@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java"  %>
 <!--  dichiarazione e istanziazione di una variabile di un
 login bean!. !-->
-<!--  lo scope e il livello di persistenza della variabile e può essere tipo
+<!--  lo scope e il livello di persistenza della variabile e puo essere tipo
 request e session (richiesta e sessione) oppure application o page (vive fino a chiusura applicazione o 
 vive fino a ricaricamento pagina). !-->
 

@@ -30,7 +30,7 @@ public class ManageActivityController {
 	
 	/* Nel "Managing" di un'attivita potremmo anche volerla cancellare.
 	 * chiameremo il metodo di DAOActivity deleteActivityJSON cancellandola
-	 * così dalla persistenza.
+	 * cosi dalla persistenza.
 	 */
 	public boolean deleteActivity(SuperActivity sua) {
 		daoAc = DAOActivity.getInstance();
@@ -41,7 +41,7 @@ public class ManageActivityController {
 
 	/* Nel "Managing" di un'attivita potremmo anche voler cambiare la frequenza
 	 * con cui l'attivita va a ripetersi. Si controlla prima che l'attivita non sia
-	 * gia del tipo della nuova frequenza, fatto ciò si aggiorna l'attivita anche
+	 * gia del tipo della nuova frequenza, fatto cio si aggiorna l'attivita anche
 	 * nella persistenza.
 	 */
 	public SuperActivity setFrequency(SuperActivity sua, LocalTime opening, LocalTime closing ) {

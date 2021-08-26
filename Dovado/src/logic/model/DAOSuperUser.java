@@ -91,7 +91,7 @@ public class DAOSuperUser {
 			//Aggiungo tutte le preferenze al nuovo JSONArray che ho creato.
 			preferences.addAll(su.getPreferences());
 			
-			//Fatto ciò vado a cercare all'interno del JSON il SuperUser che ho come istanza.
+			//Fatto cio vado a cercare all'interno del JSON il SuperUser che ho come istanza.
 			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
 				
@@ -153,7 +153,7 @@ public class DAOSuperUser {
 			JSONObject result;
 			
 			
-			//Fatto ciò vado a cercare all'interno del JSON l'utente il cui id voglio aggiornare il wallet
+			//Fatto cio vado a cercare all'interno del JSON l'utente il cui id voglio aggiornare il wallet
 			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
 				

@@ -25,10 +25,10 @@ public class PlayActivityController {
 			System.out.println("Il canale e vuoto\n");
 			return;
 		}
-		// Qui bisognera implementare una comunicazione col bean per la pagina web o, credo meglio, più in generale qualcosa che vada al view controller
+		// Qui bisognera implementare una comunicazione col bean per la pagina web o, credo meglio, piu in generale qualcosa che vada al view controller
 		for (String[] i : chat) {
 
-			//volendo potrei mettere qui il controllo dell'utente così da avere comunque tutti gli utenti
+			//volendo potrei mettere qui il controllo dell'utente cosi da avere comunque tutti gli utenti
 			if (i[0].equals(String.valueOf(0))) {
 				System.out.println("<<MIO MESSAGGIO>>   " + i[1]);
 			}

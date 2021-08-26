@@ -309,7 +309,7 @@ public class DAOActivity {
 					for(i=0;i<activityInPlace.size();i++) {
 						
 						//Prendo un elemento dell'array di eventi nel posto, estraggo il contenuto corrispondente alla chiave "id";
-						//Fatto ciò converto a Long l'oggetto risultante ed infine lo confronto con l'id dell'attivita per eliminarlo
+						//Fatto cio converto a Long l'oggetto risultante ed infine lo confronto con l'id dell'attivita per eliminarlo
 						//Anche dall'array di eventi nel json dei places.
 						if(((Long)((JSONObject)activityInPlace.get(i)).get("id")==sua.getId())){
 							activityInPlace.remove(i);

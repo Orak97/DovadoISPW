@@ -14,10 +14,10 @@
 
 	<jsp:include page="Navbar.jsp" />
 
-	<!-- non serve mettere un body perché viene incluso dentro navbar -->
+	<!-- non serve mettere un body perche viene incluso dentro navbar -->
 	<h1> pagina finta homo 😳</h1>
 
-  <h2>Giova se leggi qua, qua dentro ci va la Home, dal commento fino a body si chiama sample perché esisteva gia la pagina home.jsp</h2>
+  <h2>Giova se leggi qua, qua dentro ci va la Home, dal commento fino a body si chiama sample perche esisteva gia la pagina home.jsp</h2>
 
 </body>
 </html>

@@ -13,7 +13,7 @@ public class ShowMapController {
 	private static ShowMapController INSTANCE;
 	
 	private ShowMapController() {
-		//Privato perché e un singleton.
+		//Privato perche e un singleton.
 	}
 	
 	public static ShowMapController getInstance() {

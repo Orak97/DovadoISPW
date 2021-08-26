@@ -52,8 +52,8 @@
 	        
 	      
 	        
-	        if (true) { //qua se non e loggato si mette a false così non compaiono i pulsanti %>
-	        
+	        if (true) { //qua se non e loggato si mette a false cosi non compaiono i pulsanti %>
+	       
 	        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 	          <span class="navbar-toggler-icon"></span>
 	        </button>

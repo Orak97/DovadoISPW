@@ -7,7 +7,7 @@ import logic.model.User;
 public class CreateUserController {
 	
 	DAOSuperUser daoSU;
-	// TODO in virtù i quello scritto sotto gli id sono statici
+	// TODO in virtu i quello scritto sotto gli id sono statici
 	// NON SO SE E' UTILE CREARE UN INTERO CONTROLLER PER L'AGGIUNTA DI UTENTI, MAGARI IL DAO VIENE CHIAMATO DALLA ENTITY? NON SEMBRA CORRETTO, MA OVVIAMENTE E' MENO CODICE.
 	// Per il momento non vedo motivo per cuifar ritornare la classe partner/user quindi ho 
 	public  int createPartner(String email, String username,String psw){

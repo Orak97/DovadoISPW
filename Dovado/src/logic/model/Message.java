@@ -20,7 +20,7 @@ public class Message {
 	   this.sentDate = LocalDateTime.now();		
 	}
 	
-	//Non faccio Override poiché non controllo gli Objects in generale ma solo i Message
+	//Non faccio Override poiche non controllo gli Objects in generale ma solo i Message
 	public boolean equals(Message m) {
 		if ( m != null) {
 			

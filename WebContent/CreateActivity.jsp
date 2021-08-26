@@ -14,7 +14,7 @@
 
 	<jsp:include page="Navbar.jsp" />
 
-	<!-- non serve mettere un body perché viene incluso dentro navbar -->
+	<!-- non serve mettere un body perche viene incluso dentro navbar -->
 	<h1> pagina per creare attivita</h1>
 
   <h2>Giova se leggi qua, qua dentro ci va la pagina create activity, dal commento fino a body </h2>
