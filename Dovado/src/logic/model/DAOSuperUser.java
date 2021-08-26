@@ -76,7 +76,7 @@ public class DAOSuperUser {
 		return true;
 	}
 	
-	//Creiamo un metodo per la modifica delle preferenze sul tipo di attività collegate ad un utente.
+	//Creiamo un metodo per la modifica delle preferenze sul tipo di attivita collegate ad un utente.
 	public boolean updateUserPreferences(SuperUser su) {
 		JSONParser parser = new JSONParser();
 		ArrayList<String> oldpref = new ArrayList<String>();
@@ -102,7 +102,7 @@ public class DAOSuperUser {
 				if (su.getUserID().equals(IDJSON)) {
 					oldpreferences = (JSONArray) result.get("preferences");
 					//Si ricostruisce l'arrayList delle preferenze per compararlo con il nuovo
-					//che si andrà ad inserire; Se sono uguali si esce restituendo falso.
+					//che si andra ad inserire; Se sono uguali si esce restituendo falso.
 					//Se vero si procede nel salvataggio.
 					for(j=0;j<oldpreferences.size();j++) {
 						oldpref.add((String)oldpreferences.get(j));

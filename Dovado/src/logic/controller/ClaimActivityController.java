@@ -21,7 +21,7 @@ public class ClaimActivityController {
 				return false;
 			}
 		} else {
-			System.out.println("Esiste già un partner proprietario dell'attività.\n");
+			System.out.println("Esiste gia un partner proprietario dell'attivita.\n");
 			return false;	
 		}
 	}

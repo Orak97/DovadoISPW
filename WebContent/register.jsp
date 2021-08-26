@@ -21,7 +21,7 @@
 <h1>Register Form Page</h1>
 
 <%
-	if(request.getParameter("regForm")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro login vuol dire che arrivo a questa pagina tramite la pressione del bottone login, quindi ne consegue che i dati username e password sono pieni e quindi posso andare avanti
+	if(request.getParameter("regForm")!= null){ //controllo la richiesta ricevuta, se all'interno e presente un parametro login vuol dire che arrivo a questa pagina tramite la pressione del bottone login, quindi ne consegue che i dati username e password sono pieni e quindi posso andare avanti
 		if(regBean.validate()){ 
 %>
 			<jsp:forward page="login.jsp"/>

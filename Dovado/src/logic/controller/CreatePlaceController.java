@@ -20,7 +20,7 @@ public class CreatePlaceController {
 		this.place = new Place(name, address,city,region,civico,owner);
 		int id = this.addPlaceToDB(address, name, city, region, civico, owner); 
 		if(id < 0)
-			System.out.println("\n\nPosto già creato precedentemente\n\n");
+			System.out.println("\n\nPosto gia creato precedentemente\n\n");
 		this.place.setId(id);
 		return this.place;
 	}
@@ -29,7 +29,7 @@ public class CreatePlaceController {
 		this.place = new Place(name, address,city,region,civico,null);
 		int id = this.addPlaceToDB(address, name, city, region, civico, null); 
 		if(id < 0)
-			System.out.println("\n\nPosto già creato precedentemente\n\n");
+			System.out.println("\n\nPosto gia creato precedentemente\n\n");
 		this.place.setId(id);
 		return this.place;
 	}

@@ -4,7 +4,7 @@
     <!doctype html>
 	<html lang="en">
 	<head>
-	  	<% //NON SI PUO' FARE QUI IL CHECK DEL LOGIN PERCHE' al codice chiamato con include non è permesso modificare status code ed header e di conseguenza non è possibile effettuare una redirezione
+	  	<% //NON SI PUO' FARE QUI IL CHECK DEL LOGIN PERCHE' al codice chiamato con include non e permesso modificare status code ed header e di conseguenza non e possibile effettuare una redirezione
 	  	
 	  		String titolo = (String) application.getAttribute("titolo");
 	  		
@@ -52,7 +52,7 @@
 	        
 	      
 	        
-	        if (true) { //qua se non è loggato si mette a false così non compaiono i pulsanti %>
+	        if (true) { //qua se non e loggato si mette a false così non compaiono i pulsanti %>
 	        
 	        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 	          <span class="navbar-toggler-icon"></span>

@@ -46,7 +46,7 @@ public abstract class SuperActivity {
 	}
 	
 	
-	//Non so se vanno bene getters e setters qui, dato che abbiamo tutte le attività principalmente salvate nel JSON potremmo usare getters e setters di un bean apposito.
+	//Non so se vanno bene getters e setters qui, dato che abbiamo tutte le attivita principalmente salvate nel JSON potremmo usare getters e setters di un bean apposito.
 
 	public String getName() {
 		return this.name;

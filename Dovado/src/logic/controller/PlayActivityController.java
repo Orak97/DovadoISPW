@@ -22,10 +22,10 @@ public class PlayActivityController {
 		ArrayList<String[]> chat = this.cController.formattedChat(user);
 		
 		if (chat == null) {
-			System.out.println("Il canale è vuoto\n");
+			System.out.println("Il canale e vuoto\n");
 			return;
 		}
-		// Qui bisognerà implementare una comunicazione col bean per la pagina web o, credo meglio, più in generale qualcosa che vada al view controller
+		// Qui bisognera implementare una comunicazione col bean per la pagina web o, credo meglio, più in generale qualcosa che vada al view controller
 		for (String[] i : chat) {
 
 			//volendo potrei mettere qui il controllo dell'utente così da avere comunque tutti gli utenti

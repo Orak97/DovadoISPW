@@ -42,24 +42,24 @@ public class CreateActivityController {
 			{	
 				if(u instanceof User) {
 					
-					//A seconda di che tipo di utente è abbiamo un metodo di aggiunta attività al file JSON diverso;
-					//se l'utente è normale l'attività non è certificata, mentre se lo è avremo un'attività certificata.
-					//è importante nella ricostruzione delle attività ricavate dalla persistenza.
+					//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso;
+					//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
+					//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
 					
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime());					
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						System.out.println("Attività non creata.\n");
+						System.out.println("Attivita non creata.\n");
 						return;
 					} else System.out.println("ID:\n"+id+"\n");
 					
-					newActivity.setId(id);
+					newActivity.setId(id); 
 				}
 				else {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime() );
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 					if(id<0) {
-						System.out.println("Attività non creata.\n");
+						System.out.println("Attivita non creata.\n");
 						return;
 					}else System.out.println("ID:\n"+id+"\n");
 					newActivity.setId(id);
@@ -70,13 +70,13 @@ public class CreateActivityController {
 		case periodica:
 			{
 				if(u instanceof User) {
-					//A seconda di che tipo di utente è abbiamo un metodo di aggiunta attività al file JSON diverso;
-					//se l'utente è normale l'attività non è certificata, mentre se lo è avremo un'attività certificata.
-					//è importante nella ricostruzione delle attività ricavate dalla persistenza.
+					//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso;
+					//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
+					//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						System.out.println("Attività non creata.\n");
+						System.out.println("Attivita non creata.\n");
 						return;
 					}else System.out.println("ID:\n"+id+"\n");
 					newActivity.setId(id);
@@ -85,7 +85,7 @@ public class CreateActivityController {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");		
 					if(id<0) {
-						System.out.println("Attività non creata.\n");
+						System.out.println("Attivita non creata.\n");
 						return;
 					}else System.out.println("ID:\n"+id+"\n");
 					newActivity.setId(id);
@@ -95,13 +95,13 @@ public class CreateActivityController {
 		case scadenza:
 			{
 				if(u instanceof User) {
-					//A seconda di che tipo di utente è abbiamo un metodo di aggiunta attività al file JSON diverso;
-					//se l'utente è normale l'attività non è certificata, mentre se lo è avremo un'attività certificata.
-					//è importante nella ricostruzione delle attività ricavate dalla persistenza.
+					//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso;
+					//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
+					//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						System.out.println("Attività non creata.\n");
+						System.out.println("Attivita non creata.\n");
 						return;
 					}else System.out.println("ID:\n"+id+"\n");
 					newActivity.setId(id);
@@ -110,7 +110,7 @@ public class CreateActivityController {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 					if(id<0) {
-						System.out.println("Attività non creata.\n");
+						System.out.println("Attivita non creata.\n");
 						return;
 					}else System.out.println("ID:\n"+id+"\n");
 					newActivity.setId(id);				

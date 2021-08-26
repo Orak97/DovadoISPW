@@ -123,11 +123,11 @@ public class HomeView implements Initializable{
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "TENNIS"));
 
-			System.out.println("\nNumero di attività trovate: "+activities.size());
+			System.out.println("\nNumero di attivita trovate: "+activities.size());
 
 			int j;
 			for(j=0;j<activities.size();j++)
-				System.out.println("tutte le attività "+activities.get(j).getId());
+				System.out.println("tutte le attivita "+activities.get(j).getId());
 			
 			Thread newThread = new Thread(() -> {
 				int i;
@@ -192,7 +192,7 @@ public class HomeView implements Initializable{
 		int activityId = Integer.parseInt(eventBox.getChildren().get(0).getId());
 		Long placeId = Long.parseLong(eventBox.getChildren().get(1).getId());
 		activitySelected = daoAct.findActivityByID(daoSU,daoPlc.findPlaceById(placeId),activityId); 
-		System.out.println("Attività trovata: "+activitySelected);
+		System.out.println("Attivita trovata: "+activitySelected);
 		
 		eng.executeScript("spotPlace('"+activitySelected.getPlace().getCivico()+"','"+activitySelected.getPlace().getAddress()+"','"+activitySelected.getPlace().getCity()+"','"+activitySelected.getPlace().getRegion()+"')");
 		

@@ -22,7 +22,7 @@ public class DAOPlace {
 		return INSTANCE;
 	}
 
-	//Aggiunto un metodo per trovare un posto tramite ID, utile durante la reistanzazione da persistenza delle attività.
+	//Aggiunto un metodo per trovare un posto tramite ID, utile durante la reistanzazione da persistenza delle attivita.
 	public Place findPlaceById(Long id) {
 		JSONParser parser = new JSONParser();
 		int i;

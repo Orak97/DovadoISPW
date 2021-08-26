@@ -8,7 +8,7 @@ public class Channel {
 	private ArrayList<Message> listOfMsg;
 	private int sizeList;
 	
-	//Utile solo se vogliamo aggiornare dinamicamente senza prendere tutta la chat. Probabilmente verrà cancellato
+	//Utile solo se vogliamo aggiornare dinamicamente senza prendere tutta la chat. Probabilmente verra cancellato
 	private Message lastMessage;
 
 	
@@ -17,7 +17,7 @@ public class Channel {
 		listOfMsg = new ArrayList<Message>();
 		sizeList = listOfMsg.size();
 		
-	//Qui si inserirà  un eventuale recupero della chat dalla persistenza. Per il momento assumiamo sempre nulla
+	//Qui si inserira  un eventuale recupero della chat dalla persistenza. Per il momento assumiamo sempre nulla
 		lastMessage = new Message();
 		listOfMsg.add(lastMessage);
 	}
@@ -31,7 +31,7 @@ public class Channel {
 	}
 		
 	
-	//Da vedere meglio, potrebbe essere necessario passare gli attributi invece della classe Message. Per il momento non è usato
+	//Da vedere meglio, potrebbe essere necessario passare gli attributi invece della classe Message. Per il momento non e usato
 	public void removeMsg(Message msg) {
 		
 		for (int i = 0; i < sizeList; i++) {

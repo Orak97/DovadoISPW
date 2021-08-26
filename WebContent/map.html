@@ -75,8 +75,8 @@
 		for (place in result.places){
 			console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico);
 			
-			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca è un oggetto contenente la percentuale di precisione
-			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una città nella mappa.*/
+			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca e un oggetto contenente la percentuale di precisione
+			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una citta nella mappa.*/
 			
 			L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
   				if (err) {
@@ -99,7 +99,7 @@
 				return;
 				}
 				console.log(results.results);
-				console.log(address+' '+civico+' questo è il posto trovato -> '+results.results[0].properties.StAddr);
+				console.log(address+' '+civico+' questo e il posto trovato -> '+results.results[0].properties.StAddr);
 				setCoords(results.results[0].latlng.lat,results.results[0].latlng.lng);
 			});
 	}

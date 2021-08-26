@@ -67,7 +67,7 @@ public void setError(String error) {
 public boolean validate() {
 	System.out.println(username +": "+ password2 + "  " + password);	
 	
-	// controllo la mail se è scritta in maniera corretta
+	// controllo la mail se e scritta in maniera corretta
 	Matcher matchEmail = patternEmail.matcher(email);
 	if (!matchEmail.matches()) {
 			error = "Mail sintatticamente sbagliata";
@@ -96,9 +96,9 @@ public boolean validate() {
 		System.out.println("Spazi nell'username: " + username + username.length()+ "  ci sono questi spazi:  " + username.lastIndexOf(" "));		
 		return false;}
 	
-	//Chiamo il controller che controlla se eventualmente già esiste e lo aggiunge in alternativa
+	//Chiamo il controller che controlla se eventualmente gia esiste e lo aggiunge in alternativa
 	if (!regController.addUser(email, username, password)) {
-		error = "Esiste già un utente associato a questa email";
+		error = "Esiste gia un utente associato a questa email";
 		return false;
 	}
 	

@@ -10,8 +10,8 @@ public class Place {
 	private String name;
 	private Partner owner;
 	
-	//Modificato l'arraylist di attività in un array di long, in questo modo
-	//Verranno indicate le attività a cui fa riferimento il posto mediante il loro id.
+	//Modificato l'arraylist di attivita in un array di long, in questo modo
+	//Verranno indicate le attivita a cui fa riferimento il posto mediante il loro id.
 	private ArrayList<Long> hostedActivities;
 	
 	public Place(String name,String address,String city,String region,String civico){
