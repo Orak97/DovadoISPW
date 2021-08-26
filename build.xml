@@ -9,11 +9,6 @@
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="11"/>
     <property name="source" value="11"/>
-    <path id="Maven Dependencies.libraryclasspath">
-        <pathelement location="../../.m2/repository/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar"/>
-        <pathelement location="../../.m2/repository/junit/junit/4.10/junit-4.10.jar"/>
-        <pathelement location="../../.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar"/>
-    </path>
     <path id="Web App Libraries.libraryclasspath">
         <pathelement location="WebContent/WEB-INF/lib/json-simple-1.1.1.jar"/>
         <pathelement location="WebContent/WEB-INF/lib/taglibs-standard-impl-1.2.5.jar"/>
@@ -59,7 +54,6 @@
         <pathelement location="target/classes"/>
         <pathelement location="target/test-classes"/>
         <pathelement location="../../eclipse-workspace/Dovado/json-simple-1.1.1.jar"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
         <path refid="Web App Libraries.libraryclasspath"/>
         <path refid="EAR Libraries.libraryclasspath"/>
         <path refid="Apache Tomcat v8.0 [Apache Tomcat v8.0].libraryclasspath"/>
@@ -68,21 +62,30 @@
     </path>
     <path id="run.CouponVector.classpath">
         <path refid="Dovado.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
         <pathelement location="../../eclipse-workspace/Dovado/json-simple-1.1.1.jar"/>
+        <path refid="Web App Libraries.libraryclasspath"/>
+        <path refid="EAR Libraries.libraryclasspath"/>
+        <path refid="Apache Tomcat v8.0 [Apache Tomcat v8.0].libraryclasspath"/>
         <pathelement location="WebContent/WEB-INF/lib/taglibs-standard-impl-1.2.5.jar"/>
+        <path refid="JavaFX.userclasspath"/>
     </path>
     <path id="run.Main (1).classpath">
         <path refid="Dovado.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
         <pathelement location="../../eclipse-workspace/Dovado/json-simple-1.1.1.jar"/>
+        <path refid="Web App Libraries.libraryclasspath"/>
+        <path refid="EAR Libraries.libraryclasspath"/>
+        <path refid="Apache Tomcat v8.0 [Apache Tomcat v8.0].libraryclasspath"/>
         <pathelement location="WebContent/WEB-INF/lib/taglibs-standard-impl-1.2.5.jar"/>
+        <path refid="JavaFX.userclasspath"/>
     </path>
     <path id="run.Main.classpath">
         <path refid="Dovado.classpath"/>
-        <path refid="Maven Dependencies.libraryclasspath"/>
         <pathelement location="../../eclipse-workspace/Dovado/json-simple-1.1.1.jar"/>
+        <path refid="Web App Libraries.libraryclasspath"/>
+        <path refid="EAR Libraries.libraryclasspath"/>
+        <path refid="Apache Tomcat v8.0 [Apache Tomcat v8.0].libraryclasspath"/>
         <pathelement location="WebContent/WEB-INF/lib/taglibs-standard-impl-1.2.5.jar"/>
+        <path refid="JavaFX.userclasspath"/>
     </path>
     <target name="init">
         <mkdir dir="target/classes"/>
