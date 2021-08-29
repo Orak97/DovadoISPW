@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+	    <%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules" %>
 
 	<%	if(session.isNew()) {
 
@@ -16,7 +18,7 @@
 
   <jsp:useBean id="scheduleBean" scope="request" class="logic.model.ScheduleBean" />
 
-	<jsp:setProperty name="scheduleBean" property="*" />
+  <jsp:setProperty name="scheduleBean" property="*" />
 	<%
 
 		if(request.getParameter("date")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti

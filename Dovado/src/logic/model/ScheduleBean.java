@@ -1,7 +1,7 @@
 /**
  * 
  */
-package logic.view;
+package logic.model;
 
 /**
  * @author sav
