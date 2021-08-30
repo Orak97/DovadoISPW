@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java"  %>
 <!--  dichiarazione e istanziazione di una variabile di un
 login bean!. !-->
-<!--  lo scope e il livello di persistenza della variabile e puo essere tipo
+<!--  lo scope è il livello di persistenza della variabile e può essere tipo
 request e session (richiesta e sessione) oppure application o page (vive fino a chiusura applicazione o 
 vive fino a ricaricamento pagina). !-->
 
@@ -92,8 +92,8 @@ vive fino a ricaricamento pagina). !-->
 		for (place in result.places){
 			console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico);
 			
-			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca e un oggetto contenente la percentuale di precisione
-			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una citta nella mappa.*/
+			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca è un oggetto contenente la percentuale di precisione
+			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una città nella mappa.*/
 			
 			L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
   				if (err) {
