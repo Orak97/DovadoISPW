@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+
     
 <jsp:useBean id ="logBean" scope="request" class="logic.model.LogBean" />
 <jsp:setProperty name="logBean" property="*" />
@@ -10,6 +9,8 @@
 		response.sendRedirect("homeLogin.jsp");
 	}	
 	%>
+	
+	
 	
 <html>
 <head>

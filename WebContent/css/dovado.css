@@ -1,4 +1,28 @@
  
 nav {
     background-color: #484848;
+    
 }
+
+.col-4.events-list{
+	 background-color:#212121;
+	 height:100%;
+	 overflow-y: scroll;
+}
+
+.card-img, .card-img-bottom, .card-img-top {
+	height: 20vh;
+}
+
+.plannedEvents {
+  overflow: scroll;
+}
+
+.home .row{
+	height:100vh;
+}
+
+.pt-6 {
+  padding-top: 12vh; !important;
+}
+
