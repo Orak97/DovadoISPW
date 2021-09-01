@@ -1,20 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
-	<%	if(session.isNew()) {
-		
-		response.sendRedirect("login.jsp");
-	} else {
-		session.setMaxInactiveInterval(10);	
-	}%>
+ 
 
     <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity" %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
-	<jsp:include page="Navbar.jsp" />
+	<%@ include file="Navbar.jsp" %>
 	
-	<!-- non serve mettere un body perche viene incluso dentro navbar -->
+	
+
 	<% //tentativo di fare una home decente:
 		
 		DAOPreferences daoPref = DAOPreferences.getInstance();

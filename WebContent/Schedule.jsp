@@ -2,11 +2,7 @@
     
 	<%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules" %>
 
-	
-
-    <%@ page import = "java.io.*,java.util.*" %>
-
-    <% application.setAttribute( "titolo" , "Schedule"); %>
+	<% application.setAttribute( "titolo" , "Schedule"); %>
 
 	<%@ include file="Navbar.jsp" %>
 

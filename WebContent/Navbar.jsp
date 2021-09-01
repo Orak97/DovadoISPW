@@ -5,23 +5,23 @@
 	<html lang="en">
 	<head>
 		<%
-
-		boolean logged = false;
-
-		if(session.isNew()) {
-
-		response.sendRedirect("login.jsp");
-		logged = false;
-
+		boolean logged = true;
+		
+		String titolo = (String) application.getAttribute("titolo");
+				
+		if (titolo.equals("login") | titolo.equals("register")) {
+			if( session.getAttribute("user") != null) {				
+				response.sendRedirect("Home.jsp");
+			}
+			logged = false;
+		}
+		else if(session.getAttribute("user") == null) {
+		response.sendRedirect("login.jsp");		
 		} else {
 			session.setMaxInactiveInterval(10);
-			logged = true;
 		}
-		%>
+		//NON SI PUO' FARE QUI IL CHECK DEL LOGIN PERCHE' al codice chiamato con include non e permesso modificare status code ed header e di conseguenza non e possibile effettuare una redirezione
 
-	  	<% //NON SI PUO' FARE QUI IL CHECK DEL LOGIN PERCHE' al codice chiamato con include non e permesso modificare status code ed header e di conseguenza non e possibile effettuare una redirezione
-
-	  		String titolo = (String) application.getAttribute("titolo");
 
 	  		int active = 0;
 

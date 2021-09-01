@@ -5,14 +5,10 @@ login bean!. !-->
 request e session (richiesta e sessione) oppure application o page (vive fino a chiusura applicazione o 
 vive fino a ricaricamento pagina). !-->
 
-	<%	if(session.isNew()) {
-		
-		response.sendRedirect("login.jsp");
-	} else {
-		session.setMaxInactiveInterval(10);	
-	}%>
 	
-<html>
+    <% application.setAttribute( "titolo" , "MAP"); %>
+
+	<%@ include file="Navbar.jsp" %>
 	<head>
 		<meta charset="ISO-8859-1"></meta>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
@@ -45,6 +41,7 @@ vive fino a ricaricamento pagina). !-->
 		</style>
 	</head>
 <body>
+
 	<script type="text/javascript">
 	var lat,long;
 	var i=0;
@@ -121,12 +118,13 @@ vive fino a ricaricamento pagina). !-->
 	}
 	
 	</script>
+	<div class="container pt-6">
 	<h1>Mappa e geolocalizzazione.</h1>
 	<div id="Map"></div>
 	<script type="text/javascript" src="js/map.js">
 	</script>
 
-
+    </div>
 </body>
 
 	
