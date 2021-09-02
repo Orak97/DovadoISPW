@@ -364,5 +364,59 @@ public class DAOSuperUser {
 		}
 		return null;
 	}
+
+	public SuperUser findSuperUserByUsername(String username, String password) {
+		JSONParser parser = new JSONParser();
+		int i;
+		try 
+		{
+			Object users = parser.parse(new FileReader("WebContent/user.json"));
+			JSONObject userRes = (JSONObject) users;
+			JSONArray userArray = (JSONArray) userRes.get("users");
+			JSONObject result;
+
+			for(i=0;i<userArray.size();i++) 
+			{
+				result = (JSONObject)userArray.get(i);
+				
+				String userJSON = (String) result.get("username");
+				String passwordJSON = (String) result.get("password");
+				try {
+					if (username.equals(userJSON)) {
+						if(password==null) {
+							System.out.println("PASSWORD NULLAAAAAAA");
+						}
+						else if (!password.equals(passwordJSON)) {
+							System.out.println("PASSWORD SBAGLIATA");
+							return null;
+						}
+						//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
+						if((Long)result.get("partner")==1) {
+							Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
+							partner.setPreferences(((ArrayList<String>)result.get("preferences")));
+							return partner;
+						}
+						User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
+						user.setPreferences(((ArrayList<String>)result.get("preferences")));
+						return user;					
+					}
+				} catch(NullPointerException e) {
+					e.printStackTrace();
+					return null;
+				}
+				
+			}
+			
+		} 
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
 	
 }

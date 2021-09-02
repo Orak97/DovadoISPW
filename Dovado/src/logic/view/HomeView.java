@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ResourceBundle;
 
-import com.sun.prism.paint.Color;
-
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,17 +43,22 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import logic.model.Activity;
+import logic.model.Channel;
 import logic.model.DAOActivity;
+import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
 import logic.model.SuperActivity;
+import logic.model.SuperUser;
+import logic.model.User;
 
 public class HomeView implements Initializable{
 
 	private static StackPane lastEventBoxSelected;
-
 	
+	private static VBox chatContainer;
 	@FXML
 	private TextField searchBar;
 	
@@ -88,10 +91,12 @@ public class HomeView implements Initializable{
     private static DAOPreferences daoPref;
     private static DAOActivity daoAct;
     private static DAOSuperUser daoSU;
+    private static DAOChannel daoCH;
     private static DAOPlace daoPlc;
     private static SuperActivity activitySelected;
+    private static SuperUser user;
     
-	public static void render(Stage current) {
+	public static void render(Stage current, SuperUser user2) {
 		try {
 			VBox root = new VBox();
 			BorderPane navbar = Navbar.getNavbar();
@@ -110,8 +115,8 @@ public class HomeView implements Initializable{
 				e.printStackTrace();
 			}
 			root.getChildren().addAll(navbar,home);
-			current.show();
-			
+			user=user2;
+			current.show();	
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -123,18 +128,19 @@ public class HomeView implements Initializable{
 		daoPref = DAOPreferences.getInstance();
 		daoAct = DAOActivity.getInstance();
 		daoSU = DAOSuperUser.getInstance();
-
+		
     	ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
 		
     	System.out.println("ok");
 		System.out.println("Working Directory = " + System.getProperty("user.dir"));		
 		try{
 			eng = map.getEngine();
-			eng.load("file:///C:/Users/Andrew/Desktop/NuovaRoba/Dovado/WebContent/map.html");
+			eng.load("file:/home/pgs/eclipse-workspace/DovadoISPW/WebContent/map.html");
 			
 			// Setting permissions to interact with Js
 	        eng.setJavaScriptEnabled(true);
 	        
+	        searchButton.setText("SEARCH");
 			searchButton.getStyleClass().add("src-btn");
 	        
 	        preference1.setText(daoPref.getPreferenceFromJSON(1));
@@ -145,15 +151,15 @@ public class HomeView implements Initializable{
 			preference2.getStyleClass().add("pref-btn");
 			preference3.getStyleClass().add("pref-btn");
 			
-			//Apro di default una lista di attività che hanno a che fare con Boxe e Tennis.
+			//Apro di default una lista di attivitï¿½ che hanno a che fare con Boxe e Tennis.
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "TENNIS"));
 
-			System.out.println("\nNumero di attività trovate: "+activities.size());
+			System.out.println("\nNumero di attivitï¿½ trovate: "+activities.size());
 
 			int j;
 			for(j=0;j<activities.size();j++)
-				System.out.println("tutte le attività "+activities.get(j).getId());
+				System.out.println("tutte le attivitï¿½ "+activities.get(j).getId());
 			
 			Thread newThread = new Thread(() -> {
 				int i;
@@ -185,7 +191,7 @@ public class HomeView implements Initializable{
 					VBox eventText = new VBox(eventName,eventInfo);
 					eventText.setAlignment(Pos.CENTER);
 					eventText.getStyleClass().add("eventTextVbox");
-					//Preparo un box in cui contenere il nome dell'attività e altre sue
+					//Preparo un box in cui contenere il nome dell'attivitï¿½ e altre sue
 					//informazioni; uso uno StackPane per poter mettere scritte su immagini.
 					StackPane eventBox = new StackPane();
 					eventBox.getStyleClass().add("eventBox");
@@ -241,7 +247,7 @@ public class HomeView implements Initializable{
 		
 		int itemNumber = eventsList.getSelectionModel().getSelectedIndex();
 		
-		//La prossima volta che selezionerò un altro evento oltre questo si resetta il suo eventBox.
+		//La prossima volta che selezionerï¿½ un altro evento oltre questo si resetta il suo eventBox.
 		lastEventBoxSelected = eventBox;
 		
 		int activityId = Integer.parseInt(eventBox.getChildren().get(0).getId());
@@ -275,14 +281,99 @@ public class HomeView implements Initializable{
 		eventImage.setScaleY(1.25);
 
 		activitySelected = daoAct.findActivityByID(daoSU,daoPlc.findPlaceById(placeId),activityId); 
-		System.out.println("Attività trovata: "+activitySelected);
-		
+		System.out.println("Attivitï¿½ trovata: "+activitySelected);
+
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				eng.executeScript("spotPlace('"+activitySelected.getPlace().getCivico()+"','"+activitySelected.getPlace().getAddress()+"','"+activitySelected.getPlace().getCity()+"','"+activitySelected.getPlace().getRegion()+"')");
+					eng.executeScript("spotPlace('"+activitySelected.getPlace().getCivico()+"','"+activitySelected.getPlace().getAddress()+"','"+activitySelected.getPlace().getCity()+"','"+activitySelected.getPlace().getRegion()+"')");
 				};
 		});
 		
+		joinActivityChannel.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				//Cliccato il pulsante si deve aprire una chat e comparire 
+				//tutto ciÃ² che Ã¨ stato scritto.
+					daoCH = DAOChannel.getInstance();
+					chatContainer = new VBox();
+					Button send = new Button();
+					Button close = new Button();
+					ListView chat = new ListView();
+					HBox textAndSend = new HBox();
+					TextField mss = new TextField();
+					
+					updateChat(chat,activitySelected.getChannel());
+					
+					send.setOnAction(new EventHandler<ActionEvent>() {
+						@Override public void handle(ActionEvent e) {
+							System.out.println("\n\nInviando un messaggio...\n");
+							System.out.println("\nMessaggi prima dell'invio:\n");
+							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
+								System.out.println(activitySelected.getChannel().getChat().get(j).getMsgText());
+							}
+							activitySelected.getChannel().addMsg(user.getUserID(), mss.getText());
+							
+							daoCH.updateChannelInJSON(activitySelected.getChannel(), activitySelected.getChannel().getChat(), activitySelected);
+
+							System.out.println("\nMessaggi dopo l'invio:\n");
+							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
+								System.out.println(activitySelected.getChannel().getChat().get(j).getMsgText());
+							}
+							updateChat(chat,activitySelected.getChannel());
+						}
+					});
+					
+					send.setText("SEND");
+					send.getStyleClass().add("src-btn");
+					
+					textAndSend.getChildren().addAll(mss,send);
+					chatContainer.getChildren().addAll(chat,textAndSend);
+					chatContainer.setAlignment(Pos.BOTTOM_RIGHT);
+					
+					root.getChildren().add(chatContainer);
+					
+				};
+		});
+		
+		playActivity.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+					((User) user).getSchedule().addActivityToSchedule((Activity)activitySelected, null, null, user);;
+				};
+		});
+	}
+
+	private void updateChat(ListView chat, Channel ch) {
+
+		chat.getItems().clear();
+		for(int i=0;i<ch.getChat().size();i++) {
+			
+			VBox chatMss = new VBox();
+			TextField msstxt = new TextField();
+			TextField username = new TextField();
+			TextField dateSent = new TextField();
+			String usernameMss = daoSU.findSuperUserByID(ch.getChat().get(i).getUsr()).getUsername();
+			
+			//Mi trovo lo username da mettere sopra il messaggio:
+			username.setText(usernameMss);
+			//Mi trovo il testo da mettere al centro del messaggio:
+			msstxt.setText(ch.getChat().get(i).getMsgText());
+			//Mi trovo il tempo di invio da mettere in basso a destra del messaggio:
+			dateSent.setText(ch.getChat().get(i).getMsgSentDate());
+			
+			username.setAlignment(Pos.TOP_LEFT);
+			msstxt.setAlignment(Pos.CENTER_LEFT);
+			dateSent.setAlignment(Pos.BOTTOM_RIGHT);
+			
+			chatMss.getChildren().addAll(username,msstxt,dateSent);
+			chatMss.setPrefWidth(chat.getWidth()/2);
+			
+			if(user.getUsername().equals(usernameMss)) {
+				chatMss.setAlignment(Pos.CENTER_RIGHT);
+			}
+			else {
+				chatMss.setAlignment(Pos.CENTER_LEFT);
+			}
+			chat.getItems().add(chatMss);
+		}
 	}
 	
 	//Penso che questo metodo come anche activity selected etc... vadano spostati in un'apposita classe
@@ -300,6 +391,8 @@ public class HomeView implements Initializable{
 
 		eventImage.setScaleX(1);
 		eventImage.setScaleY(1);
+		
+		root.getChildren().remove(chatContainer);
 	}
 	
 	public void filterActivities() {
@@ -347,7 +440,7 @@ public class HomeView implements Initializable{
 			VBox eventText = new VBox(eventName,eventInfo);
 			eventText.setAlignment(Pos.CENTER);
 			
-			//Preparo un box in cui contenere il nome dell'attività e altre sue
+			//Preparo un box in cui contenere il nome dell'attivitï¿½ e altre sue
 			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
 			StackPane eventBox = new StackPane();
 			Text eventId = new Text();

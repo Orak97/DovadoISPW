@@ -16,6 +16,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import logic.model.DAOSuperUser;
+import logic.model.SuperUser;
 
 public class LoginView{
 	
@@ -40,9 +42,22 @@ public class LoginView{
     @FXML
     void login(ActionEvent event) {
     	System.out.println("Clicked login");
+    	SuperUser user = null;
+    	if(username.getText().contains("@")) {
+    		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText()))==null) {
+    			System.out.println("Email o password incorrette.");
+    			return;
+    		} 
+    	}
+    	else {
+    		if((user=DAOSuperUser.getInstance().findSuperUserByUsername(username.getText(), password.getText()))==null) {
+    			System.out.println("Username o password incorretti.");
+    			return;
+    		}
+    	}
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	HomeView hv = new HomeView();
-    	hv.render(current);
+    	hv.render(current,user);
     }
 
     @FXML
