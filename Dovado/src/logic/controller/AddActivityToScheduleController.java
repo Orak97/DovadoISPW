@@ -50,7 +50,7 @@ public class AddActivityToScheduleController {
 	public void addActivityToSchedule(Activity a) {
 		Schedule s = session.getSchedule();
 		
-		s.addActivityToSchedule(a, timestamp.getScheduledTime(), timestamp.getReminderTime());
+		s.addActivityToSchedule(a, timestamp.getScheduledTime(), timestamp.getReminderTime(),session);
 	
 	}
 	

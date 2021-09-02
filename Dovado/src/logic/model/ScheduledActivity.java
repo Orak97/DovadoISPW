@@ -61,6 +61,18 @@ public class ScheduledActivity {
 		
 		timer.schedule( task , convertToDateViaSqlTimestamp(reminderTime));
 	}
-	
+
+	public Activity getReferencedActivity() {
+		return this.referencedActivity;
+	}
+	public LocalDateTime getReminderTime() {
+		return this.reminderTime;
+	}
+	public Timer getTimer() {
+		return this.timer;
+	}
+	public LocalDateTime getScheduledTime() {
+		return this.scheduledTime;
+	}
 
 }

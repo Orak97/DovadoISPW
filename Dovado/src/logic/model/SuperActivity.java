@@ -24,7 +24,6 @@ public abstract class SuperActivity {
 		this.place = place;
 		this.preferences = new ArrayList<String>();
 		this.frequencyOfRepeat = new ContinuosActivity(null,null);
-		this.channel = new Channel();
 	}
 	
 	public SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime) {
@@ -59,6 +58,7 @@ public abstract class SuperActivity {
 	}
 	public void setId(Long id) {
 		this.id=id;
+		this.channel = DAOChannel.getInstance().setupChannelJSON(id);
 	}
 	public FrequencyOfRepeat getFrequency() {
 		return this.frequencyOfRepeat;

@@ -151,7 +151,6 @@ public class DAOActivity {
 				return false;
 			}
 			
-			
 			for(i=0;i<activityArray.size();i++){
 				
 				result = (JSONObject) activityArray.get(i);

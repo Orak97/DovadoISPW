@@ -6,19 +6,26 @@ import java.time.LocalDateTime;
 
 public class Message {
 	private String msgText;
-	private int user;
+	private long user;
 	private LocalDateTime sentDate;
 	
 	public Message() {
 		this(0,"");
 	}
-	
-	public Message (int user, String msgText) {
+
+	public Message (long user, String msgText) {
 		
 	   this.user = user;
 	   this.msgText = msgText;
 	   this.sentDate = LocalDateTime.now();		
 	}
+	
+	public Message (long user, String msgText,LocalDateTime time) {
+		
+		   this.user = user;
+		   this.msgText = msgText;
+		   this.sentDate = time;		
+		}
 	
 	//Non faccio Override poiche non controllo gli Objects in generale ma solo i Message
 	public boolean equals(Message m) {
@@ -36,7 +43,7 @@ public class Message {
 	
 	}
 	
-	public int getUsr() {
+	public long getUsr() {
 		return this.user;
 	}		
 	
