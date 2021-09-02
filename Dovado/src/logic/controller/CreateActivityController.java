@@ -38,7 +38,7 @@ public class CreateActivityController {
 
 		System.out.println("Ciao da dentro createActivity");
 		switch(bean.getType()) {
-		case continua:
+		case CONTINUA:
 			{	
 				if(u instanceof User) {
 					
@@ -67,7 +67,7 @@ public class CreateActivityController {
 			
 		}
 		break;
-		case periodica:
+		case PERIODICA:
 			{
 				if(u instanceof User) {
 					//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso;
@@ -92,7 +92,7 @@ public class CreateActivityController {
 				}
 			}
 		break;
-		case scadenza:
+		case SCADENZA:
 			{
 				if(u instanceof User) {
 					//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso;
