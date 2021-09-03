@@ -6,15 +6,15 @@ import logic.model.Log;
 
 public class RegisterController {
 	//Decidere se i pattern mantenerli qui o sul bean
-	
-	private DAOSuperUser dao;
-	
+	DAOSuperUser dao;
+
 	public RegisterController() {
+		dao = DAOSuperUser.getInstance();
 	}
 	
 	public boolean addUser(String email, String username, String psw) {
 		
-		dao = DAOSuperUser.getInstance();
+		
 	
 		if (dao.findSuperUser(email) != null) {
 			Log.getInstance().logger.info("L'utente esiste");
