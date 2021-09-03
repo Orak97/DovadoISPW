@@ -10,14 +10,12 @@ public class Channel {
 	private int sizeList;
 	private long activityReferenced;
 	
-	//Utile solo se vogliamo aggiornare dinamicamente senza prendere tutta la chat. Probabilmente verra cancellato
-	private Message lastMessage;
 
 	
 	public Channel (long activityId) {
 		Log.getInstance().logger.info("Creato il canale da zero");
 		this.activityReferenced=activityId;
-		this.listOfMsg = new ArrayList<Message>();
+		this.listOfMsg = new ArrayList<>();
 	}
 	 
 	
@@ -53,7 +51,7 @@ public class Channel {
 	
 	public ArrayList<String> getFormattedChat(int startIndex) {
 		
-		ArrayList<String> chat = new ArrayList<String>();
+		ArrayList<String> chat = new ArrayList<>();
 		
 		for (int i = startIndex; i < sizeList; i++) {
 			
