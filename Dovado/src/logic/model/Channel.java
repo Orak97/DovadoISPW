@@ -19,7 +19,7 @@ public class Channel {
 		this.activityReferenced=activityId;
 		this.listOfMsg = new ArrayList<Message>();
 	}
-	
+	 
 	
 	public void addMsg(long user, String msgText) {
 

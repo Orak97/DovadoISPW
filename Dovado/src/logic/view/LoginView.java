@@ -88,7 +88,7 @@ public class LoginView{
 			
 		} catch(Exception e) {
 			e.printStackTrace();
-		}
+		} 
 	}
 
 }

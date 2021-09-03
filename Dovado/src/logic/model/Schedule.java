@@ -11,7 +11,7 @@ public class Schedule {
 		myActivity = new ArrayList<ScheduledActivity>();
 	}
 	
-	public void addActivityToSchedule(Activity a, LocalDateTime scheduledTime, LocalDateTime reminderTime, SuperUser usr) {
+	public void addActivityToSchedule(SuperActivity a, LocalDateTime scheduledTime, LocalDateTime reminderTime, SuperUser usr) {
 		ScheduledActivity s = new ScheduledActivity(a,scheduledTime,reminderTime);
 		//Salva in persistenza l'attività schedulata:
 		daoSc = DAOSchedules.getInstance();
@@ -20,6 +20,8 @@ public class Schedule {
 			Log.getInstance().logger.warning("Errore nell'aggiunta dell'attività nello schedule.");
 			return;
 		}
+		System.out.println("Aggiunta l'attività nello schedule.");
+		
 	}
 	
 	public ArrayList<ScheduledActivity> getScheduledActivities() {
