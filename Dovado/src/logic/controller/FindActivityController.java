@@ -13,6 +13,7 @@ import logic.model.Cadence;
 import logic.model.CertifiedActivity;
 import logic.model.DAOActivity;
 import logic.model.DAOSuperUser;
+import logic.model.Log;
 import logic.model.NormalActivity;
 import logic.model.Place;
 import logic.model.SuperActivity;
@@ -29,7 +30,7 @@ public class FindActivityController {
 		daoSU = DAOSuperUser.getInstance();
 		if((result = daoAc.findActivityByPreference(daoSU, preference))!=null)
 			return result;
-		System.err.println("\n"+"Non e stata trovata alcuna attivita con la preferenza specificata.");
+		Log.getInstance().logger.warning("Non e stata trovata alcuna attivita con la preferenza specificata.");
 		return null;
 	}
 	//Il metodo prende in ingresso un posto e un intero che rappresenta l'id dell'attivita che si vuole

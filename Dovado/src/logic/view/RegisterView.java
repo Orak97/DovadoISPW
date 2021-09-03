@@ -15,6 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import logic.model.Log;
 
 public class RegisterView {
 
@@ -44,7 +45,7 @@ public class RegisterView {
 
     @FXML
     void register(ActionEvent event) {
-    	System.err.println("\n"+"User registered");
+    	Log.getInstance().logger.info("User registered");
     }
     
     public static void render(Stage current) {

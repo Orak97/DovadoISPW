@@ -55,7 +55,7 @@ public class ScheduledActivity {
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
-				System.err.println("\n"+"devi fare il task");
+				Log.getInstance().logger.info("devi fare il task");
 			}
 		};
 		

@@ -1,6 +1,7 @@
 package logic.controller;
 
 import logic.model.DAOPlace;
+import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
 
@@ -16,7 +17,7 @@ public class ClaimAPlaceController {
 				return true;
 			else
 			{
-				System.err.println("\n"+"Errore incontrato nel processo di aggiunta proprietario.\n");
+				Log.getInstance().logger.warning("Errore incontrato nel processo di aggiunta proprietario.\n");
 				return false;
 			}
 		}

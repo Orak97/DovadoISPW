@@ -225,7 +225,7 @@ public class DAOSuperUser {
 							partner.setPreferences(((ArrayList<String>)result.get("preferences")));
 							return partner;
 						}
-						System.err.println("\n"+result.get("wallet"));
+						Log.getInstance().logger.info(String.valueOf(result.get("wallet")));
 						User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"),(Long) result.get("wallet"));
 						user.setPreferences(((ArrayList<String>)result.get("preferences")));
 						return user;
@@ -274,10 +274,10 @@ public class DAOSuperUser {
 				try {
 					if (email.equals(emailJSON)) {
 						if(psw==null) {
-							System.err.println("\n"+"PASSWORD NULLAAAAAAA");
+							Log.getInstance().logger.warning("PASSWORD NULLA");
 						}
 						else if (!psw.equals(passwordJSON)) {
-							System.err.println("\n"+"PASSWORD SBAGLIATA");
+							Log.getInstance().logger.info("PASSWORD SBAGLIATA");
 							return null;
 						}
 						//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
@@ -330,10 +330,10 @@ public class DAOSuperUser {
 				try {
 					if (email.equals(emailJSON)) {
 						if(psw==null) {
-							System.err.println("\n"+"PASSWORD NULLAAAAAAA");
+							Log.getInstance().logger.warning("PASSWORD NULLA");
 						}
 						else if (!psw.equals(passwordJSON)) {
-							System.err.println("\n"+"PASSWORD SBAGLIATA");
+							Log.getInstance().logger.info("PASSWORD SBAGLIATA");
 							return null;
 						}
 						//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
@@ -384,10 +384,10 @@ public class DAOSuperUser {
 				try {
 					if (username.equals(userJSON)) {
 						if(password==null) {
-							System.err.println("\n"+"PASSWORD NULLAAAAAAA");
+							Log.getInstance().logger.warning("PASSWORD NULLA");
 						}
 						else if (!password.equals(passwordJSON)) {
-							System.err.println("\n"+"PASSWORD SBAGLIATA");
+							Log.getInstance().logger.info("PASSWORD SBAGLIATA");
 							return null;
 						}
 						//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.

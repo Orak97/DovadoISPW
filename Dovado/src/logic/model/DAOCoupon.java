@@ -69,7 +69,7 @@ public class DAOCoupon {
 	
 	public Coupon findCoupon(int code) {
 		try {		
-			System.err.println("\n"+"valore code:"+ code);
+			Log.getInstance().logger.info("valore code:"+ code);
 
 			Object coupons = parser.parse(new FileReader("WebContent/coupon.json"));
 			JSONObject couponObj = (JSONObject) coupons;
@@ -80,11 +80,11 @@ public class DAOCoupon {
 				result = (JSONObject)couponArray.get(i);
 				
 				Long codeJSON = (Long) result.get("code");
-				System.err.println("\n"+"valore codeJSON:"+ codeJSON);
+				Log.getInstance().logger.info("valore codeJSON:"+ codeJSON);
 				
 				try {
 					if (codeJSON.equals(Long.valueOf(code))) {
-						System.err.println("\n"+"coupon trovato");
+						Log.getInstance().logger.info("coupon trovato");
 						Long user = (Long) result.get("user");
 						Long partner = (Long) result.get("partner");
 						Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get("discount")).intValue() );
@@ -133,16 +133,16 @@ public class DAOCoupon {
 				result = (JSONObject)couponArray.get(i);
 				
 				Long userJSON = (Long) result.get("user");
-				System.err.println("\n"+userJSON +" = "+ userID);
+				Log.getInstance().logger.info(userJSON +" = "+ userID);
 
 				try {
 					if (userJSON.equals(Long.valueOf(userID))) {		
-						System.err.println("\n"+"user trovato");
+						Log.getInstance().logger.info("user trovato");
 
 						Long partnerJSON = (Long) result.get("partner");
 
 						if(partnerJSON.equals(Long.valueOf(partnerID))) {
-							System.err.println("\n"+"coupon trovato");
+							Log.getInstance().logger.info("coupon trovato");
 							Long user = (Long) result.get("user");
 							Long partner = (Long) result.get("partner");
 							Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get("discount")).intValue() );

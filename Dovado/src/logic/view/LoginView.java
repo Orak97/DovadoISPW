@@ -17,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import logic.model.DAOSuperUser;
+import logic.model.Log;
 import logic.model.SuperUser;
 
 public class LoginView{
@@ -41,17 +42,17 @@ public class LoginView{
 
     @FXML
     void login(ActionEvent event) {
-    	System.err.println("\n"+"Clicked login");
+    	Log.getInstance().logger.info("Clicked login");
     	SuperUser user = null;
     	if(username.getText().contains("@")) {
     		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText()))==null) {
-    			System.err.println("\n"+"Email o password incorrette.");
+    			Log.getInstance().logger.info("Email o password incorrette.");
     			return;
     		} 
     	}
     	else {
     		if((user=DAOSuperUser.getInstance().findSuperUserByUsername(username.getText(), password.getText()))==null) {
-    			System.err.println("\n"+"Username o password incorretti.");
+    			Log.getInstance().logger.info("Username o password incorretti.");
     			return;
     		}
     	}
@@ -62,7 +63,7 @@ public class LoginView{
 
     @FXML
     void register(ActionEvent event) {
-    	System.err.println("\n"+"Clicked register");
+    	Log.getInstance().logger.info("Clicked register");
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	RegisterView.render(current);
     }

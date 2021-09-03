@@ -50,6 +50,7 @@ import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
+import logic.model.Log;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
@@ -131,8 +132,8 @@ public class HomeView implements Initializable{
 		
     	ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
 		
-    	System.err.println("\n"+"ok");
-		System.err.println("\n"+"Working Directory = " + System.getProperty("user.dir"));		
+
+    	Log.getInstance().logger.info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 		try{
 			eng = map.getEngine();
 			eng.load("file:/home/pgs/eclipse-workspace/DovadoISPW/WebContent/map.html");
@@ -155,18 +156,18 @@ public class HomeView implements Initializable{
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "TENNIS"));
 
-			System.err.println("\n"+"\nNumero di attivit� trovate: "+activities.size());
+			Log.getInstance().logger.info("\nNumero di attivit� trovate: "+activities.size());
 
 			int j;
 			for(j=0;j<activities.size();j++)
-				System.err.println("\n"+"tutte le attivit� "+activities.get(j).getId());
+				Log.getInstance().logger.info("tutte le attivit� "+activities.get(j).getId());
 			
 			Thread newThread = new Thread(() -> {
 				int i;
 				for(i=0;i<activities.size();i++) {
 					ImageView eventImage = new ImageView();
 					Text eventName = new Text(activities.get(i).getName()+"\n");
-					System.err.println("\n"+"\n\n"+activities.get(i).getName()+"\n\n");
+					Log.getInstance().logger.info("\n\n"+activities.get(i).getName()+"\n\n");
 					Text eventInfo = new Text(activities.get(i).getPlace().getName()+
 							"\n"+activities.get(i).getFrequency().getOpeningTime()+
 							"-"+activities.get(i).getFrequency().getClosingTime());
@@ -218,10 +219,10 @@ public class HomeView implements Initializable{
 			eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 			newThread.join();
 		}catch(Error e) {
-			System.err.println("\n"+e);
+			Log.getInstance().logger.warning(e.getMessage());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-			System.err.println("\n"+e);
+			Log.getInstance().logger.info(e.getMessage());
 		}
 	}
 	
@@ -239,7 +240,7 @@ public class HomeView implements Initializable{
 			return;
 		}
 		
-		System.err.println("\n"+lastActivitySelected);
+		Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 
 		if(lastEventBoxSelected == eventBox) return;
 		
@@ -258,7 +259,7 @@ public class HomeView implements Initializable{
 		Text eventName = (Text) eventInfo.getChildren().get(0);
 		Text eventDetails = (Text) eventInfo.getChildren().get(1);
 		
-		System.err.println("\n"+eventName+" "+eventDetails);
+		Log.getInstance().logger.info(eventName+" "+eventDetails);
 
 		VBox selection = new VBox();
 		Button viewOnMap = new Button();
@@ -281,7 +282,7 @@ public class HomeView implements Initializable{
 		eventImage.setScaleY(1.25);
 
 		activitySelected = daoAct.findActivityByID(daoSU,daoPlc.findPlaceById(placeId),activityId); 
-		System.err.println("\n"+"Attivit� trovata: "+activitySelected);
+		Log.getInstance().logger.info("Attivit� trovata: "+activitySelected);
 
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
@@ -305,18 +306,18 @@ public class HomeView implements Initializable{
 					
 					send.setOnAction(new EventHandler<ActionEvent>() {
 						@Override public void handle(ActionEvent e) {
-							System.err.println("\n"+"\n\nInviando un messaggio...\n");
-							System.err.println("\n"+"\nMessaggi prima dell'invio:\n");
+							Log.getInstance().logger.info("\n\nInviando un messaggio...\n");
+							Log.getInstance().logger.info("\nMessaggi prima dell'invio:\n");
 							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
-								System.err.println("\n"+activitySelected.getChannel().getChat().get(j).getMsgText());
+								Log.getInstance().logger.info(activitySelected.getChannel().getChat().get(j).getMsgText());
 							}
 							activitySelected.getChannel().addMsg(user.getUserID(), mss.getText());
 							
 							daoCH.updateChannelInJSON(activitySelected.getChannel(), activitySelected.getChannel().getChat(), activitySelected);
 
-							System.err.println("\n"+"\nMessaggi dopo l'invio:\n");
+							Log.getInstance().logger.info("\nMessaggi dopo l'invio:\n");
 							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
-								System.err.println("\n"+activitySelected.getChannel().getChat().get(j).getMsgText());
+								Log.getInstance().logger.info(activitySelected.getChannel().getChat().get(j).getMsgText());
 							}
 							updateChat(chat,activitySelected.getChannel());
 						}
@@ -416,7 +417,7 @@ public class HomeView implements Initializable{
 		for(i=0;i<activities.size();i++) {
 			ImageView eventImage = new ImageView();
 			Text eventName = new Text(activities.get(i).getName()+"\n");
-			System.err.println("\n"+"\n\n"+activities.get(i).getName()+"\n\n");
+			Log.getInstance().logger.info("\n\n"+activities.get(i).getName()+"\n\n");
 			Text eventInfo = new Text(activities.get(i).getPlace().getName()+
 					"\n"+activities.get(i).getFrequency().getOpeningTime()+
 					"-"+activities.get(i).getFrequency().getClosingTime());

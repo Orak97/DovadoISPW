@@ -17,7 +17,7 @@ public class Schedule {
 		daoSc = DAOSchedules.getInstance();
 		
 		if(daoSc.addScheduletoJSON(this, usr)==false) {
-			System.err.println("\n"+"Errore nell'aggiunta dell'attività nello schedule.");
+			Log.getInstance().logger.warning("Errore nell'aggiunta dell'attività nello schedule.");
 			return;
 		}
 	}

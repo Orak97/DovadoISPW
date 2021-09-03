@@ -1,14 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity,logic.model.Log" %>
 
     <!doctype html>
 	<html lang="en">
 	<head>
 		<%
+				
 		boolean logged = true;
 		
 		String titolo = (String) application.getAttribute("titolo");
-				
+		
+		Log.getInstance().logger.info(titolo);
+		
 		if (titolo.equals("login") | titolo.equals("register")) {
 			if( session.getAttribute("user") != null) {				
 				response.sendRedirect("Home.jsp");

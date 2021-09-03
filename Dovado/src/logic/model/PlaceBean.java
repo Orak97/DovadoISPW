@@ -32,7 +32,7 @@ public class PlaceBean {
 		createPlaceController = new CreatePlaceController(user);
 		if(owner!=null)
 			return createPlaceController.createPlace(address, name, city, region, civico, owner);
-		return createPlaceController.createPlaceWithoutOwner(address, name, city, region, civico);
+		return createPlaceController.createPlace(address, name, city, region, civico);
 	}
 	
 	public Place getPlace(String name, String city, String region, SuperUser user) {

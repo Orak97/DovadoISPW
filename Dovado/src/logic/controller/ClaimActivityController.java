@@ -1,6 +1,7 @@
 package logic.controller;
 
 import logic.model.DAOActivity;
+import logic.model.Log;
 import logic.model.Partner;
 import logic.model.SuperActivity;
 import logic.model.User;
@@ -17,11 +18,11 @@ public class ClaimActivityController {
 				return true;
 			else
 			{
-				System.err.println("\n"+"Errore incontrato nel processo di aggiunta proprietario.\n");
+				Log.getInstance().logger.warning("Errore incontrato nel processo di aggiunta proprietario.\n");
 				return false;
 			}
 		} else {
-			System.err.println("\n"+"Esiste gia un partner proprietario dell'attivita.\n");
+			Log.getInstance().logger.info("Esiste gia un partner proprietario dell'attivita.\n");
 			return false;	
 		}
 	}

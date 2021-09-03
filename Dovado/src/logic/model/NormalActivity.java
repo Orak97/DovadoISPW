@@ -22,7 +22,7 @@ public class NormalActivity extends SuperActivity implements Activity{
 
 	@Override
 	public void PlayActivity(User u) {
-		System.err.println("\n"+"Yay hai fatto l'activity");
+		Log.getInstance().logger.info("Yay hai fatto l'activity");
 	}
 
 }

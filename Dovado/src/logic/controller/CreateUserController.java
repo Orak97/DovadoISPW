@@ -1,6 +1,7 @@
 package logic.controller;
 
 import logic.model.DAOSuperUser;
+import logic.model.Log;
 import logic.model.Partner;
 import logic.model.User;
 
@@ -26,7 +27,7 @@ public class CreateUserController {
 		return 1;
 	}
 	public void printTest(String n) {
-		System.err.println("\n"+n);
+		Log.getInstance().logger.info(n);
 	}
 	
 }

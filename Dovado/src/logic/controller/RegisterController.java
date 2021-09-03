@@ -1,21 +1,15 @@
 package logic.controller;
-import java.util.regex.Pattern;
 
 import logic.model.DAOSuperUser;
+import logic.model.Log;
 
-import java.util.regex.Matcher;
 
 public class RegisterController {
 	//Decidere se i pattern mantenerli qui o sul bean
-	private Pattern patternPsw;
-	private Pattern patternEmail;
-	private Pattern patternUname;
+	
 	private DAOSuperUser dao;
 	
 	public RegisterController() {
-		patternEmail = Pattern.compile(".+@.+\\.[a-z]+");
-		patternPsw = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,20})");
-		patternUname = Pattern.compile("\\S");
 	}
 	
 	public boolean addUser(String email, String username, String psw) {
@@ -23,11 +17,11 @@ public class RegisterController {
 		dao = DAOSuperUser.getInstance();
 	
 		if (dao.findSuperUser(email) != null) {
-			System.err.println("\n"+"L'utente esiste");
+			Log.getInstance().logger.info("L'utente esiste");
 			return false;
 		}
 		else {
-			System.err.println("\n"+"Non esiste l'utente");
+			Log.getInstance().logger.info("Non esiste l'utente");
 			dao.addUserToJSON(email, username, 0, psw);
 			return true;}	
 	}
