@@ -16,9 +16,10 @@ import org.json.simple.parser.ParseException;
 public class DAOSuperUser {
 	
 	private static DAOSuperUser INSTANCE;
+	private String userFileName;
 	
 	private DAOSuperUser() {
-		//Si implementa come singleton.
+		userFileName = "WebContent/user.json";
 	}
 	
 	public static DAOSuperUser getInstance() {
@@ -30,7 +31,7 @@ public class DAOSuperUser {
 	public boolean addUserToJSON(String email, String username, int partner, String password) {
 		JSONParser parser = new JSONParser();
 		try {
-			Object users = parser.parse(new FileReader("WebContent/user.json"));
+			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userObj = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userObj.get("users");
 			JSONArray userPref = new JSONArray();
@@ -50,26 +51,13 @@ public class DAOSuperUser {
 				newUser.put("preferences", userPref);
 				userArray.add(newUser);
 
-				FileWriter file = new FileWriter("WebContent/user.json");
-				file.write(userObj.toString());;
+				FileWriter file = new FileWriter(userFileName);
+				file.write(userObj.toString());
 				file.flush();
 				file.close();
 			}
-			
-			
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-			return false;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
+			//TODO vale per tutte le eccezioni dei DAO. Non gestendole separatamente ho eliminato le eccezioni ridondanti 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -79,13 +67,15 @@ public class DAOSuperUser {
 	//Creiamo un metodo per la modifica delle preferenze sul tipo di attivita collegate ad un utente.
 	public boolean updateUserPreferences(SuperUser su) {
 		JSONParser parser = new JSONParser();
-		ArrayList<String> oldpref = new ArrayList<String>();
-		int i,j;
+		ArrayList<String> oldpref = new ArrayList<>();
+		int i;
+		int j;
 		
 		try {
-			Object users = parser.parse(new FileReader("WebContent/user.json"));
+			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
-			JSONArray userArray = (JSONArray) userRes.get("users"),preferences = new JSONArray();
+			JSONArray userArray = (JSONArray) userRes.get("users");
+			JSONArray preferences = new JSONArray();
 			JSONObject result;
 			
 			//Aggiungo tutte le preferenze al nuovo JSONArray che ho creato.
@@ -95,11 +85,11 @@ public class DAOSuperUser {
 			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
 				
-				Long IDJSON = (Long) result.get("id");
+				Long idJson = (Long) result.get("id");
 				JSONArray oldpreferences;
 				//Se trovato l'utente si pone all'interno dell'attributo "preferences"
 				//il nuovo JSONArray appositamente preparato in precedenza.
-				if (su.getUserID().equals(IDJSON)) {
+				if (su.getUserID().equals(idJson)) {
 					oldpreferences = (JSONArray) result.get("preferences");
 					//Si ricostruisce l'arrayList delle preferenze per compararlo con il nuovo
 					//che si andra ad inserire; Se sono uguali si esce restituendo falso.
@@ -111,8 +101,8 @@ public class DAOSuperUser {
 					if(!su.getPreferences().equals(oldpref)) {
 						result.put("preferences", preferences);
 						
-						FileWriter file = new FileWriter("WebContent/user.json");
-						file.write(userRes.toString());;
+						FileWriter file = new FileWriter(userFileName);
+						file.write(userRes.toString());
 						file.flush();
 						file.close();
 						
@@ -121,17 +111,6 @@ public class DAOSuperUser {
 					else return false;
 				}
 			}			
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-			return false;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -144,10 +123,10 @@ public class DAOSuperUser {
 	public boolean updateUserWallet(Long id, Long wallet) {
 		JSONParser parser = new JSONParser();
 		Long daoWallet  =  (long) 0;
-		int i,j;
+		int i;
 		
 		try {
-			Object users = parser.parse(new FileReader("WebContent/user.json"));
+			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userRes.get("users");
 			JSONObject result;
@@ -157,10 +136,10 @@ public class DAOSuperUser {
 			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
 				
-				Long IDJSON = (Long) result.get("id");
+				Long idJson = (Long) result.get("id");
 				//Se trovato l'utente si pone all'interno dell'attributo "preferences"
 				//il nuovo JSONArray appositamente preparato in precedenza.
-				if (id.equals(IDJSON)) {
+				if (id.equals(idJson)) {
 					daoWallet = (Long) result.get("wallet");
 					if (daoWallet == null) {
 						daoWallet =(long) 0;
@@ -173,8 +152,8 @@ public class DAOSuperUser {
 					
 						result.put("wallet", daoWallet);
 						
-						FileWriter file = new FileWriter("WebContent/user.json");
-						file.write(userRes.toString());;
+						FileWriter file = new FileWriter(userFileName);
+						file.write(userRes.toString());
 						file.flush();
 						file.close();
 						
@@ -182,17 +161,6 @@ public class DAOSuperUser {
 					
 				}
 			}			
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-			return false;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -207,7 +175,7 @@ public class DAOSuperUser {
 		int i;
 		try 
 		{
-			Object users = parser.parse(new FileReader("WebContent/user.json"));
+			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userRes.get("users");
 			JSONObject result;
@@ -216,33 +184,24 @@ public class DAOSuperUser {
 				result = (JSONObject)userArray.get(i);
 				
 				Long IDJSON = (Long) result.get("id");
-				try {
-					if (id.equals(IDJSON)) {
+				
+				if (id.equals(IDJSON)) {
 						
-						//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-						if((Long)result.get("partner")==1) {
+					//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
+					if((Long)result.get("partner")==1) {
 							Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
 							partner.setPreferences(((ArrayList<String>)result.get("preferences")));
 							return partner;
-						}
-						Log.getInstance().logger.info(String.valueOf(result.get("wallet")));
-						User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"),(Long) result.get("wallet"));
-						user.setPreferences(((ArrayList<String>)result.get("preferences")));
-						return user;
 					}
-				} catch(NullPointerException e) {
-					e.printStackTrace();
-					return null;
+					Log.getInstance().logger.info(String.valueOf(result.get("wallet")));
+					User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"),(Long) result.get("wallet"));
+					user.setPreferences(((ArrayList<String>)result.get("preferences")));
+					return user;
 				}
 				
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -260,7 +219,7 @@ public class DAOSuperUser {
 		int i;
 		try 
 		{
-			Object users = parser.parse(new FileReader("WebContent/user.json"));
+			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userRes.get("users");
 			JSONObject result;
@@ -271,38 +230,28 @@ public class DAOSuperUser {
 				
 				String emailJSON = (String) result.get("email");
 				String passwordJSON = (String) result.get("password");
-				try {
-					if (email.equals(emailJSON)) {
-						if(psw==null) {
-							Log.getInstance().logger.warning("PASSWORD NULLA");
-						}
-						else if (!psw.equals(passwordJSON)) {
-							Log.getInstance().logger.info("PASSWORD SBAGLIATA");
-							return null;
-						}
-						//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-						if((Long)result.get("partner")==1) {
-							Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
-							partner.setPreferences(((ArrayList<String>)result.get("preferences")));
-							return partner;
-						}
-						User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
-						user.setPreferences(((ArrayList<String>)result.get("preferences")));
-						return user;					
-					}
-				} catch(NullPointerException e) {
-					e.printStackTrace();
-					return null;
-				}
 				
+				if (email.equals(emailJSON)) {
+					if(psw==null) {
+						Log.getInstance().logger.warning("PASSWORD NULLA");
+					}
+					else if (!psw.equals(passwordJSON)) {
+						Log.getInstance().logger.info("PASSWORD SBAGLIATA");
+						return null;
+					}
+					//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
+					if((Long)result.get("partner")==1) {
+						Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
+						partner.setPreferences(((ArrayList<String>)result.get("preferences")));
+						return partner;
+					}
+					User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
+					user.setPreferences(((ArrayList<String>)result.get("preferences")));
+					return user;					
+				}		
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -316,7 +265,7 @@ public class DAOSuperUser {
 		int i;
 		try 
 		{
-			Object users = parser.parse(new FileReader("WebContent/user.json"));
+			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userRes.get("users");
 			JSONObject result;
@@ -327,38 +276,27 @@ public class DAOSuperUser {
 				
 				String emailJSON = (String) result.get("email");
 				String passwordJSON = (String) result.get("password");
-				try {
-					if (email.equals(emailJSON)) {
-						if(psw==null) {
-							Log.getInstance().logger.warning("PASSWORD NULLA");
-						}
-						else if (!psw.equals(passwordJSON)) {
-							Log.getInstance().logger.info("PASSWORD SBAGLIATA");
-							return null;
-						}
-						//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-						if((Long)result.get("partner")==1) {
-							Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
-							partner.setPreferences(((ArrayList<String>)result.get("preferences")));
-							return partner;
-						}
-						User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
-						user.setPreferences(((ArrayList<String>)result.get("preferences")));
-						return user;
+				if (email.equals(emailJSON)) {
+					if(psw==null) {
+						Log.getInstance().logger.warning("PASSWORD NULLA");
 					}
-				} catch(NullPointerException e) {
-					e.printStackTrace();
-					return null;
-				}
-				
+					else if (!psw.equals(passwordJSON)) {
+						Log.getInstance().logger.info("PASSWORD SBAGLIATA");
+						return null;
+					}
+					//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
+					if((Long)result.get("partner")==1) {
+						Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
+						partner.setPreferences(((ArrayList<String>)result.get("preferences")));
+						return partner;
+					}
+					User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
+					user.setPreferences(((ArrayList<String>)result.get("preferences")));
+					return user;
+				}				
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -370,7 +308,7 @@ public class DAOSuperUser {
 		int i;
 		try 
 		{
-			Object users = parser.parse(new FileReader("WebContent/user.json"));
+			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userRes.get("users");
 			JSONObject result;
@@ -381,38 +319,28 @@ public class DAOSuperUser {
 				
 				String userJSON = (String) result.get("username");
 				String passwordJSON = (String) result.get("password");
-				try {
-					if (username.equals(userJSON)) {
-						if(password==null) {
-							Log.getInstance().logger.warning("PASSWORD NULLA");
-						}
-						else if (!password.equals(passwordJSON)) {
-							Log.getInstance().logger.info("PASSWORD SBAGLIATA");
-							return null;
-						}
-						//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-						if((Long)result.get("partner")==1) {
-							Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
-							partner.setPreferences(((ArrayList<String>)result.get("preferences")));
-							return partner;
-						}
-						User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
-						user.setPreferences(((ArrayList<String>)result.get("preferences")));
-						return user;					
-					}
-				} catch(NullPointerException e) {
-					e.printStackTrace();
-					return null;
-				}
 				
+				if (username.equals(userJSON)) {
+					if(password==null) {
+						Log.getInstance().logger.warning("PASSWORD NULLA");
+					}
+					else if (!password.equals(passwordJSON)) {
+						Log.getInstance().logger.info("PASSWORD SBAGLIATA");
+						return null;
+					}
+					//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
+					if((Long)result.get("partner")==1) {
+						Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
+						partner.setPreferences(((ArrayList<String>)result.get("preferences")));
+						return partner;
+					}
+					User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
+					user.setPreferences(((ArrayList<String>)result.get("preferences")));
+					return user;					
+				}				
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
