@@ -18,7 +18,7 @@ public class ShowMapController {
 	
 	public static ShowMapController getInstance() {
 		if(INSTANCE==null) {
-			ShowMapController instance = new ShowMapController();
+			INSTANCE = new ShowMapController();
 		}
 		return INSTANCE;
 	}
@@ -29,12 +29,10 @@ public class ShowMapController {
 		try {
 		
 		JSONObject places = (JSONObject) parser.parse(new FileReader("places.json"));
-		JSONArray placeArray = (JSONArray) places.get("places");
-		
-		return placeArray;
+				
+		return (JSONArray) places.get("places");
 		
 		} 
-		catch(IOException e) {e.printStackTrace();}
 		catch(Exception e) {e.printStackTrace();}
 		
 		return null;
