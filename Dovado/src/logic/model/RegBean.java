@@ -65,13 +65,13 @@ public void setError(String error) {
 
 
 public boolean validate() {
-	System.out.println(username +": "+ password2 + "  " + password);	
+	System.err.println("\n"+username +": "+ password2 + "  " + password);	
 	
 	// controllo la mail se e scritta in maniera corretta
 	Matcher matchEmail = patternEmail.matcher(email);
 	if (!matchEmail.matches()) {
 			error = "Mail sintatticamente sbagliata";
-			System.out.println("Mail sintatticamente sbagliata");
+			System.err.println("\n"+"Mail sintatticamente sbagliata");
 			
 			return false;}
 	
@@ -85,7 +85,7 @@ public boolean validate() {
 	Matcher matchPsw = patternPsw.matcher(password);
 	if (!matchPsw.matches()) {
 		error = "La password deve contenere almeno 8 cratteri e deve contenere numeri, lettere e un carattere tra:{',','.','&','!','?'} ";
-		System.out.println("password non conforme");
+		System.err.println("\n"+"password non conforme");
 		return false;}
 	
 	//check sul nome utente e sulla presenza di spazi NON funzionaaaaaaa
@@ -93,7 +93,7 @@ public boolean validate() {
 	if (username.length()>15 || username.length()<4 || username.lastIndexOf(" ") != -1) {
 	
 		error = "Lo username deve essere composto da una sola parola senza l'utilizzo di spazi e deve avere dai 4 ai 15 caratteri";
-		System.out.println("Spazi nell'username: " + username + username.length()+ "  ci sono questi spazi:  " + username.lastIndexOf(" "));		
+		System.err.println("\n"+"Spazi nell'username: " + username + username.length()+ "  ci sono questi spazi:  " + username.lastIndexOf(" "));		
 		return false;}
 	
 	//Chiamo il controller che controlla se eventualmente gia esiste e lo aggiunge in alternativa

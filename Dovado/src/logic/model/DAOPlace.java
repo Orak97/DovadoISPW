@@ -174,9 +174,9 @@ public class DAOPlace {
 				Long placeId = ((Long) result.get("id"));
 				
 				/*--------------------PRINT DI CONTROLLO-----------------------------------------------*/
-				System.out.println("Controllo di comparazione ID posti:");
-				System.out.println(p.getId()==(placeId));
-				System.out.println(p.getOwner().getUserID());
+				System.err.println("\n"+"Controllo di comparazione ID posti:");
+				System.err.println(p.getId()==(placeId));
+				System.err.println("\n"+p.getOwner().getUserID());
 				/*--------------------PRINT DI CONTROLLO-----------------------------------------------*/				
 				
 				if(p.getId()==(placeId)) {

@@ -17,11 +17,11 @@ public class ClaimActivityController {
 				return true;
 			else
 			{
-				System.out.println("Errore incontrato nel processo di aggiunta proprietario.\n");
+				System.err.println("\n"+"Errore incontrato nel processo di aggiunta proprietario.\n");
 				return false;
 			}
 		} else {
-			System.out.println("Esiste gia un partner proprietario dell'attivita.\n");
+			System.err.println("\n"+"Esiste gia un partner proprietario dell'attivita.\n");
 			return false;	
 		}
 	}

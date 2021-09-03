@@ -63,10 +63,10 @@
 	        </a>
 	        <%
 	        String path = ((HttpServletRequest) request).getRequestURI();
-	        System.out.println(path);
+	        System.err.println(path+ "\n");
 
 
-	        System.out.println(logged);
+	        System.err.println("\n"+logged);
 	        if (logged) { //qua se non e loggato si mette a false cosi non compaiono i pulsanti %>
 
 	        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

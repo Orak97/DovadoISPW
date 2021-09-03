@@ -44,7 +44,7 @@ public class RegisterView {
 
     @FXML
     void register(ActionEvent event) {
-    	System.out.println("User registered");
+    	System.err.println("\n"+"User registered");
     }
     
     public static void render(Stage current) {

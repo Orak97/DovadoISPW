@@ -33,7 +33,7 @@ public class LogBean {
 	} 
 
 	public String getError() {
-		System.out.println("Prendo l'errore: "+ error);
+		System.err.println("\n"+"Prendo l'errore: "+ error);
 
 	    return error;
 	}
@@ -54,10 +54,10 @@ public class LogBean {
 		sUser = logController.findUser(email, password);
 		if (sUser == null) {
 			error = "Mail o password errate";
-			System.out.println("login failed");
+			System.err.println("\n"+"login failed");
 			return false;
 		}
-		System.out.println("login OK!!");
+		System.err.println("\n"+"login OK!!");
 
 		return true;
 		

@@ -26,7 +26,7 @@ public class CreateUserController {
 		return 1;
 	}
 	public void printTest(String n) {
-		System.out.println(n);
+		System.err.println("\n"+n);
 	}
 	
 }

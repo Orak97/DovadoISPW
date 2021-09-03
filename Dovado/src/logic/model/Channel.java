@@ -15,7 +15,7 @@ public class Channel {
 
 	
 	public Channel (long activityId) {
-		System.out.println("Creato il canale da zero");
+		System.err.println("\n"+"Creato il canale da zero");
 		this.activityReferenced=activityId;
 		this.listOfMsg = new ArrayList<Message>();
 	}
@@ -60,9 +60,9 @@ public class Channel {
 			chat.add(listOfMsg.get(i).getUsr() + "::" + listOfMsg.get(i).getMsgSentDate() + " ----> " + listOfMsg.get(i).getMsgText()+"\n");
 		}
 		/**if (chat.get(0) == null) {
-			System.out.println("sono vuoto");
+			System.err.println("\n"+"sono vuoto");
 		}
-		else System.out.println(chat.get(0));**/
+		else System.err.println("\n"+chat.get(0));**/
 		return chat;
 	}
 

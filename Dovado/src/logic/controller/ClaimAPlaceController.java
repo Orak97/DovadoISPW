@@ -16,7 +16,7 @@ public class ClaimAPlaceController {
 				return true;
 			else
 			{
-				System.out.println("Errore incontrato nel processo di aggiunta proprietario.\n");
+				System.err.println("\n"+"Errore incontrato nel processo di aggiunta proprietario.\n");
 				return false;
 			}
 		}

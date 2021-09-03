@@ -32,7 +32,7 @@ public class DAOSchedules {
 			int i;
 
 			if(scheduleArray==null) {
-				System.out.println("Non ci sono attivita da dover modificare!\n");
+				System.err.println("\n"+"Non ci sono attivita da dover modificare!\n");
 				return false;
 			}
 			
@@ -130,8 +130,8 @@ public class DAOSchedules {
 	
 	public Schedule findSchedule(long code) {
 		try {		
-			System.out.println("valore code:"+ code);
-			System.out.println("Working Directory = " + System.getProperty("user.dir"));		
+			System.err.println("\n"+"valore code:"+ code);
+			System.err.println("\n"+"Working Directory = " + System.getProperty("user.dir"));		
 
 			Object schedules = parser.parse(new FileReader("WebContent/schedules.json"));
 			JSONObject scheduleObj = (JSONObject) schedules;
@@ -142,11 +142,11 @@ public class DAOSchedules {
 				result = (JSONObject)scheduleArray.get(i);
 				
 				Long codeJSON = (Long) result.get("userID");
-				System.out.println("valore codeJSON:"+ codeJSON);
+				System.err.println("\n"+"valore codeJSON:"+ codeJSON);
 				
 				try {
 					if (codeJSON.equals(Long.valueOf(code))) {
-						System.out.println("schedule trovato");
+						System.err.println("\n"+"schedule trovato");
 						
 						
 						return null;

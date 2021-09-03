@@ -22,7 +22,7 @@ public class NavbarController {
     
     @FXML
     void Logout(ActionEvent event) {
-    	System.out.println("Clicked Logout");
+    	System.err.println("\n"+"Clicked Logout");
     	nav.onHome();
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
@@ -32,31 +32,31 @@ public class NavbarController {
     @FXML
     void goChannels(ActionEvent event) {
     	nav.onChannels();
-    	System.out.println("Clicked channels");
+    	System.err.println("\n"+"Clicked channels");
     }
 
     @FXML
     void goHome(ActionEvent event) {
     	nav.onHome();
-    	System.out.println("Clicked home");
+    	System.err.println("\n"+"Clicked home");
     }
 
     @FXML
     void goProfile(ActionEvent event) {
     	nav.onMyProfile();
-    	System.out.println("Clicked My profile");
+    	System.err.println("\n"+"Clicked My profile");
     }
 
     @FXML
     void goPreferences(ActionEvent event) {
     	nav.onPreferences();
-    	System.out.println("Clicked preferences");
+    	System.err.println("\n"+"Clicked preferences");
     }
 
     @FXML
     void goEvents(ActionEvent event) {
     	nav.onEvents();
-    	System.out.println("Clicked vote");
+    	System.err.println("\n"+"Clicked vote");
     }
     
 

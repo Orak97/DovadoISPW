@@ -18,11 +18,11 @@
 	
 		ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
 		
-		System.out.println("Working Directory = " + System.getProperty("user.dir"));	
+		System.err.println("\n"+"Working Directory = " + System.getProperty("user.dir"));	
 		activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
 		activities.addAll(daoAct.findActivityByPreference(daoSU, "TENNIS"));
 
-		System.out.println("\nNumero di attivita trovate: "+activities.size());
+		System.err.println("\n"+"\nNumero di attivita trovate: "+activities.size());
 	
 	%>
 	<div class="container-fluid home">

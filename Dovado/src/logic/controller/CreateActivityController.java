@@ -36,7 +36,7 @@ public class CreateActivityController {
 		daoAc = DAOActivity.getInstance();
 		SuperActivity newActivity;
 
-		System.out.println("Ciao da dentro createActivity");
+		System.err.println("\n"+"Ciao da dentro createActivity");
 		switch(bean.getType()) {
 		case CONTINUA:
 			{	
@@ -49,9 +49,9 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime());					
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						System.out.println("Attivita non creata.\n");
+						System.err.println("\n"+"Attivita non creata.\n");
 						return;
-					} else System.out.println("ID:\n"+id+"\n");
+					} else System.err.println("\n"+"ID:\n"+id+"\n");
 					
 					newActivity.setId(id); 
 				}
@@ -59,9 +59,9 @@ public class CreateActivityController {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime() );
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 					if(id<0) {
-						System.out.println("Attivita non creata.\n");
+						System.err.println("\n"+"Attivita non creata.\n");
 						return;
-					}else System.out.println("ID:\n"+id+"\n");
+					}else System.err.println("\n"+"ID:\n"+id+"\n");
 					newActivity.setId(id);
 				}
 			
@@ -76,18 +76,18 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						System.out.println("Attivita non creata.\n");
+						System.err.println("\n"+"Attivita non creata.\n");
 						return;
-					}else System.out.println("ID:\n"+id+"\n");
+					}else System.err.println("\n"+"ID:\n"+id+"\n");
 					newActivity.setId(id);
 				}
 				else {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");		
 					if(id<0) {
-						System.out.println("Attivita non creata.\n");
+						System.err.println("\n"+"Attivita non creata.\n");
 						return;
-					}else System.out.println("ID:\n"+id+"\n");
+					}else System.err.println("\n"+"ID:\n"+id+"\n");
 					newActivity.setId(id);
 				}
 			}
@@ -101,18 +101,18 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						System.out.println("Attivita non creata.\n");
+						System.err.println("\n"+"Attivita non creata.\n");
 						return;
-					}else System.out.println("ID:\n"+id+"\n");
+					}else System.err.println("\n"+"ID:\n"+id+"\n");
 					newActivity.setId(id);
 				}
 				else { 
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 					if(id<0) {
-						System.out.println("Attivita non creata.\n");
+						System.err.println("\n"+"Attivita non creata.\n");
 						return;
-					}else System.out.println("ID:\n"+id+"\n");
+					}else System.err.println("\n"+"ID:\n"+id+"\n");
 					newActivity.setId(id);				
 				}
 			}
