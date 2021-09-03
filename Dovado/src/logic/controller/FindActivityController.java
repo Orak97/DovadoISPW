@@ -18,13 +18,14 @@ import logic.model.NormalActivity;
 import logic.model.Place;
 import logic.model.SuperActivity;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FindActivityController {
 	
 	DAOSuperUser daoSU;
 	DAOActivity daoAc;
 	
-	public ArrayList<SuperActivity> findActivityByPreference(String preference) {
+	public List<SuperActivity> findActivityByPreference(String preference) {
 		ArrayList<SuperActivity> result;
 		daoAc = DAOActivity.getInstance();
 		daoSU = DAOSuperUser.getInstance();

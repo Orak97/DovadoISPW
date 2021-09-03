@@ -7,14 +7,13 @@ import logic.model.SuperActivity;
 import logic.model.User;
 
 public class ClaimActivityController {
-	
-	private DAOActivity daoAc;
-	
+
+
 	public boolean claimActivityOwnership(Partner owner, SuperActivity a) {
-		daoAc=DAOActivity.getInstance();
+		DAOActivity daoAc=DAOActivity.getInstance();
 		if(a.getCreator() instanceof User) {
 			a.setCreator(owner);
-			if(daoAc.updateActivityJSON(a)==true)
+			if(daoAc.updateActivityJSON(a))
 				return true;
 			else
 			{
