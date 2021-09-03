@@ -27,16 +27,16 @@ public class PlaceBean {
 		return INSTANCE;
 	}
 	
-	public Place addPlace(String address, String name, String city, String region,String civico, Partner owner,SuperUser user) {
+	public Place addPlace(String address, String name, String city, String region,String civico, Partner owner) {
 		
-		createPlaceController = new CreatePlaceController(user);
+		createPlaceController = new CreatePlaceController();
 		if(owner!=null)
 			return createPlaceController.createPlace(address, name, city, region, civico, owner);
 		return createPlaceController.createPlaceWithoutOwner(address, name, city, region, civico);
 	}
 	
-	public Place getPlace(String name, String city, String region, SuperUser user) {
-		createPlaceController = new CreatePlaceController(user);
+	public Place getPlace(String name, String city, String region) {
+		createPlaceController = new CreatePlaceController();
 		return createPlaceController.getPlaceFromJSON(name, city, region);
 	}
 
