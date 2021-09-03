@@ -15,7 +15,6 @@ public class SetPreferencesController {
 	DAOPreferences daoPr;
 	
 	public boolean updatePreferencesUser(SuperUser su, String name) {
-		Long id;
 		if(name == null) return false;
 		daoSu = DAOSuperUser.getInstance();
 		daoPr = DAOPreferences.getInstance();
@@ -30,13 +29,10 @@ public class SetPreferencesController {
 		preferences.add(name.toUpperCase());
 		su.setPreferences(preferences);
 		
-		if(daoSu.updateUserPreferences(su))
-			return true;
-		return false;
+		return daoSu.updateUserPreferences(su);
 	}
 	
 	public boolean updatePreferencesActivity(SuperActivity sua, String name) {
-		Long id;
 		if(name == null) return false;
 		daoAc = DAOActivity.getInstance();
 		daoPr = DAOPreferences.getInstance();
@@ -51,9 +47,7 @@ public class SetPreferencesController {
 		preferences.add(name.toUpperCase());
 		sua.setPreferences(preferences);
 		
-		if(daoAc.updateActivityPreferences(sua))
-			return true;
-		return false;
+		return daoAc.updateActivityPreferences(sua);
 	}
 	
 	
