@@ -7,7 +7,6 @@ public class Coupon {
 	private int pID;
 	private int couponCode;
 	private int discount;
-	private DAOCoupon dao;
 	
 	public Coupon(int userID, int partnerID,int discount) {
 		this(userID,partnerID, false, discount);
@@ -48,7 +47,7 @@ public class Coupon {
 	}
 
 	public void genCode() {
-		dao = DAOCoupon.getInstance();
+		DAOCoupon dao = DAOCoupon.getInstance();
 		Coupon coupon;
 		Random rand = new Random();
 		int code = 0;
@@ -60,7 +59,7 @@ public class Coupon {
 		}
 		
 		while(check) {
-			code = 100000 + (int) (rand.nextFloat() * 899900);
+			code = 100000 + (rand.nextInt(899900));
 			if(dao.findCoupon(code) == null) {
 				check = false;
 				}

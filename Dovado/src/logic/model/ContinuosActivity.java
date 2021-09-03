@@ -11,8 +11,7 @@ public class ContinuosActivity extends FrequencyOfRepeat {
 
 	@Override
 	public boolean checkPlayability(LocalDateTime timestamp) {
-		if(this.isOnTime(timestamp))return true;
-		return false;
+		return this.isOnTime(timestamp);
 	}
 
 }
