@@ -3,6 +3,8 @@ package logic.controller;
 import logic.model.Activity;
 import logic.model.DateBean;
 import logic.model.Schedule;
+import logic.model.SuperActivity;
+import logic.model.SuperUser;
 import logic.model.User;
 
 /*
@@ -50,7 +52,7 @@ public class AddActivityToScheduleController {
 	public void addActivityToSchedule(Activity a) {
 		Schedule s = session.getSchedule();
 		
-		s.addActivityToSchedule(a, timestamp.getScheduledTime(), timestamp.getReminderTime(),session);
+		s.addActivityToSchedule((SuperActivity) a, timestamp.getScheduledTime(), timestamp.getReminderTime(), (SuperUser) session);
 	
 	}
 	
