@@ -34,9 +34,7 @@ public class ManageActivityController {
 	 */
 	public boolean deleteActivity(SuperActivity sua) {
 		daoAc = DAOActivity.getInstance();
-		if(!daoAc.deleteActivityJSON(sua))
-			return false;
-		return true;
+		return daoAc.deleteActivityJSON(sua);
 	}
 
 	/* Nel "Managing" di un'attivita potremmo anche voler cambiare la frequenza
