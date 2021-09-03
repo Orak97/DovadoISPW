@@ -19,9 +19,9 @@ public class PlayActivityController {
 			this.cController  = new ChannelController(this.activity);
 		}
 		
-		ArrayList<String[]> chat = this.cController.formattedChat(user);
+		ArrayList<String[]> chat = (ArrayList<String[]>) this.cController.formattedChat(user);
 		
-		if (chat == null) {
+		if (chat.isEmpty()) {
 			System.err.println("\n"+"Il canale e vuoto\n");
 			return;
 		}

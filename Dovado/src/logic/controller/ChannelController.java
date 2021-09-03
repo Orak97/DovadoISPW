@@ -17,12 +17,12 @@ public class ChannelController {
 	}
 	
 	
-	public ArrayList<String[]> formattedChat(int user){
+	public List<String[]> formattedChat(int user){
 		ArrayList<Message> listOfMsg = this.channell.getChat();
-		ArrayList<String[]> chat = new ArrayList<String[]>();
+		ArrayList<String[]> chat = new ArrayList<>();
 		String[] msg;
 		if (listOfMsg.size() == 1) {
-			return null;
+			return chat;
 		}
 		for (int i = 1; i < listOfMsg.size() ; i++) {
 			msg = new String[2];
