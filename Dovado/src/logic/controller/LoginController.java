@@ -12,8 +12,8 @@ private DAOSuperUser dao;
 	}
 	
 	public SuperUser findUser(String email, String password) {
-		SuperUser sUser= dao.findSuperUser(email, password);		
-		return sUser;
+				
+		return dao.findSuperUser(email, password);
 		
 	}
 }
