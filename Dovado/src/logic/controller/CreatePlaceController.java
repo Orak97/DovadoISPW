@@ -6,7 +6,6 @@ import logic.model.Partner;
 import logic.model.Place;
 
 public class CreatePlaceController {
-	private Place place;
 	
 	
 
@@ -17,12 +16,12 @@ public class CreatePlaceController {
 	}
 	
 	public Place createPlace(String name,String address,String city,String region, String civico,Partner owner){
-		this.place = new Place(name, address,city,region,civico,owner);
+		Place place = new Place(name, address,city,region,civico,owner);
 		int id = this.addPlaceToDB(address, name, city, region, civico, owner); 
 		if(id < 0)
 			Log.getInstance().logger.info("\n\nPosto gia creato precedentemente\n\n");
-		this.place.setId(id);
-		return this.place;
+		place.setId(id);
+		return place;
 	}
 
 	
