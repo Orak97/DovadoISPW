@@ -45,7 +45,7 @@ public class LoginView{
     	Log.getInstance().logger.info("Clicked login");
     	SuperUser user = null;
     	if(username.getText().contains("@")) {
-    		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText()))==null) {
+    		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText(),null))==null) {
     			Log.getInstance().logger.info("Email o password incorrette.");
     			return;
     		} 

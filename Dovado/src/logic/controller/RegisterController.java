@@ -16,7 +16,7 @@ public class RegisterController {
 		
 		
 	
-		if (dao.findSuperUser(email) != null) {
+		if (dao.findSuperUserByEmail(email) != null) {
 			Log.getInstance().logger.info("L'utente esiste");
 			return false;
 		}

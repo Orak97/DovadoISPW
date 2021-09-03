@@ -37,7 +37,7 @@ public class DAOSuperUser {
 			JSONArray userPref = new JSONArray();
 			
 			
-			if (findSuperUser(email, password)==(null)) {				
+			if (findSuperUser(email, password, null)==(null)) {				
 				JSONObject newUser = new JSONObject();
 
 				newUser.put("id", userArray.size());
@@ -171,95 +171,82 @@ public class DAOSuperUser {
 	
 	//Creiamo una istanza di una classe a partire dall'id
 	public SuperUser findSuperUserByID(Long id ){
-		JSONParser parser = new JSONParser();
-		int i;
-		try 
-		{
-			Object users = parser.parse(new FileReader(userFileName));
-			JSONObject userRes = (JSONObject) users;
-			JSONArray userArray = (JSONArray) userRes.get("users");
-			JSONObject result;
-			
-			for(i=0;i<userArray.size();i++) {
-				result = (JSONObject)userArray.get(i);
-				
-				Long IDJSON = (Long) result.get("id");
-				
-				if (id.equals(IDJSON)) {
-						
-					//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-					if((Long)result.get("partner")==1) {
-							Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
-							partner.setPreferences(((ArrayList<String>)result.get("preferences")));
-							return partner;
-					}
-					Log.getInstance().logger.info(String.valueOf(result.get("wallet")));
-					User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"),(Long) result.get("wallet"));
-					user.setPreferences(((ArrayList<String>)result.get("preferences")));
-					return user;
-				}
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		return null;
+		return findSuperUser(null, null, id);
 	}
 	
 	//Creiamo istanza di una classe sapendo la mail-----COME SOTTO ANDREBBE SOSTITUITA DA UN METODO CHE RITORNI L'ID
-	public SuperUser findSuperUser(String email) {
-		return findSuperUser(email,null);
+	public SuperUser findSuperUserByEmail(String email) {
+		return findSuperUser(email,null,null);
 	}
 	
 	//qui controlliamo che la mail sia uguale, utile per il login
-	public SuperUser findSuperUser (String email, String psw) {
+	public SuperUser findSuperUser (String email, String psw, Long id) {
 		JSONParser parser = new JSONParser();
 		int i;
+		boolean founded = false;
 		try 
 		{
 			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userRes.get("users");
-			JSONObject result;
+			JSONObject result = null;
 
-			for(i=0;i<userArray.size();i++) 
-			{
+			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
-				
+				System.out.println("email: "+ email +"\nPassword: "+ psw);
 				String emailJSON = (String) result.get("email");
 				String passwordJSON = (String) result.get("password");
-				
-				if (email.equals(emailJSON)) {
-					if(psw==null) {
+				Long idJson = (Long) result.get("id");
+				System.out.println("DAOemail: "+ emailJSON +"\nDAOPassword: "+ passwordJSON);
+				//Qui controllo nel caso uso la mail per cercare
+				if (email != null && email.equals(emailJSON)) {
+					if(psw == null) {
 						Log.getInstance().logger.warning("PASSWORD NULLA");
+						founded = true;
+						break;
 					}
 					else if (!psw.equals(passwordJSON)) {
 						Log.getInstance().logger.info("PASSWORD SBAGLIATA");
 						return null;
+					} else {
+						Log.getInstance().logger.warning("PASSWORD CORRETTA");
+						founded = true;
+						break;
 					}
-					//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-					if((Long)result.get("partner")==1) {
-						Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
-						partner.setPreferences(((ArrayList<String>)result.get("preferences")));
-						return partner;
-					}
-					User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
-					user.setPreferences(((ArrayList<String>)result.get("preferences")));
-					return user;					
-				}		
+				}
+				//Qui invece entro se cerco tramite id
+				else if( id != null && id.equals(idJson)){
+					founded = true;
+					break;
+				}
+								
+			}		
+					
+			if (!founded) {
+				Log.getInstance().logger.info("Nessun utente trovato");
+				return null;
 			}
+			
+			//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
+			if((Long)result.get("partner")==1) {
+				Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
+				partner.setPreferences(((ArrayList<String>)result.get("preferences")));
+				return partner;
+			}
+			Log.getInstance().logger.info(String.valueOf(result.get("wallet")));
+			User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
+			user.setPreferences(((ArrayList<String>)result.get("preferences")));
+			return user;							
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		return null;
 	}
 	
 	
-	//Ritorna l'ID di un elemento----- WORKINPROGRESS
+	//TODO Ritorna l'ID di un elemento----- WORKINPROGRESS ---- DA CANCELLARE???
 	public SuperUser findSuperUserID (String email, String psw) {
 		JSONParser parser = new JSONParser();
 		int i;
@@ -294,7 +281,7 @@ public class DAOSuperUser {
 					user.setPreferences(((ArrayList<String>)result.get("preferences")));
 					return user;
 				}				
-			}
+			}	
 			
 		} catch (Exception e) {
 			e.printStackTrace();

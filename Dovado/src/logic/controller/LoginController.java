@@ -13,7 +13,7 @@ private DAOSuperUser dao;
 	
 	public SuperUser findUser(String email, String password) {
 				
-		return dao.findSuperUser(email, password);
+		return dao.findSuperUser(email, password, null);
 		
 	}
 }
