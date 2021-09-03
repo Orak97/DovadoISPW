@@ -1,39 +1,40 @@
-
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
     
 <jsp:useBean id ="logBean" scope="request" class="logic.model.LogBean" />
 <jsp:setProperty name="logBean" property="*" />
 <!DOCTYPE html>
 
+	<%	if(session.isNew()) {
 		
-	
-    <% application.setAttribute( "titolo" , "login"); 
-    //Potrei gedtire questa eccezione qui del null
-    
+		response.sendRedirect("homeLogin.jsp");
+	}	
 	%>
 	
-	<%@ include file="Navbar.jsp" %>
-	<div class="container pt-6">
-    <h1>Login Page</h1>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Login Page</title>
+</head>
+
+	
+<body>
 <%
-	    
-   
 	if(request.getParameter("logForm")!= null){ //controllo la richiesta ricevuta, se all'interno e presente un parametro login vuol dire che arrivo a questa pagina tramite la pressione del bottone login, quindi ne consegue che i dati username e password sono pieni e quindi posso andare avanti
 		if(logBean.validate()){ 
 			session.setAttribute("user", logBean.getUser());
 			session.setMaxInactiveInterval(10);
 			
-			response.sendRedirect("Home.jsp");
+			response.sendRedirect("homeLogin.jsp");
 
 		} else{
 %>
-
-		<p style="color:red;"> ${logBean.getError()}</p>  
-		
+		<p style="color:red;"> ${logBean.getError()}</p>
 <%		
 		};
 	}
 %>
-    
+  <h1>Login Page</h1>
     <form action="login.jsp" method="POST">    
         <label><b>Email     
         </b>    
@@ -52,6 +53,6 @@
       <%--   Implementa Dimenticata  <a href="#">Password</a>   --%>    
     </form>   
     <p>Se ancora non sei registrato clicca <a href="register.jsp"> qui </a></p>
-  </div>
+      
 </body>
 </html>

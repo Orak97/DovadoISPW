@@ -25,13 +25,13 @@ import java.util.TimerTask;
 
 public class ScheduledActivity {
 	
-	private Activity referencedActivity;
+	private SuperActivity referencedActivity;
 	private LocalDateTime scheduledTime;
 	private LocalDateTime reminderTime;
 	private Timer timer;
 	
 	//prob qua useremo un javabean per contenere tutte ste stronzate
-	public ScheduledActivity(Activity a, LocalDateTime scheduledTime, LocalDateTime reminderTime) {
+	public ScheduledActivity(SuperActivity a, LocalDateTime scheduledTime, LocalDateTime reminderTime) {
 		
 		//se reminderTime è nulla allora il reminder viene messo come ora di schedulo!
 		
@@ -55,14 +55,14 @@ public class ScheduledActivity {
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
-				System.err.println("\n"+"devi fare il task");
+				System.out.println("devi fare il task");
 			}
 		};
 		
 		timer.schedule( task , convertToDateViaSqlTimestamp(reminderTime));
 	}
 
-	public Activity getReferencedActivity() {
+	public SuperActivity getReferencedActivity() {
 		return this.referencedActivity;
 	}
 	public LocalDateTime getReminderTime() {

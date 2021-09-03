@@ -1,20 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
- <%@ page import = "java.io.*,java.util.*" %>
+
+	<%	if(session.isNew()) {
+		
+		response.sendRedirect("login.jsp");
+	} else {
+		session.setMaxInactiveInterval(10);	
+	}%>
+	
+    <%@ page import = "java.io.*,java.util.*" %>
 
     <% application.setAttribute( "titolo" , "Create Activity"); %>
 
-	<%@ include file="Navbar.jsp" %>
-	
-  <div class="container pt-6">
-
+	<jsp:include page="Navbar.jsp" />
 
 	<!-- non serve mettere un body perche viene incluso dentro navbar -->
 	<h1> pagina per creare attivita</h1>
 
-  <h2>Giova se leggi qua, qua dentro ci va la pagina create activity, dal commento fino a body </h2> 
-  
-  </div>
+  <h2>Giova se leggi qua, qua dentro ci va la pagina create activity, dal commento fino a body </h2>
 </body>
 </html>

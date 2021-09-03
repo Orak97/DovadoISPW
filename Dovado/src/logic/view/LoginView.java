@@ -41,17 +41,17 @@ public class LoginView{
 
     @FXML
     void login(ActionEvent event) {
-    	System.err.println("\n"+"Clicked login");
+    	System.out.println("Clicked login");
     	SuperUser user = null;
     	if(username.getText().contains("@")) {
     		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText()))==null) {
-    			System.err.println("\n"+"Email o password incorrette.");
+    			System.out.println("Email o password incorrette.");
     			return;
     		} 
     	}
     	else {
     		if((user=DAOSuperUser.getInstance().findSuperUserByUsername(username.getText(), password.getText()))==null) {
-    			System.err.println("\n"+"Username o password incorretti.");
+    			System.out.println("Username o password incorretti.");
     			return;
     		}
     	}
@@ -62,7 +62,7 @@ public class LoginView{
 
     @FXML
     void register(ActionEvent event) {
-    	System.err.println("\n"+"Clicked register");
+    	System.out.println("Clicked register");
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	RegisterView.render(current);
     }
