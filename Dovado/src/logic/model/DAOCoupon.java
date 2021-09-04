@@ -77,9 +77,18 @@ public class DAOCoupon {
 				
 				try {
 					if (codeJSON.equals(Long.valueOf(code))) {
-						return getCouponFromJSON(result);
+						Log.getInstance().logger.info("coupon trovato");
+						Long user = (Long) result.get("user");
+						Long partner = (Long) result.get(PARTNERKEY);
+						Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(DISCOUNTKEY)).intValue() );
+						coupon.setCouponCode(((Long) result.get("code")).intValue());
+						
+						return coupon;
 					}
-				} catch (NullPointerException|ClassCastException e) {
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+					return null;
+				} catch (ClassCastException e) {
 					e.printStackTrace();
 					return null;
 				}
@@ -115,11 +124,20 @@ public class DAOCoupon {
 						Long partnerJSON = (Long) result.get(PARTNERKEY);
 
 						if(partnerJSON.equals(Long.valueOf(partnerID))) {
-							return getCouponFromJSON(result);
+							Log.getInstance().logger.info("coupon trovato");
+							Long user = (Long) result.get("user");
+							Long partner = (Long) result.get(PARTNERKEY);
+							Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(DISCOUNTKEY)).intValue() );
+							coupon.setCouponCode(((Long) result.get("code")).intValue());
+											
+							return coupon;
 						}
 						
 					}
-				} catch (NullPointerException|ClassCastException e) {
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+					return null;
+				} catch (ClassCastException e) {
 					e.printStackTrace();
 					return null;
 				}
@@ -132,16 +150,6 @@ public class DAOCoupon {
 			return null;
 		}
 		return null;
-	}
-	
-	private Coupon getCouponFromJSON(JSONObject result) {
-		Log.getInstance().logger.info("coupon trovato");
-		Long user = (Long) result.get("user");
-		Long partner = (Long) result.get(PARTNERKEY);
-		Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(DISCOUNTKEY)).intValue() );
-		coupon.setCouponCode(((Long) result.get("code")).intValue());
-		
-		return coupon;
 	}
 	
 }

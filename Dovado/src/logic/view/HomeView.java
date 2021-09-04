@@ -2,6 +2,8 @@ package logic.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -13,13 +15,17 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -31,6 +37,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import logic.model.Channel;
 import logic.model.DAOActivity;
@@ -38,10 +45,10 @@ import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
-import logic.model.Log;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
+import logic.model.Log;
 
 public class HomeView implements Initializable{
 
@@ -316,6 +323,7 @@ public class HomeView implements Initializable{
 								Log.getInstance().logger.info(activitySelected.getChannel().getChat().get(j).getMsgText());
 							}
 							updateChat(chat,activitySelected.getChannel());
+							mss.clear();
 						}
 					});
 					
@@ -351,7 +359,70 @@ public class HomeView implements Initializable{
 					//Apro un pop up in cui si può scegliere una
 					//Data in cui svolgere l'attività
 					DatePicker pickDate = new DatePicker();
-					TextField tf = new TextField("Select date");
+					ChoiceBox<String> hourBox = new ChoiceBox<>();
+					ChoiceBox<String> minBox = new ChoiceBox<>();
+
+					int upperLimit, lowerLimit, upperLimMin, lowerLimMin;
+					
+					lowerLimit = activitySelected.getFrequency().getOpeningTime().getHour();
+					upperLimit = activitySelected.getFrequency().getClosingTime().getHour();
+					
+					lowerLimMin = activitySelected.getFrequency().getOpeningTime().getMinute();
+					upperLimMin = activitySelected.getFrequency().getClosingTime().getMinute();
+					
+					for(int i=lowerLimit;i<=upperLimit;i++) {
+						String hr = Integer.toString(i);
+						if(i<10) {
+							hr = "0"+hr;
+						}
+						hourBox.getItems().add(hr);
+					}
+					
+					hourBox.setOnAction(new EventHandler<ActionEvent>() {
+						@Override public void handle(ActionEvent e) {
+							minBox.getItems().clear();
+							int selectedHour = Integer.parseInt(hourBox.getValue());
+							if(selectedHour==lowerLimit) {
+								for(int j=lowerLimMin;j<61;j++) {
+									String min = Integer.toString(j);
+									if(j<10) {
+										min = "0"+min;
+									}
+									minBox.getItems().add(min);
+									
+								}
+								return;
+							}
+							if(selectedHour==upperLimit) {
+								for(int j=0;j<=upperLimMin;j++) {
+									String min = Integer.toString(j);
+									if(j<10) {
+										min = "0"+min;
+									}
+									minBox.getItems().add(min);
+								}
+								return;
+							}
+							else {
+								for(int j=0;j<61;j++) {
+									String min = Integer.toString(j);
+									if(j<10) {
+										min = "0"+min;
+									}
+									minBox.getItems().add(min);
+								}
+								return;
+							}
+								
+						}
+					});
+					
+					/*for(int j=0;j<61;j++) {
+						minBox.getItems().add(Integer.toString(j));
+					}*/
+					
+					Text txt = new Text("Select date");
+					
 					Button ok = new Button();
 					Button close = new Button();
 					
@@ -359,8 +430,18 @@ public class HomeView implements Initializable{
 					ok.setText("Ok");
 					ok.getStyleClass().add("src-btn");
 					HBox buttonBox = new HBox();
-					buttonBox.getChildren().addAll(close,ok);
+					HBox pickTimeBox = new HBox();
+						buttonBox.getChildren().addAll(close,ok);
 					
+					CornerRadii cr = new CornerRadii(4);
+					BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+					Background b = new Background(bf);
+					
+					txt.getStyleClass().add("msstxt");
+					
+					pickTimeBox.getChildren().addAll(hourBox,minBox);
+					
+					dateBox.setBackground(b);
 					dateBox.getChildren().addAll(tf,pickDate,buttonBox);
 					dateBox.setId("dateBox");
 					
@@ -374,7 +455,47 @@ public class HomeView implements Initializable{
 							selectedBox.getChildren().remove(dateBox);
 						}
 					});
-					//((User) user).getSchedule().addActivityToSchedule(activitySelected, null, null, user);;
+				};
+		});
+	}
+	
+	ok.setOnAction(new EventHandler<ActionEvent>(){
+						@Override public void handle(ActionEvent e) {
+							DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+							String dayStringed = day.format(pickDate.getValue());
+							
+							String hourChosen = hourBox.getValue();
+							String minChosen = minBox.getValue();
+							
+							int hourReminderInt = Integer.parseInt(hourChosen);
+							String hourReminder;
+							hourReminder = Integer.toString(hourReminderInt-1);
+					
+							if(hourReminderInt-1<10) {
+								hourReminder = "0"+hourReminder;
+							}
+							
+							String dateChosen = dayStringed+' '+hourChosen+':'+minChosen;
+							String dateReminder = dayStringed+' '+hourReminder+':'+minChosen;
+							
+							DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+							LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
+							LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
+							
+							((User) user).getSchedule().addActivityToSchedule(activitySelected, dateSelected, remindDate, user);		
+							
+							final Stage dialog = new Stage();
+			                dialog.initModality(Modality.NONE);
+			                dialog.initOwner(curr);
+			                VBox dialogVbox = new VBox(20);
+			                dialogVbox.getChildren().add(new Text("Activity successfully scheduled"));
+			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+			                dialog.setScene(dialogScene);
+			                dialog.show();
+			                
+						}
+					});
+					
 				};
 		});
 	}
@@ -383,7 +504,7 @@ public class HomeView implements Initializable{
 		int i;
 		chat.getItems().clear();
 		for(i=0;i<ch.getChat().size();i++) {
-			
+			VBox chatContainer = new VBox();
 			VBox chatMss = new VBox();
 			TextField msstxt = new TextField();
 			TextField username = new TextField();
@@ -401,13 +522,33 @@ public class HomeView implements Initializable{
 			msstxt.setAlignment(Pos.CENTER_LEFT);
 			dateSent.setAlignment(Pos.BOTTOM_RIGHT);
 			
-			chatMss.getChildren().addAll(username,msstxt,dateSent);
-			chatMss.setPrefWidth(chat.getWidth()/2);
+			username.getStyleClass().add("mssusr");
+			msstxt.getStyleClass().add("msstxt");
+			dateSent.getStyleClass().add("msssent");
+			
+			chatContainer.getChildren().addAll(username,msstxt,dateSent);
+			chatContainer.setMaxWidth(root.getWidth()/2);
+			
+			chatMss.getChildren().add(chatContainer);
+			chatMss.autosize();
+			
 			
 			if(user.getUsername().equals(usernameMss)) {
+				CornerRadii cr = new CornerRadii(4);
+			
+				BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+				Background b = new Background(bf);
+
+				chatContainer.setBackground(b);
+				chatContainer.setAlignment(Pos.CENTER_RIGHT);
 				chatMss.setAlignment(Pos.CENTER_RIGHT);
 			}
 			else {
+				CornerRadii cr = new CornerRadii(4);
+				BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+				Background b = new Background(bf);
+				
+				chatContainer.setBackground(b);
 				chatMss.setAlignment(Pos.CENTER_LEFT);
 			}
 			chat.getItems().add(chatMss);
