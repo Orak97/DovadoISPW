@@ -3,7 +3,6 @@ package logic.model;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public class DAOActivity {
 		
 		Long id;
 		int i;
-		try 
+		try (FileWriter file = new FileWriter(placeFileName); FileWriter file2 = new FileWriter(activityFileName))
 		{
 			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
@@ -123,25 +122,19 @@ public class DAOActivity {
 					activitiesIdArray.add(activityIdToAdd); //Salvo l'id dell'attivita al posto di appartenenza.
 					result.put(jpResActivity, activitiesIdArray);
 					
-					FileWriter file = new FileWriter(placeFileName);
+					
 					file.write(place.toString());
 					file.flush();
-					file.close();
 					
 					activityArray.add(activityToAdd);
 					
-					FileWriter file2 = new FileWriter(activityFileName);
 					file2.write(activitiesJOBJ.toString());
 					file2.flush();
-					file2.close();
 					
 					return id;
 				}
 				
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			return -1L;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1L;
@@ -154,7 +147,7 @@ public class DAOActivity {
 		JSONParser parser = new JSONParser();
 		
 		int i;
-		try 
+		try (FileWriter file = new FileWriter(activityFileName))
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -201,11 +194,10 @@ public class DAOActivity {
 						result.put(jpFreq[4], (((PeriodicActivity) (sua.getFrequency())).getCadence().toString()));
 						
 					}
-					FileWriter file = new FileWriter(activityFileName);
+					
 					file.write(activitiesJOBJ.toString());
 					file.flush();
-					file.close();
-					
+										
 					return true;
 				}
 			}
@@ -223,7 +215,7 @@ public class DAOActivity {
 		int i;
 		int j;
 		
-		try 		
+		try (FileWriter file = new FileWriter(activityFileName))		
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -257,18 +249,15 @@ public class DAOActivity {
 					if(!sua.getPreferences().equals(oldpref)) {
 						result.put(jpPref,preferences);
 
-						FileWriter file = new FileWriter(activityFileName);
+						
 						file.write(activitiesJOBJ.toString());
 						file.flush();
-						file.close();
 						
 						return true;
 					} else return false;
 				
 				}
-			}
-			
-			
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -284,7 +273,7 @@ public class DAOActivity {
 		Place pl;
 		
 		int i;
-		try (FileWriter file = new FileWriter(activityFileName); FileWriter file2 = new FileWriter(placeFileName);)
+		try (FileWriter file = new FileWriter(activityFileName); FileWriter file2 = new FileWriter(placeFileName))
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -555,7 +544,8 @@ public class DAOActivity {
 						if(activities.size()==0)
 							return false;
 						
-						JSONObject activity,activityJSON;
+						JSONObject activity;
+						JSONObject activityJSON;
 						
 						for(j=0;j<activities.size();j++) {
 							
