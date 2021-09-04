@@ -193,17 +193,16 @@ public class DAOSuperUser {
 
 			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
-				System.out.println("email: "+ email +"\nPassword: "+ psw);
+	
 				String emailJSON = (String) result.get("email");
 				String passwordJSON = (String) result.get("password");
 				Long idJson = (Long) result.get("id");
-				System.out.println("DAOemail: "+ emailJSON +"\nDAOPassword: "+ passwordJSON);
+			
 				//Qui controllo nel caso uso la mail per cercare
 				if (email != null && email.equals(emailJSON)) {
 					if(psw == null) {
 						Log.getInstance().logger.warning("PASSWORD NULLA");
 						founded = true;
-						break;
 					}
 					else if (!psw.equals(passwordJSON)) {
 						Log.getInstance().logger.info("PASSWORD SBAGLIATA");
@@ -211,14 +210,14 @@ public class DAOSuperUser {
 					} else {
 						Log.getInstance().logger.warning("PASSWORD CORRETTA");
 						founded = true;
-						break;
 					}
 				}
 				//Qui invece entro se cerco tramite id
 				else if( id != null && id.equals(idJson)){
 					founded = true;
-					break;
 				}
+				if(founded)
+					break;
 								
 			}		
 					
