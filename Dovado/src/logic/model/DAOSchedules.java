@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
@@ -105,9 +106,8 @@ public class DAOSchedules {
 				file.close();
 				
 			} 
-			else {
 				updateScheduleInJSON(schedule,su);
-			}
+			
 			
 		}catch(NullPointerException e) {
 			e.printStackTrace();
@@ -146,10 +146,28 @@ public class DAOSchedules {
 				
 				try {
 					if (codeJSON.equals(Long.valueOf(code))) {
+						DAOActivity daoAc = DAOActivity.getInstance();
+						JSONArray schedule = (JSONArray) result.get("schedule");
+						DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+						
 						Log.getInstance().logger.info("schedule trovato");
 						
+						Schedule schFound = new Schedule();
+						ArrayList<ScheduledActivity> scheduledActsArray = new ArrayList<ScheduledActivity>(); 
 						
-						return null;
+						for(int j=0;j<schedule.size();j++) {
+							JSONObject actSch = (JSONObject) schedule.get(j);
+							String remindTime = (String)actSch.get("reminderTime");
+							String schedTime = (String)actSch.get("scheduledTime");
+							
+							ScheduledActivity sa = new ScheduledActivity(daoAc.findActivityByID(DAOSuperUser.getInstance(),(Long)actSch.get("activityReferenced")), LocalDateTime.parse(schedTime,dateFormatter), LocalDateTime.parse(remindTime,dateFormatter));
+							scheduledActsArray.add(sa);
+						}
+						
+						schFound.setScheduledActivities(scheduledActsArray);
+						
+						
+						return schFound;
 					}
 				} catch (NullPointerException e) {
 					e.printStackTrace();

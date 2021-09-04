@@ -1,1 +1,1 @@
-{"schedules": [ {"userID":0, "schedule":[]}]} 
+{"schedules":[{"schedule":[],"userID":0},{"schedule":[{"scheduledTime":"2021-09-09T11:21","activityReferenced":3,"reminderTime":"2021-09-09T10:21"},{"scheduledTime":"2021-09-09T13:23","activityReferenced":3,"reminderTime":"2021-09-09T12:23"},{"scheduledTime":"2021-09-09T16:19","activityReferenced":3,"reminderTime":"2021-09-09T15:19"},{"scheduledTime":"2021-09-08T11:22","activityReferenced":3,"reminderTime":"2021-09-08T10:22"}],"userID":1}]}

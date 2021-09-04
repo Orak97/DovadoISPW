@@ -5,10 +5,14 @@ login bean!. !-->
 request e session (richiesta e sessione) oppure application o page (vive fino a chiusura applicazione o 
 vive fino a ricaricamento pagina). !-->
 
+	<%	if(session.isNew()) {
+		
+		response.sendRedirect("login.jsp");
+	} else {
+		session.setMaxInactiveInterval(10);	
+	}%>
 	
-    <% application.setAttribute( "titolo" , "MAP"); %>
-
-	<%@ include file="Navbar.jsp" %>
+<html>
 	<head>
 		<meta charset="ISO-8859-1"></meta>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
@@ -41,10 +45,10 @@ vive fino a ricaricamento pagina). !-->
 		</style>
 	</head>
 <body>
-
 	<script type="text/javascript">
 	var lat,long;
 	var i=0;
+
 	/*Se sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione success(position)*/
 	
 	function success(position){
@@ -53,14 +57,17 @@ vive fino a ricaricamento pagina). !-->
 	}
 	
 	/*Se NON sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione error() e mi informa di quanto successo*/
+
 	function error(){
 		 alert("Nessuna informazione sulla geolocalizzazione dell'utente trovata.");
 	}
+
 	const options = {
 		enableHighAccuracy: true,
 		maximumAge: 30000,
 		timeout: 27000
 	};
+
 	/*Cerco di prendere anche la posizione dell'utente tramite la geolocalizzazione.*/
 	
 	if('geolocation' in navigator) {
@@ -78,6 +85,7 @@ vive fino a ricaricamento pagina). !-->
 	}).catch(error => {
 		console.error(error);
 	});
+
 	async function fetchPlaces(){
 		const response = await fetch('places.json');
 		const result = await response.json();
@@ -95,10 +103,12 @@ vive fino a ricaricamento pagina). !-->
   				console.log(results.results[0].latlng.lat+' '+results.results[0].latlng.lng);
 				addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[i].name);
 			});
+
 			i++;
 		}
 		i=0;
 	}
+
 	async function spotPlace(){
 		L.esri.Geocoding.geocode().nation('Niger').run(function (err, results, response) {
 				if (err) {
@@ -111,13 +121,12 @@ vive fino a ricaricamento pagina). !-->
 	}
 	
 	</script>
-	<div class="container pt-6">
 	<h1>Mappa e geolocalizzazione.</h1>
 	<div id="Map"></div>
 	<script type="text/javascript" src="js/map.js">
 	</script>
 
-    </div>
+
 </body>
 
 	
