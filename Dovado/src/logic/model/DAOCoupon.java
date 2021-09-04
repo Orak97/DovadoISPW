@@ -13,23 +13,26 @@ import org.json.simple.parser.ParseException;
 import logic.controller.FindActivityController;
 
 public class DAOCoupon {
-	private static DAOCoupon INSTANCE;
+	private static DAOCoupon instance;
 	private JSONParser parser; 
+	private final String couponJson = "WebContent/coupon.json" ;
+	private final String couponsKey = "coupons";
+	
 	private DAOCoupon() {
 		parser = new JSONParser();
 	}
 	
 	public static DAOCoupon getInstance() {
-		if(INSTANCE==null)
-			INSTANCE = new DAOCoupon();
-		return INSTANCE;
+		if(instance==null)
+			instance = new DAOCoupon();
+		return instance;
 	}
 	
 	public boolean addCoupontoJSON(Coupon coupon) {
 		try {
-			Object coupons = parser.parse(new FileReader("WebContent/coupon.json"));
+			Object coupons = parser.parse(new FileReader(couponJson));
 			JSONObject couponObj = (JSONObject) coupons;
-			JSONArray couponArray = (JSONArray) couponObj.get("coupons");
+			JSONArray couponArray = (JSONArray) couponObj.get(couponsKey);
 			
 			
 			if (findCoupon(coupon.getCouponCode())==(null)) {				
@@ -41,7 +44,7 @@ public class DAOCoupon {
 				newCoupon.put("discount", coupon.getDiscount());
 				couponArray.add(newCoupon);
 
-				FileWriter file = new FileWriter("WebContent/coupon.json");
+				FileWriter file = new FileWriter(couponJson);
 				file.write(couponObj.toString());
 				file.flush();
 				file.close();
@@ -71,9 +74,9 @@ public class DAOCoupon {
 		try {		
 			Log.getInstance().logger.info("valore code:"+ code);
 
-			Object coupons = parser.parse(new FileReader("WebContent/coupon.json"));
+			Object coupons = parser.parse(new FileReader(couponJson));
 			JSONObject couponObj = (JSONObject) coupons;
-			JSONArray couponArray = (JSONArray) couponObj.get("coupons");
+			JSONArray couponArray = (JSONArray) couponObj.get(couponsKey);
 			JSONObject result;
 			
 			for(int i=0; i<couponArray.size();i++) {
@@ -124,9 +127,9 @@ public class DAOCoupon {
 	public Coupon findCoupon(int userID, int partnerID) {
 		try {		
 
-			Object coupons = parser.parse(new FileReader("WebContent/coupon.json"));
+			Object coupons = parser.parse(new FileReader(couponJson));
 			JSONObject couponObj = (JSONObject) coupons;
-			JSONArray couponArray = (JSONArray) couponObj.get("coupons");
+			JSONArray couponArray = (JSONArray) couponObj.get(couponsKey);
 			JSONObject result;
 			
 			for(int i=0; i<couponArray.size();i++) {
