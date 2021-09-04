@@ -45,13 +45,15 @@ public class LoginView{
     	Log.getInstance().logger.info("Clicked login");
     	SuperUser user = null;
     	if(username.getText().contains("@")) {
+    		System.out.println(username);
     		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText(),null))==null) {
     			Log.getInstance().logger.info("Email o password incorrette.");
     			return;
     		} 
     	}
+    	// Questo else diventa inutile visto che non possiamo cercare gli utenti in base agli Username
     	else {
-    		if((user=DAOSuperUser.getInstance().findSuperUserByUsername(username.getText(), password.getText()))==null) {
+    		if((user=DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText(),null))==null) {
     			Log.getInstance().logger.info("Username o password incorretti.");
     			return;
     		}
