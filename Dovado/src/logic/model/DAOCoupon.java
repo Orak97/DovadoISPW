@@ -52,19 +52,8 @@ public class DAOCoupon {
 			}
 			
 			
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-			return false;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch(Exception e) {
+			//removed exeption for future use: NullPointerException|FileNotFoundException|IOException
 			e.printStackTrace();
 			return false;
 		} 
@@ -106,22 +95,11 @@ public class DAOCoupon {
 			}
 				
 			
-		} catch(NullPointerException e) {
+		} catch(Exception e) {
+			//removed exeption for future use: NullPointerException|FileNotFoundException|IOException
 			e.printStackTrace();
 			return null;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+		} 
 		return null;
 	}
 	
@@ -166,19 +144,8 @@ public class DAOCoupon {
 			}
 				
 			
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-			return null;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			//removed exeption for future use: NullPointerException|FileNotFoundException|IOException
 			e.printStackTrace();
 			return null;
 		}
