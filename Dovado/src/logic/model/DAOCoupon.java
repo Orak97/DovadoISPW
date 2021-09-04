@@ -15,8 +15,10 @@ import logic.controller.FindActivityController;
 public class DAOCoupon {
 	private static DAOCoupon instance;
 	private JSONParser parser; 
-	private final String couponJson = "WebContent/coupon.json" ;
-	private final String couponsKey = "coupons";
+	private final static String couponJson = "WebContent/coupon.json" ;
+	private final static String couponsKey = "coupons";
+	private final static String partnerKey = "partner";
+	private final static String discountKey = "discount";
 	
 	private DAOCoupon() {
 		parser = new JSONParser();
@@ -29,7 +31,7 @@ public class DAOCoupon {
 	}
 	
 	public boolean addCoupontoJSON(Coupon coupon) {
-		try {
+		try (FileWriter file  = new FileWriter(couponJson)){
 			Object coupons = parser.parse(new FileReader(couponJson));
 			JSONObject couponObj = (JSONObject) coupons;
 			JSONArray couponArray = (JSONArray) couponObj.get(couponsKey);
@@ -40,11 +42,11 @@ public class DAOCoupon {
 
 				newCoupon.put("code", coupon.getCouponCode());
 				newCoupon.put("user", coupon.getuID());
-				newCoupon.put("partner", coupon.getpID());
-				newCoupon.put("discount", coupon.getDiscount());
+				newCoupon.put(partnerKey, coupon.getpID());
+				newCoupon.put(discountKey, coupon.getDiscount());
 				couponArray.add(newCoupon);
-
-				FileWriter file = new FileWriter(couponJson);
+				
+				
 				file.write(couponObj.toString());
 				file.flush();
 				file.close();
@@ -66,7 +68,7 @@ public class DAOCoupon {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
-		}
+		} 
 		return true;
 	}
 	
@@ -89,8 +91,8 @@ public class DAOCoupon {
 					if (codeJSON.equals(Long.valueOf(code))) {
 						Log.getInstance().logger.info("coupon trovato");
 						Long user = (Long) result.get("user");
-						Long partner = (Long) result.get("partner");
-						Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get("discount")).intValue() );
+						Long partner = (Long) result.get(partnerKey);
+						Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(discountKey)).intValue() );
 						coupon.setCouponCode(((Long) result.get("code")).intValue());
 						
 						return coupon;
@@ -142,13 +144,13 @@ public class DAOCoupon {
 					if (userJSON.equals(Long.valueOf(userID))) {		
 						Log.getInstance().logger.info("user trovato");
 
-						Long partnerJSON = (Long) result.get("partner");
+						Long partnerJSON = (Long) result.get(partnerKey);
 
 						if(partnerJSON.equals(Long.valueOf(partnerID))) {
 							Log.getInstance().logger.info("coupon trovato");
 							Long user = (Long) result.get("user");
-							Long partner = (Long) result.get("partner");
-							Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get("discount")).intValue() );
+							Long partner = (Long) result.get(partnerKey);
+							Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(discountKey)).intValue() );
 							coupon.setCouponCode(((Long) result.get("code")).intValue());
 											
 							return coupon;
