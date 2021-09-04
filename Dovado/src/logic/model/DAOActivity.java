@@ -139,7 +139,9 @@ public class DAOActivity {
 				}
 				
 			}
-			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1L;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1L;
@@ -282,7 +284,7 @@ public class DAOActivity {
 		Place pl;
 		
 		int i;
-		try 
+		try (FileWriter file = new FileWriter(activityFileName); FileWriter file2 = new FileWriter(placeFileName);)
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -324,24 +326,17 @@ public class DAOActivity {
 						}
 					}
 					
-					FileWriter file = new FileWriter(activityFileName);
+					
 					file.write(activitiesJOBJ.toString());
 					file.flush();
-					file.close();
-					
-					FileWriter file2 = new FileWriter(placeFileName);
+										
 					file2.write(place.toString());
 					file2.flush();
-					file2.close();
 					
 					return true;
 				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-			
-		} catch (Exception e) {
+		}  catch (Exception e) {
 			e.printStackTrace();
 			return false;
 			}
