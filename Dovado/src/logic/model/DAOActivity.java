@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -19,6 +20,8 @@ public class DAOActivity {
 	private DAOPlace daoPl;
 	private String activityFileName;
 	private String placeFileName;
+	
+	private String jpPlaces = "places";
 	private String jpPlace = "place";
 	private String jpActName = "name";
 	private String jpCreator = "creator";
@@ -51,7 +54,7 @@ public class DAOActivity {
 		{
 			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get("places");
+			JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 			
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -136,11 +139,7 @@ public class DAOActivity {
 				
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return -1L;}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return -1L;
 			}
@@ -150,7 +149,6 @@ public class DAOActivity {
 
 	public boolean updateActivityJSON(SuperActivity sua) {
 		JSONParser parser = new JSONParser();
-		FindActivityController fac = new FindActivityController();
 		
 		int i;
 		try 
@@ -209,11 +207,7 @@ public class DAOActivity {
 				}
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 			}
@@ -222,9 +216,11 @@ public class DAOActivity {
 	
 	public boolean updateActivityPreferences(SuperActivity sua) {
 		JSONParser parser = new JSONParser();
-		ArrayList<String> oldpref = new ArrayList<String>();
-		int i,j;
-		try 
+		ArrayList<String> oldpref = new ArrayList<>();
+		int i;
+		int j;
+		
+		try 		
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -270,11 +266,7 @@ public class DAOActivity {
 			}
 			
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 			}
@@ -313,7 +305,7 @@ public class DAOActivity {
 					
 					Object places = parser.parse(new FileReader(placeFileName));
 					JSONObject place = (JSONObject) places;
-					JSONArray placeArray = (JSONArray) place.get("places");
+					JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 					JSONObject resultPlace;
 					
 					pl = daoPl.findPlaceInJSON(sua.getPlace().getName(), sua.getPlace().getCity(), sua.getPlace().getRegion());
@@ -322,7 +314,7 @@ public class DAOActivity {
 					JSONArray activityInPlace = (JSONArray) resultPlace.get(jpResActivity);
 					for(i=0;i<activityInPlace.size();i++) {
 						
-						//Prendo un elemento dell'array di eventi nel posto, estraggo il contenuto corrispondente alla chiave "id";
+						//Prendo un elemento dell'array di eventi nel posto, estraggo il contenuto corrispondente alla chiave id
 						//Fatto cio converto a Long l'oggetto risultante ed infine lo confronto con l'id dell'attivita per eliminarlo
 						//Anche dall'array di eventi nel json dei places.
 						if(((Long)((JSONObject)activityInPlace.get(i)).get(jpID)==sua.getId())){
@@ -337,7 +329,7 @@ public class DAOActivity {
 					file.close();
 					
 					FileWriter file2 = new FileWriter(placeFileName);
-					file2.write(place.toString());;
+					file2.write(place.toString());
 					file2.flush();
 					file2.close();
 					
@@ -345,19 +337,15 @@ public class DAOActivity {
 				}
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 			}
 		return false;
 	}
 	
-	public ArrayList<SuperActivity> findActivityByPreference (DAOSuperUser daoSU, String preference){
-		ArrayList<SuperActivity> matchingActivities = new ArrayList<SuperActivity>();
+	public List<SuperActivity> findActivityByPreference (DAOSuperUser daoSU, String preference){
+		ArrayList<SuperActivity> matchingActivities = new ArrayList<>();
 		SuperActivity matchingActivity;
 		JSONParser parser = new JSONParser();
 		
@@ -434,11 +422,7 @@ public class DAOActivity {
 				}
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 			}
@@ -453,7 +437,7 @@ public class DAOActivity {
 	{
 		Object places = parser.parse(new FileReader(placeFileName));
 		JSONObject place = (JSONObject) places;
-		JSONArray placeArray = (JSONArray) place.get("places");
+		JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 		JSONObject result;
 		
 		for(i=0;i<placeArray.size();i++) 
@@ -471,7 +455,8 @@ public class DAOActivity {
 					if(activities.size()==0)
 						return null;
 					
-					JSONObject activity,activityJSON;
+					JSONObject activity;
+					JSONObject activityJSON;
 					
 					for(j=0;j<activities.size();j++) {
 						
@@ -533,17 +518,7 @@ public class DAOActivity {
 						}
 					}
 			} 
-		}
-	
-		catch(NullPointerException e) {
-			e.printStackTrace();
-			return null;
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -557,7 +532,7 @@ public class DAOActivity {
 		{
 			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get("places");
+			JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 			JSONObject result;
 			daoSU = DAOSuperUser.getInstance();
 			
@@ -598,16 +573,7 @@ public class DAOActivity {
 						}
 				} 
 			}
-		}
-		catch(NullPointerException e) {
-			e.printStackTrace();
-			return false;
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
