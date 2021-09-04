@@ -215,10 +215,7 @@ public class DAOSuperUser {
 				//Qui invece entro se cerco tramite id
 				else if( id != null && id.equals(idJson)){
 					founded = true;
-				}
-				if(founded)
-					break;
-								
+				}	
 			}		
 					
 			if (!founded) {
