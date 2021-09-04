@@ -49,7 +49,7 @@ public class AddActivityToScheduleController {
 	}
 	
 	//questo metodo andrebbe chiamato dal controller di playActivity
-	public void addActivityToSchedule(SuperActivity a) {
+	public void addActivityToSchedule(Activity a) {
 		Schedule s = session.getSchedule();
 		
 		s.addActivityToSchedule((SuperActivity) a, timestamp.getScheduledTime(), timestamp.getReminderTime(), (SuperUser) session);

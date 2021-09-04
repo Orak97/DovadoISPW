@@ -1,21 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    
-	    <%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules" %>
+	<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-	<%	if(session.isNew()) {
+	<%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules" %>
 
-		response.sendRedirect("login.jsp");
-	} else {
-		session.setMaxInactiveInterval(10);
-	}%>
-
-    <%@ page import = "java.io.*,java.util.*" %>
-
-    <% application.setAttribute( "titolo" , "Schedule"); %>
-
-	<jsp:include page="Navbar.jsp" />
-
+	<% application.setAttribute( "titolo" , "Schedule"); %>
+	
+	<%@ include file="Navbar.jsp" %>
+	
   <jsp:useBean id="scheduleBean" scope="request" class="logic.model.ScheduleBean" />
 
   <jsp:setProperty name="scheduleBean" property="*" />

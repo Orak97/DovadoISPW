@@ -50,7 +50,7 @@ public class Message {
 	
 	//"yyyy-MM-dd'T'HH:mm:ss.SSS" -- "yyyy/MM/dd HH:mm:ss"
 	public String getMsgSentDate() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy'  'HH:mm");
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 		return dtf.format(sentDate);
 	}
 	
