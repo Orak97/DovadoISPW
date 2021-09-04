@@ -15,10 +15,10 @@ import logic.controller.FindActivityController;
 public class DAOCoupon {
 	private static DAOCoupon instance;
 	private JSONParser parser; 
-	private final static String couponJson = "WebContent/coupon.json" ;
-	private final static String couponsKey = "coupons";
-	private final static String partnerKey = "partner";
-	private final static String discountKey = "discount";
+	private static final  String COUPONJSON = "WebContent/coupon.json" ;
+	private static final  String COUPONSKEY = "coupons";
+	private static final  String PARTNERKEY = "partner";
+	private static final  String DISCOUNTKEY = "discount";
 	
 	private DAOCoupon() {
 		parser = new JSONParser();
@@ -31,10 +31,10 @@ public class DAOCoupon {
 	}
 	
 	public boolean addCoupontoJSON(Coupon coupon) {
-		try (FileWriter file  = new FileWriter(couponJson)){
-			Object coupons = parser.parse(new FileReader(couponJson));
+		try (FileWriter file  = new FileWriter(COUPONJSON)){
+			Object coupons = parser.parse(new FileReader(COUPONJSON));
 			JSONObject couponObj = (JSONObject) coupons;
-			JSONArray couponArray = (JSONArray) couponObj.get(couponsKey);
+			JSONArray couponArray = (JSONArray) couponObj.get(COUPONSKEY);
 			
 			
 			if (findCoupon(coupon.getCouponCode())==(null)) {				
@@ -42,14 +42,13 @@ public class DAOCoupon {
 
 				newCoupon.put("code", coupon.getCouponCode());
 				newCoupon.put("user", coupon.getuID());
-				newCoupon.put(partnerKey, coupon.getpID());
-				newCoupon.put(discountKey, coupon.getDiscount());
+				newCoupon.put(PARTNERKEY, coupon.getpID());
+				newCoupon.put(DISCOUNTKEY, coupon.getDiscount());
 				couponArray.add(newCoupon);
 				
 				
 				file.write(couponObj.toString());
 				file.flush();
-				file.close();
 			}
 			
 			
@@ -76,9 +75,9 @@ public class DAOCoupon {
 		try {		
 			Log.getInstance().logger.info("valore code:"+ code);
 
-			Object coupons = parser.parse(new FileReader(couponJson));
+			Object coupons = parser.parse(new FileReader(COUPONJSON));
 			JSONObject couponObj = (JSONObject) coupons;
-			JSONArray couponArray = (JSONArray) couponObj.get(couponsKey);
+			JSONArray couponArray = (JSONArray) couponObj.get(COUPONSKEY);
 			JSONObject result;
 			
 			for(int i=0; i<couponArray.size();i++) {
@@ -91,8 +90,8 @@ public class DAOCoupon {
 					if (codeJSON.equals(Long.valueOf(code))) {
 						Log.getInstance().logger.info("coupon trovato");
 						Long user = (Long) result.get("user");
-						Long partner = (Long) result.get(partnerKey);
-						Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(discountKey)).intValue() );
+						Long partner = (Long) result.get(PARTNERKEY);
+						Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(DISCOUNTKEY)).intValue() );
 						coupon.setCouponCode(((Long) result.get("code")).intValue());
 						
 						return coupon;
@@ -129,9 +128,9 @@ public class DAOCoupon {
 	public Coupon findCoupon(int userID, int partnerID) {
 		try {		
 
-			Object coupons = parser.parse(new FileReader(couponJson));
+			Object coupons = parser.parse(new FileReader(COUPONJSON));
 			JSONObject couponObj = (JSONObject) coupons;
-			JSONArray couponArray = (JSONArray) couponObj.get(couponsKey);
+			JSONArray couponArray = (JSONArray) couponObj.get(COUPONSKEY);
 			JSONObject result;
 			
 			for(int i=0; i<couponArray.size();i++) {
@@ -144,13 +143,13 @@ public class DAOCoupon {
 					if (userJSON.equals(Long.valueOf(userID))) {		
 						Log.getInstance().logger.info("user trovato");
 
-						Long partnerJSON = (Long) result.get(partnerKey);
+						Long partnerJSON = (Long) result.get(PARTNERKEY);
 
 						if(partnerJSON.equals(Long.valueOf(partnerID))) {
 							Log.getInstance().logger.info("coupon trovato");
 							Long user = (Long) result.get("user");
-							Long partner = (Long) result.get(partnerKey);
-							Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(discountKey)).intValue() );
+							Long partner = (Long) result.get(PARTNERKEY);
+							Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(DISCOUNTKEY)).intValue() );
 							coupon.setCouponCode(((Long) result.get("code")).intValue());
 											
 							return coupon;
