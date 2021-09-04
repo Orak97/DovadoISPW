@@ -29,12 +29,13 @@ public class CreateActivityController {
 	CreateActivityController(SuperUser u, CreateActivityBean bean){
 		this.u= u;
 		this.bean = bean;
+		daoAc = DAOActivity.getInstance();
 	}
 	
 	public void createActivity(String n, Place p) {
 		//spaghetti code here!!!
 		Long id;
-		daoAc = DAOActivity.getInstance();
+		
 		SuperActivity newActivity;
 
 		Log.getInstance().logger.info("Ciao da dentro createActivity");
