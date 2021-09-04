@@ -19,6 +19,14 @@ public class DAOActivity {
 	private DAOPlace daoPl;
 	private String activityFileName;
 	private String placeFileName;
+	private String jpPlace = "place";
+	private String jpActName = "name";
+	private String jpCreator = "creator";
+	private String jpPref = "preferences";
+	private String[] jpFreq = {"opening","closing","startdate","enddate","cadence"};
+	private String jpCert = "certified";
+	private String jpID = "id";
+	private String jpResActivity = "activities";
 	
 	private DAOActivity() {
 		daoPl = DAOPlace.getInstance();
@@ -47,69 +55,69 @@ public class DAOActivity {
 			
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
-			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
+			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
 			
 			JSONObject result;
 			JSONObject activityToAdd = new JSONObject();
 			JSONObject activityIdToAdd = new JSONObject();
 			JSONArray newPreferences = new JSONArray();
 
-			activityToAdd.put("place", p.getId());
-			activityToAdd.put("name", activity.getName());
-			activityToAdd.put("creator", activity.getCreator().getUserID());
-			activityToAdd.put("preferences", newPreferences);
+			activityToAdd.put(jpPlace, p.getId());
+			activityToAdd.put(jpActName, activity.getName());
+			activityToAdd.put(jpCreator, activity.getCreator().getUserID());
+			activityToAdd.put(jpPref, newPreferences);
 			if(activity.getFrequency() instanceof ContinuosActivity) {
-				activityToAdd.put("opening", activity.getFrequency().getOpeningTime().toString());
-				activityToAdd.put("closing", activity.getFrequency().getClosingTime().toString());
-				activityToAdd.put("startdate", null);
-				activityToAdd.put("enddate", null);
-				activityToAdd.put("cadence", null);
+				activityToAdd.put(jpFreq[0], activity.getFrequency().getOpeningTime().toString());
+				activityToAdd.put(jpFreq[1], activity.getFrequency().getClosingTime().toString());
+				activityToAdd.put(jpFreq[2], null);
+				activityToAdd.put(jpFreq[3], null);
+				activityToAdd.put(jpFreq[4], null);
 				
 			}
 			if(activity.getFrequency() instanceof ExpiringActivity) {
-				activityToAdd.put("opening", activity.getFrequency().getOpeningTime().toString());
-				activityToAdd.put("closing", activity.getFrequency().getClosingTime().toString());
-				activityToAdd.put("startdate", (((ExpiringActivity) (activity.getFrequency())).getStartDate().toString()));
-				activityToAdd.put("enddate", (((ExpiringActivity) (activity.getFrequency())).getEndDate().toString()));
-				activityToAdd.put("cadence", null);
+				activityToAdd.put(jpFreq[0], activity.getFrequency().getOpeningTime().toString());
+				activityToAdd.put(jpFreq[1], activity.getFrequency().getClosingTime().toString());
+				activityToAdd.put(jpFreq[2], (((ExpiringActivity) (activity.getFrequency())).getStartDate().toString()));
+				activityToAdd.put(jpFreq[3], (((ExpiringActivity) (activity.getFrequency())).getEndDate().toString()));
+				activityToAdd.put(jpFreq[4], null);
 				
 			}
 			if(activity.getFrequency() instanceof PeriodicActivity) {
-				activityToAdd.put("opening", activity.getFrequency().getOpeningTime().toString());
-				activityToAdd.put("closing", activity.getFrequency().getClosingTime().toString());
-				activityToAdd.put("startdate", (((PeriodicActivity) (activity.getFrequency())).getStartDate().toString()));
-				activityToAdd.put("enddate", (((PeriodicActivity) (activity.getFrequency())).getEndDate().toString()));
-				activityToAdd.put("cadence", (((PeriodicActivity) (activity.getFrequency())).getCadence().toString()));
+				activityToAdd.put(jpFreq[0], activity.getFrequency().getOpeningTime().toString());
+				activityToAdd.put(jpFreq[1], activity.getFrequency().getClosingTime().toString());
+				activityToAdd.put(jpFreq[2], (((PeriodicActivity) (activity.getFrequency())).getStartDate().toString()));
+				activityToAdd.put(jpFreq[3], (((PeriodicActivity) (activity.getFrequency())).getEndDate().toString()));
+				activityToAdd.put(jpFreq[4], (((PeriodicActivity) (activity.getFrequency())).getCadence().toString()));
 				
 			}
-			activityToAdd.put("certified", cert);
+			activityToAdd.put(jpCert, cert);
 
 			if(activityArray!=null) {
-				activityToAdd.put("id",Integer.toUnsignedLong(activityArray.size()));
-				activityIdToAdd.put("id",Integer.toUnsignedLong(activityArray.size()));
+				activityToAdd.put(jpID,Integer.toUnsignedLong(activityArray.size()));
+				activityIdToAdd.put(jpID,Integer.toUnsignedLong(activityArray.size()));
 			} else {
-				activityToAdd.put("id",0L);
-				activityIdToAdd.put("id",0L);
+				activityToAdd.put(jpID,0L);
+				activityIdToAdd.put(jpID,0L);
 			}
 			
-			id = ((Long)activityIdToAdd.get("id"));
+			id = ((Long)activityIdToAdd.get(jpID));
 			
 			for(i=0;i<placeArray.size();i++) 
 			{
 				result = (JSONObject) placeArray.get(i);
 
-				Long idPlace = (Long) result.get("id");
+				Long idPlace = (Long) result.get(jpID);
 					
 				if (activity.getPlace().getId()==(idPlace)) {
 					
-					JSONArray activitiesIdArray = (JSONArray) result.get("activities");
+					JSONArray activitiesIdArray = (JSONArray) result.get(jpResActivity);
 					
 					//Passando il posto in cui sto aggiungendo l'attivita, controllo se l'attivita che voglio aggiungere e gia presente.
 					
 					if(fac.isInJSON(p, activity.getName(),activity.getCreator().getUserID()))	
 						return -1L;	
 					activitiesIdArray.add(activityIdToAdd); //Salvo l'id dell'attivita al posto di appartenenza.
-					result.put("activities", activitiesIdArray);
+					result.put(jpResActivity, activitiesIdArray);
 					
 					FileWriter file = new FileWriter(placeFileName);
 					file.write(place.toString());
@@ -149,7 +157,7 @@ public class DAOActivity {
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
-			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
+			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
 			
 			JSONObject result;
 
@@ -162,34 +170,34 @@ public class DAOActivity {
 				
 				result = (JSONObject) activityArray.get(i);
 				
-				if(((Long)result.get("id"))==sua.getId()) {
+				if(((Long)result.get(jpID))==sua.getId()) {
 					
-					result.put("place", sua.getPlace().getId());
-					result.put("creator", sua.getCreator().getUserID());
-					result.put("preferences", sua.getPreferences());
-					result.put("name", sua.getName());
+					result.put(jpPlace, sua.getPlace().getId());
+					result.put(jpCreator, sua.getCreator().getUserID());
+					result.put(jpPref, sua.getPreferences());
+					result.put(jpActName, sua.getName());
 					if(sua.getFrequency() instanceof ContinuosActivity) {
-						result.put("opening", sua.getFrequency().getOpeningTime().toString());
-						result.put("closing", sua.getFrequency().getClosingTime().toString());
-						result.put("startdate", null);
-						result.put("enddate", null);
-						result.put("cadence", null);
+						result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
+						result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
+						result.put(jpFreq[2], null);
+						result.put(jpFreq[3], null);
+						result.put(jpFreq[4], null);
 						
 					}
 					if(sua.getFrequency() instanceof ExpiringActivity) {
-						result.put("opening", sua.getFrequency().getOpeningTime().toString());
-						result.put("closing", sua.getFrequency().getClosingTime().toString());
-						result.put("startdate", (((ExpiringActivity) (sua.getFrequency())).getStartDate().toString()));
-						result.put("enddate", (((ExpiringActivity) (sua.getFrequency())).getEndDate().toString()));
-						result.put("cadence", null);
+						result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
+						result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
+						result.put(jpFreq[2], (((ExpiringActivity) (sua.getFrequency())).getStartDate().toString()));
+						result.put(jpFreq[3], (((ExpiringActivity) (sua.getFrequency())).getEndDate().toString()));
+						result.put(jpFreq[4], null);
 						
 					}
 					if(sua.getFrequency() instanceof PeriodicActivity) {
-						result.put("opening", sua.getFrequency().getOpeningTime().toString());
-						result.put("closing", sua.getFrequency().getClosingTime().toString());
-						result.put("startdate", (((PeriodicActivity) (sua.getFrequency())).getStartDate().toString()));
-						result.put("enddate", (((PeriodicActivity) (sua.getFrequency())).getEndDate().toString()));
-						result.put("cadence", (((PeriodicActivity) (sua.getFrequency())).getCadence().toString()));
+						result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
+						result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
+						result.put(jpFreq[2], (((PeriodicActivity) (sua.getFrequency())).getStartDate().toString()));
+						result.put(jpFreq[3], (((PeriodicActivity) (sua.getFrequency())).getEndDate().toString()));
+						result.put(jpFreq[4], (((PeriodicActivity) (sua.getFrequency())).getCadence().toString()));
 						
 					}
 					FileWriter file = new FileWriter(activityFileName);
@@ -220,7 +228,7 @@ public class DAOActivity {
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
-			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
+			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
 			JSONArray preferences = new JSONArray();
 			
 			JSONObject result;
@@ -237,9 +245,9 @@ public class DAOActivity {
 					
 				result = (JSONObject) activityArray.get(i);
 				
-				if(((Long)result.get("id"))==sua.getId()) {
+				if(((Long)result.get(jpID))==sua.getId()) {
 					
-					oldpreferences = (JSONArray) result.get("preferences");
+					oldpreferences = (JSONArray) result.get(jpPref);
 					//Si ricostruisce l'arrayList delle preferenze per compararlo con il nuovo
 					//che si andra ad inserire; Se sono uguali si esce restituendo falso.
 					//Se vero si procede nel salvataggio.
@@ -248,7 +256,7 @@ public class DAOActivity {
 					}
 					
 					if(!sua.getPreferences().equals(oldpref)) {
-						result.put("preferences",preferences);
+						result.put(jpPref,preferences);
 
 						FileWriter file = new FileWriter(activityFileName);
 						file.write(activitiesJOBJ.toString());
@@ -285,7 +293,7 @@ public class DAOActivity {
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
-			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
+			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
 			
 			JSONObject result;
 
@@ -299,7 +307,7 @@ public class DAOActivity {
 				
 				result = (JSONObject) activityArray.get(i);
 				
-				if(((Long)result.get("id"))==sua.getId()) {
+				if(((Long)result.get(jpID))==sua.getId()) {
 				
 					activityArray.remove(i);
 					
@@ -311,13 +319,13 @@ public class DAOActivity {
 					pl = daoPl.findPlaceInJSON(sua.getPlace().getName(), sua.getPlace().getCity(), sua.getPlace().getRegion());
 					
 					resultPlace = (JSONObject) placeArray.get(pl.getId().intValue());
-					JSONArray activityInPlace = (JSONArray) resultPlace.get("activities");
+					JSONArray activityInPlace = (JSONArray) resultPlace.get(jpResActivity);
 					for(i=0;i<activityInPlace.size();i++) {
 						
 						//Prendo un elemento dell'array di eventi nel posto, estraggo il contenuto corrispondente alla chiave "id";
 						//Fatto cio converto a Long l'oggetto risultante ed infine lo confronto con l'id dell'attivita per eliminarlo
 						//Anche dall'array di eventi nel json dei places.
-						if(((Long)((JSONObject)activityInPlace.get(i)).get("id")==sua.getId())){
+						if(((Long)((JSONObject)activityInPlace.get(i)).get(jpID)==sua.getId())){
 							activityInPlace.remove(i);
 							Log.getInstance().logger.info("L'attivita e stata eliminata anche dalla lista dei places.\n");
 						}
@@ -359,7 +367,7 @@ public class DAOActivity {
 			//Si parsa il JSON delle attivita, si estrae poi l'array di attivita in esso contenuto.
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
-			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
+			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
 			JSONArray preferenceList;
 			//Si prepara l'oggetto result, dove contenere attivita estratte dall'array activityArray.
 			JSONObject result;
@@ -374,51 +382,51 @@ public class DAOActivity {
 			for(i=0;i<activityArray.size();i++){
 				
 				result = (JSONObject) activityArray.get(i);
-				preferenceList = (JSONArray) result.get("preferences");
+				preferenceList = (JSONArray) result.get(jpPref);
 				
 				if(preferenceList.contains(preference.toUpperCase())) {
 					
-					if(((String)result.get("certified")).equals("yes")) {			
+					if(((String)result.get(jpCert)).equals("yes")) {			
 						
 						//Se startdate e nulla allora l'attivita sara chiaramente un'attivita Continuos.
-						if((result.get("startdate"))==null) {
-							matchingActivity = new CertifiedActivity((String)result.get("name"),daoSU.findSuperUserByID((Long)result.get("creator")), daoPl.findPlaceById((Long)result.get("place")),LocalTime.parse((String)result.get("opening")),LocalTime.parse((String)result.get("closing")));
-							matchingActivity.setId(((Long)result.get("id")));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get("preferences")));
+						if((result.get(jpFreq[2]))==null) {
+							matchingActivity = new CertifiedActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)),LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])));
+							matchingActivity.setId(((Long)result.get(jpID)));
+							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
 						}
 						//Se cadence e nulla allora l'attivita sara chiaramente un'attivita Expiring.
-						else if((result.get("cadence"))==null) {
-							matchingActivity = new CertifiedActivity((String)result.get("name"),daoSU.findSuperUserByID((Long)result.get("creator")), daoPl.findPlaceById((Long)result.get("place")) , LocalTime.parse((String)result.get("opening")),LocalTime.parse((String)result.get("closing")), LocalDate.parse((String)result.get("startdate")), LocalDate.parse((String)result.get("enddate")));
-							matchingActivity.setId(((Long)result.get("id")));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get("preferences")));
+						else if((result.get(jpFreq[4]))==null) {
+							matchingActivity = new CertifiedActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)) , LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])), LocalDate.parse((String)result.get(jpFreq[2])), LocalDate.parse((String)result.get(jpFreq[3])));
+							matchingActivity.setId(((Long)result.get(jpID)));
+							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
 						}
 						//A seguito dei check si capisce che l'attivita sara Periodica.
 						else {
-							matchingActivity = new CertifiedActivity((String)result.get("name"),daoSU.findSuperUserByID((Long)result.get("creator")), daoPl.findPlaceById((Long)result.get("place")) ,LocalTime.parse((String)result.get("opening")),LocalTime.parse((String)result.get("closing")),LocalDate.parse((String)result.get("startdate")), LocalDate.parse((String)result.get("enddate")),Cadence.valueOf((String)result.get("cadence")));
-							matchingActivity.setId(((Long)result.get("id")));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get("preferences")));
+							matchingActivity = new CertifiedActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)) ,LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])),LocalDate.parse((String)result.get(jpFreq[2])), LocalDate.parse((String)result.get(jpFreq[3])),Cadence.valueOf((String)result.get(jpFreq[4])));
+							matchingActivity.setId(((Long)result.get(jpID)));
+							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
 						}
 						matchingActivity = (CertifiedActivity) matchingActivity;
 					}
 					else {	
 						
 						//Se startdate e nulla allora l'attivita sara chiaramente un'attivita Continuos.
-						if((result.get("startdate"))==null) {
-							matchingActivity = new NormalActivity((String)result.get("name"),daoSU.findSuperUserByID((Long)result.get("creator")), daoPl.findPlaceById((Long)result.get("place")) ,LocalTime.parse((String)result.get("opening")),LocalTime.parse((String)result.get("closing")));
-							matchingActivity.setId(((Long)result.get("id")));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get("preferences")));
+						if((result.get(jpFreq[2]))==null) {
+							matchingActivity = new NormalActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)) ,LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])));
+							matchingActivity.setId(((Long)result.get(jpID)));
+							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
 						}
 						//Se cadence e nulla allora l'attivita sara chiaramente un'attivita Expiring.
-						else if((result.get("cadence"))==null) {
-							matchingActivity = new NormalActivity((String)result.get("name"),daoSU.findSuperUserByID((Long)result.get("creator")), daoPl.findPlaceById((Long)result.get("place")) ,LocalTime.parse((String)result.get("opening")),LocalTime.parse((String)result.get("closing")),LocalDate.parse((String)result.get("startdate")), LocalDate.parse((String)result.get("enddate")));
-							matchingActivity.setId(((Long)result.get("id")));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get("preferences")));
+						else if((result.get(jpFreq[4]))==null) {
+							matchingActivity = new NormalActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)) ,LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])),LocalDate.parse((String)result.get(jpFreq[2])), LocalDate.parse((String)result.get(jpFreq[3])));
+							matchingActivity.setId(((Long)result.get(jpID)));
+							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
 							}
 						//A seguito dei check si capisce che l'attivita sara Periodica.
 						else {
-							matchingActivity = new NormalActivity((String)result.get("name"),daoSU.findSuperUserByID((Long)result.get("creator")), daoPl.findPlaceById((Long)result.get("place")),LocalTime.parse((String)result.get("opening")),LocalTime.parse((String)result.get("closing")),LocalDate.parse((String)result.get("startdate")), LocalDate.parse((String)result.get("enddate")),Cadence.valueOf((String)result.get("cadence")));
-							matchingActivity.setId(((Long)result.get("id")));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get("preferences")));
+							matchingActivity = new NormalActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)),LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])),LocalDate.parse((String)result.get(jpFreq[2])), LocalDate.parse((String)result.get(jpFreq[3])),Cadence.valueOf((String)result.get(jpFreq[4])));
+							matchingActivity.setId(((Long)result.get(jpID)));
+							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
 						}
 						matchingActivity = (NormalActivity) matchingActivity;
 					}
@@ -454,10 +462,10 @@ public class DAOActivity {
 			
 			//Sfruttando l'id del posto si controlla prima quale posto sia quello in cui cercare una particolare attivita.
 			
-			Long idPlace = (Long) result.get("id");
+			Long idPlace = (Long) result.get(jpID);
 			
 			if (p.getId()==idPlace) {
-					JSONArray activities = (JSONArray) result.get("activities");
+					JSONArray activities = (JSONArray) result.get(jpResActivity);
 					
 					//Se non ci sono attivita nel posto c'e poco da cercare.
 					if(activities.size()==0)
@@ -468,57 +476,57 @@ public class DAOActivity {
 					for(j=0;j<activities.size();j++) {
 						
 						activity = (JSONObject) activities.get(j);
-						if(((Long)activity.get("id")).intValue()==n) {
+						if(((Long)activity.get(jpID)).intValue()==n) {
 							//Si controlla se certificata o no l'attivita, passato il test si controlla anche che tipo di attivita ricorrente sia:
 							
 							Object activitiesParser = parser.parse(new FileReader(activityFileName));
 							JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
-							JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
+							JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
 							
 							activityJSON = (JSONObject)activityArray.get(n);
 							
-							if(((String)activityJSON.get("certified")).equals("yes")) {			
+							if(((String)activityJSON.get(jpCert)).equals("yes")) {			
 								
 								//Se startdate e nulla allora l'attivita sara chiaramente un'attivita Continuos.
-								if((activityJSON.get("startdate"))==null) {
-									resultActivity = new CertifiedActivity((String)activityJSON.get("name"),daoSU.findSuperUserByID((Long)activityJSON.get("creator")), p,LocalTime.parse((String)activityJSON.get("opening")),LocalTime.parse((String)activityJSON.get("closing")));
-									resultActivity.setId(((Long)activityJSON.get("id")));
-									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get("preferences")));
+								if((activityJSON.get(jpFreq[2]))==null) {
+									resultActivity = new CertifiedActivity((String)activityJSON.get(jpActName),daoSU.findSuperUserByID((Long)activityJSON.get(jpCreator)), p,LocalTime.parse((String)activityJSON.get(jpFreq[0])),LocalTime.parse((String)activityJSON.get(jpFreq[1])));
+									resultActivity.setId(((Long)activityJSON.get(jpID)));
+									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get(jpPref)));
 									return resultActivity;
 								}
 								//Se cadence e nulla allora l'attivita sara chiaramente un'attivita Expiring.
-								if((activityJSON.get("cadence"))==null) {
-									resultActivity = new CertifiedActivity((String)activityJSON.get("name"),daoSU.findSuperUserByID((Long)activityJSON.get("creator")), p, LocalTime.parse((String)activityJSON.get("opening")),LocalTime.parse((String)activityJSON.get("closing")), LocalDate.parse((String)activityJSON.get("startdate")), LocalDate.parse((String)activityJSON.get("enddate")));
-									resultActivity.setId(((Long)activityJSON.get("id")));
-									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get("preferences")));
+								if((activityJSON.get(jpFreq[4]))==null) {
+									resultActivity = new CertifiedActivity((String)activityJSON.get(jpActName),daoSU.findSuperUserByID((Long)activityJSON.get(jpCreator)), p, LocalTime.parse((String)activityJSON.get(jpFreq[0])),LocalTime.parse((String)activityJSON.get(jpFreq[1])), LocalDate.parse((String)activityJSON.get(jpFreq[2])), LocalDate.parse((String)activityJSON.get(jpFreq[3])));
+									resultActivity.setId(((Long)activityJSON.get(jpID)));
+									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get(jpPref)));
 									return resultActivity;
 								}
 								//A seguito dei check si capisce che l'attivita sara Periodica.
-								resultActivity = new CertifiedActivity((String)activityJSON.get("name"),daoSU.findSuperUserByID((Long)activityJSON.get("creator")), p,LocalTime.parse((String)activityJSON.get("opening")),LocalTime.parse((String)activityJSON.get("closing")),LocalDate.parse((String)activityJSON.get("startdate")), LocalDate.parse((String)activityJSON.get("enddate")),Cadence.valueOf((String)activityJSON.get("cadence")));
-								resultActivity.setId(((Long)activityJSON.get("id")));
-								resultActivity.setPreferences(((ArrayList<String>)activityJSON.get("preferences")));
+								resultActivity = new CertifiedActivity((String)activityJSON.get(jpActName),daoSU.findSuperUserByID((Long)activityJSON.get(jpCreator)), p,LocalTime.parse((String)activityJSON.get(jpFreq[0])),LocalTime.parse((String)activityJSON.get(jpFreq[1])),LocalDate.parse((String)activityJSON.get(jpFreq[2])), LocalDate.parse((String)activityJSON.get(jpFreq[3])),Cadence.valueOf((String)activityJSON.get(jpFreq[4])));
+								resultActivity.setId(((Long)activityJSON.get(jpID)));
+								resultActivity.setPreferences(((ArrayList<String>)activityJSON.get(jpPref)));
 								return resultActivity;
 							}
 							else {	
 								
 								//Se startdate e nulla allora l'attivita sara chiaramente un'attivita Continuos.
-								if((activityJSON.get("startdate"))==null) {
-									resultActivity = new NormalActivity((String)activityJSON.get("name"),daoSU.findSuperUserByID((Long)activityJSON.get("creator")), p,LocalTime.parse((String)activityJSON.get("opening")),LocalTime.parse((String)activityJSON.get("closing")));
-									resultActivity.setId(((Long)activityJSON.get("id")));
-									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get("preferences")));
+								if((activityJSON.get(jpFreq[2]))==null) {
+									resultActivity = new NormalActivity((String)activityJSON.get(jpActName),daoSU.findSuperUserByID((Long)activityJSON.get(jpCreator)), p,LocalTime.parse((String)activityJSON.get(jpFreq[0])),LocalTime.parse((String)activityJSON.get(jpFreq[1])));
+									resultActivity.setId(((Long)activityJSON.get(jpID)));
+									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get(jpPref)));
 									return resultActivity;
 								}
 								//Se cadence e nulla allora l'attivita sara chiaramente un'attivita Expiring.
-								if((activityJSON.get("cadence"))==null) {
-									resultActivity = new NormalActivity((String)activityJSON.get("name"),daoSU.findSuperUserByID((Long)activityJSON.get("creator")), p,LocalTime.parse((String)activityJSON.get("opening")),LocalTime.parse((String)activityJSON.get("closing")),LocalDate.parse((String)activityJSON.get("startdate")), LocalDate.parse((String)activityJSON.get("enddate")));
-									resultActivity.setId(((Long)activityJSON.get("id")));
-									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get("preferences")));
+								if((activityJSON.get(jpFreq[4]))==null) {
+									resultActivity = new NormalActivity((String)activityJSON.get(jpActName),daoSU.findSuperUserByID((Long)activityJSON.get(jpCreator)), p,LocalTime.parse((String)activityJSON.get(jpFreq[0])),LocalTime.parse((String)activityJSON.get(jpFreq[1])),LocalDate.parse((String)activityJSON.get(jpFreq[2])), LocalDate.parse((String)activityJSON.get(jpFreq[3])));
+									resultActivity.setId(((Long)activityJSON.get(jpID)));
+									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get(jpPref)));
 									return resultActivity;
 									}
 								//A seguito dei check si capisce che l'attivita sara Periodica.
-									resultActivity = new NormalActivity((String)activityJSON.get("name"),daoSU.findSuperUserByID((Long)activityJSON.get("creator")), p,LocalTime.parse((String)activityJSON.get("opening")),LocalTime.parse((String)activityJSON.get("closing")),LocalDate.parse((String)activityJSON.get("startdate")), LocalDate.parse((String)activityJSON.get("enddate")),Cadence.valueOf((String)activityJSON.get("cadence")));
-									resultActivity.setId(((Long)activityJSON.get("id")));
-									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get("preferences")));
+									resultActivity = new NormalActivity((String)activityJSON.get(jpActName),daoSU.findSuperUserByID((Long)activityJSON.get(jpCreator)), p,LocalTime.parse((String)activityJSON.get(jpFreq[0])),LocalTime.parse((String)activityJSON.get(jpFreq[1])),LocalDate.parse((String)activityJSON.get(jpFreq[2])), LocalDate.parse((String)activityJSON.get(jpFreq[3])),Cadence.valueOf((String)activityJSON.get(jpFreq[4])));
+									resultActivity.setId(((Long)activityJSON.get(jpID)));
+									resultActivity.setPreferences(((ArrayList<String>)activityJSON.get(jpPref)));
 									return resultActivity;
 								}
 							}
@@ -555,7 +563,7 @@ public class DAOActivity {
 			
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
-			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
+			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
 			
 			for(i=0;i<placeArray.size();i++) 
 			{
@@ -563,10 +571,10 @@ public class DAOActivity {
 				
 				//Sfruttando l'id del posto si controlla prima quale posto sia quello in cui cercare una particolare attivita.
 				
-				Long idPlace = (Long) result.get("id");
+				Long idPlace = (Long) result.get(jpID);
 				
 				if (p.getId()==(idPlace)) {
-						JSONArray activities = (JSONArray) result.get("activities");
+						JSONArray activities = (JSONArray) result.get(jpResActivity);
 						
 						//Se non ci sono attivita nel posto c'e poco da cercare.
 						if(activities.size()==0)
@@ -580,11 +588,11 @@ public class DAOActivity {
 							//Preso l'oggetto activity dal JSON places, scandisco il JSON activities sfruttando il campo
 							//id della lista di attivita nei posti. In questo modo posso vedere quali attivita appartengono
 							//al posto che mi interessa per poi eventualmente vedere se tra le attivita e gia presente quella che volevo aggiungere.
-							activityJSON = (JSONObject)activityArray.get(((Long)activity.get("id")).intValue());
+							activityJSON = (JSONObject)activityArray.get(((Long)activity.get(jpID)).intValue());
 							
 							//Se tra le attivita che ho scandito con questo ciclo for ho trovato una con nome utente che ha creato l'attivita e nome dell'attivita
 							//UGUALI a quella che stavo per aggiungere restituisco true, indicando che GIA' e presente l'attivita.
-							if(((Long)(activityJSON.get("creator")))==(creatorId) && (((String)activityJSON.get("name")).toUpperCase()).equals(activityName.toUpperCase())) {
+							if(((Long)(activityJSON.get(jpCreator)))==(creatorId) && (((String)activityJSON.get(jpActName)).toUpperCase()).equals(activityName.toUpperCase())) {
 								return true;
 							}
 						}
