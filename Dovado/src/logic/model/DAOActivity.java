@@ -3,6 +3,7 @@ package logic.model;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -336,6 +337,9 @@ public class DAOActivity {
 					return true;
 				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -432,7 +436,8 @@ public class DAOActivity {
 	public SuperActivity findActivityByID (DAOSuperUser daoSU, Place p, int n){
 	SuperActivity resultActivity;
 	JSONParser parser = new JSONParser();
-	int i,j;
+	int i;
+	int j;
 	try 
 	{
 		Object places = parser.parse(new FileReader(placeFileName));
@@ -527,14 +532,14 @@ public class DAOActivity {
 	
 	public boolean isInJSON(DAOSuperUser daoSU, Place p, String activityName, Long creatorId) {
 		JSONParser parser = new JSONParser();
-		int i,j;
+		int i;
+		int j;
 		try 
 		{
 			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
 			JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 			JSONObject result;
-			daoSU = DAOSuperUser.getInstance();
 			
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -567,7 +572,7 @@ public class DAOActivity {
 							
 							//Se tra le attivita che ho scandito con questo ciclo for ho trovato una con nome utente che ha creato l'attivita e nome dell'attivita
 							//UGUALI a quella che stavo per aggiungere restituisco true, indicando che GIA' e presente l'attivita.
-							if(((Long)(activityJSON.get(jpCreator)))==(creatorId) && (((String)activityJSON.get(jpActName)).toUpperCase()).equals(activityName.toUpperCase())) {
+							if(((Long)(activityJSON.get(jpCreator))).equals(creatorId) && (((String)activityJSON.get(jpActName)).toUpperCase()).equals(activityName.toUpperCase())) {
 								return true;
 							}
 						}

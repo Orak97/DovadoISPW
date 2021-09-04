@@ -29,7 +29,7 @@ public class FindActivityController {
 		ArrayList<SuperActivity> result;
 		daoAc = DAOActivity.getInstance();
 		daoSU = DAOSuperUser.getInstance();
-		if((result = daoAc.findActivityByPreference(daoSU, preference))!=null)
+		if((result = (ArrayList<SuperActivity>) daoAc.findActivityByPreference(daoSU, preference))!=null)
 			return result;
 		Log.getInstance().logger.warning("Non e stata trovata alcuna attivita con la preferenza specificata.");
 		return null;
