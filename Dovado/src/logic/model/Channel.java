@@ -2,6 +2,8 @@ package logic.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+
 import logic.model.Message;
 
 public class Channel {
@@ -17,8 +19,14 @@ public class Channel {
 		this.activityReferenced=activityId;
 		this.listOfMsg = new ArrayList<>();
 	}
-	 
 	
+	
+	
+	public long getActivityReferenced() {
+		return activityReferenced;
+	}
+
+
 	public void addMsg(long user, String msgText) {
 
 		Message newMessage = new Message(user, msgText); 
@@ -39,17 +47,17 @@ public class Channel {
 		}
 	}
 	
-	public ArrayList<Message> getChat(){
+	public List<Message> getChat(){
 		return this.listOfMsg;
 	}
 	
 	
 	//IL METODO returnChat SECONDO ME VA NEL CONTROLLER, QUINDI QUESTI PER IL MOMENTO RESTANO INUTILIZZATI
-	public ArrayList<String> getFormattedChat() {
+	public List<String> getFormattedChat() {
 		return getFormattedChat(0);
 	}
 	
-	public ArrayList<String> getFormattedChat(int startIndex) {
+	public List<String> getFormattedChat(int startIndex) {
 		
 		ArrayList<String> chat = new ArrayList<>();
 		
