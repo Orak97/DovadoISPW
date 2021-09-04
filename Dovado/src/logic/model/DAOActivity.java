@@ -17,8 +17,14 @@ public class DAOActivity {
 	
 	private static DAOActivity INSTANCE;
 	private DAOPlace daoPl;
+	private String activityFileName;
+	private String placeFileName;
 	
 	private DAOActivity() {
+		daoPl = DAOPlace.getInstance();
+		activityFileName = "WebContent/activities.json";
+		//TODO il Path del place potremmo fare che viene chiamato da DAOPlace
+		placeFileName = "WebContent/places.json";
 	}
 	
 	public static DAOActivity getInstance() {
@@ -35,16 +41,17 @@ public class DAOActivity {
 		int i;
 		try 
 		{
-			Object places = parser.parse(new FileReader("WebContent/places.json"));
+			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
 			JSONArray placeArray = (JSONArray) place.get("places");
 			
-			Object activitiesParser = parser.parse(new FileReader("WebContent/activities.json"));
+			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
 			
 			JSONObject result;
-			JSONObject activityToAdd = new JSONObject(),activityIdToAdd = new JSONObject();
+			JSONObject activityToAdd = new JSONObject();
+			JSONObject activityIdToAdd = new JSONObject();
 			JSONArray newPreferences = new JSONArray();
 
 			activityToAdd.put("place", p.getId());
@@ -104,14 +111,14 @@ public class DAOActivity {
 					activitiesIdArray.add(activityIdToAdd); //Salvo l'id dell'attivita al posto di appartenenza.
 					result.put("activities", activitiesIdArray);
 					
-					FileWriter file = new FileWriter("WebContent/places.json");
+					FileWriter file = new FileWriter(placeFileName);
 					file.write(place.toString());
 					file.flush();
 					file.close();
 					
 					activityArray.add(activityToAdd);
 					
-					FileWriter file2 = new FileWriter("WebContent/activities.json");
+					FileWriter file2 = new FileWriter(activityFileName);
 					file2.write(activitiesJOBJ.toString());
 					file2.flush();
 					file2.close();
@@ -140,7 +147,7 @@ public class DAOActivity {
 		int i;
 		try 
 		{
-			Object activitiesParser = parser.parse(new FileReader("WebContent/activities.json"));
+			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
 			
@@ -185,7 +192,7 @@ public class DAOActivity {
 						result.put("cadence", (((PeriodicActivity) (sua.getFrequency())).getCadence().toString()));
 						
 					}
-					FileWriter file = new FileWriter("WebContent/activities.json");
+					FileWriter file = new FileWriter(activityFileName);
 					file.write(activitiesJOBJ.toString());
 					file.flush();
 					file.close();
@@ -211,7 +218,7 @@ public class DAOActivity {
 		int i,j;
 		try 
 		{
-			Object activitiesParser = parser.parse(new FileReader("WebContent/activities.json"));
+			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
 			JSONArray preferences = new JSONArray();
@@ -243,7 +250,7 @@ public class DAOActivity {
 					if(!sua.getPreferences().equals(oldpref)) {
 						result.put("preferences",preferences);
 
-						FileWriter file = new FileWriter("WebContent/activities.json");
+						FileWriter file = new FileWriter(activityFileName);
 						file.write(activitiesJOBJ.toString());
 						file.flush();
 						file.close();
@@ -276,7 +283,7 @@ public class DAOActivity {
 		int i;
 		try 
 		{
-			Object activitiesParser = parser.parse(new FileReader("WebContent/activities.json"));
+			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
 			
@@ -296,7 +303,7 @@ public class DAOActivity {
 				
 					activityArray.remove(i);
 					
-					Object places = parser.parse(new FileReader("WebContent/places.json"));
+					Object places = parser.parse(new FileReader(placeFileName));
 					JSONObject place = (JSONObject) places;
 					JSONArray placeArray = (JSONArray) place.get("places");
 					JSONObject resultPlace;
@@ -316,12 +323,12 @@ public class DAOActivity {
 						}
 					}
 					
-					FileWriter file = new FileWriter("WebContent/activities.json");
+					FileWriter file = new FileWriter(activityFileName);
 					file.write(activitiesJOBJ.toString());
 					file.flush();
 					file.close();
 					
-					FileWriter file2 = new FileWriter("WebContent/places.json");
+					FileWriter file2 = new FileWriter(placeFileName);
 					file2.write(place.toString());;
 					file2.flush();
 					file2.close();
@@ -345,13 +352,12 @@ public class DAOActivity {
 		ArrayList<SuperActivity> matchingActivities = new ArrayList<SuperActivity>();
 		SuperActivity matchingActivity;
 		JSONParser parser = new JSONParser();
-		DAOPlace daoPl = DAOPlace.getInstance();
 		
 		int i;
 		try 
 		{
 			//Si parsa il JSON delle attivita, si estrae poi l'array di attivita in esso contenuto.
-			Object activitiesParser = parser.parse(new FileReader("WebContent/activities.json"));
+			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
 			JSONArray preferenceList;
@@ -437,7 +443,7 @@ public class DAOActivity {
 	int i,j;
 	try 
 	{
-		Object places = parser.parse(new FileReader("WebContent/places.json"));
+		Object places = parser.parse(new FileReader(placeFileName));
 		JSONObject place = (JSONObject) places;
 		JSONArray placeArray = (JSONArray) place.get("places");
 		JSONObject result;
@@ -465,7 +471,7 @@ public class DAOActivity {
 						if(((Long)activity.get("id")).intValue()==n) {
 							//Si controlla se certificata o no l'attivita, passato il test si controlla anche che tipo di attivita ricorrente sia:
 							
-							Object activitiesParser = parser.parse(new FileReader("WebContent/activities.json"));
+							Object activitiesParser = parser.parse(new FileReader(activityFileName));
 							JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 							JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
 							
@@ -541,13 +547,13 @@ public class DAOActivity {
 		int i,j;
 		try 
 		{
-			Object places = parser.parse(new FileReader("WebContent/places.json"));
+			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
 			JSONArray placeArray = (JSONArray) place.get("places");
 			JSONObject result;
 			daoSU = DAOSuperUser.getInstance();
 			
-			Object activitiesParser = parser.parse(new FileReader("WebContent/activities.json"));
+			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 			JSONArray activityArray = (JSONArray) activitiesJOBJ.get("activities");
 			

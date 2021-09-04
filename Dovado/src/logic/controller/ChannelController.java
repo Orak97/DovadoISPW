@@ -18,7 +18,7 @@ public class ChannelController {
 	
 	
 	public List<String[]> formattedChat(int user){
-		ArrayList<Message> listOfMsg = this.channell.getChat();
+		ArrayList<Message> listOfMsg = (ArrayList<Message>) this.channell.getChat();
 		ArrayList<String[]> chat = new ArrayList<>();
 		String[] msg;
 		if (listOfMsg.size() == 1) {
