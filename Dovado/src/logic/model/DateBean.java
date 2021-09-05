@@ -56,12 +56,7 @@ public class DateBean {
 	
 	public LocalDateTime getScheduledTime() {
 		
-		LocalDateTime scheduledTime = LocalDateTime.of(
-				LocalDate.of(yearS,monthS,dayS), 
-				LocalTime.of(hourS, minutesS)
-				);	
-		
-		return scheduledTime;
+		return LocalDateTime.of(LocalDate.of(yearS,monthS,dayS), LocalTime.of(hourS, minutesS));
 	}
 	
 	public LocalDateTime getReminderTime() {
