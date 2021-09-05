@@ -212,11 +212,11 @@ public class DAOSuperUser {
 					else if (psw.equals(passwordJSON)) {				
 						Log.getInstance().logger.info("PASSWORD CORRETTA");
 						founded = true;
-					} 
+					} else {
 					
 					Log.getInstance().logger.info("PASSWORD SBAGLIATA");
 					return null;
-						
+					}	
 				}
 				//Qui invece entro se cerco tramite id
 				else if( id != null && Long.compare(id, idJson)==0){
