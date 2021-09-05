@@ -58,8 +58,4 @@ public class Message {
 		this.sentDate = LocalDateTime.parse(date);
 	}
 	
-	public static void main(String[] args) {
-		
-	}
-		
 }

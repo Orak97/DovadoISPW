@@ -19,7 +19,7 @@ public class SetPreferencesController {
 		daoSu = DAOSuperUser.getInstance();
 		daoPr = DAOPreferences.getInstance();
 		//Prendo l'arraylist delle preferenze e lo preparo.
-		ArrayList<String> preferences = su.getPreferences();
+		ArrayList<String> preferences = (ArrayList<String>) su.getPreferences();
 		
 		//Tramite il DAO delle preferenze vado a cercare il suo id usando il nome.
 		//Se il nome non esiste il metodo chiamato restituisce l'id dell'appena aggiunta

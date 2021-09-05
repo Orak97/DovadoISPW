@@ -7,7 +7,7 @@ public abstract class FrequencyOfRepeat {
 	private LocalTime openingTime;
 	private LocalTime closingTime;
 	
-	public FrequencyOfRepeat(LocalTime openingTime, LocalTime closingTime) {
+	protected FrequencyOfRepeat(LocalTime openingTime, LocalTime closingTime) {
 		this.openingTime=openingTime;
 		this.closingTime=closingTime;
 	}

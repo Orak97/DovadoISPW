@@ -1,6 +1,7 @@
 package logic.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class SuperUser {
 	private String username;
@@ -8,11 +9,11 @@ public abstract class SuperUser {
 	private String email;
 	private ArrayList<String> preferences;
 	
-	public SuperUser(String usr,String email,Long id) {
+	protected SuperUser(String usr,String email,Long id) {
 		this.username = usr;
 		this.email = email;
 		this.uID = id;
-		this.preferences = new ArrayList<String>();
+		this.preferences = new ArrayList<>();
 	}
 	
 	public String getEmail() {
@@ -32,12 +33,12 @@ public abstract class SuperUser {
 	* di SuperUser, e setPreferences, che invece stabilisce le nuove 
 	* preferenze del SuperUser in questione.
 	*/
-	public ArrayList<String> getPreferences() {
+	public List<String> getPreferences() {
 		return this.preferences;
 	}
 	
-	public void setPreferences(ArrayList<String> newPreferences) {
-		this.preferences = newPreferences;
+	public void setPreferences(List<String> newPreferences) {
+		this.preferences = (ArrayList<String>) newPreferences;
 	}
 	
 	public SuperUser getUser(String username) {

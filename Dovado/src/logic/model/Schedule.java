@@ -21,7 +21,7 @@ public class Schedule {
 			Log.getInstance().logger.warning("Errore nell'aggiunta dell'attività nello schedule.");
 			return;
 		}
-		System.out.println("Aggiunta l'attività nello schedule.");
+		Log.getInstance().logger.info("Aggiunta l'attività nello schedule.");
 		
 	}
 	
@@ -29,7 +29,7 @@ public class Schedule {
 		return this.myActivity;
 	}
 
-	public void setScheduledActivities(ArrayList<ScheduledActivity> scheduledActs) {
-		this.myActivity = scheduledActs;
+	public void setScheduledActivities(List<ScheduledActivity> scheduledActs) {
+		this.myActivity = (ArrayList<ScheduledActivity>) scheduledActs;
 	}
 }

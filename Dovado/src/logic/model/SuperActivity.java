@@ -18,7 +18,7 @@ public abstract class SuperActivity {
 	private Channel channel;
 	private ArrayList<String> preferences;
 	
-	public SuperActivity(String nome, SuperUser user, Place place) {
+	protected SuperActivity(String nome, SuperUser user, Place place) {
 		//chiamare questo metodo quando si vuole creare una attività continua!
 		this.name= nome;
 		this.creator = user;
@@ -27,19 +27,19 @@ public abstract class SuperActivity {
 		this.frequencyOfRepeat = new ContinuosActivity(null,null);
 	}
 	
-	public SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime) {
+	protected SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime) {
 		//chiamare questo metodo quando si vuole creare una attività continua con orario apertura e chiusura
 		this(nome,c,p);
 		this.frequencyOfRepeat = new ContinuosActivity(openingTime,closingTime);
 	}
 	
-	public SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate) {
+	protected SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate) {
 		//chiamare questo metodo quando si vuole creare una attività a scadenza!
 		this(nome,c,p);
 		this.frequencyOfRepeat = new ExpiringActivity(openingTime,closingTime,startDate,endDate);
 	}
 	
-	public SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate, Cadence cadence) {
+	protected SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate, Cadence cadence) {
 		//chiamare questo metodo quando si vuole creare una attività periodica !
 		this(nome,c,p);
 		this.frequencyOfRepeat = new PeriodicActivity(openingTime,closingTime,startDate,endDate,cadence);
@@ -94,7 +94,7 @@ public abstract class SuperActivity {
 		return this.preferences;
 	}
 	
-	public void setPreferences(ArrayList<String> newPreferences) {
-		this.preferences = newPreferences;
+	public void setPreferences(List<String> newPreferences) {
+		this.preferences = (ArrayList<String>) newPreferences;
 	}
 }

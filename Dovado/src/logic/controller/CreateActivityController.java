@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,7 +25,10 @@ import logic.model.User;
 public class CreateActivityController {
 	private SuperUser u;
 	private DAOActivity daoAc;
-	CreateActivityBean bean;
+	private CreateActivityBean bean;
+	
+	private static final  String ERRNOCREATE = "Attivita non creata.";
+	private static final  String SHOWLOGID = "ID: {0}";
 		
 	CreateActivityController(SuperUser u, CreateActivityBean bean){
 		this.u= u;
@@ -51,9 +55,9 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime());					
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().logger.warning(ERRNOCREATE);
 						return;
-					} else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					} else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
 					
 					newActivity.setId(id); 
 				}
@@ -61,9 +65,9 @@ public class CreateActivityController {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime() );
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().logger.warning(ERRNOCREATE);
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
 					newActivity.setId(id);
 				}
 			
@@ -78,18 +82,18 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().logger.warning(ERRNOCREATE);
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
 					newActivity.setId(id);
 				}
 				else {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");		
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().logger.warning(ERRNOCREATE);
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
 					newActivity.setId(id);
 				}
 			}
@@ -103,18 +107,18 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().logger.warning(ERRNOCREATE);
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
 					newActivity.setId(id);
 				}
 				else { 
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().logger.warning(ERRNOCREATE);
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
 					newActivity.setId(id);				
 				}
 			}

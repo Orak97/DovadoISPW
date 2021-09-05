@@ -13,13 +13,11 @@ private String username;
 private String error;
 private Pattern patternPsw;
 private Pattern patternEmail;
-private Pattern patternUname;
 private RegisterController regController;
 
 public RegBean() {
 	patternEmail = Pattern.compile(".+@.+\\.[a-z]+");
 	patternPsw = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[,.!?&]).{8,20})");
-	patternUname = Pattern.compile(" ");
 	regController = new RegisterController();
 	error = null;
 }

@@ -54,11 +54,11 @@ public class User extends SuperUser{
 	
 	public void getReward(int reward) {
 		this.wallet+=reward;
-	};
+	}
 	
 	public Schedule getSchedule() {
 		return schedule;
-	};
+	}
 	
 	
 	

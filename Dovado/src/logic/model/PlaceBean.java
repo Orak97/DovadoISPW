@@ -14,7 +14,7 @@ import logic.controller.CreatePlaceController;
 public class PlaceBean {
 	
 	private static PlaceBean INSTANCE;
-	private static CreatePlaceController createPlaceController;
+	private CreatePlaceController createPlaceController;
 	
 	private PlaceBean() {
 		//Lo implemento come singleton.
