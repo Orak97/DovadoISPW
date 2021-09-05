@@ -18,17 +18,6 @@ public class DAOSuperUser {
 	private static DAOSuperUser INSTANCE;
 	private String userFileName;
 	
-	private String jpPref = "preferences";
-	private String jpID = "id";
-	private String jpEmail = "email";
-	private String jpUsername = "username";
-	private String jpPartner = "partner";
-	private String jpPassword = "password";
-	private String jpWallet = "wallet";
-	private String jpUsers = "users"; 
-	
-	
-	
 	private DAOSuperUser() {
 		userFileName = "WebContent/user.json";
 	}
@@ -44,22 +33,22 @@ public class DAOSuperUser {
 		try {
 			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userObj = (JSONObject) users;
-			JSONArray userArray = (JSONArray) userObj.get(jpUsers);
+			JSONArray userArray = (JSONArray) userObj.get("users");
 			JSONArray userPref = new JSONArray();
 			
 			
 			if (findSuperUser(email, password, null)==(null)) {				
 				JSONObject newUser = new JSONObject();
 
-				newUser.put(jpID, userArray.size());
-				newUser.put(jpEmail, email);
-				newUser.put(jpUsername, username);
-				newUser.put(jpPartner, partner);
+				newUser.put("id", userArray.size());
+				newUser.put("email", email);
+				newUser.put("username", username);
+				newUser.put("partner", partner);
 				if (partner == 0) {
-					newUser.put(jpWallet, 0);
+					newUser.put("wallet", 0);
 				}
-				newUser.put(jpPassword, password);
-				newUser.put(jpPref, userPref);
+				newUser.put("password", password);
+				newUser.put("preferences", userPref);
 				userArray.add(newUser);
 
 				FileWriter file = new FileWriter(userFileName);
@@ -82,10 +71,10 @@ public class DAOSuperUser {
 		int i;
 		int j;
 		
-		try (FileWriter file = new FileWriter(userFileName)){
+		try {
 			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
-			JSONArray userArray = (JSONArray) userRes.get(jpUsers);
+			JSONArray userArray = (JSONArray) userRes.get("users");
 			JSONArray preferences = new JSONArray();
 			JSONObject result;
 			
@@ -96,12 +85,12 @@ public class DAOSuperUser {
 			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
 				
-				Long idJson = (Long) result.get(jpID);
+				Long idJson = (Long) result.get("id");
 				JSONArray oldpreferences;
-				//Se trovato l'utente si pone all'interno dell'attributo jpPref
+				//Se trovato l'utente si pone all'interno dell'attributo "preferences"
 				//il nuovo JSONArray appositamente preparato in precedenza.
 				if (su.getUserID().equals(idJson)) {
-					oldpreferences = (JSONArray) result.get(jpPref);
+					oldpreferences = (JSONArray) result.get("preferences");
 					//Si ricostruisce l'arrayList delle preferenze per compararlo con il nuovo
 					//che si andra ad inserire; Se sono uguali si esce restituendo falso.
 					//Se vero si procede nel salvataggio.
@@ -110,11 +99,13 @@ public class DAOSuperUser {
 					}
 					
 					if(!su.getPreferences().equals(oldpref)) {
-						result.put(jpPref, preferences);
+						result.put("preferences", preferences);
 						
+						FileWriter file = new FileWriter(userFileName);
 						file.write(userRes.toString());
 						file.flush();
-												
+						file.close();
+						
 						return true;
 					} 
 					else return false;
@@ -134,10 +125,10 @@ public class DAOSuperUser {
 		Long daoWallet  =  (long) 0;
 		int i;
 		
-		try (FileWriter file = new FileWriter(userFileName)) {
+		try {
 			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
-			JSONArray userArray = (JSONArray) userRes.get(jpUsers);
+			JSONArray userArray = (JSONArray) userRes.get("users");
 			JSONObject result;
 			
 			
@@ -145,11 +136,11 @@ public class DAOSuperUser {
 			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
 				
-				Long idJson = (Long) result.get(jpID);
+				Long idJson = (Long) result.get("id");
 				//Se trovato l'utente si pone all'interno dell'attributo "preferences"
 				//il nuovo JSONArray appositamente preparato in precedenza.
 				if (id.equals(idJson)) {
-					daoWallet = (Long) result.get(jpWallet);
+					daoWallet = (Long) result.get("wallet");
 					if (daoWallet == null) {
 						daoWallet =(long) 0;
 					}
@@ -159,11 +150,12 @@ public class DAOSuperUser {
 						return false;
 					}
 					
-						result.put(jpWallet, daoWallet);
+						result.put("wallet", daoWallet);
 						
-					
+						FileWriter file = new FileWriter(userFileName);
 						file.write(userRes.toString());
 						file.flush();
+						file.close();
 						
 						return true;
 					
@@ -196,27 +188,27 @@ public class DAOSuperUser {
 		{
 			Object users = parser.parse(new FileReader(userFileName));
 			JSONObject userRes = (JSONObject) users;
-			JSONArray userArray = (JSONArray) userRes.get(jpUsers);
+			JSONArray userArray = (JSONArray) userRes.get("users");
 			JSONObject result = null;
 
 			for(i=0;i<userArray.size();i++) {
 				result = (JSONObject)userArray.get(i);
 	
-				String emailJSON = (String) result.get(jpEmail);
-				String passwordJSON = (String) result.get(jpPassword);
-				Long idJson = (Long) result.get(jpID);
+				String emailJSON = (String) result.get("email");
+				String passwordJSON = (String) result.get("password");
+				Long idJson = (Long) result.get("id");
 			
 				//Qui controllo nel caso uso la mail per cercare
 				if (email != null && email.equals(emailJSON)) {
 					if(psw == null) {
-						Log.getInstance().getLogger().warning("PASSWORD NULLA");
+						Log.getInstance().logger.warning("PASSWORD NULLA");
 						founded = true;
 					}
 					else if (!psw.equals(passwordJSON)) {
-						Log.getInstance().getLogger().info("PASSWORD SBAGLIATA");
+						Log.getInstance().logger.info("PASSWORD SBAGLIATA");
 						return null;
 					} else {
-						Log.getInstance().getLogger().warning("PASSWORD CORRETTA");
+						Log.getInstance().logger.warning("PASSWORD CORRETTA");
 						founded = true;
 					}
 				}
@@ -227,19 +219,19 @@ public class DAOSuperUser {
 			}		
 					
 			if (!founded) {
-				Log.getInstance().getLogger().info("Nessun utente trovato");
+				Log.getInstance().logger.info("Nessun utente trovato");
 				return null;
 			}
 			
 			//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-			if((Long)result.get(jpPartner)==1) {
-				Partner partner = new Partner((String) result.get(jpUsername),(String) result.get(jpEmail),(Long) result.get(jpID));
-				partner.setPreferences(((ArrayList<String>)result.get(jpPref)));
+			if((Long)result.get("partner")==1) {
+				Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
+				partner.setPreferences(((ArrayList<String>)result.get("preferences")));
 				return partner;
 			}
-			Log.getInstance().getLogger().info(String.valueOf(result.get(jpWallet)));
-			User user = new User((String) result.get(jpUsername),(String) result.get(jpEmail),(Long) result.get(jpID), (Long) result.get(jpWallet));
-			user.setPreferences(((ArrayList<String>)result.get(jpPref)));
+			Log.getInstance().logger.info(String.valueOf(result.get("wallet")));
+			User user = new User((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"), (Long) result.get("wallet"));
+			user.setPreferences(((ArrayList<String>)result.get("preferences")));
 			return user;							
 			
 			
