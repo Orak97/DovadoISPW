@@ -356,7 +356,6 @@ public class DAOActivity {
 	}
 	
 	public SuperActivity findActivityByID (DAOSuperUser daoSU, Place p, int n){
-	//SuperActivity resultActivity;
 	JSONParser parser = new JSONParser();
 	int i;
 	int j;
@@ -412,7 +411,6 @@ public class DAOActivity {
 	
 	
 	public SuperActivity findActivityByID(DAOSuperUser daoSU,Long id) {
-		SuperActivity resultActivity;
 		JSONParser parser = new JSONParser();
 		DAOPlace daoP = DAOPlace.getInstance();
 		
