@@ -143,14 +143,26 @@ public class DAOActivity {
 	}
 
 	public boolean updateActivityJSON(SuperActivity sua) {
+		return updateActivityPreferences(sua, false);
+	}
+	
+	public boolean updateActivityPreferences(SuperActivity sua) {
+		return updateActivityPreferences(sua, true);
+	}
+	
+	public boolean updateActivityPreferences(SuperActivity sua, boolean updatePref) {
 		JSONParser parser = new JSONParser();
-		
+		ArrayList<String> oldpref = new ArrayList<>();
 		int i;
-		try (FileWriter file = new FileWriter(activityFileName))
+		int j;
+		
+		try (FileWriter file = new FileWriter(activityFileName))		
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
+			JSONArray preferences = new JSONArray();
+			JSONArray oldpreferences;
 			
 			JSONObject result;
 
@@ -159,12 +171,35 @@ public class DAOActivity {
 				return false;
 			}
 			
+			if (updatePref) {
+				preferences.addAll(sua.getPreferences());
+				
+			}
+			
 			for(i=0;i<activityArray.size();i++){
-				
-				result = (JSONObject) activityArray.get(i);
-				
-				if(((Long)result.get(jpID))==sua.getId()) {
 					
+				result = (JSONObject) activityArray.get(i);
+				if (updatePref) {
+					if(((Long)result.get(jpID))==sua.getId()) {
+					
+						oldpreferences = (JSONArray) result.get(jpPref);
+						//Si ricostruisce l'arrayList delle preferenze per compararlo con il nuovo
+						//che si andra ad inserire; Se sono uguali si esce restituendo falso.
+						//Se vero si procede nel salvataggio.
+						for(j=0;j<oldpreferences.size();j++) {
+							oldpref.add((String)oldpreferences.get(j));
+						}
+					
+						if(!sua.getPreferences().equals(oldpref)) {
+							result.put(jpPref,preferences);
+						
+							file.write(activitiesJOBJ.toString());
+							file.flush();
+						
+							return true;
+						} 	else return false;
+					}
+				} else {
 					result.put(jpPlace, sua.getPlace().getId());
 					result.put(jpCreator, sua.getCreator().getUserID());
 					result.put(jpPref, sua.getPreferences());
@@ -198,63 +233,6 @@ public class DAOActivity {
 					file.flush();
 										
 					return true;
-				}
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-			}
-		return false;
-	}
-	
-	public boolean updateActivityPreferences(SuperActivity sua) {
-		JSONParser parser = new JSONParser();
-		ArrayList<String> oldpref = new ArrayList<>();
-		int i;
-		int j;
-		
-		try (FileWriter file = new FileWriter(activityFileName))		
-		{
-			Object activitiesParser = parser.parse(new FileReader(activityFileName));
-			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
-			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
-			JSONArray preferences = new JSONArray();
-			
-			JSONObject result;
-
-			if(activityArray==null) {
-				Log.getInstance().logger.info("Non ci sono attivita da dover modificare!\n");
-				return false;
-			}
-			
-			preferences.addAll(sua.getPreferences());
-			
-			for(i=0;i<activityArray.size();i++){
-				JSONArray oldpreferences;
-					
-				result = (JSONObject) activityArray.get(i);
-				
-				if(((Long)result.get(jpID))==sua.getId()) {
-					
-					oldpreferences = (JSONArray) result.get(jpPref);
-					//Si ricostruisce l'arrayList delle preferenze per compararlo con il nuovo
-					//che si andra ad inserire; Se sono uguali si esce restituendo falso.
-					//Se vero si procede nel salvataggio.
-					for(j=0;j<oldpreferences.size();j++) {
-						oldpref.add((String)oldpreferences.get(j));
-					}
-					
-					if(!sua.getPreferences().equals(oldpref)) {
-						result.put(jpPref,preferences);
-
-						
-						file.write(activitiesJOBJ.toString());
-						file.flush();
-						
-						return true;
-					} else return false;
-				
 				}
 			}			
 		} catch (Exception e) {
