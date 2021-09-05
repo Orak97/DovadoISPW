@@ -39,6 +39,13 @@ public class DAOPlace {
 	}
 	//Aggiunto un metodo per trovare un posto tramite ID, utile durante la reistanzazione da persistenza delle attivita.
 	public Place findPlaceById(Long id) {
+		return findPlace(null, null, null, id);
+	}
+	public Place findPlaceInJSON(String name, String city, String region) {
+		return findPlace(name, city, region, null);
+	}
+	
+	public Place findPlace (String name, String city, String region,Long id) {
 		JSONParser parser = new JSONParser();
 		int i;
 		daoSu = DAOSuperUser.getInstance();
@@ -48,48 +55,24 @@ public class DAOPlace {
 			JSONObject place = (JSONObject) places;
 			JSONArray placeArray = (JSONArray) place.get(PLACESKEY);
 			JSONObject result;
+			boolean expression;
 
 			for(i=0;i<placeArray.size();i++) 
 			{
 				result = (JSONObject)placeArray.get(i);
 				
 				Long idJSON = (Long) result.get(IDKEY);
-				
-				if (idJSON.equals(id)) {
-					Place placeFound = new Place((String)result.get(NAMEKEY),(String) result.get(ADDRESSKEY),(String)result.get(CITYKEY),(String)result.get(REGIONKEY),(String) result.get(CIVICOKEY),(Partner) daoSu.findSuperUserByID((Long)result.get(OWNERKEY)));
-					placeFound.setId((Long) result.get(IDKEY));
-					return placeFound;
-				}
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-			}
-		return null;
-	}
-	
-	public Place findPlaceInJSON(String name, String city, String region) {
-		JSONParser parser = new JSONParser();
-		int i;
-		daoSu = DAOSuperUser.getInstance();
-		try 
-		{
-			Object places = parser.parse(new FileReader(PLACEJSON));
-			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get(PLACESKEY);
-			JSONObject result;
-
-			for(i=0;i<placeArray.size();i++) 
-			{
-				result = (JSONObject)placeArray.get(i);
-				
 				String namePrint = (String) result.get(NAMEKEY);
 				String cityPrint = (String) result.get(CITYKEY);
 				String regionPrint = (String) result.get(REGIONKEY);
 				
-				if (name.equals(namePrint) && city.equals(cityPrint) && region.equals(regionPrint)) {
+				if (id != null) {
+					expression = idJSON.equals(id);
+				} else {
+					expression = name.equals(namePrint) && city.equals(cityPrint) && region.equals(regionPrint);
+				}
+				
+				if (expression) {
 					Place placeFound = new Place(namePrint,(String) result.get(ADDRESSKEY),cityPrint,regionPrint,(String) result.get(CIVICOKEY),(Partner) daoSu.findSuperUserByID((Long)result.get(OWNERKEY)));
 					placeFound.setId((Long) result.get(IDKEY));
 					return placeFound;
