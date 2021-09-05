@@ -32,14 +32,23 @@
 			<div class="row row-cols-1 row-cols-md-1 g-1">
 			  <% for(SuperActivity curr:activities){ %>
 			  
-			  <div class="col">
-			    <div class="card">
+			  <div class="col" >
+			    <div class="card" data-bs-toggle="collapse" href="#collapse<%= curr.getId() %>" aria-expanded="false" aria-controls="collapse<%= curr.getId() %>">
 			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 			      <div class="card-body">
 			        <h5 class="card-title"><% out.println(curr.getName()); %></h5>
 			        <p class="card-text">Orario Apertura: <%= curr.getFrequency().getOpeningTime()%> <br />Orario Chiusura: <%= curr.getFrequency().getClosingTime()%></p>
 			        <p class="card-text">Luogo : <%= curr.getPlace().getName() %> </p>
 			      </div>
+			    </div>
+			    <div class="collapse" id="collapse<%= curr.getId() %>">
+				    <div class="d-grid gap-2">
+				        	<button type="button" class="btn btn-dark btnHome">Join Channel</button>
+				        
+				        	<button type="button" class="btn btn-dark btnHome">View on map</button>
+				        
+				        	<button type="button" class="btn btn-warning btnHome">Play Activity</button>
+				    </div>
 			    </div>
 			  </div>
 			  
@@ -55,6 +64,7 @@
 	
 	
 	</div>
+
 	
 </body>
 </html>
