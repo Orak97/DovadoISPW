@@ -136,7 +136,7 @@ public class HomeView implements Initializable{
     	Log.getInstance().logger.info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 		try{
 			eng = map.getEngine();
-			eng.load("file:/home/pgs/eclipse-workspace/DovadoISPW/WebContent/map.html");
+			eng.load("file:/DovadoISPW/Dovado/WebContent/map.html");
 			
 			// Setting permissions to interact with Js
 	        eng.setJavaScriptEnabled(true);
