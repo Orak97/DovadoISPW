@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -167,7 +168,9 @@ public class DAOChannel {
 					for(int j=0;j<resultMss.size();j++) {
 						JSONObject mss = (JSONObject)resultMss.get(j);
 						System.out.println("\n\nMessaggio scritto: "+mss.get("messtxt")+"\n\n");
-						chFound.addMsg((Long)mss.get("userID"), (String)mss.get("messtxt"),LocalDateTime.parse((String)mss.get("datesent")));
+						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy'  'HH:mm");
+						
+						chFound.addMsg((Long)mss.get("userID"), (String)mss.get("messtxt"),LocalDateTime.parse((String)mss.get("datesent"),dtf));
 					}
 					return chFound;
 				}
