@@ -12,6 +12,12 @@ public class DAOPlace {
 	
 	private static DAOPlace INSTANCE;
 	private DAOSuperUser daoSu;
+	private static final  String PLACEJSON = "WebContent/places.json" ;
+	private static final  String COUPONSKEY = "coupons";
+	private static final  String PARTNERKEY = "partner";
+	private static final  String DISCOUNTKEY = "discount";
+	
+	
 	
 	private DAOPlace() {
 	}
@@ -22,6 +28,9 @@ public class DAOPlace {
 		return INSTANCE;
 	}
 
+	public String getJsonFileName() {
+		return PLACEJSON;
+	}
 	//Aggiunto un metodo per trovare un posto tramite ID, utile durante la reistanzazione da persistenza delle attivita.
 	public Place findPlaceById(Long id) {
 		JSONParser parser = new JSONParser();
