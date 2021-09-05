@@ -120,6 +120,27 @@
   -fx-font-weight: bold;
   -fx-font-size:20.0;
  }
+
+.mssusr{
+  	-fx-font-family: 'Montserrat';
+  	-fx-fill: #212121;
+    -fx-font-size:12.0;
+  	-fx-font-weight: bold;
+}
+
+.msstxt{
+  	-fx-font-family: 'Montserrat';
+  	-fx-fill: #212121;
+    -fx-font-size:16.0;
+  	-fx-font-weight: normal;
+}
+
+.msssent{
+  	-fx-font-family: 'Montserrat';
+  	-fx-font-weight: normal;
+  	-fx-fill: #212121;
+    -fx-font-size:10.0;
+}
  
  /*Event buttons*/
  
@@ -156,6 +177,14 @@
     -fx-background-insets: 5px;
 }
 
+.pref-btn:hover {
+  -fx-background-color: #251d04;
+}
+.pref-btn:pressed{
+  -fx-scale-y: 0.9;
+  -fx-scale-x: 0.9;
+}
+ 
 .src-btn{
 	-fx-background-color: #BC9416;
   	-fx-background-radius: 999;
@@ -165,6 +194,14 @@
     -fx-font-size:10.0;
     -fx-padding: 8px;
 	
+}
+
+.src-btn:hover {
+  -fx-background-color: #251d04;
+}
+.src-btn:pressed{
+  -fx-scale-y: 0.9;
+  -fx-scale-x: 0.9;
 }
 
 .event-image {

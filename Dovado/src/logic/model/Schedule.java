@@ -15,7 +15,8 @@ public class Schedule {
 		ScheduledActivity s = new ScheduledActivity(a,scheduledTime,reminderTime);
 		//Salva in persistenza l'attività schedulata:
 		daoSc = DAOSchedules.getInstance();
-		
+
+		myActivity.add(s);
 		if(daoSc.addScheduletoJSON(this, usr)==false) {
 			Log.getInstance().getLogger().warning("Errore nell'aggiunta dell'attività nello schedule.");
 			return;
@@ -26,6 +27,9 @@ public class Schedule {
 	
 	public ArrayList<ScheduledActivity> getScheduledActivities() {
 		return this.myActivity;
-	}
+	} 
 
-}
+	public ArrayList<ScheduledActivity> setScheduledActivities(ArrayList<ScheduledActivity> scheduledActs) {
+		return this.myActivity = scheduledActs;
+	}
+} 
