@@ -40,6 +40,10 @@ public class NavbarController {
     void goHome(ActionEvent event) {
     	nav.onHome();
     	Log.getInstance().logger.info("Clicked home");
+    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
+    	Navbar.loginSetup();
+    	//HomeView hv = new HomeView();
+    	HomeView.render(current);
     }
 
     @FXML
@@ -57,7 +61,11 @@ public class NavbarController {
     @FXML
     void goEvents(ActionEvent event) {
     	nav.onEvents();
-    	Log.getInstance().logger.info("Clicked vote");
+    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
+    	Navbar.loginSetup();
+    	//EventsView ev = new EventsView();
+    	EventsView.render(current);
+    	Log.getInstance().logger.info("Clicked events");
     }
     
 

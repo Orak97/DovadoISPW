@@ -131,9 +131,9 @@ public class DAOSchedules {
 		return true;
 	}
 	
-	public Schedule findSchedule(long code) {
+	public Schedule findSchedule(long userID) {
 		try {		
-			Log.getInstance().logger.info("valore code:"+ code);
+			Log.getInstance().logger.info("valore code:"+ userID);
 			Log.getInstance().logger.info("Working Directory = " + System.getProperty("user.dir"));		
 
 			Object schedules = parser.parse(new FileReader("WebContent/schedules.json"));
@@ -148,7 +148,7 @@ public class DAOSchedules {
 				Log.getInstance().logger.info("valore codeJSON:"+ codeJSON);
 				
 				try {
-					if (codeJSON.equals(Long.valueOf(code))) {
+					if (codeJSON.equals(Long.valueOf(userID))) {
 						DAOActivity daoAc = DAOActivity.getInstance();
 						JSONArray schedule = (JSONArray) result.get("schedule");
 						DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");

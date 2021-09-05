@@ -59,7 +59,7 @@ public class LoginView{
     		}
     	}
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
-    	HomeView hv = new HomeView();
+    	//HomeView hv = new HomeView();
     	Navbar.setUser(user);
     	HomeView.render(current);
     }
