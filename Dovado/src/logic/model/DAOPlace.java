@@ -11,7 +11,6 @@ import org.json.simple.parser.JSONParser;
 public class DAOPlace {
 	
 	private static DAOPlace INSTANCE;
-	private DAOSuperUser daoSu;
 	private static final  String PLACEJSON = "WebContent/places.json" ;
 	private static final  String PLACESKEY = "places";
 	private static final  String NAMEKEY = "name";
@@ -48,7 +47,7 @@ public class DAOPlace {
 	public Place findPlace (String name, String city, String region,Long id) {
 		JSONParser parser = new JSONParser();
 		int i;
-		daoSu = DAOSuperUser.getInstance();
+		DAOSuperUser daoSu = DAOSuperUser.getInstance();
 		try 
 		{
 			Object places = parser.parse(new FileReader(PLACEJSON));
