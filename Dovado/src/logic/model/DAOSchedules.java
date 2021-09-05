@@ -50,7 +50,7 @@ public class DAOSchedules {
 				result = (JSONObject) scheduleArray.get(i);
 
 				if(((Long)result.get(UIDKEY))==su.getUserID()) {
-					ArrayList<ScheduledActivity> scheduleList = schedule.getScheduledActivities();
+					ArrayList<ScheduledActivity> scheduleList =(ArrayList<ScheduledActivity>) schedule.getScheduledActivities();
 					JSONArray scheduleUpdArr = (JSONArray) result.get(SCHEDKEY);
 					
 					int j;

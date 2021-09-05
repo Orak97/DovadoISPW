@@ -101,7 +101,7 @@ public class EventsView implements Initializable{
     	Log.getInstance().logger.info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 		try{
 			//Apro di default la lista di attività schedulate.
-			schedActivities = (daoSch.findSchedule(Navbar.getUser().getUserID())).getScheduledActivities();
+			schedActivities = (ArrayList) (daoSch.findSchedule(Navbar.getUser().getUserID())).getScheduledActivities();
 
 			for(int j=0;j<schedActivities.size();j++) {
 				activities.add(daoAct.findActivityByID(daoSU,schedActivities.get(j).getReferencedActivity().getId()));

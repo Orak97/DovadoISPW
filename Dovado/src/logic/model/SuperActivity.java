@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import logic.controller.CreateActivityBean;
 
@@ -22,7 +23,7 @@ public abstract class SuperActivity {
 		this.name= nome;
 		this.creator = user;
 		this.place = place;
-		this.preferences = new ArrayList<String>();
+		this.preferences = new ArrayList<>();
 		this.frequencyOfRepeat = new ContinuosActivity(null,null);
 	}
 	
@@ -86,11 +87,10 @@ public abstract class SuperActivity {
 		 * 
 		 * 
 		 */
-		if (frequencyOfRepeat.checkPlayability(timestamp)) return true;
-		else return false;
+		return (frequencyOfRepeat.checkPlayability(timestamp));
 	}
 
-	public ArrayList<String> getPreferences() {
+	public List<String> getPreferences() {
 		return this.preferences;
 	}
 	

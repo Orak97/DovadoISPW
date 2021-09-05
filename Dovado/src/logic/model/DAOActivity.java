@@ -172,7 +172,7 @@ public class DAOActivity {
 			}
 			
 			if (updatePref) {
-				preferences.addAll(sua.getPreferences());
+				preferences.addAll((ArrayList<String>) sua.getPreferences());
 				
 			}
 			
