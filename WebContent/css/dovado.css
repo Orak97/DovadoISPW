@@ -26,6 +26,13 @@ nav {
   padding-top: 12vh; !important;
  }
 
+/*********************home*********************************/
 .btnHome{
-	height:9vh;
+	height:6vh;
+	border-radius: 200px;
+}
+
+.activityButtonGroup{
+	background-color: #c49000;
+	padding: 5vh;
 }

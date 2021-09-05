@@ -42,12 +42,12 @@
 			      </div>
 			    </div>
 			    <div class="collapse" id="collapse<%= curr.getId() %>">
-				    <div class="d-grid gap-2">
+				    <div class="d-grid gap-2 activityButtonGroup">
 				        	<button type="button" class="btn btn-dark btnHome">Join Channel</button>
 				        
-				        	<button type="button" class="btn btn-dark btnHome">View on map</button>
+				        	<button type="button" class="btn btn-dark btnHome" onclick="document.getElementById('map').contentWindow.spotPlace('<%=curr.getPlace().getCivico()%>','<%=curr.getPlace().getAddress()%>','<%=curr.getPlace().getCity()%>','<%=curr.getPlace().getRegion()%>');">View on map</button>
 				        
-				        	<button type="button" class="btn btn-warning btnHome">Play Activity</button>
+				        	<button type="button" class="btn btn-success btnHome">Play Activity</button>
 				    </div>
 			    </div>
 			  </div>
@@ -58,7 +58,7 @@
 			</div>
 			
 			<div class="col-8" style="overflow-y:hidden">
-				<iframe src="map.html" title="maps" style="width:100%; height:100%"></iframe> 
+				<iframe src="map.html" title="maps" id="map" style="width:100%; height:100%"></iframe> 
 			</div>
 		</div>
 	
