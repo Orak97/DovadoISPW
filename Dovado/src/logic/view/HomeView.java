@@ -45,10 +45,10 @@ import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
+import logic.model.Log;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
-import logic.model.Log;
 
 public class HomeView implements Initializable{
 
@@ -94,7 +94,7 @@ public class HomeView implements Initializable{
     private static SuperActivity activitySelected;
     private static SuperUser user;
     
-	public static void render(Stage current, SuperUser user2) {
+    public static void render(Stage current, SuperUser user2) {
 		try {
 			VBox root = new VBox();
 			BorderPane navbar = Navbar.getNavbar();
@@ -123,6 +123,7 @@ public class HomeView implements Initializable{
 		}
 	}
 
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		lastEventBoxSelected = null;
@@ -132,7 +133,6 @@ public class HomeView implements Initializable{
 		
     	ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
 		
-
     	Log.getInstance().logger.info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 		try{
 			eng = map.getEngine();
@@ -144,6 +144,7 @@ public class HomeView implements Initializable{
 	        searchButton.setText("SEARCH");
 			searchButton.getStyleClass().add("src-btn");
 	        
+
 	        preference1.setText(daoPref.getPreferenceFromJSON(1));
 			preference2.setText(daoPref.getPreferenceFromJSON(2));
 			preference3.setText(daoPref.getPreferenceFromJSON(3));
@@ -156,11 +157,10 @@ public class HomeView implements Initializable{
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "TENNIS"));
 
-			Log.getInstance().logger.info("\nNumero di attivit� trovate: "+activities.size());
-
+			
 			int j;
 			for(j=0;j<activities.size();j++)
-				Log.getInstance().logger.info("tutte le attivit� "+activities.get(j).getId());
+			Log.getInstance().logger.info("tutte le attivit� "+activities.get(j).getId());
 			
 			Thread newThread = new Thread(() -> {
 				int i;
@@ -218,16 +218,14 @@ public class HomeView implements Initializable{
 			newThread.start();
 			eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 			newThread.join();
-		}catch(Error e) {
-			Log.getInstance().logger.warning(e.getMessage());
+		}catch(Error e) {	Log.getInstance().logger.warning(e.getMessage());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			Log.getInstance().logger.info(e.getMessage());
 		}
 	}
-	
 
-	public void activitySelected() {
+public void activitySelected() {
 		
 		daoAct = DAOActivity.getInstance();
 		daoSU = DAOSuperUser.getInstance();
@@ -240,7 +238,7 @@ public class HomeView implements Initializable{
 			return;
 		}
 		
-		Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
+Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 
 		if(lastEventBoxSelected == eventBox) return;
 		
@@ -318,7 +316,8 @@ public class HomeView implements Initializable{
 							
 							daoCH.updateChannelInJSON(activitySelected.getChannel(), activitySelected.getChannel().getChat(), activitySelected);
 
-							Log.getInstance().logger.info("\nMessaggi dopo l'invio:\n");
+						Log.getInstance().logger.info("\nMessaggi dopo l'invio:\n");
+
 							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
 								Log.getInstance().logger.info(activitySelected.getChannel().getChat().get(j).getMsgText());
 							}
@@ -422,16 +421,17 @@ public class HomeView implements Initializable{
 					}*/
 					
 					Text txt = new Text("Select date");
-					
 					Button ok = new Button();
 					Button close = new Button();
 					
 					VBox dateBox = new VBox();
 					ok.setText("Ok");
 					ok.getStyleClass().add("src-btn");
+					
 					HBox buttonBox = new HBox();
 					HBox pickTimeBox = new HBox();
-						buttonBox.getChildren().addAll(close,ok);
+					
+					buttonBox.getChildren().addAll(close,ok);
 					
 					CornerRadii cr = new CornerRadii(4);
 					BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
@@ -442,7 +442,7 @@ public class HomeView implements Initializable{
 					pickTimeBox.getChildren().addAll(hourBox,minBox);
 					
 					dateBox.setBackground(b);
-					dateBox.getChildren().addAll(tf,pickDate,buttonBox);
+					dateBox.getChildren().addAll(txt,pickDate,pickTimeBox,buttonBox);
 					dateBox.setId("dateBox");
 					
 					selectedBox.getChildren().add(dateBox);
@@ -455,11 +455,8 @@ public class HomeView implements Initializable{
 							selectedBox.getChildren().remove(dateBox);
 						}
 					});
-				};
-		});
-	}
-	
-	ok.setOnAction(new EventHandler<ActionEvent>(){
+					
+					ok.setOnAction(new EventHandler<ActionEvent>(){
 						@Override public void handle(ActionEvent e) {
 							DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 							String dayStringed = day.format(pickDate.getValue());
@@ -500,148 +497,148 @@ public class HomeView implements Initializable{
 		});
 	}
 
-	private void updateChat(ListView chat, Channel ch) {
-		int i;
-		chat.getItems().clear();
-		for(i=0;i<ch.getChat().size();i++) {
-			VBox chatContainer = new VBox();
-			VBox chatMss = new VBox();
-			TextField msstxt = new TextField();
-			TextField username = new TextField();
-			TextField dateSent = new TextField();
-			String usernameMss = daoSU.findSuperUserByID(ch.getChat().get(i).getUsr()).getUsername();
-			
-			//Mi trovo lo username da mettere sopra il messaggio:
-			username.setText(usernameMss);
-			//Mi trovo il testo da mettere al centro del messaggio:
-			msstxt.setText(ch.getChat().get(i).getMsgText());
-			//Mi trovo il tempo di invio da mettere in basso a destra del messaggio:
-			dateSent.setText(ch.getChat().get(i).getMsgSentDate());
-			
-			username.setAlignment(Pos.TOP_LEFT);
-			msstxt.setAlignment(Pos.CENTER_LEFT);
-			dateSent.setAlignment(Pos.BOTTOM_RIGHT);
-			
-			username.getStyleClass().add("mssusr");
-			msstxt.getStyleClass().add("msstxt");
-			dateSent.getStyleClass().add("msssent");
-			
-			chatContainer.getChildren().addAll(username,msstxt,dateSent);
-			chatContainer.setMaxWidth(root.getWidth()/2);
-			
-			chatMss.getChildren().add(chatContainer);
-			chatMss.autosize();
-			
-			
-			if(user.getUsername().equals(usernameMss)) {
-				CornerRadii cr = new CornerRadii(4);
-			
-				BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
-				Background b = new Background(bf);
+private void updateChat(ListView chat, Channel ch) {
+	int i;
+	chat.getItems().clear();
+	for(i=0;i<ch.getChat().size();i++) {
+		VBox chatContainer = new VBox();
+		VBox chatMss = new VBox();
+		Text msstxt = new Text();
+		Text username = new Text();
+		Text dateSent = new Text();
+		String usernameMss = daoSU.findSuperUserByID(ch.getChat().get(i).getUsr()).getUsername();
+		
+		//Mi trovo lo username da mettere sopra il messaggio:
+		username.setText(usernameMss);
+		//Mi trovo il testo da mettere al centro del messaggio:
+		msstxt.setText(ch.getChat().get(i).getMsgText());
+		//Mi trovo il tempo di invio da mettere in basso a destra del messaggio:
+		dateSent.setText(ch.getChat().get(i).getMsgSentDate());
+		
+		username.setTextAlignment(TextAlignment.LEFT);
+		msstxt.setTextAlignment(TextAlignment.LEFT);
+		dateSent.setTextAlignment(TextAlignment.RIGHT);
+		
+		username.getStyleClass().add("mssusr");
+		msstxt.getStyleClass().add("msstxt");
+		dateSent.getStyleClass().add("msssent");
+		
+		chatContainer.getChildren().addAll(username,msstxt,dateSent);
+		chatContainer.setMaxWidth(root.getWidth()/2);
+		
+		chatMss.getChildren().add(chatContainer);
+		chatMss.autosize();
+		
+		
+		if(user.getUsername().equals(usernameMss)) {
+			CornerRadii cr = new CornerRadii(4);
+		
+			BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+			Background b = new Background(bf);
 
-				chatContainer.setBackground(b);
-				chatContainer.setAlignment(Pos.CENTER_RIGHT);
-				chatMss.setAlignment(Pos.CENTER_RIGHT);
-			}
-			else {
-				CornerRadii cr = new CornerRadii(4);
-				BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
-				Background b = new Background(bf);
-				
-				chatContainer.setBackground(b);
-				chatMss.setAlignment(Pos.CENTER_LEFT);
-			}
-			chat.getItems().add(chatMss);
+			chatContainer.setBackground(b);
+			chatContainer.setAlignment(Pos.CENTER_RIGHT);
+			chatMss.setAlignment(Pos.CENTER_RIGHT);
 		}
-		if(i>0) {
-			chat.scrollTo(i-1);
+		else {
+			CornerRadii cr = new CornerRadii(4);
+			BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+			Background b = new Background(bf);
+			
+			chatContainer.setBackground(b);
+			chatMss.setAlignment(Pos.CENTER_LEFT);
 		}
+		chat.getItems().add(chatMss);
 	}
-	
-	//Penso che questo metodo come anche activity selected etc... vadano spostati in un'apposita classe
-	//HomeController.
-	
-	public void activityDeselected(StackPane lastBox) {
-		if(lastActivitySelected>=0)
-			eventsList.getItems().remove(lastActivitySelected+1);
-		
-		ImageView eventImage = (ImageView) lastBox.getChildren().get(2);
-		VBox eventInfo = (VBox) lastBox.getChildren().get(3);
-		
-		Text eventName = (Text) eventInfo.getChildren().get(0);
-		Text eventDetails = (Text) eventInfo.getChildren().get(1);
-
-		eventImage.setScaleX(1);
-		eventImage.setScaleY(1);
-		
-		root.getChildren().remove(chatContainer);
+	if(i>0) {
+		chat.scrollTo(i-1);
 	}
+}
+
+//Penso che questo metodo come anche activity selected etc... vadano spostati in un'apposita classe
+//HomeController.
+
+public void activityDeselected(StackPane lastBox) {
+	if(lastActivitySelected>=0)
+		eventsList.getItems().remove(lastActivitySelected+1);
 	
-	public void filterActivities() {
-		daoAct = DAOActivity.getInstance();
-		daoSU = DAOSuperUser.getInstance();
-		daoPlc = DAOPlace.getInstance();
-		daoPref = DAOPreferences.getInstance();
-		
-		String searchItem = null;
-		
-		if((searchItem = searchBar.getText())==null) return;
-		
-		if(daoPref.preferenceIsInJSON(searchItem.toUpperCase())==false) return;
-		
-		ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
-		
-		activities.addAll(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
-		eventsList.getItems().clear();
-		
-		int i;
-		for(i=0;i<activities.size();i++) {
-			ImageView eventImage = new ImageView();
-			Text eventName = new Text(activities.get(i).getName()+"\n");
-			Log.getInstance().logger.info("\n\n"+activities.get(i).getName()+"\n\n");
-			Text eventInfo = new Text(activities.get(i).getPlace().getName()+
-					"\n"+activities.get(i).getFrequency().getOpeningTime()+
-					"-"+activities.get(i).getFrequency().getClosingTime());
-			eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
+	ImageView eventImage = (ImageView) lastBox.getChildren().get(2);
+	VBox eventInfo = (VBox) lastBox.getChildren().get(3);
+	
+	Text eventName = (Text) eventInfo.getChildren().get(0);
+	Text eventDetails = (Text) eventInfo.getChildren().get(1);
 
-			eventInfo.setId("eventInfo");
-			eventInfo.getStyleClass().add("textEventInfo");
-			eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.MEDIUM, 12));
-			eventInfo.setTextAlignment(TextAlignment.LEFT);
-			eventInfo.setFill(Paint.valueOf("#ffffff"));
-			eventInfo.setStroke(Paint.valueOf("#000000"));
+	eventImage.setScaleX(1);
+	eventImage.setScaleY(1);
+	
+	root.getChildren().remove(chatContainer);
+}
 
-			eventName.setId("eventName");
-			eventName.getStyleClass().add("textEventName");
-			eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-			eventName.setFill(Paint.valueOf("#ffffff"));
-			eventName.setStroke(Paint.valueOf("#000000"));
+public void filterActivities() {
+	daoAct = DAOActivity.getInstance();
+	daoSU = DAOSuperUser.getInstance();
+	daoPlc = DAOPlace.getInstance();
+	daoPref = DAOPreferences.getInstance();
+	
+	String searchItem = null;
+	
+	if((searchItem = searchBar.getText())==null) return;
+	
+	if(daoPref.preferenceIsInJSON(searchItem.toUpperCase())==false) return;
+	
+	ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
+	
+	activities.addAll(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
+	eventsList.getItems().clear();
+	
+	int i;
+	for(i=0;i<activities.size();i++) {
+		ImageView eventImage = new ImageView();
+		Text eventName = new Text(activities.get(i).getName()+"\n");
+		Log.getInstance().logger.info("\n\n"+activities.get(i).getName()+"\n\n");
+		Text eventInfo = new Text(activities.get(i).getPlace().getName()+
+				"\n"+activities.get(i).getFrequency().getOpeningTime()+
+				"-"+activities.get(i).getFrequency().getClosingTime());
+		eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
 
-			
-			
-			VBox eventText = new VBox(eventName,eventInfo);
-			eventText.setAlignment(Pos.CENTER);
-			
-			//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-			StackPane eventBox = new StackPane();
-			Text eventId = new Text();
-			Text placeId = new Text();
-			
-			eventId.setId(activities.get(i).getId().toString());
-			placeId.setId(activities.get(i).getPlace().getId().toString());
-			
-			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-			//dell'evento ed infine il testo dell'evento.
-			eventBox.getChildren().add(eventId);
-			eventBox.getChildren().add(placeId);
-			eventBox.getChildren().add(eventImage);
-			eventBox.getChildren().add(eventText);
-			
-			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-			eventBox.setAlignment(Pos.CENTER);
-			
-			eventsList.getItems().add(eventBox);
-		}
+		eventInfo.setId("eventInfo");
+		eventInfo.getStyleClass().add("textEventInfo");
+		eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.MEDIUM, 12));
+		eventInfo.setTextAlignment(TextAlignment.LEFT);
+		eventInfo.setFill(Paint.valueOf("#ffffff"));
+		eventInfo.setStroke(Paint.valueOf("#000000"));
+
+		eventName.setId("eventName");
+		eventName.getStyleClass().add("textEventName");
+		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+		eventName.setFill(Paint.valueOf("#ffffff"));
+		eventName.setStroke(Paint.valueOf("#000000"));
+
+		
+		
+		VBox eventText = new VBox(eventName,eventInfo);
+		eventText.setAlignment(Pos.CENTER);
+		
+		//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+		//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+		StackPane eventBox = new StackPane();
+		Text eventId = new Text();
+		Text placeId = new Text();
+		
+		eventId.setId(activities.get(i).getId().toString());
+		placeId.setId(activities.get(i).getPlace().getId().toString());
+		
+		//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+		//dell'evento ed infine il testo dell'evento.
+		eventBox.getChildren().add(eventId);
+		eventBox.getChildren().add(placeId);
+		eventBox.getChildren().add(eventImage);
+		eventBox.getChildren().add(eventText);
+		
+		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+		eventBox.setAlignment(Pos.CENTER);
+		
+		eventsList.getItems().add(eventBox);
 	}
+}
 }
