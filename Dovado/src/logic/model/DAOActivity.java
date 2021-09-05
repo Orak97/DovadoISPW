@@ -356,7 +356,6 @@ public class DAOActivity {
 	}
 	
 	public SuperActivity findActivityByID (DAOSuperUser daoSU, Place p, int n){
-	//SuperActivity resultActivity;
 	JSONParser parser = new JSONParser();
 	int i;
 	int j;
@@ -412,7 +411,6 @@ public class DAOActivity {
 	
 	
 	public SuperActivity findActivityByID(DAOSuperUser daoSU,Long id) {
-		SuperActivity resultActivity;
 		JSONParser parser = new JSONParser();
 		DAOPlace daoP = DAOPlace.getInstance();
 		
@@ -434,7 +432,7 @@ public class DAOActivity {
 				if(Long.compare((Long)activity.get("id"),id)==0) {
 					//Si controlla se certificata o no l'attivita, passato il test si controlla anche che tipo di attivita ricorrente sia:
 						
-					JSONObject activityJSON = (JSONObject)activityArray.get(Long.valueOf(id).intValue());
+					JSONObject activityJSON = (JSONObject)activityArray.get(id.intValue());
 					
 					return createActClass(daoSU, activityJSON, daoP.findPlaceById((Long)activityJSON.get(jpPlace)));
 					}	

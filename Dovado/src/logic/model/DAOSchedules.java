@@ -15,6 +15,13 @@ import org.json.simple.parser.JSONParser;
 public class DAOSchedules {
 	private static DAOSchedules INSTANCE;
 	private JSONParser parser;
+	
+	private static final  String SCHEDJSON = "WebContent/schedules.json";
+	private static final  String SCHEDULESKEY = "schedules";
+	private static final  String SCHEDKEY = "schedule";
+	private static final  String UIDKEY = "userID";
+
+	
 	private DAOSchedules() {
 		parser = new JSONParser();
 	}
@@ -25,11 +32,11 @@ public class DAOSchedules {
 	}
 	
 	public boolean updateScheduleInJSON(Schedule schedule, SuperUser su) {
-		try {
-			Object schedules = parser.parse(new FileReader("WebContent/schedules.json"));
+		try (FileWriter file = new FileWriter(SCHEDJSON)){
+			Object schedules = parser.parse(new FileReader(SCHEDJSON));
 			JSONObject scheduleObj = (JSONObject) schedules;
 			
-			JSONArray scheduleArray = (JSONArray) scheduleObj.get("schedules");
+			JSONArray scheduleArray = (JSONArray) scheduleObj.get(SCHEDULESKEY);
 			int i;
 
 			if(scheduleArray==null) {
@@ -42,9 +49,9 @@ public class DAOSchedules {
 			for(i=0;i<scheduleArray.size();i++) {
 				result = (JSONObject) scheduleArray.get(i);
 
-				if(((Long)result.get("userID"))==su.getUserID()) {
+				if(((Long)result.get(UIDKEY))==su.getUserID()) {
 					ArrayList<ScheduledActivity> scheduleList = schedule.getScheduledActivities();
-					JSONArray scheduleUpdArr = (JSONArray) result.get("schedule");
+					JSONArray scheduleUpdArr = (JSONArray) result.get(SCHEDKEY);
 					
 					int j;
 					for(j=0;j<scheduleList.size();j++) {
@@ -57,28 +64,15 @@ public class DAOSchedules {
 						scheduleUpdArr.add(scheduleUpdated);
 					}
 					
-					result.put("schedule", scheduleUpdArr);
+					result.put(SCHEDKEY, scheduleUpdArr);
 					
-					FileWriter file = new FileWriter("WebContent/schedules.json");
 					file.write(scheduleObj.toString());
 					file.flush();
-					file.close();
 					
 					return true;
 				}
 			}
 				
-		}catch(NullPointerException e) {
-			e.printStackTrace();
-			return false;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,41 +82,28 @@ public class DAOSchedules {
 	}
 	
 	public boolean addScheduletoJSON(Schedule schedule, SuperUser su) {
-		try {
-			Object schedules = parser.parse(new FileReader("WebContent/schedules.json"));
+		try (FileWriter file = new FileWriter(SCHEDJSON)) {
+			Object schedules = parser.parse(new FileReader(SCHEDJSON));
 			JSONObject scheduleObj = (JSONObject) schedules;
 			
-			JSONArray scheduleArray = (JSONArray) scheduleObj.get("schedules");
+			JSONArray scheduleArray = (JSONArray) scheduleObj.get(SCHEDULESKEY);
 			Schedule schFound = findSchedule(su.getUserID());
 			
 			if(schFound==null) {
 				JSONObject newSchedule = new JSONObject();
 				
-				newSchedule.put("userID", su.getUserID());
-				newSchedule.put("schedule", new JSONArray());
+				newSchedule.put(UIDKEY, su.getUserID());
+				newSchedule.put(SCHEDKEY, new JSONArray());
 				
 				scheduleArray.add(newSchedule);
 				
-				FileWriter file = new FileWriter("WebContent/schedules.json");
 				file.write(scheduleObj.toString());
 				file.flush();
-				file.close();
 				
 			} 
 				updateScheduleInJSON(schedule,su);
 			
 			
-		}catch(NullPointerException e) {
-			e.printStackTrace();
-			return false;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -136,63 +117,46 @@ public class DAOSchedules {
 			Log.getInstance().logger.info("valore code:"+ userID);
 			Log.getInstance().logger.info("Working Directory = " + System.getProperty("user.dir"));		
 
-			Object schedules = parser.parse(new FileReader("WebContent/schedules.json"));
+			Object schedules = parser.parse(new FileReader(SCHEDJSON));
 			JSONObject scheduleObj = (JSONObject) schedules;
-			JSONArray scheduleArray = (JSONArray) scheduleObj.get("schedules");
+			JSONArray scheduleArray = (JSONArray) scheduleObj.get(SCHEDULESKEY);
 			JSONObject result;
 			
 			for(int i=0; i<scheduleArray.size();i++) {
 				result = (JSONObject)scheduleArray.get(i);
 				
-				Long codeJSON = (Long) result.get("userID");
+				Long codeJSON = (Long) result.get(UIDKEY);
 				Log.getInstance().logger.info("valore codeJSON:"+ codeJSON);
 				
-				try {
-					if (codeJSON.equals(Long.valueOf(userID))) {
-						DAOActivity daoAc = DAOActivity.getInstance();
-						JSONArray schedule = (JSONArray) result.get("schedule");
-						DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+				
+				if (codeJSON.equals(Long.valueOf(userID))) {
+					DAOActivity daoAc = DAOActivity.getInstance();
+					JSONArray schedule = (JSONArray) result.get(SCHEDKEY);
+					DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 						
-						Log.getInstance().logger.info("schedule trovato");
+					Log.getInstance().logger.info("schedule trovato");
 						
-						Schedule schFound = new Schedule();
-						ArrayList<ScheduledActivity> scheduledActsArray = new ArrayList<ScheduledActivity>(); 
+					Schedule schFound = new Schedule();
+					ArrayList<ScheduledActivity> scheduledActsArray = new ArrayList<>(); 
 						
-						for(int j=0;j<schedule.size();j++) {
-							JSONObject actSch = (JSONObject) schedule.get(j);
-							String remindTime = (String)actSch.get("reminderTime");
-							String schedTime = (String)actSch.get("scheduledTime");
+					for(int j=0;j<schedule.size();j++) {
+						JSONObject actSch = (JSONObject) schedule.get(j);
+						String remindTime = (String)actSch.get("reminderTime");
+						String schedTime = (String)actSch.get("scheduledTime");
 							
-							ScheduledActivity sa = new ScheduledActivity(daoAc.findActivityByID(DAOSuperUser.getInstance(),(Long)actSch.get("activityReferenced")), LocalDateTime.parse(schedTime,dateFormatter), LocalDateTime.parse(remindTime,dateFormatter));
-							scheduledActsArray.add(sa);
-						}
-						
-						schFound.setScheduledActivities(scheduledActsArray);
-						
-						
-						return schFound;
+						ScheduledActivity sa = new ScheduledActivity(daoAc.findActivityByID(DAOSuperUser.getInstance(),(Long)actSch.get("activityReferenced")), LocalDateTime.parse(schedTime,dateFormatter), LocalDateTime.parse(remindTime,dateFormatter));
+						scheduledActsArray.add(sa);
 					}
-				} catch (NullPointerException e) {
-					e.printStackTrace();
-					return null;
-				} catch (ClassCastException e) {
-					e.printStackTrace();
-					return null;
+						
+					schFound.setScheduledActivities(scheduledActsArray);
+						
+						
+					return schFound;
+					
 				}
 			}
 				
 			
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-			return null;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
