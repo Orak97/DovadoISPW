@@ -43,18 +43,21 @@ public class DAOSchedules {
 				result = (JSONObject) scheduleArray.get(i);
 
 				if(((Long)result.get("userID"))==su.getUserID()) {
-					JSONObject scheduleUpdated = new JSONObject();
 					ArrayList<ScheduledActivity> scheduleList = schedule.getScheduledActivities();
-
+					JSONArray scheduleUpdArr = (JSONArray) result.get("schedule");
+					
 					int j;
 					for(j=0;j<scheduleList.size();j++) {
-						scheduleUpdated.put("activityReferenced", scheduleList.get(j).getReferencedActivity());
-						scheduleUpdated.put("scheduledTime", scheduleList.get(j).getScheduledTime());
-						scheduleUpdated.put("remiderTime", scheduleList.get(j).getReminderTime());
-						scheduleUpdated.put("timer", scheduleList.get(j).getTimer());
+						JSONObject scheduleUpdated = new JSONObject();
+					
+						scheduleUpdated.put("activityReferenced", scheduleList.get(scheduleList.size()-1).getReferencedActivity().getId());
+						scheduleUpdated.put("scheduledTime", scheduleList.get(scheduleList.size()-1).getScheduledTime().toString());
+						scheduleUpdated.put("remiderTime", scheduleList.get(scheduleList.size()-1).getReminderTime().toString());
+						
+						scheduleUpdArr.add(scheduleUpdated);
 					}
 					
-					result.put("schedule", scheduleUpdated);
+					result.put("schedule", scheduleUpdArr);
 					
 					FileWriter file = new FileWriter("WebContent/schedules.json");
 					file.write(scheduleObj.toString());
@@ -100,7 +103,7 @@ public class DAOSchedules {
 				
 				scheduleArray.add(newSchedule);
 				
-				FileWriter file = new FileWriter("Webcontent/schedules.json");
+				FileWriter file = new FileWriter("WebContent/schedules.json");
 				file.write(scheduleObj.toString());
 				file.flush();
 				file.close();

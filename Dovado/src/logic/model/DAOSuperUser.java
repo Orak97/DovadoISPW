@@ -203,6 +203,7 @@ public class DAOSuperUser {
 					if(psw == null) {
 						Log.getInstance().logger.warning("PASSWORD NULLA");
 						founded = true;
+						break;
 					}
 					else if (!psw.equals(passwordJSON)) {
 						Log.getInstance().logger.info("PASSWORD SBAGLIATA");
@@ -210,11 +211,13 @@ public class DAOSuperUser {
 					} else {
 						Log.getInstance().logger.warning("PASSWORD CORRETTA");
 						founded = true;
+						break;
 					}
 				}
 				//Qui invece entro se cerco tramite id
-				else if( id != null && id.equals(idJson)){
+				else if( id != null && Long.compare(id, idJson)==0){
 					founded = true;
+					break;
 				}	
 			}		
 					
@@ -224,7 +227,9 @@ public class DAOSuperUser {
 			}
 			
 			//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-			if((Long)result.get("partner")==1) {
+			if(Long.compare((Long)result.get("partner"),1L)==0) {
+
+				Log.getInstance().logger.info("Partner Trovato");
 				Partner partner = new Partner((String) result.get("username"),(String) result.get("email"),(Long) result.get("id"));
 				partner.setPreferences(((ArrayList<String>)result.get("preferences")));
 				return partner;
