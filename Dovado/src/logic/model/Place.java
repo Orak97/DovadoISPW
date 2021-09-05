@@ -21,7 +21,7 @@ public class Place {
 		this.region = region;
 		this.civico = civico;
 		this.owner = null;
-		this.hostedActivities = new ArrayList<Long>();
+		this.hostedActivities = new ArrayList<>();
 		
 	}
 	
@@ -32,11 +32,11 @@ public class Place {
 
 	public void setOwner(Partner o) {
 		this.owner = o;
-	};
+	}
 
 	public void setId(long l) {
 		this.id = l;
-	};
+	}
 	
 	public void addActivity(Long id) {
 		this.hostedActivities.add(id);
@@ -44,7 +44,7 @@ public class Place {
 
 	public Long getId() {
 		return this.id;
-	};
+	}
 
 	public String getName() {
 		return this.name;

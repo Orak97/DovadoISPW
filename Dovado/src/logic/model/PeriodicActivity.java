@@ -50,9 +50,7 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 				
 				
 				
-				if( myDay.getValue() >= startingDay.getValue() && myDay.getValue() <= endDay.getValue()) return true;
-				
-				else return false;
+				return ( myDay.getValue() >= startingDay.getValue() && myDay.getValue() <= endDay.getValue());
 				
 			}
 		case MONTHLY:
@@ -63,8 +61,7 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 				int startDay = startDate.getDayOfMonth();
 				int endDay = endDate.getDayOfMonth();
 				
-				if(myDate >= startDay && myDate <= endDay) return true;
-				else return false;
+				return (myDate >= startDay && myDate <= endDay);
 				
 			}
 		case ANNUALLY: 
@@ -85,8 +82,7 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 				int startDay = startDate.getDayOfMonth();
 				int endDay = endDate.getDayOfMonth();
 				
-				if(myDate >= startDay && myDate <= endDay) return true;
-				else return false;
+				return (myDate >= startDay && myDate <= endDay);
 				
 			}
 		}

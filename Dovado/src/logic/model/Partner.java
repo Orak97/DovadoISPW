@@ -2,7 +2,7 @@ package logic.model;
 
 public class Partner extends SuperUser{
 
-	public String name;
+	private String name;
 	
 	public Partner(String usr, String email,Long id) {
 		super(usr, email,id);

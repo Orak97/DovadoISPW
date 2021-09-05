@@ -88,8 +88,6 @@ public boolean validate() {
 		Log.getInstance().logger.info("password non conforme");
 		return false;}
 	
-	//check sul nome utente e sulla presenza di spazi NON funzionaaaaaaa
-	Matcher matchUsr = patternUname.matcher(username);
 	if (username.length()>15 || username.length()<4 || username.lastIndexOf(" ") != -1) {
 	
 		error = "Lo username deve essere composto da una sola parola senza l'utilizzo di spazi e deve avere dai 4 ai 15 caratteri";
