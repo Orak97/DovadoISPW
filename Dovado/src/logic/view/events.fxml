@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox fx:id="root" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="root" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.EventsView">
    <children>
-      <BorderPane prefHeight="200.0" prefWidth="200.0">
-         <center>
-            <ListView fx:id="eventsList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-         </center>
-         <left>
-            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
-         </left>
-      </BorderPane>
+      <HBox>
+         <children>
+            <TextField fx:id="searchBar" />
+            <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#searchEvent" text="Search" />
+         </children>
+      </HBox>
+      <ListView fx:id="eventsList" VBox.vgrow="ALWAYS" />
    </children>
 </VBox>

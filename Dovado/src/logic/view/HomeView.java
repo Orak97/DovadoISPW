@@ -176,19 +176,19 @@ public class HomeView implements Initializable{
 					
 					eventInfo.setId("eventInfo");
 					eventInfo.getStyleClass().add("textEventInfo");
-					eventInfo.setTextAlignment(TextAlignment.LEFT);
+			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
 					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
 					eventInfo.setFill(Paint.valueOf("#ffffff"));
 					eventInfo.setStrokeWidth(0.3);
 					eventInfo.setStroke(Paint.valueOf("#000000"));
-					
+				*/	
 					eventName.setId("eventName");
 					eventName.getStyleClass().add("textEventName");
-					eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+					/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
 					eventName.setFill(Paint.valueOf("#ffffff"));
 					eventName.setStrokeWidth(0.3);
 					eventName.setStroke(Paint.valueOf("#000000"));
-					
+					*/
 					VBox eventText = new VBox(eventName,eventInfo);
 					eventText.setAlignment(Pos.CENTER);
 					eventText.getStyleClass().add("eventTextVbox");
@@ -603,17 +603,17 @@ public void filterActivities() {
 
 		eventInfo.setId("eventInfo");
 		eventInfo.getStyleClass().add("textEventInfo");
-		eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.MEDIUM, 12));
+	/*	eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.MEDIUM, 12));
 		eventInfo.setTextAlignment(TextAlignment.LEFT);
 		eventInfo.setFill(Paint.valueOf("#ffffff"));
 		eventInfo.setStroke(Paint.valueOf("#000000"));
-
+*/
 		eventName.setId("eventName");
 		eventName.getStyleClass().add("textEventName");
-		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+	/*	eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
 		eventName.setFill(Paint.valueOf("#ffffff"));
 		eventName.setStroke(Paint.valueOf("#000000"));
-
+*/
 		
 		
 		VBox eventText = new VBox(eventName,eventInfo);
