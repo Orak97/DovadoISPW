@@ -361,49 +361,10 @@ public class DAOActivity {
 				
 				if(preferenceList.contains(preference.toUpperCase())) {
 					
-					if(((String)result.get(jpCert)).equals("yes")) {			
-						
-						//Se startdate e nulla allora l'attivita sara chiaramente un'attivita Continuos.
-						if((result.get(jpFreq[2]))==null) {
-							matchingActivity = new CertifiedActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)),LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])));
-							matchingActivity.setId(((Long)result.get(jpID)));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
-						}
-						//Se cadence e nulla allora l'attivita sara chiaramente un'attivita Expiring.
-						else if((result.get(jpFreq[4]))==null) {
-							matchingActivity = new CertifiedActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)) , LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])), LocalDate.parse((String)result.get(jpFreq[2])), LocalDate.parse((String)result.get(jpFreq[3])));
-							matchingActivity.setId(((Long)result.get(jpID)));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
-						}
-						//A seguito dei check si capisce che l'attivita sara Periodica.
-						else {
-							matchingActivity = new CertifiedActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)) ,LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])),LocalDate.parse((String)result.get(jpFreq[2])), LocalDate.parse((String)result.get(jpFreq[3])),Cadence.valueOf((String)result.get(jpFreq[4])));
-							matchingActivity.setId(((Long)result.get(jpID)));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
-						}
-						matchingActivity = (CertifiedActivity) matchingActivity;
-					}
-					else {	
-						
-						//Se startdate e nulla allora l'attivita sara chiaramente un'attivita Continuos.
-						if((result.get(jpFreq[2]))==null) {
-							matchingActivity = new NormalActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)) ,LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])));
-							matchingActivity.setId(((Long)result.get(jpID)));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
-						}
-						//Se cadence e nulla allora l'attivita sara chiaramente un'attivita Expiring.
-						else if((result.get(jpFreq[4]))==null) {
-							matchingActivity = new NormalActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)) ,LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])),LocalDate.parse((String)result.get(jpFreq[2])), LocalDate.parse((String)result.get(jpFreq[3])));
-							matchingActivity.setId(((Long)result.get(jpID)));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
-							}
-						//A seguito dei check si capisce che l'attivita sara Periodica.
-						else {
-							matchingActivity = new NormalActivity((String)result.get(jpActName),daoSU.findSuperUserByID((Long)result.get(jpCreator)), daoPl.findPlaceById((Long)result.get(jpPlace)),LocalTime.parse((String)result.get(jpFreq[0])),LocalTime.parse((String)result.get(jpFreq[1])),LocalDate.parse((String)result.get(jpFreq[2])), LocalDate.parse((String)result.get(jpFreq[3])),Cadence.valueOf((String)result.get(jpFreq[4])));
-							matchingActivity.setId(((Long)result.get(jpID)));
-							matchingActivity.setPreferences(((ArrayList<String>)result.get(jpPref)));
-						}
-						matchingActivity = (NormalActivity) matchingActivity;
+					if(((String)result.get(jpCert)).equals("yes")) {
+						matchingActivity = (CertifiedActivity) createActClass(daoSU, result, daoPl.findPlaceById((Long)result.get(jpPlace)));
+					} else {	
+						matchingActivity = (NormalActivity) createActClass(daoSU, result, daoPl.findPlaceById((Long)result.get(jpPlace)));
 					}
 					matchingActivities.add(matchingActivity);
 				}
