@@ -28,8 +28,7 @@ public abstract class FrequencyOfRepeat {
 		int t1 = openingTime.compareTo(myTime); //this should be <= 0 (orario di apertura minore o uguale al tempo desiderato)
 		int t2 = closingTime.compareTo(myTime); // this sould be >0 (orario di chiusura più grande di tempo desiderato )
 		
-		if(t1<= 0 && t2 >0) return true;
-		else return false;
+		return (t1<= 0 && t2 >0);
 	}
 
 	public LocalTime getOpeningTime() {

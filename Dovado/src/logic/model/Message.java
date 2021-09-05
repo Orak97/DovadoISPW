@@ -54,8 +54,8 @@ public class Message {
 		return dtf.format(sentDate);
 	}
 	
-	public void setSentDate(String Date) {
-		this.sentDate = LocalDateTime.parse(Date);
+	public void setSentDate(String date) {
+		this.sentDate = LocalDateTime.parse(date);
 	}
 	
 	public static void main(String[] args) {

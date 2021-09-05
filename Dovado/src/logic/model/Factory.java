@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import logic.controller.CreateActivityBean;
 
 public class Factory {
+	private Factory(){}
+	
 	private static SuperActivity newActivity;
 	
 	public static SuperActivity createNormalActivity(String nome, SuperUser u, Place p,LocalTime openingTime, LocalTime closingTime) {

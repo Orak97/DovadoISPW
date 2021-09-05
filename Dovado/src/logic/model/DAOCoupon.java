@@ -75,17 +75,10 @@ public class DAOCoupon {
 				Long codeJSON = (Long) result.get("code");
 				Log.getInstance().logger.info("valore codeJSON:"+ codeJSON);
 				
-				try {
-					if (codeJSON.equals(Long.valueOf(code))) {
-						return getCouponFromJSON(result);
-					}
-				} catch (NullPointerException|ClassCastException e) {
-					e.printStackTrace();
-					return null;
+				if (codeJSON.equals(Long.valueOf(code))) {
+					return getCouponFromJSON(result);
 				}
-			}
-				
-			
+			}			
 		} catch(Exception e) {
 			//removed exeption for future use: NullPointerException|FileNotFoundException|IOException
 			e.printStackTrace();
@@ -108,24 +101,17 @@ public class DAOCoupon {
 				Long userJSON = (Long) result.get("user");
 				Log.getInstance().logger.info(userJSON +" = "+ userID);
 
-				try {
-					if (userJSON.equals(Long.valueOf(userID))) {		
-						Log.getInstance().logger.info("user trovato");
+				if (userJSON.equals(Long.valueOf(userID))) {		
+					Log.getInstance().logger.info("user trovato");
 
-						Long partnerJSON = (Long) result.get(PARTNERKEY);
+					Long partnerJSON = (Long) result.get(PARTNERKEY);
 
-						if(partnerJSON.equals(Long.valueOf(partnerID))) {
-							return getCouponFromJSON(result);
-						}
-						
+					if(partnerJSON.equals(Long.valueOf(partnerID))) {
+						return getCouponFromJSON(result);
 					}
-				} catch (NullPointerException|ClassCastException e) {
-					e.printStackTrace();
-					return null;
+						
 				}
-			}
-				
-			
+			}			
 		} catch (Exception e) {
 			//removed exeption for future use: NullPointerException|FileNotFoundException|IOException
 			e.printStackTrace();
