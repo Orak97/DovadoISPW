@@ -25,7 +25,7 @@ public class DAOSuperUser {
 	private String jpPartner = "partner";
 	private String jpPassword = "password";
 	private String jpWallet = "wallet";
-	private String jpUsers = "users";
+	private String jpUsers = "users"; 
 	
 	
 	

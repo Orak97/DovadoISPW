@@ -135,7 +135,7 @@ public class DAOCoupon {
 	}
 	
 	private Coupon getCouponFromJSON(JSONObject result) {
-		Log.getInstance().logger.info("coupon trovato");
+		Log.getInstance().getLogger().info("coupon trovato");
 		Long user = (Long) result.get("user");
 		Long partner = (Long) result.get(PARTNERKEY);
 		Coupon coupon = new Coupon(user.intValue() , partner.intValue(), ((Long) result.get(DISCOUNTKEY)).intValue() );
