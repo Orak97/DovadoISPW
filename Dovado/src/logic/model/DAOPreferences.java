@@ -53,11 +53,12 @@ public class DAOPreferences {
 	public boolean preferenceIsInJSON(String preferenceName){
 		JSONParser parser = new JSONParser();
 		int i;
-		try (FileWriter file = new FileWriter(PREFERJSON))
+		try
 		{
 			Object preferences = parser.parse(new FileReader(PREFERJSON));
 			JSONObject preferenceOBJ = (JSONObject) preferences;
 			JSONArray prefArray = (JSONArray) preferenceOBJ.get("preferences");
+			Log.getInstance().logger.info("Ho trovato preferenze");
 			JSONObject result;
 			preferenceName = preferenceName.toUpperCase();
 			
@@ -77,9 +78,10 @@ public class DAOPreferences {
 			newPref.put("name", preferenceName);
 			prefArray.add(newPref);
 			
-			
-			file.write(preferenceOBJ.toString());
-			file.flush();
+			try (FileWriter file = new FileWriter(PREFERJSON)){
+				file.write(preferenceOBJ.toString());
+				file.flush();
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
