@@ -96,12 +96,14 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: bold;
     -fx-font-size:20.0;
+ 	-fx-fill:white;
  }
  
  .list-cell:selected .textEventName {
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: bold;
  	-fx-font-size:24.0;
+ 	-fx-fill:white;
  }
  
  
@@ -113,12 +115,14 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: normal;
  	-fx-font-size:16.0;
+ 	-fx-fill:white;
  }
  
  .textEventName {
   -fx-font-family: 'Montserrat';
   -fx-font-weight: bold;
   -fx-font-size:20.0;
+ 	-fx-fill:white;
  }
 
 .mssusr{
