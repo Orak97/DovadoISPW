@@ -47,7 +47,7 @@
 				        
 				        	<button type="button" class="btn btn-dark btnHome" onclick="document.getElementById('map').contentWindow.spotPlace('<%=curr.getPlace().getCivico()%>','<%=curr.getPlace().getAddress()%>','<%=curr.getPlace().getCity()%>','<%=curr.getPlace().getRegion()%>');">View on map</button>
 				        
-				        	<button type="button" class="btn btn-success btnHome">Play Activity</button>
+				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>">Play Activity</button>
 				    </div>
 			    </div>
 			  </div>
@@ -64,6 +64,104 @@
 	
 	
 	</div>
+	
+	<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel"></h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		      <form action="Schedule.jsp" name="myform" method="GET">
+			      <div class="scheduled-time">
+				        <div class="mb-3">
+				        	<label for="scheduledDate" class="col-form-label">Data:</label>
+				            <input type="date" class="form-control" id="scheduledDate" name="scheduledDate">
+				        </div>
+		
+				        <div class="mb-3">
+				        	<label for="scheduledTime" class="col-form-label">Orario:</label>
+				            <input type="time" class="form-control" id="scheduledTime" name="scheduledTime">
+				        </div>
+				  </div>
+		
+				  <div class="reminder-time">
+				        <div class="mb-3" id="promemoria">
+				        	<p>Vuoi ricevere un promemoria per questo evento?</p>
+				        	<button type="button" class="btn btn-primary btn-sm" onclick="addPromemoria()">Impostaun promemoria</button>
+				        </div>
+		
+				        <div class="reminder-form visually-hidden" id="reminder-form">
+				        	<p>Dati del reminder:</p>
+					        <div class="mb-3">
+					        	<label for="scheduledDate" class="col-form-label">Data:</label>
+					            <input type="date" class="form-control" id="scheduledDate" name="reminderDate">
+					        </div>
+		
+					        <div class="mb-3">
+					        	<label for="scheduledTime" class="col-form-label">Orario:</label>
+					            <input type="time" class="form-control" id="scheduledTime" name="reminderTime">
+					        </div>
+				        </div>
+			      </div>
+		
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-success"  name="date">Schedule Activity</button>
+		      </div>
+		      </form>
+		    </div>
+		  </div>
+		</div>
+		
+		<!-- fine modal -->
+		 <script>
+		 	var exampleModal = document.getElementById('exampleModal')
+		 	exampleModal.addEventListener('show.bs.modal', function (event) {
+			   // Button that triggered the modal
+			   var button = event.relatedTarget
+			   // Extract info from data-bs-* attributes
+			   var titolo = button.getAttribute('data-bs-titolo')
+			   
+			   var luogo = button.getAttribute('data-bs-luogo')
+			   
+			   var orarioReminder = button.getAttribute('data-bs-orarioReminder')
+			   var dataReminder = button.getAttribute('data-bs-dataReminder')
+			   if(orarioReminder == null || dataReminder == null){
+				   console.log('nessun promemoria')
+				   removePromemoria()
+			   }
+			   // If necessary, you could initiate an AJAX request here
+			   // and then do the updating in a callback.
+			   //
+			   // Update the modal's content.
+			   var modalTitle = exampleModal.querySelector('.modal-title')
+		
+		
+			   modalTitle.textContent = titolo
+			})
+		
+			function addPromemoria(){
+		 		let div = document.getElementById('promemoria')
+		 		div.classList.add("visually-hidden");
+		
+		 		let form = document.getElementById('reminder-form');
+		 		form.classList.remove("visually-hidden");
+		 	}
+		
+		 	function removePromemoria(){
+		 		let div = document.getElementById('promemoria')
+		 		div.classList.remove("visually-hidden");
+		
+		
+		 		let form = document.getElementById('reminder-form');
+		 		form.classList.add("visually-hidden");
+		 	}
+		
+		 </script>
 
 	
 </body>
