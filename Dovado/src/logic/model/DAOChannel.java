@@ -41,12 +41,12 @@ public class DAOChannel {
 	
 	//Metodo per aggiornare nella persistenza un canale
 		public boolean updateChannelInJSON(Channel ch, List<Message> msges, SuperActivity a) {
-			JSONParser parser = new JSONParser();
+			JSONParser pars = new JSONParser();
 			
 			try(FileWriter file = new FileWriter(CHANNJSON)) 
 			{
 				
-				Object channels = parser.parse(new FileReader(CHANNJSON));
+				Object channels = pars.parse(new FileReader(CHANNJSON));
 				JSONObject channel = (JSONObject) channels;
 				JSONArray channelArray = (JSONArray) channel.get(CHANNKEY);
 				JSONArray newMessageArray = new JSONArray();
