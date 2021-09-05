@@ -11,9 +11,9 @@ import org.json.simple.parser.JSONParser;
 public class DAOPreferences {
 	
 	private static DAOPreferences INSTANCE;
+	private static final  String PREFERJSON = "WebContent/preferences.json" ;
 	
 	private DAOPreferences() {
-		//Da vedere se serve singleton.
 	}
 	
 	public static DAOPreferences getInstance() {
@@ -25,10 +25,9 @@ public class DAOPreferences {
 	public String getPreferenceFromJSON(int placeInJSON) {
 		String preference;
 		JSONParser parser = new JSONParser();
-		int i;
 		try 
 		{
-			Object preferences = parser.parse(new FileReader("WebContent/preferences.json"));
+			Object preferences = parser.parse(new FileReader(PREFERJSON));
 			JSONObject preferenceOBJ = (JSONObject) preferences;
 			JSONArray prefArray = (JSONArray) preferenceOBJ.get("preferences");
 			JSONObject result;
@@ -39,18 +38,13 @@ public class DAOPreferences {
 			
 			return preference;
 			
-			//Se uscito dal ciclo for la preferenza non era presente nella persistenza;
+			//Se uscito dal ciclo for la preferenza non era presente nella persistenza
 			//Per un possibile uso futuro quindi la si aggiunge; restituendo il suo id.
 			
 			// POTREMMO VOLERLO CAMBIARE ( SE NON VOGLIAMO IL JSON INTASATO DI SINONIMI DI UNO STESSO
 			// INSERITO DIVERSE VOLTE DA PARTE DI UTENTI ) TOGLIENDO L'AGGIUNTA IN AUTOMATICO DELLA PREFERENZA.
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -59,9 +53,9 @@ public class DAOPreferences {
 	public boolean preferenceIsInJSON(String preferenceName){
 		JSONParser parser = new JSONParser();
 		int i;
-		try 
+		try (FileWriter file = new FileWriter(PREFERJSON))
 		{
-			Object preferences = parser.parse(new FileReader("WebContent/preferences.json"));
+			Object preferences = parser.parse(new FileReader(PREFERJSON));
 			JSONObject preferenceOBJ = (JSONObject) preferences;
 			JSONArray prefArray = (JSONArray) preferenceOBJ.get("preferences");
 			JSONObject result;
@@ -78,26 +72,16 @@ public class DAOPreferences {
 				
 				
 			}
-			//Se uscito dal ciclo for la preferenza non era presente nella persistenza;
-			//Per un possibile uso futuro quindi la si aggiunge; restituendo il suo id.
 			
-			// POTREMMO VOLERLO CAMBIARE ( SE NON VOGLIAMO IL JSON INTASATO DI SINONIMI DI UNO STESSO
-			// INSERITO DIVERSE VOLTE DA PARTE DI UTENTI ) TOGLIENDO L'AGGIUNTA IN AUTOMATICO DELLA PREFERENZA.
 			JSONObject newPref = new JSONObject();
 			newPref.put("name", preferenceName);
 			prefArray.add(newPref);
 			
-			FileWriter file = new FileWriter("WebContent/preferences.json");
-			file.write(preferenceOBJ.toString());;
-			file.flush();
-			file.close();
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;
-		}
-		catch (Exception e) {
+			file.write(preferenceOBJ.toString());
+			file.flush();
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
