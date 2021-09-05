@@ -17,11 +17,11 @@ public class RegisterController {
 		
 	
 		if (dao.findSuperUserByEmail(email) != null) {
-			Log.getInstance().logger.info("L'utente esiste");
+			Log.getInstance().getLogger().info("L'utente esiste");
 			return false;
 		}
 		else {
-			Log.getInstance().logger.info("Non esiste l'utente");
+			Log.getInstance().getLogger().info("Non esiste l'utente");
 			dao.addUserToJSON(email, username, 0, psw);
 			return true;}	
 	}

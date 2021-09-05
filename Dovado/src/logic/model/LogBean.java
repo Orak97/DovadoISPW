@@ -33,7 +33,7 @@ public class LogBean {
 	} 
 
 	public String getError() {
-		Log.getInstance().logger.warning("Prendo l'errore: "+ error);
+		Log.getInstance().getLogger().warning("Prendo l'errore: "+ error);
 
 	    return error;
 	}
@@ -54,10 +54,10 @@ public class LogBean {
 		sUser = logController.findUser(email, password);
 		if (sUser == null) {
 			error = "Mail o password errate";
-			Log.getInstance().logger.info("login failed");
+			Log.getInstance().getLogger().info("login failed");
 			return false;
 		}
-		Log.getInstance().logger.info("login OK!!");
+		Log.getInstance().getLogger().info("login OK!!");
 
 		return true;
 		

@@ -12,8 +12,19 @@ public class DAOPlace {
 	
 	private static DAOPlace INSTANCE;
 	private DAOSuperUser daoSu;
+	private String placeFileName = "WebContent/places.json"; 
 	
-	private DAOPlace() {
+	private String jpPlaces = "places";
+	private String jpPlaName = "name";
+	private String jpAddress = "address";
+	private String jpCity = "city";
+	private String jpCivic = "civico";
+	private String jpRegion = "region";
+	private String jpID = "id";
+	private String jpAct = "activities";
+	private String jpOwner = "owner";
+	
+		private DAOPlace() {
 	}
 	
 	public static DAOPlace getInstance() {
@@ -21,7 +32,11 @@ public class DAOPlace {
 			INSTANCE = new DAOPlace();
 		return INSTANCE;
 	}
-
+	
+	public String getPlaceFileName() {
+		return this.placeFileName;
+	}
+	
 	//Aggiunto un metodo per trovare un posto tramite ID, utile durante la reistanzazione da persistenza delle attivita.
 	public Place findPlaceById(Long id) {
 		JSONParser parser = new JSONParser();
@@ -29,30 +44,26 @@ public class DAOPlace {
 		daoSu = DAOSuperUser.getInstance();
 		try 
 		{
-			Object places = parser.parse(new FileReader("WebContent/places.json"));
+			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get("places");
+			JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 			JSONObject result;
 
 			for(i=0;i<placeArray.size();i++) 
 			{
 				result = (JSONObject)placeArray.get(i);
 				
-				Long idJSON = (Long) result.get("id");
+				Long idJSON = (Long) result.get(jpID);
 				
 				if (idJSON.equals(id)) {
-					Place placeFound = new Place((String)result.get("name"),(String) result.get("address"),(String)result.get("city"),(String)result.get("region"),(String) result.get("civico"),(Partner) daoSu.findSuperUserByID((Long)result.get("owner")));
-					placeFound.setId((Long) result.get("id"));
+					Place placeFound = new Place((String)result.get(jpPlaName),(String) result.get(jpAddress),(String)result.get(jpCity),(String)result.get(jpRegion),(String) result.get(jpCivic),(Partner) daoSu.findSuperUserByID((Long)result.get(jpOwner)));
+					placeFound.setId((Long) result.get(jpID));
 					return placeFound;
 				}
 				
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 			}
@@ -65,32 +76,28 @@ public class DAOPlace {
 		daoSu = DAOSuperUser.getInstance();
 		try 
 		{
-			Object places = parser.parse(new FileReader("WebContent/places.json"));
+			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get("places");
+			JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 			JSONObject result;
 
 			for(i=0;i<placeArray.size();i++) 
 			{
 				result = (JSONObject)placeArray.get(i);
 				
-				String namePrint = (String) result.get("name");
-				String cityPrint = (String) result.get("city");
-				String regionPrint = (String) result.get("region");
+				String namePrint = (String) result.get(jpPlaName);
+				String cityPrint = (String) result.get(jpCity);
+				String regionPrint = (String) result.get(jpRegion);
 				
 				if (name.equals(namePrint) && city.equals(cityPrint) && region.equals(regionPrint)) {
-					Place placeFound = new Place(namePrint,(String) result.get("address"),cityPrint,regionPrint,(String) result.get("civico"),(Partner) daoSu.findSuperUserByID((Long)result.get("owner")));
-					placeFound.setId((Long) result.get("id"));
+					Place placeFound = new Place(namePrint,(String) result.get(jpAddress),cityPrint,regionPrint,(String) result.get(jpCivic),(Partner) daoSu.findSuperUserByID((Long)result.get(jpOwner)));
+					placeFound.setId((Long) result.get(jpID));
 					return placeFound;
 				}
 				
 			}
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 			}
@@ -99,55 +106,50 @@ public class DAOPlace {
 	
 	
 	public int addPlaceToJSON(String address, String name, String city, String region,String civico, Partner owner) {
-		int i,id=0;
+		int i;
+		int id=0;
 		JSONParser parser = new JSONParser();
 		JSONObject newPlace = new JSONObject();
 		JSONArray newPlaceActivities = new JSONArray();
 		
-		newPlace.put("address", address);
-		newPlace.put("civico", civico);
-		newPlace.put("name", name);
-		newPlace.put("city", city);
-		newPlace.put("region", region);
-		newPlace.put("activities", newPlaceActivities);
+		newPlace.put(jpAddress, address);
+		newPlace.put(jpCivic, civico);
+		newPlace.put(jpPlaName, name);
+		newPlace.put(jpCity, city);
+		newPlace.put(jpRegion, region);
+		newPlace.put(jpAct, newPlaceActivities);
 		if(owner!=null)
-			newPlace.put("owner", owner.getUserID());
+			newPlace.put(jpOwner, owner.getUserID());
 		else 
-			newPlace.put("owner", null); 
+			newPlace.put(jpOwner, null); 
 		
-		try 
+		try (FileWriter file = new FileWriter(placeFileName))
 		{
-			Object places = parser.parse(new FileReader("WebContent/places.json"));
+			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get("places");
+			JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 			JSONObject result;
 			
 			for(i=0;i<placeArray.size();i++) 
 			{
 				result = (JSONObject)placeArray.get(i);
 
-				String addressPrint = (String) result.get("address");
-				String civicoPrint = (String) result.get("civico");
-				String namePrint = (String) result.get("name");
-				String cityPrint = (String) result.get("city");
-				String regionPrint = (String) result.get("region");
+				String addressPrint = (String) result.get(jpAddress);
+				String civicoPrint = (String) result.get(jpCivic);
+				String namePrint = (String) result.get(jpPlaName);
+				String cityPrint = (String) result.get(jpCity);
+				String regionPrint = (String) result.get(jpRegion);
 				
 				if(address.equals(addressPrint) && civico.equals(civicoPrint) && name.equals(namePrint) && city.equals(cityPrint) && region.equals(regionPrint))
-					return ((Long) result.get("id")).intValue();
+					return ((Long) result.get(jpID)).intValue();
 			}
 			id=i;
-			newPlace.put("id", id);
+			newPlace.put(jpID, id);
 			placeArray.add(newPlace);
 			
-			FileWriter file = new FileWriter("WebContent/places.json");
-			file.write(place.toString());;
+			file.write(place.toString());
 			file.flush();
-			file.close();
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return -1;}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return -1;
 			}
@@ -161,39 +163,37 @@ public class DAOPlace {
 		int i;
 		JSONParser parser = new JSONParser();
 		
-		try {
-			Object places = parser.parse(new FileReader("WebContent/places.json"));
+		try (FileWriter file = new FileWriter(placeFileName))
+		{
+			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get("places");
+			JSONArray placeArray = (JSONArray) place.get(jpPlaces);
 			JSONObject result;
 			
 			for(i=0;i<placeArray.size();i++) 
 			{
 				result = (JSONObject)placeArray.get(i);
 
-				Long placeId = ((Long) result.get("id"));
+				Long placeId = ((Long) result.get(jpID));
 				
 				/*--------------------PRINT DI CONTROLLO-----------------------------------------------*/
-				Log.getInstance().logger.info("Controllo di comparazione ID posti:");
-				Log.getInstance().logger.info(String.valueOf(p.getId()==(placeId)));
-				Log.getInstance().logger.info(String.valueOf(p.getOwner().getUserID()));
+				Log.getInstance().getLogger().info("Controllo di comparazione ID posti:");
+				Log.getInstance().getLogger().info(String.valueOf(p.getId()==(placeId)));
+				Log.getInstance().getLogger().info(String.valueOf(p.getOwner().getUserID()));
 				/*--------------------PRINT DI CONTROLLO-----------------------------------------------*/				
 				
 				if(p.getId()==(placeId)) {
 					//Salvo nella persistenza il proprietario con il suo nome. In futuro lo si potrebbe salvare in base all'id.
-					result.put("owner", p.getOwner().getUserID());
+					result.put(jpOwner, p.getOwner().getUserID());
 					placeArray.set(i, result);
 					break;
 				}
 			}
-			FileWriter file = new FileWriter("WebContent/places.json");
-			file.write(place.toString());;
+			
+			file.write(place.toString());
 			file.flush();
-			file.close();
-		}catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;}
-		catch (Exception e) {
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 			}

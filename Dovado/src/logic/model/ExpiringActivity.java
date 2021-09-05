@@ -20,15 +20,11 @@ public class ExpiringActivity extends FrequencyOfRepeat {
 	
 	@Override
 	public boolean checkPlayability(LocalDateTime timestamp) {
-		if(!this.isOnTime(timestamp)) return false;
-		
+		if(!this.isOnTime(timestamp)) return false;	
 		
 		LocalDate myDate = timestamp.toLocalDate();
 		
-		if((startDate.isAfter(myDate) && endDate.isBefore(myDate)) || (startDate.isEqual(myDate) && endDate.isEqual(myDate)) )
-		return true;
-		
-		else return false;
+		return (startDate.isAfter(myDate) && endDate.isBefore(myDate)) || (startDate.isEqual(myDate) && endDate.isEqual(myDate));
 	} 
 
 	public LocalDate getStartDate() {

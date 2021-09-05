@@ -1,0 +1,10 @@
+set 04, 2021 9:53:39 AM logic.view.LoginView login
+INFO: Clicked login
+set 04, 2021 9:54:42 AM logic.view.LoginView login
+INFO: Clicked login
+set 04, 2021 10:17:51 AM logic.view.LoginView login
+INFO: Clicked login
+set 04, 2021 10:19:36 AM logic.view.LoginView login
+INFO: Clicked login
+set 04, 2021 10:19:47 AM logic.view.LoginView login
+INFO: Clicked login

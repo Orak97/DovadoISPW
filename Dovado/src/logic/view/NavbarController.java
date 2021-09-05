@@ -23,7 +23,7 @@ public class NavbarController {
     
     @FXML
     void Logout(ActionEvent event) {
-    	Log.getInstance().logger.info("Clicked Logout");
+    	Log.getInstance().getLogger().info("Clicked Logout");
     	nav.onHome();
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
@@ -33,31 +33,31 @@ public class NavbarController {
     @FXML
     void goChannels(ActionEvent event) {
     	nav.onChannels();
-    	Log.getInstance().logger.info("Clicked channels");
+    	Log.getInstance().getLogger().info("Clicked channels");
     }
 
     @FXML
     void goHome(ActionEvent event) {
     	nav.onHome();
-    	Log.getInstance().logger.info("Clicked home");
+    	Log.getInstance().getLogger().info("Clicked home");
     }
 
     @FXML
     void goProfile(ActionEvent event) {
     	nav.onMyProfile();
-    	Log.getInstance().logger.info("Clicked My profile");
+    	Log.getInstance().getLogger().info("Clicked My profile");
     }
 
     @FXML
     void goPreferences(ActionEvent event) {
     	nav.onPreferences();
-    	Log.getInstance().logger.info("Clicked preferences");
+    	Log.getInstance().getLogger().info("Clicked preferences");
     }
 
     @FXML
     void goEvents(ActionEvent event) {
     	nav.onEvents();
-    	Log.getInstance().logger.info("Clicked vote");
+    	Log.getInstance().getLogger().info("Clicked vote");
     }
     
 

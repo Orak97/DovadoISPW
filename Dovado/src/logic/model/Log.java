@@ -9,10 +9,11 @@ import java.util.logging.SimpleFormatter;
 
 public class Log {
 	private static Log INSTANCE;
+	private static final String FILENAME  = "log.txt";
 	
-	public Logger logger;
+	private Logger logger;
 	private FileHandler fh;
-	private String fileName  = "log.txt";
+	
 	
 	public static Log getInstance(){
 		if(INSTANCE==null)
@@ -22,25 +23,31 @@ public class Log {
 	
 	private Log() {
 		try {
-			File fileLog = new File(fileName);
-				if (!fileLog.exists()) {
-			
-				fileLog.createNewFile();}
+			File fileLog = new File(FILENAME);
+			if (!fileLog.exists()) {			
+				if(!fileLog.createNewFile()) {
+					throw new IOException("Errore nella creazione del file "+ FILENAME);
+				}
+			}
 		
 		
-		fh = new FileHandler(fileName, true);
+			fh = new FileHandler(FILENAME, true);
 		
-		logger = Logger.getLogger("logProject");
-		logger.addHandler(fh);
-		SimpleFormatter formatter = new SimpleFormatter();
-		fh.setFormatter(formatter);
+			logger = Logger.getLogger("logProject");
+			logger.addHandler(fh);
+			SimpleFormatter formatter = new SimpleFormatter();
+			fh.setFormatter(formatter);
 		
-		logger.setLevel(Level.INFO);
+			logger.setLevel(Level.INFO);
 		
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+	}
+	
+	public Logger getLogger() {
+		return this.logger;
+	}
 		
 }

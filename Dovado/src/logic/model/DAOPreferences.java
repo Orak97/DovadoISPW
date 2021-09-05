@@ -11,9 +11,11 @@ import org.json.simple.parser.JSONParser;
 public class DAOPreferences {
 	
 	private static DAOPreferences INSTANCE;
-	
+	private static final  String PREFJFILENAME = "WebContent/preferences.json" ;
+	private static final  String PREFKEY = "preferences";
+	private static final  String NAMEKEY = "name";
+
 	private DAOPreferences() {
-		//Da vedere se serve singleton.
 	}
 	
 	public static DAOPreferences getInstance() {
@@ -25,17 +27,17 @@ public class DAOPreferences {
 	public String getPreferenceFromJSON(int placeInJSON) {
 		String preference;
 		JSONParser parser = new JSONParser();
-		int i;
+		
 		try 
 		{
-			Object preferences = parser.parse(new FileReader("WebContent/preferences.json"));
+			Object preferences = parser.parse(new FileReader(PREFJFILENAME));
 			JSONObject preferenceOBJ = (JSONObject) preferences;
-			JSONArray prefArray = (JSONArray) preferenceOBJ.get("preferences");
+			JSONArray prefArray = (JSONArray) preferenceOBJ.get(PREFKEY);
 			JSONObject result;
 			
 			result = (JSONObject)prefArray.get(placeInJSON);
 				
-			preference = ((String) result.get("name"));
+			preference = ((String) result.get(NAMEKEY));
 			
 			return preference;
 			
@@ -45,12 +47,7 @@ public class DAOPreferences {
 			// POTREMMO VOLERLO CAMBIARE ( SE NON VOGLIAMO IL JSON INTASATO DI SINONIMI DI UNO STESSO
 			// INSERITO DIVERSE VOLTE DA PARTE DI UTENTI ) TOGLIENDO L'AGGIUNTA IN AUTOMATICO DELLA PREFERENZA.
 			
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -59,18 +56,18 @@ public class DAOPreferences {
 	public boolean preferenceIsInJSON(String preferenceName){
 		JSONParser parser = new JSONParser();
 		int i;
-		try 
+		try (FileWriter file = new FileWriter(PREFJFILENAME))
 		{
-			Object preferences = parser.parse(new FileReader("WebContent/preferences.json"));
+			Object preferences = parser.parse(new FileReader(PREFJFILENAME));
 			JSONObject preferenceOBJ = (JSONObject) preferences;
-			JSONArray prefArray = (JSONArray) preferenceOBJ.get("preferences");
+			JSONArray prefArray = (JSONArray) preferenceOBJ.get(PREFKEY);
 			JSONObject result;
 			preferenceName = preferenceName.toUpperCase();
 			
 			for(i=0;i<prefArray.size();i++) {
 				result = (JSONObject)prefArray.get(i);
 				
-				String name = ((String) result.get("name")).toUpperCase();
+				String name = ((String) result.get(NAMEKEY)).toUpperCase();
 			
 				if (preferenceName.equals(name)) {
 					return true;
@@ -84,13 +81,11 @@ public class DAOPreferences {
 			// POTREMMO VOLERLO CAMBIARE ( SE NON VOGLIAMO IL JSON INTASATO DI SINONIMI DI UNO STESSO
 			// INSERITO DIVERSE VOLTE DA PARTE DI UTENTI ) TOGLIENDO L'AGGIUNTA IN AUTOMATICO DELLA PREFERENZA.
 			JSONObject newPref = new JSONObject();
-			newPref.put("name", preferenceName);
+			newPref.put(NAMEKEY, preferenceName);
 			prefArray.add(newPref);
 			
-			FileWriter file = new FileWriter("WebContent/preferences.json");
-			file.write(preferenceOBJ.toString());;
+			file.write(preferenceOBJ.toString());
 			file.flush();
-			file.close();
 			
 		} 
 		catch (FileNotFoundException e) {

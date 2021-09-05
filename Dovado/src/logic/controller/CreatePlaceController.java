@@ -19,7 +19,7 @@ public class CreatePlaceController {
 		Place place = new Place(name, address,city,region,civico,owner);
 		int id = this.addPlaceToDB(address, name, city, region, civico, owner); 
 		if(id < 0)
-			Log.getInstance().logger.info("\n\nPosto gia creato precedentemente\n\n");
+			Log.getInstance().getLogger().info("\n\nPosto gia creato precedentemente\n\n");
 		place.setId(id);
 		return place;
 	}

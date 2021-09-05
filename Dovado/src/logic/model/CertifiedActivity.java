@@ -22,7 +22,7 @@ public class CertifiedActivity extends SuperActivity implements Activity {
 
 	@Override
 	public void playActivity(User u) {
-		Log.getInstance().logger.info("Yay hai fatto l'activity certificata e ti becchi la ricompensa");
+		Log.getInstance().getLogger().info("Yay hai fatto l'activity certificata e ti becchi la ricompensa");
 		u.getReward(100);
 	}
 

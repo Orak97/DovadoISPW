@@ -38,7 +38,7 @@ public class CreateActivityController {
 		
 		SuperActivity newActivity;
 
-		Log.getInstance().logger.info("Ciao da dentro createActivity");
+		Log.getInstance().getLogger().info("Ciao da dentro createActivity");
 		switch(bean.getType()) {
 		case CONTINUA:
 			{	
@@ -51,9 +51,9 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime());					
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().getLogger().warning("Attivita non creata.\n");
 						return;
-					} else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					} else Log.getInstance().getLogger().info("ID:\n"+id+"\n");
 					
 					newActivity.setId(id); 
 				}
@@ -61,9 +61,9 @@ public class CreateActivityController {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime() );
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().getLogger().warning("Attivita non creata.\n");
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().getLogger().info("ID:\n"+id+"\n");
 					newActivity.setId(id);
 				}
 			
@@ -78,18 +78,18 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().getLogger().warning("Attivita non creata.\n");
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().getLogger().info("ID:\n"+id+"\n");
 					newActivity.setId(id);
 				}
 				else {
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");		
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().getLogger().warning("Attivita non creata.\n");
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().getLogger().info("ID:\n"+id+"\n");
 					newActivity.setId(id);
 				}
 			}
@@ -103,18 +103,18 @@ public class CreateActivityController {
 					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 					id = daoAc.addActivityToJSON(p,newActivity,"no");
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().getLogger().warning("Attivita non creata.\n");
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().getLogger().info("ID:\n"+id+"\n");
 					newActivity.setId(id);
 				}
 				else { 
 					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 					if(id<0) {
-						Log.getInstance().logger.warning("Attivita non creata.\n");
+						Log.getInstance().getLogger().warning("Attivita non creata.\n");
 						return;
-					}else Log.getInstance().logger.info("ID:\n"+id+"\n");
+					}else Log.getInstance().getLogger().info("ID:\n"+id+"\n");
 					newActivity.setId(id);				
 				}
 			}

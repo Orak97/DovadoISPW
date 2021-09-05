@@ -11,7 +11,7 @@
 		
 		String titolo = (String) application.getAttribute("titolo");
 		
-		Log.getInstance().logger.info(titolo);
+		Log.getInstance().getLogger().info(titolo);
 		
 		if (titolo.equals("login") | titolo.equals("register")) {
 			if( session.getAttribute("user") != null) {				
