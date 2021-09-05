@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
+import logic.model.SuperUser;
 
 /*
  * simple singleton implementation of the navbar due to:
@@ -13,7 +14,7 @@ import javafx.scene.layout.BorderPane;
  */
 public class Navbar {
 	private static BorderPane navbar = null;
-
+	private static SuperUser user;
 	
 	public static BorderPane getNavbar() {
 		if(Navbar.navbar == null) 
@@ -87,6 +88,13 @@ public class Navbar {
 	  		curr.getStyleClass().remove("active");
 	    }
 	}
-	
+
+	public static void setUser(SuperUser usr) {
+		user = usr;
+	}
+
+	public static SuperUser getUser() {
+		return user;
+	}
 	
 }

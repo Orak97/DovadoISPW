@@ -60,7 +60,8 @@ public class LoginView{
     	}
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	HomeView hv = new HomeView();
-    	hv.render(current,user);
+    	Navbar.setUser(user);
+    	HomeView.render(current);
     }
 
     @FXML

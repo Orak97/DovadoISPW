@@ -94,7 +94,7 @@ public class HomeView implements Initializable{
     private static SuperActivity activitySelected;
     private static SuperUser user;
     
-    public static void render(Stage current, SuperUser user2) {
+    public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
 			BorderPane navbar = Navbar.getNavbar();
@@ -114,7 +114,7 @@ public class HomeView implements Initializable{
 			}
 			root.getChildren().addAll(navbar,home);
 			
-			user=user2;
+			user=Navbar.getUser();
 			curr=current;
 			
 			current.show();	

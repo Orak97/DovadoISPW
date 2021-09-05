@@ -52,7 +52,7 @@ public class DAOSchedules {
 					
 						scheduleUpdated.put("activityReferenced", scheduleList.get(scheduleList.size()-1).getReferencedActivity().getId());
 						scheduleUpdated.put("scheduledTime", scheduleList.get(scheduleList.size()-1).getScheduledTime().toString());
-						scheduleUpdated.put("remiderTime", scheduleList.get(scheduleList.size()-1).getReminderTime().toString());
+						scheduleUpdated.put("reminderTime", scheduleList.get(scheduleList.size()-1).getReminderTime().toString());
 						
 						scheduleUpdArr.add(scheduleUpdated);
 					}
