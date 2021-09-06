@@ -139,9 +139,9 @@ public class DAOActivity {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -1L;
+			return 1L;
 			}
-		return -1L;
+		return 1L;
 	
 	}
 

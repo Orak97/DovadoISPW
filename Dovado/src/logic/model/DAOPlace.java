@@ -3,6 +3,7 @@ package logic.model;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -42,6 +43,47 @@ public class DAOPlace {
 	}
 	public Place findPlaceInJSON(String name, String city, String region) {
 		return findPlace(name, city, region, null);
+	}
+	
+	public List<Place> findPlacesByCity(String city) {
+		JSONParser parser = new JSONParser();
+		int i;
+		List<Place> placesFound = null;
+		DAOSuperUser daoSu = DAOSuperUser.getInstance();
+		try 
+		{
+			Object places = parser.parse(new FileReader(PLACEJSON));
+			JSONObject place = (JSONObject) places;
+			JSONArray placeArray = (JSONArray) place.get(PLACESKEY);
+			JSONObject result;
+			boolean expression;
+
+			for(i=0;i<placeArray.size();i++) 
+			{
+				result = (JSONObject)placeArray.get(i);
+				
+				Long idJSON = (Long) result.get(IDKEY);
+				String namePrint = (String) result.get(NAMEKEY);
+				String cityPrint = (String) result.get(CITYKEY);
+				String regionPrint = (String) result.get(REGIONKEY);
+				
+				expression = city.equals(cityPrint);
+								
+				if (expression) {
+					Place placeFound = new Place(namePrint,(String) result.get(ADDRESSKEY),cityPrint,regionPrint,(String) result.get(CIVICOKEY),(Partner) daoSu.findSuperUserByID((Long)result.get(OWNERKEY)));
+					placeFound.setId((Long) result.get(IDKEY));
+					
+					placesFound.add(placeFound);
+					
+				}
+				
+			}
+			return placesFound;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+			}
 	}
 	
 	public Place findPlace (String name, String city, String region,Long id) {
