@@ -106,7 +106,7 @@ public class DAOPlace {
 		else 
 			newPlace.put(OWNERKEY, null); 
 		
-		try (FileWriter file = new FileWriter(PLACEJSON))
+		try 
 		{
 			Object places = parser.parse(new FileReader(PLACEJSON));
 			JSONObject place = (JSONObject) places;
@@ -130,9 +130,10 @@ public class DAOPlace {
 			newPlace.put(IDKEY, id);
 			placeArray.add(newPlace);
 			
-			
-			file.write(place.toString());
-			file.flush();
+			try (FileWriter file = new FileWriter(PLACEJSON)){
+				file.write(place.toString());
+				file.flush();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1;
@@ -147,7 +148,7 @@ public class DAOPlace {
 		int i;
 		JSONParser parser = new JSONParser();
 		
-		try (FileWriter file = new FileWriter(PLACEJSON)) {
+		try {
 			Object places = parser.parse(new FileReader(PLACEJSON));
 			JSONObject place = (JSONObject) places;
 			JSONArray placeArray = (JSONArray) place.get(PLACESKEY);
@@ -172,10 +173,10 @@ public class DAOPlace {
 					break;
 				}
 			}
-			
-			file.write(place.toString());
-			file.flush();
-
+			try (FileWriter file = new FileWriter(PLACEJSON)) {
+				file.write(place.toString());
+				file.flush();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

@@ -31,7 +31,7 @@ public class DAOCoupon {
 	}
 	
 	public boolean addCoupontoJSON(Coupon coupon) {
-		try (FileWriter file  = new FileWriter(COUPONJSON)){
+		try {
 			Object coupons = parser.parse(new FileReader(COUPONJSON));
 			JSONObject couponObj = (JSONObject) coupons;
 			JSONArray couponArray = (JSONArray) couponObj.get(COUPONSKEY);
@@ -46,12 +46,11 @@ public class DAOCoupon {
 				newCoupon.put(DISCOUNTKEY, coupon.getDiscount());
 				couponArray.add(newCoupon);
 				
-				
+				try (FileWriter file  = new FileWriter(COUPONJSON)){
 				file.write(couponObj.toString());
 				file.flush();
-			}
-			
-			
+				}
+			}			
 		} catch(Exception e) {
 			//removed exeption for future use: NullPointerException|FileNotFoundException|IOException
 			e.printStackTrace();

@@ -49,7 +49,7 @@ public class DAOActivity {
 		
 		Long id;
 		int i;
-		try (FileWriter file = new FileWriter(placeFileName); FileWriter file2 = new FileWriter(activityFileName))
+		try 
 		{
 			Object places = parser.parse(new FileReader(placeFileName));
 			JSONObject place = (JSONObject) places;
@@ -121,14 +121,17 @@ public class DAOActivity {
 					activitiesIdArray.add(activityIdToAdd); //Salvo l'id dell'attivita al posto di appartenenza.
 					result.put(jpResActivity, activitiesIdArray);
 					
-					
-					file.write(place.toString());
-					file.flush();
+					try (FileWriter file = new FileWriter(placeFileName)){
+						file.write(place.toString());
+						file.flush();
+					}
 					
 					activityArray.add(activityToAdd);
 					
-					file2.write(activitiesJOBJ.toString());
-					file2.flush();
+					try (FileWriter file2 = new FileWriter(activityFileName)){
+						file2.write(activitiesJOBJ.toString());
+						file2.flush();
+					}
 					
 					return id;
 				}
@@ -156,7 +159,7 @@ public class DAOActivity {
 		int i;
 		int j;
 		
-		try (FileWriter file = new FileWriter(activityFileName))		
+		try		
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -193,11 +196,13 @@ public class DAOActivity {
 						if(!sua.getPreferences().equals(oldpref)) {
 							result.put(jpPref,preferences);
 						
-							file.write(activitiesJOBJ.toString());
-							file.flush();
-						
+							try (FileWriter file = new FileWriter(activityFileName)){
+								file.write(activitiesJOBJ.toString());
+								file.flush();
+							}						
 							return true;
-						} 	else return false;
+						
+						} else return false;
 					}
 				} else {
 					result.put(jpPlace, sua.getPlace().getId());
@@ -228,10 +233,11 @@ public class DAOActivity {
 						result.put(jpFreq[4], (((PeriodicActivity) (sua.getFrequency())).getCadence().toString()));
 						
 					}
-					
+					try (FileWriter file = new FileWriter(activityFileName)){
 					file.write(activitiesJOBJ.toString());
 					file.flush();
-										
+					}
+					
 					return true;
 				}
 			}			
@@ -250,7 +256,7 @@ public class DAOActivity {
 		Place pl;
 		
 		int i;
-		try (FileWriter file = new FileWriter(activityFileName); FileWriter file2 = new FileWriter(placeFileName))
+		try 
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
@@ -292,12 +298,15 @@ public class DAOActivity {
 						}
 					}
 					
-					
+					try (FileWriter file = new FileWriter(activityFileName)){
 					file.write(activitiesJOBJ.toString());
 					file.flush();
-										
+					}
+					
+					try (FileWriter file2 = new FileWriter(placeFileName)){
 					file2.write(place.toString());
 					file2.flush();
+					}
 					
 					return true;
 				}

@@ -60,9 +60,9 @@ public class DAOSuperUser {
 				newUser.put(PREFKEY, userPref);
 				userArray.add(newUser);
 
-			try(FileWriter file = new FileWriter(USERJSON)) {	
-				file.write(userObj.toString());
-				file.flush();
+				try(FileWriter file = new FileWriter(USERJSON)) {	
+					file.write(userObj.toString());
+					file.flush();
 				}
 			}
 		} catch (Exception e) {
@@ -108,10 +108,11 @@ public class DAOSuperUser {
 					
 					if(!su.getPreferences().equals(oldpref)) {
 						result.put(PREFKEY, preferences);
-					try (FileWriter file = new FileWriter(USERJSON)){
-						file.write(userRes.toString());
-						file.flush();
-					}
+						
+						try (FileWriter file = new FileWriter(USERJSON)){
+							file.write(userRes.toString());
+							file.flush();
+						}
 						return true;
 					} 
 					else return false;
@@ -158,12 +159,12 @@ public class DAOSuperUser {
 					
 						result.put(WALLETKEY, daoWallet);
 						
-					try (FileWriter file = new FileWriter(USERJSON)){
+						try (FileWriter file = new FileWriter(USERJSON)){
 							
-						file.write(userRes.toString());
-						file.flush();
+							file.write(userRes.toString());
+							file.flush();
 						
-						return true;
+							return true;
 					}
 				}
 			}			

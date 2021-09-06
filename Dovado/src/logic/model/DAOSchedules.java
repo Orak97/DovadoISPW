@@ -32,7 +32,7 @@ public class DAOSchedules {
 	}
 	
 	public boolean updateScheduleInJSON(Schedule schedule, SuperUser su) {
-		try (FileWriter file = new FileWriter(SCHEDJSON)){
+		try {
 			Object schedules = parser.parse(new FileReader(SCHEDJSON));
 			JSONObject scheduleObj = (JSONObject) schedules;
 			
@@ -66,10 +66,12 @@ public class DAOSchedules {
 					
 					result.put(SCHEDKEY, scheduleUpdArr);
 					
+					try (FileWriter file = new FileWriter(SCHEDJSON)){
 					file.write(scheduleObj.toString());
 					file.flush();
 					
 					return true;
+					}
 				}
 			}
 				
@@ -198,11 +200,9 @@ public class DAOSchedules {
 					
 					try(FileWriter file = new FileWriter(SCHEDJSON)) {
 						file.write(scheduleObj.toString());
-						file.flush();
+						file.flush();						
+						return true;
 					}
-						
-					return true;
-					
 				}
 			}
 				
