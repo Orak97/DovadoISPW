@@ -38,9 +38,7 @@ public class CreateActivityController {
 	
 	public void createActivity(String n, Place p) {
 		//spaghetti code here!!!
-		Long id;
-		SuperActivity newActivity;
-		
+				
 		Log.getInstance().logger.info("Ciao da dentro createActivity");
 		switch(bean.getType()) {
 		case CONTINUA:

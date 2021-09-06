@@ -205,34 +205,9 @@ public class DAOActivity {
 						} else return false;
 					}
 				} else {
-					result.put(jpPlace, sua.getPlace().getId());
-					result.put(jpCreator, sua.getCreator().getUserID());
-					result.put(jpPref, sua.getPreferences());
-					result.put(jpActName, sua.getName());
-					if(sua.getFrequency() instanceof ContinuosActivity) {
-						result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
-						result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
-						result.put(jpFreq[2], null);
-						result.put(jpFreq[3], null);
-						result.put(jpFreq[4], null);
-						
-					}
-					if(sua.getFrequency() instanceof ExpiringActivity) {
-						result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
-						result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
-						result.put(jpFreq[2], (((ExpiringActivity) (sua.getFrequency())).getStartDate().toString()));
-						result.put(jpFreq[3], (((ExpiringActivity) (sua.getFrequency())).getEndDate().toString()));
-						result.put(jpFreq[4], null);
-						
-					}
-					if(sua.getFrequency() instanceof PeriodicActivity) {
-						result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
-						result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
-						result.put(jpFreq[2], (((PeriodicActivity) (sua.getFrequency())).getStartDate().toString()));
-						result.put(jpFreq[3], (((PeriodicActivity) (sua.getFrequency())).getEndDate().toString()));
-						result.put(jpFreq[4], (((PeriodicActivity) (sua.getFrequency())).getCadence().toString()));
-						
-					}
+					
+					funcUpdatePrefJObj(result, sua);
+					
 					try (FileWriter file = new FileWriter(activityFileName)){
 					file.write(activitiesJOBJ.toString());
 					file.flush();
@@ -248,6 +223,36 @@ public class DAOActivity {
 		return false;
 	}
 	
+	private void funcUpdatePrefJObj(JSONObject result, SuperActivity sua) {
+		result.put(jpPlace, sua.getPlace().getId());
+		result.put(jpCreator, sua.getCreator().getUserID());
+		result.put(jpPref, sua.getPreferences());
+		result.put(jpActName, sua.getName());
+		if(sua.getFrequency() instanceof ContinuosActivity) {
+			result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
+			result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
+			result.put(jpFreq[2], null);
+			result.put(jpFreq[3], null);
+			result.put(jpFreq[4], null);
+			
+		}
+		if(sua.getFrequency() instanceof ExpiringActivity) {
+			result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
+			result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
+			result.put(jpFreq[2], (((ExpiringActivity) (sua.getFrequency())).getStartDate().toString()));
+			result.put(jpFreq[3], (((ExpiringActivity) (sua.getFrequency())).getEndDate().toString()));
+			result.put(jpFreq[4], null);
+			
+		}
+		if(sua.getFrequency() instanceof PeriodicActivity) {
+			result.put(jpFreq[0], sua.getFrequency().getOpeningTime().toString());
+			result.put(jpFreq[1], sua.getFrequency().getClosingTime().toString());
+			result.put(jpFreq[2], (((PeriodicActivity) (sua.getFrequency())).getStartDate().toString()));
+			result.put(jpFreq[3], (((PeriodicActivity) (sua.getFrequency())).getEndDate().toString()));
+			result.put(jpFreq[4], (((PeriodicActivity) (sua.getFrequency())).getCadence().toString()));	
+		}
+		
+	}
 	
 	
 	public boolean deleteActivityJSON(SuperActivity sua) {
