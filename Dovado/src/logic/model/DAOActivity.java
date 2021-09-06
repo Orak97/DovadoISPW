@@ -185,15 +185,10 @@ public class DAOActivity {
 				if (updatePref) {
 					if(((Long)result.get(jpID))==sua.getId()) {
 					
-						oldpreferences = (JSONArray) result.get(jpPref);
-						//Si ricostruisce l'arrayList delle preferenze per compararlo con il nuovo
-						//che si andra ad inserire; Se sono uguali si esce restituendo falso.
-						//Se vero si procede nel salvataggio.
-						for(j=0;j<oldpreferences.size();j++) {
-							oldpref.add((String)oldpreferences.get(j));
-						}
-					
+						oldpref = funcUpdateActJObj(oldpref, result, sua);
+						
 						if(!sua.getPreferences().equals(oldpref)) {
+							
 							result.put(jpPref,preferences);
 						
 							try (FileWriter file = new FileWriter(activityFileName)){
@@ -221,6 +216,22 @@ public class DAOActivity {
 			return false;
 			}
 		return false;
+	}
+	
+	//----------metodi di supporto alla updateActivityPreferences---------
+	private ArrayList<String> funcUpdateActJObj(ArrayList<String> oldpref,JSONObject result, SuperActivity sua) {
+		int j;
+		if(((Long)result.get(jpID))==sua.getId()) {
+			JSONArray oldpreferences;
+			
+			oldpreferences = (JSONArray) result.get(jpPref);
+			//Si ricostruisce l'arrayList delle preferenze per compararlo con il nuovo
+			//che si andra ad inserire. Se sono uguali si esce restituendo falso.
+			//Se vero si procede nel salvataggio.
+			for(j=0;j<oldpreferences.size();j++) {
+				oldpref.add((String)oldpreferences.get(j));
+			}  
+		} return oldpref;
 	}
 	
 	private void funcUpdatePrefJObj(JSONObject result, SuperActivity sua) {
@@ -253,6 +264,7 @@ public class DAOActivity {
 		}
 		
 	}
+	//----------fine  metodi di supporto alla updateActivityPreferences---------
 	
 	
 	public boolean deleteActivityJSON(SuperActivity sua) {
