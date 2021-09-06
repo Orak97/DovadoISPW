@@ -67,8 +67,12 @@ public class DAOPlace {
 				String cityPrint = (String) result.get(CITYKEY);
 				String regionPrint = (String) result.get(REGIONKEY);
 				
-				expression = city.equals(cityPrint);
-								
+				if(city == null) {
+					expression = true;
+				} else {
+					expression = city.equals(cityPrint);
+				}
+				
 				if (expression) {
 					Place placeFound = new Place(namePrint,(String) result.get(ADDRESSKEY),cityPrint,regionPrint,(String) result.get(CIVICOKEY),(Partner) daoSu.findSuperUserByID((Long)result.get(OWNERKEY)));
 					placeFound.setId((Long) result.get(IDKEY));
