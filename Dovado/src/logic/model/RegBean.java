@@ -15,7 +15,6 @@ private Pattern patternPsw;
 private Pattern patternEmail;
 private RegisterController regController;
 private String radio;
-private int partner;
 
 public RegBean() {
 	patternEmail = Pattern.compile(".+@.+\\.[a-z]+");
@@ -74,6 +73,7 @@ public void setError(String error) {
 
 
 public boolean validate() {
+	int partner;
 	Log.getInstance().logger.info(username +": "+ password2 + "  " + password);	 
 	if (radio!=null) {
     	if (radio.equals("yes")) {

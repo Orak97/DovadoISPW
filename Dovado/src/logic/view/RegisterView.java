@@ -29,13 +29,13 @@ public class RegisterView {
     private TextField email;
 
     @FXML
-    private Button register_input;
+    private Button registerInput;
 
     @FXML
-    private Button login_input;
+    private Button loginInput;
 
     @FXML
-    private Label label_register;
+    private Label labelRegister;
 
     @FXML
     void login(ActionEvent event) {

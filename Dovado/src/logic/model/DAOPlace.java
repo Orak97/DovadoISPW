@@ -49,7 +49,7 @@ public class DAOPlace {
 	public List<Place> findPlacesByCity(String city) {
 		JSONParser parser = new JSONParser();
 		int i;
-		ArrayList<Place> placesFound = new ArrayList<Place>();
+		ArrayList<Place> placesFound = new ArrayList<>();
 		DAOSuperUser daoSu = DAOSuperUser.getInstance();
 		try 
 		{
@@ -63,7 +63,6 @@ public class DAOPlace {
 			{
 				result = (JSONObject)placeArray.get(i);
 				
-				Long idJSON = (Long) result.get(IDKEY);
 				String namePrint = (String) result.get(NAMEKEY);
 				String cityPrint = (String) result.get(CITYKEY);
 				String regionPrint = (String) result.get(REGIONKEY);

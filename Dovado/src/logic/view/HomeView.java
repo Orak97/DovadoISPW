@@ -131,7 +131,7 @@ public class HomeView implements Initializable{
 		daoAct = DAOActivity.getInstance();
 		daoSU = DAOSuperUser.getInstance();
 		
-    	ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
+    	ArrayList<SuperActivity> activities = new ArrayList<>();
 		
     	Log.getInstance().logger.info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 		try{
@@ -285,7 +285,7 @@ Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 					eng.executeScript("spotPlace('"+activitySelected.getPlace().getCivico()+"','"+activitySelected.getPlace().getAddress()+"','"+activitySelected.getPlace().getCity()+"','"+activitySelected.getPlace().getRegion()+"')");
-				};
+				}
 		});
 		
 		joinActivityChannel.setOnAction(new EventHandler<ActionEvent>() {
@@ -345,7 +345,7 @@ Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 						}
 					});
 					
-				};
+				}
 		});
 		
 		playActivity.setOnAction(new EventHandler<ActionEvent>() {
@@ -361,7 +361,10 @@ Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 					ChoiceBox<String> hourBox = new ChoiceBox<>();
 					ChoiceBox<String> minBox = new ChoiceBox<>();
 
-					int upperLimit, lowerLimit, upperLimMin, lowerLimMin;
+					int upperLimit;
+					int lowerLimit;
+					int upperLimMin;
+					int lowerLimMin;
 					
 					lowerLimit = activitySelected.getFrequency().getOpeningTime().getHour();
 					upperLimit = activitySelected.getFrequency().getClosingTime().getHour();
@@ -493,7 +496,7 @@ Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 						}
 					});
 					
-				};
+				}
 		});
 	}
 
@@ -584,9 +587,9 @@ public void filterActivities() {
 	
 	if((searchItem = searchBar.getText())==null) return;
 	
-	if(daoPref.preferenceIsInJSON(searchItem.toUpperCase())==false) return;
+	if(!daoPref.preferenceIsInJSON(searchItem.toUpperCase())) return;
 	
-	ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
+	ArrayList<SuperActivity> activities = new ArrayList<>();
 	
 	activities.addAll(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
 	eventsList.getItems().clear();

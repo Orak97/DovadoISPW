@@ -19,7 +19,7 @@ public class NavbarController {
     private ImageView imageView;
 
     @FXML
-    private MenuItem logout_input;
+    private MenuItem logoutInput;
     
     @FXML
     void Logout(ActionEvent event) {
