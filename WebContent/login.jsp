@@ -15,7 +15,6 @@
 	
 	<%@ include file="Navbar.jsp" %>
 	<div class="container pt-6">
-    <h1>Login Page</h1>
 <%
 	    
    
@@ -34,25 +33,29 @@
 		};
 	}
 %>
-    
-    <form action="login.jsp" method="POST">    
-        <label><b>Email     
-        </b>    
-        </label>    
-        <input type="email" name="email"  placeholder="Email" required>    
-        <br><br>    
-        <label><b>Password     
-        </b>    
-        </label>    
-        <input type="password" name="password"  placeholder="Password" pattern=".{8,}" maxlength="20" required>    
-        <br>    
-       
-        <input type="submit" name="logForm"  value="Login">       
-      
+   
+
+ <body class="text-center">
+
+<main class="form-signin">
+   <form action="login.jsp" method="POST"> 
+   		<img class="mb-4" src="logo/DovadoLogo(3).png" alt="" width="72" height="57">  
+   		<h1 class="h3 mb-3 fw-normal">Please sign in</h1> 
+      		<div class="form-floating">
+      			<input type="email" class="form-control" id="emailID" name="email" placeholder="name@example.com" required>
+      			<label for="emailID">Email address</label>
+    		</div>
+    		<div class="form-floating">
+      			<input type="password" class="form-control" id="passwordID" name="password"  placeholder="Password" pattern=".{8,}" maxlength="20" required>
+      			<label for="passwordID">Password</label>
+    		</div>    		   
+ 			<button class="w-100 btn btn-lg btn-dark" type="submit" name="logForm"  value="Login">Sign in</button>       
        
       <%--   Implementa Dimenticata  <a href="#">Password</a>   --%>    
     </form>   
-    <p>Se ancora non sei registrato clicca <a href="register.jsp"> qui </a></p>
+    <p class="mt-5 mb-3 text-muted">Se ancora non sei registrato clicca <a href="register.jsp"> qui </a></p>
   </div>
+</main>
+  
 </body>
 </html>

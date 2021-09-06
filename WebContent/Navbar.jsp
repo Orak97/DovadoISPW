@@ -10,22 +10,27 @@
 		boolean logged = true;
 		
 		String titolo = (String) application.getAttribute("titolo");
-		
+		System.out.println(System.getProperty("user.dir"));
 		Log.getInstance().logger.info(titolo);
 		
-		if (titolo.equals("login") | titolo.equals("register")) {
+		if (titolo.equals("login")) {
 			if( session.getAttribute("user") != null) {				
 				response.sendRedirect("Home.jsp");
 			}
 			logged = false;
-		}
-		else if(session.getAttribute("user") == null) {
-		response.sendRedirect("login.jsp");		
+			
+		} else if(titolo.equals("register")){
+			if( session.getAttribute("user") != null) {				
+				response.sendRedirect("Home.jsp");
+			}
+			logged = false;
+			
+		} else if(session.getAttribute("user") == null) {
+				response.sendRedirect("login.jsp");
+				
 		} else {
 			session.setMaxInactiveInterval(10);
 		}
-		//NON SI PUO' FARE QUI IL CHECK DEL LOGIN PERCHE' al codice chiamato con include non e permesso modificare status code ed header e di conseguenza non e possibile effettuare una redirezione
-
 
 	  		int active = 0;
 
