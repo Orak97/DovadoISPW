@@ -3,6 +3,11 @@
  */
 package logic.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * @author sav
  *
@@ -13,6 +18,7 @@ public class ScheduleBean {
 	private String scheduledTime;
 	private String reminderDate;
 	private String reminderTime;
+	private Long idActivity;
 	
 	public String getScheduledDate() {
 		return scheduledDate;
@@ -37,6 +43,18 @@ public class ScheduleBean {
 	}
 	public void setReminderTime(String reminderTime) {
 		this.reminderTime = reminderTime;
+	}
+	
+	public LocalDateTime getScheduledDateTime() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		return LocalDateTime.parse(scheduledDate+' '+scheduledTime, formatter);
+
+	}
+	public Long getIdActivity() {
+		return idActivity;
+	}
+	public void setIdActivity(Long idActivity) {
+		this.idActivity = idActivity;
 	}
 
 }

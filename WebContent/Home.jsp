@@ -2,11 +2,49 @@
     pageEncoding="UTF-8"%>
  
 
-    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity" %>
+    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User" %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
 	<%@ include file="Navbar.jsp" %>
+	
+	<jsp:useBean id="scheduleBean" scope="request" class="logic.model.ScheduleBean" />
+
+	<jsp:setProperty name="scheduleBean" property="*" />
+	<%
+
+		if(request.getParameter("date")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
+		 //out.println("printo prop:"+scheduleBean.getScheduledDateTime());
+		 
+		SuperUser u = (User) session.getAttribute("user");
+		 
+		 try {
+			 out.println(u.getUsername());
+			 DAOActivity a = DAOActivity.getInstance();
+			 DAOSuperUser su = DAOSuperUser.getInstance();
+			 Long idA = scheduleBean.getIdActivity();
+			 SuperActivity att = a.findActivityByID(su,idA);
+			 ((User) u).getSchedule().addActivityToSchedule(att, scheduleBean.getScheduledDateTime(),scheduleBean.getScheduledDateTime(), u);
+		 }catch(Exception e){
+			 e.printStackTrace();
+		 }
+		 }
+
+		
+		/*
+		Enumeration paramNames = request.getParameterNames();
+		while(paramNames.hasMoreElements()) {
+			String paramName = (String)paramNames.nextElement();
+			String paramValue = request.getParameter(paramName);
+			if(paramValue == "") out.println("zi, is null");
+			out.println(paramName+':'+paramValue);
+		} */
+		
+
+	%>
+
+	
+	
 	
 	
 
@@ -33,7 +71,7 @@
 			  <% for(SuperActivity curr:activities){ %>
 			  
 			  <div class="col" >
-			    <div class="card" data-bs-toggle="collapse" href="#collapse<%= curr.getId() %>" aria-expanded="false" aria-controls="collapse<%= curr.getId() %>">
+			    <div class="card card-dark text-white" data-bs-toggle="collapse" href="#collapse<%= curr.getId() %>" aria-expanded="false" aria-controls="collapse<%= curr.getId() %>">
 			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 			      <div class="card-body">
 			        <h5 class="card-title"><% out.println(curr.getName()); %></h5>
@@ -47,7 +85,7 @@
 				        
 				        	<button type="button" class="btn btn-dark btnHome" onclick="document.getElementById('map').contentWindow.spotPlace('<%=curr.getPlace().getCivico()%>','<%=curr.getPlace().getAddress()%>','<%=curr.getPlace().getCity()%>','<%=curr.getPlace().getRegion()%>');">View on map</button>
 				        
-				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>">Play Activity</button>
+				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>">Play Activity</button>
 				    </div>
 			    </div>
 			  </div>
@@ -74,7 +112,8 @@
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
-		      <form action="Schedule.jsp" name="myform" method="GET">
+		      <form action="Home.jsp" name="myform" method="GET">
+		      	  <input type="number" id="idActivity" name="idActivity" class="visually-hidden">
 			      <div class="scheduled-time">
 				        <div class="mb-3">
 				        	<label for="scheduledDate" class="col-form-label">Data:</label>
@@ -125,7 +164,7 @@
 			   var button = event.relatedTarget
 			   // Extract info from data-bs-* attributes
 			   var titolo = button.getAttribute('data-bs-titolo')
-			   
+			   var id = button.getAttribute('data-bs-id')
 			   var luogo = button.getAttribute('data-bs-luogo')
 			   
 			   var orarioReminder = button.getAttribute('data-bs-orarioReminder')
@@ -139,8 +178,10 @@
 			   //
 			   // Update the modal's content.
 			   var modalTitle = exampleModal.querySelector('.modal-title')
+			   var modalID = exampleModal.querySelector('.modal-body #idActivity')
 		
-		
+			   console.log(id);
+			   modalID.value=id
 			   modalTitle.textContent = titolo
 			})
 		
