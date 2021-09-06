@@ -47,6 +47,16 @@ public class NavbarController {
     }
 
     @FXML
+    void goCreateActivity(ActionEvent event) {
+    	nav.onCreateActivity();
+    	Log.getInstance().logger.info("Clicked create activity");
+    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
+    	Navbar.loginSetup();
+    	//HomeView hv = new HomeView();
+    	CreateActivityView.render(current);
+    }
+    
+    @FXML
     void goProfile(ActionEvent event) {
     	nav.onMyProfile();
     	Log.getInstance().logger.info("Clicked My profile");

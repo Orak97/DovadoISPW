@@ -51,11 +51,11 @@
                <HBox.margin>
                   <Insets top="5.0" />
                </HBox.margin></Button>
-            <Button id="events" mnemonicParsing="false" onAction="#goEvents" prefHeight="50.0" styleClass="navbar-item" text="Events" textFill="WHITE">
+            <Button id="createActivity" mnemonicParsing="false" onAction="#goCreateActivity" prefHeight="50.0" styleClass="navbar-item" text="Create activity" textFill="WHITE">
                <HBox.margin>
                   <Insets top="5.0" />
                </HBox.margin></Button>
-            <Button id="channels" mnemonicParsing="false" onAction="#goChannels" prefHeight="50.0" styleClass="navbar-item" text="Channels" textFill="WHITE">
+            <Button id="events" mnemonicParsing="false" onAction="#goEvents" prefHeight="50.0" styleClass="navbar-item" text="Schedule" textFill="WHITE">
                <HBox.margin>
                   <Insets top="5.0" />
                </HBox.margin></Button>

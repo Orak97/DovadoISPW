@@ -67,6 +67,11 @@ public class Navbar {
 		this.changePage();
 		navbar.lookup("#channels").getStyleClass().add("active");
 	}
+
+	public void onCreateActivity() {
+		this.changePage();
+		navbar.lookup("#createActivity").getStyleClass().add("active");
+	}
 	
 	public void onEvents() {
 		this.changePage();
@@ -96,5 +101,6 @@ public class Navbar {
 	public static SuperUser getUser() {
 		return user;
 	}
+
 	
 }
