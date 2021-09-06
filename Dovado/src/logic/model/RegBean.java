@@ -14,6 +14,8 @@ private String error;
 private Pattern patternPsw;
 private Pattern patternEmail;
 private RegisterController regController;
+private String radio;
+private int partner;
 
 public RegBean() {
 	patternEmail = Pattern.compile(".+@.+\\.[a-z]+");
@@ -21,6 +23,15 @@ public RegBean() {
 	regController = new RegisterController();
 	error = null;
 }
+
+public String getRadio() {
+    return radio;
+}
+
+public void setRadio(String radio) {
+    this.radio = radio;
+}
+
 public String getUsername() {
     return username;
 }
@@ -63,8 +74,17 @@ public void setError(String error) {
 
 
 public boolean validate() {
-	Log.getInstance().logger.info(username +": "+ password2 + "  " + password);	
-	
+	Log.getInstance().logger.info(username +": "+ password2 + "  " + password);	 
+	if (radio!=null) {
+    	if (radio.equals("yes")) {
+    		partner = 1;
+    	} else {
+    		partner = 0;
+    	}
+    } else {
+    	error = "Devi scegliere un tipo di accesso";
+		return false;
+    }
 	// controllo la mail se e scritta in maniera corretta
 	Matcher matchEmail = patternEmail.matcher(email);
 	if (!matchEmail.matches()) {
@@ -93,7 +113,7 @@ public boolean validate() {
 		return false;}
 	
 	//Chiamo il controller che controlla se eventualmente gia esiste e lo aggiunge in alternativa
-	if (!regController.addUser(email, username, password)) {
+	if (!regController.addUser(email, username, password, partner)) {
 		error = "Esiste gia un utente associato a questa email";
 		return false;
 	}

@@ -12,17 +12,15 @@ public class RegisterController {
 		dao = DAOSuperUser.getInstance();
 	}
 	
-	public boolean addUser(String email, String username, String psw) {
+	public boolean addUser(String email, String username, String psw, int partner) {
 		
-		
-	
 		if (dao.findSuperUserByEmail(email) != null) {
 			Log.getInstance().logger.info("L'utente esiste");
 			return false;
 		}
 		else {
 			Log.getInstance().logger.info("Non esiste l'utente");
-			dao.addUserToJSON(email, username, 0, psw);
+			dao.addUserToJSON(email, username, partner, psw);
 			return true;}	
 	}
 
