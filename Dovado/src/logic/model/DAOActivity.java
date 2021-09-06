@@ -139,9 +139,9 @@ public class DAOActivity {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return 1L;
+			return 0L;
 			}
-		return 1L;
+		return 0L;
 	
 	}
 
@@ -173,15 +173,16 @@ public class DAOActivity {
 			}
 			
 			if (updatePref) {
-				preferences.addAll((ArrayList<String>) sua.getPreferences());
-				
+				for(i=0;i<sua.getPreferences().size();i++) {
+					preferences.add(sua.getPreferences().get(i));
+				}
 			}
 			
 			for(i=0;i<activityArray.size();i++){
 					
 				result = (JSONObject) activityArray.get(i);
 				if (updatePref) {
-					if(((Long)result.get(jpID))==sua.getId()) {
+					if(((Long)result.get(jpID)).equals(sua.getId())) {
 					
 						oldpref = funcUpdateActJObj(oldpref, result, sua);
 						

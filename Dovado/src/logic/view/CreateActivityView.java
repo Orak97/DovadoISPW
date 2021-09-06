@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -49,9 +50,12 @@ public class CreateActivityView implements Initializable{
 	
 	@FXML
 	private TextField closingTime;
-	
+
 	@FXML
 	private TextField openingTime;
+
+	@FXML
+	private TextField tagField;
 	
 	@FXML
 	private DatePicker startDate;
@@ -82,12 +86,16 @@ public class CreateActivityView implements Initializable{
 	private static DatePicker eDate;
 	private static TextField searchField;
 	private static TextField actNameField;
+	private static TextField tField;
 	private static Stage curr;
 	private static VBox rt;
 	private static DAOActivity daoAc;
 	private static DAOPlace daoPl;
 	private static Place placeSelected;
-	private static List<Place> placesFound;
+	private static ArrayList<Place> placesFound;
+	private static StackPane lastPlaceBoxSelected;
+	
+	private static int lastPlaceSelected=-1;
 	
 	public static void render(Stage current) {
 		try {
@@ -124,6 +132,7 @@ public class CreateActivityView implements Initializable{
 		daoAc = DAOActivity.getInstance();
 		daoPl = DAOPlace.getInstance();
 		placeSelected = null;
+		placesFound = new ArrayList<Place>();
 		
 		actNameField=actNameTF;
 		sDate=startDate;
@@ -134,6 +143,7 @@ public class CreateActivityView implements Initializable{
 		cadBox=cadenceBox;
 		pList=placesList;
 		rt=root;
+		tField=tagField;
 		
 		cadBox.getItems().addAll("Non-stop","Weekly","Monthly","Annually");
 		
@@ -160,29 +170,44 @@ public class CreateActivityView implements Initializable{
 				}
 			}
 		});
-		
+		searchBtn.setText("Search");
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				
 				String[] placeAttr;
 				placeAttr = searchBar.getText().split(",");
-				if(placeAttr.length==1 && !placeAttr[1].isEmpty()) {
-					if( (placesFound =  daoPl.findPlacesByCity(placeAttr[1]))==null){
+				
+				if(placeAttr.length==1) {
+					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByCity(placeAttr[0]))==null){
 						final Stage dialog = new Stage();
 		                dialog.initModality(Modality.NONE);
 		                dialog.initOwner(curr);
 		                VBox dialogVbox = new VBox(20);
-		                dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[1]));
+		                dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
 		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
 		                dialog.setScene(dialogScene);
 		                dialog.show();
 						return;
 					}
+					else if(placeAttr.length==3) {
+						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
+						if(placesFound.contains(null)){
+							final Stage dialog = new Stage();
+			                dialog.initModality(Modality.NONE);
+			                dialog.initOwner(curr);
+			                VBox dialogVbox = new VBox(20);
+			                dialogVbox.getChildren().add(new Text("No place found in: "+placeAttr[0]+'\n'+"in region: "+placeAttr[2]+'\n'+"named: "+ placeAttr[1]));
+			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+			                dialog.setScene(dialogScene);
+			                dialog.show();
+							return;
+						}
+					}
 					else {
 						updatePlaces();
 					}
 				}
-				if(placeAttr.length<3) {
+				/*if(placeAttr.length<3) {
 					final Stage dialog = new Stage();
 	                dialog.initModality(Modality.NONE);
 	                dialog.initOwner(curr);
@@ -192,14 +217,14 @@ public class CreateActivityView implements Initializable{
 	                dialog.setScene(dialogScene);
 	                dialog.show();
 					return;
-				}
+				}*/
 				
 			}
 		});
 		
 	}
 	
-	public static void updatePlaces() {
+	public void updatePlaces() {
 			pList.getItems().clear();
 		
 		for(int i=0;i<placesFound.size();i++) {
@@ -212,15 +237,14 @@ public class CreateActivityView implements Initializable{
 					Log.getInstance().logger.info("\n\n"+placesFound.get(i).getName()+"\n\n");
 					Text plInfo = new Text(placesFound.get(i).getCity()+
 							"\n"+placesFound.get(i).getRegion()+
+							"\n"+placesFound.get(i).getAddress()+
 							"-"+placesFound.get(i).getCivico());
-					HBox placeLine = new HBox();
-					placeLine.setAlignment(Pos.CENTER);
 					
 					plImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
-					plImage.getStyleClass().add("event-image");
+					plImage.getStyleClass().add("place-image");
 					
 					plInfo.setId("placeInfo");
-					plInfo.getStyleClass().add("textEventInfo");
+					plInfo.getStyleClass().add("placeInfo");
 			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
 					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
 					eventInfo.setFill(Paint.valueOf("#ffffff"));
@@ -228,7 +252,7 @@ public class CreateActivityView implements Initializable{
 					eventInfo.setStroke(Paint.valueOf("#000000"));
 			*/		
 					plName.setId("placeName");
-					plName.getStyleClass().add("textEventName");
+					plName.getStyleClass().add("placeName");
 			/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
 					eventName.setFill(Paint.valueOf("#ffffff"));
 					eventName.setStrokeWidth(0.3);
@@ -245,30 +269,65 @@ public class CreateActivityView implements Initializable{
 					
 					Text placeId = new Text();
 					
-					placeId.setId(placesFound.get(i).getId().toString());
+					Long pID = placesFound.get(i).getId();
+					Log.getInstance().logger.info("ID POSTO: "+pID);
+					placeId.setId(pID.toString());
 					
 					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 					//dell'evento ed infine il testo dell'evento.
 					eventBox.getChildren().add(placeId);
 					eventBox.getChildren().add(plImage);
 					eventBox.getChildren().add(eventText);
+					
 					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 					eventBox.setAlignment(Pos.CENTER_LEFT);
 					
-					placeLine.getChildren().addAll(eventBox);
-					placeLine.setMinWidth(rt.getWidth()/2);
-					placeLine.setMaxWidth(rt.getWidth()/2);
-					pList.getItems().add(placeLine);
+					eventBox.setMinWidth(rt.getWidth()/2);
+					eventBox.setMaxWidth(rt.getWidth()/2);
+					pList.getItems().add(eventBox);
 					}
 				}
 	}
 	
-	public static void selectedPlace() {
+	public void selectedPlace() {
+		
+		StackPane placeBox = null;
+		try {
+			placeBox = (StackPane) pList.getSelectionModel().getSelectedItem();
+		} catch(ClassCastException ce) {
+			Log.getInstance().logger.info(ce.getMessage());
+			return;
+		}
+
+		if(lastPlaceBoxSelected == placeBox) return;
+		
+		if(lastPlaceBoxSelected!=null) placeDeselected(lastPlaceBoxSelected);
 		
 		int itemNumber = pList.getSelectionModel().getSelectedIndex();
 		
+		lastPlaceSelected = itemNumber;
+		Log.getInstance().logger.info(String.valueOf(lastPlaceSelected));
 		
+		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
+		lastPlaceBoxSelected = placeBox;
+		Long pID = Long.parseLong(((Text)placeBox.getChildren().get(0)).getId());
+		placeSelected = daoPl.findPlaceById(pID);
+	
+		ImageView placeImage = (ImageView) placeBox.getChildren().get(1);
+
+		placeImage.setScaleX(1.25);
+		placeImage.setScaleY(1.25);
 		
+		Log.getInstance().logger.info("Place id found: "+pID+" "+placeSelected.getName());
+			
+	}
+	
+	public void placeDeselected(StackPane lastPlaceBoxSelected2) {
+		
+		ImageView eventImage = (ImageView) lastPlaceBoxSelected2.getChildren().get(1);
+		
+		eventImage.setScaleX(1);
+		eventImage.setScaleY(1);
 	}
 	
 	public static boolean createActivity() {
@@ -294,7 +353,7 @@ public class CreateActivityView implements Initializable{
 			
 		if(clTime.getText().isEmpty() || !clTime.getText().contains(":") || clTime.getText().length()>5)
 			return false;
-		openingTime = LocalTime.parse(clTime.getText());
+		closingTime = LocalTime.parse(clTime.getText());
 			
 		if(sDate.getValue().isBefore(LocalDate.now()))
 			return false;
@@ -317,9 +376,18 @@ public class CreateActivityView implements Initializable{
 		else {
 			return false;
 		}
+		String[] prefs = tField.getText().toString().split(",");
+		ArrayList<String> prefsList = new ArrayList<String>();
 		
-		int result = Long.compare(daoAc.addActivityToJSON(placeSelected,act,"no"),0L);
-		if(result==0) {
+		for(int i=0;i<prefs.length;i++) {
+			prefsList.add(prefs[i]);
+		}
+		
+		Log.getInstance().logger.info(act.toString());
+		act.setId(daoAc.addActivityToJSON(placeSelected,(SuperActivity)act,"no"));
+		int result = Long.compare(act.getId(),0L);
+		if(result>0) {
+			act.setPreferences((List<String>)prefsList);
 			return true;
 		} 
 		else if(result<0) {
@@ -333,7 +401,7 @@ public class CreateActivityView implements Initializable{
             dialog.show();
 			return false;
 		}
-		else if(result>0) {
+		else if(result==0) {
 			final Stage dialog = new Stage();
             dialog.initModality(Modality.NONE);
             dialog.initOwner(curr);

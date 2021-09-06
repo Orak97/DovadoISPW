@@ -3,6 +3,7 @@ package logic.model;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -48,7 +49,7 @@ public class DAOPlace {
 	public List<Place> findPlacesByCity(String city) {
 		JSONParser parser = new JSONParser();
 		int i;
-		List<Place> placesFound = null;
+		ArrayList<Place> placesFound = new ArrayList<Place>();
 		DAOSuperUser daoSu = DAOSuperUser.getInstance();
 		try 
 		{
