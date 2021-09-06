@@ -39,7 +39,5 @@ public class PlayActivityController {
 	
 	public void writeOnChannell(int user, String textMsg) {
 		cController.writeMessage(user, textMsg);
-	
-		// this.readOnChannell(user);
-	}
+		}
 }

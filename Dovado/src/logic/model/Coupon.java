@@ -7,7 +7,7 @@ public class Coupon {
 	private int pID;
 	private int couponCode;
 	private int discount;
-	
+	Random rand ;
 	public Coupon(int userID, int partnerID,int discount) {
 		this(userID,partnerID, false, discount);
 	}
@@ -16,6 +16,7 @@ public class Coupon {
 		
 		uID = userID;
 		pID = partnerID;
+		rand = new Random();
 		this.discount = discount;
 		if (add) {
 			genCode();
@@ -49,7 +50,7 @@ public class Coupon {
 	public void genCode() {
 		DAOCoupon dao = DAOCoupon.getInstance();
 		Coupon coupon;
-		Random rand = new Random();
+
 		int code = 0;
 		boolean check = true;
 		coupon = dao.findCoupon(this.uID, this.pID);	

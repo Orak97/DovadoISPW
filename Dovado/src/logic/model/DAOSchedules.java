@@ -187,15 +187,9 @@ public class DAOSchedules {
 				
 				
 				if (codeJSON.equals(Long.valueOf(userID))) {
-					DAOActivity daoAc = DAOActivity.getInstance();
 					JSONArray schedule = (JSONArray) result.get(SCHEDKEY);
-					DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-						
 					Log.getInstance().logger.info("schedule trovato");
-						
-					Schedule schFound = new Schedule();
-					ArrayList<ScheduledActivity> scheduledActsArray = new ArrayList<>(); 
-					
+								
 					schedule.remove(idSched);
 					
 					try(FileWriter file = new FileWriter(SCHEDJSON)) {

@@ -157,16 +157,14 @@ public class DAOActivity {
 		JSONParser parser = new JSONParser();
 		ArrayList<String> oldpref = new ArrayList<>();
 		int i;
-		int j;
-		
+
 		try		
 		{
 			Object activitiesParser = parser.parse(new FileReader(activityFileName));
 			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
 			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
 			JSONArray preferences = new JSONArray();
-			JSONArray oldpreferences;
-			
+		
 			JSONObject result;
 
 			if(activityArray==null) {
