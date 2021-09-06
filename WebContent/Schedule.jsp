@@ -1,6 +1,6 @@
 	<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-	<%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules" %>
+	<%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules, logic.model.SuperUser, logic.model.User, logic.model.Schedule, logic.model.ScheduledActivity " %>
 
 	<% application.setAttribute( "titolo" , "Schedule"); %>
 	
@@ -26,8 +26,10 @@
 		*/
 
 		DAOSchedules schedule = DAOSchedules.getInstance();
-
-		if(schedule.findSchedule(0) == null) out.println("ok");
+		SuperUser u = (User) session.getAttribute("user");
+		Schedule s = schedule.findSchedule(u.getUserID());
+		ArrayList<ScheduledActivity> activities = (ArrayList<ScheduledActivity>) s.getScheduledActivities();
+		//if(schedule.findSchedule(0) == null) out.println("ok");
 	%>
 
 
@@ -36,7 +38,10 @@
 	<div class="container gy-5">
 
 
-
+	<%
+		
+	
+	%>
 	<div class="row  p-3">
 		<div class="col-2">
 			<h2> Oggi</h2>
@@ -44,67 +49,22 @@
 	</div>
 
 	<div class= "row p-3">
-
+		
 		<div class="col">
 			<div class="row flex-row flex-nowrap row-cols-1 row-cols-md-3 g-4" style="overflow-x: scroll">
+			  <% for(ScheduledActivity curr:activities){ %>
 			  <div class="col">
-			    <div class="card h-100" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="Concerto di Tupac" data-bs-orario="15:30" data-bs-luogo="Roma" data-bs-data="2021-06-27">
+			    <div class="card h-100" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%= curr.getReferencedActivity().getName() %>" data-bs-orario="<%= curr.getScheduledTime().toLocalTime() %>" data-bs-luogo="Roma" data-bs-data="<%= curr.getScheduledTime().toLocalDate() %>">
 			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 			      <div class="card-body">
-			        <h5 class="card-title">Concerto tupac</h5>
-			        <p class="card-text">Orario: 15:30</p>
-			        <p class="card-text">Luogo : Roma </p>
+			        <h5 class="card-title"><%= curr.getReferencedActivity().getName() %></h5>
+			        <p class="card-text">Orario: <%=curr.getScheduledTime().toLocalTime() %> </p>
+			        <p class="card-text">Luogo : <%=curr.getReferencedActivity().getPlace().getName()  %> </p>
 			      </div>
 			    </div>
 			  </div>
-			  <div class="col">
-			    <div class="card h-100" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="Giardinaggio con i boys" data-bs-orario="20:30" data-bs-luogo="Lecce" data-bs-data="2021-06-27">
-			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
-			      <div class="card-body">
-			        <h5 class="card-title">Giardinaggio con i boys</h5>
-			        <p class="card-text">Orario: 20:30</p>
-			        <p class="card-text">Luogo : Lecce </p>
-			      </div>
-			    </div>
-			  </div>
-			  <div class="col">
-			    <div class="card h-100">
-			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
-			      <div class="card-body">
-			        <h5 class="card-title">Concerto tupac</h5>
-			        <p class="card-text">Lorem ipsum</p>
-			      </div>
-			    </div>
-			  </div>
-			  <div class="col">
-			    <div class="card h-100">
-			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
-			      <div class="card-body">
-			        <h5 class="card-title">Concerto tupac</h5>
-			        <p class="card-text">Lorem ipsum</p>
-			      </div>
-			    </div>
-			  </div>
-
-			  <div class="col">
-			    <div class="card h-100">
-			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
-			      <div class="card-body">
-			        <h5 class="card-title">Concerto tupac</h5>
-			        <p class="card-text">Lorem ipsum</p>
-			      </div>
-			    </div>
-			  </div>
-
-			  <div class="col">
-			    <div class="card h-100">
-			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
-			      <div class="card-body">
-			        <h5 class="card-title">Concerto tupac</h5>
-			        <p class="card-text">Lorem ipsum</p>
-			      </div>
-			    </div>
-			  </div>
+			  <% } %>
+			
 			</div>
 		</div>
 	</div>
