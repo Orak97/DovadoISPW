@@ -85,21 +85,21 @@ public class DAOSchedules {
 	
 	public boolean addScheduletoJSON(Schedule schedule, SuperUser su) {
 		try {
-			Object schedules = parser.parse(new FileReader(SCHEDJSON));
-			JSONObject scheduleObj = (JSONObject) schedules;
+			Object sched = parser.parse(new FileReader(SCHEDJSON));
+			JSONObject schedObj = (JSONObject) sched;
 			
-			JSONArray scheduleArray = (JSONArray) scheduleObj.get(SCHEDULESKEY);
-			Schedule schFound = findSchedule(su.getUserID());
+			JSONArray schedArray = (JSONArray) schedObj.get(SCHEDULESKEY);
+			Schedule schedFound = findSchedule(su.getUserID());
 			
-			if(schFound==null) {
-				JSONObject newSchedule = new JSONObject();
+			if(schedFound == null) {
+				JSONObject newSched = new JSONObject();
 				
-				newSchedule.put(UIDKEY, su.getUserID());
-				newSchedule.put(SCHEDKEY, new JSONArray());
+				newSched.put(UIDKEY, su.getUserID());
+				newSched.put(SCHEDKEY, new JSONArray());
 				
-				scheduleArray.add(newSchedule);
+				schedArray.add(newSched);
 				try (FileWriter file = new FileWriter(SCHEDJSON)){
-					file.write(scheduleObj.toString());
+					file.write(schedObj.toString());
 					file.flush();
 				}
 				
