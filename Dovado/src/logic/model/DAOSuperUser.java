@@ -224,32 +224,30 @@ public class DAOSuperUser {
 				}
 				
 				if (founded) {
-					break;
+					return getSuperUserByJSONObj(result);
 				}
 			}		
 					
-			if (!founded) {
-				Log.getInstance().logger.info("Nessun utente trovato");
-				return null;
-			}
-			
-			//Il return viene modificato in modo da tener conto della ISTANZIAZIONE ANCHE DELLE PREFERENZE dell'utente.
-			if(Long.compare((Long)result.get(PARTNERKEY),1L)==0) {
-
-				Log.getInstance().logger.info("Partner Trovato");
-				Partner partner = new Partner((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY));
-				partner.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
-				return partner;
-			}
-			Log.getInstance().logger.info(String.valueOf(result.get(WALLETKEY)));
-			User user = new User((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY), (Long) result.get(WALLETKEY));
-			user.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
-			return user;							
-			
-			
+			Log.getInstance().logger.info("Nessun utente trovato");
+			return null;
+						
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	private SuperUser getSuperUserByJSONObj(JSONObject result) {
+		if(Long.compare((Long)result.get(PARTNERKEY),1L)==0) {
+
+			Log.getInstance().logger.info("Partner Trovato");
+			Partner partner = new Partner((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY));
+			partner.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
+			return partner;
+		}
+		Log.getInstance().logger.info(String.valueOf(result.get(WALLETKEY)));
+		User user = new User((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY), (Long) result.get(WALLETKEY));
+		user.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
+		return user;	
 	}
 }
