@@ -132,7 +132,7 @@ public class CreateActivityView implements Initializable{
 		daoAc = DAOActivity.getInstance();
 		daoPl = DAOPlace.getInstance();
 		placeSelected = null;
-		placesFound = new ArrayList<Place>();
+		placesFound = new ArrayList<>();
 		
 		actNameField=actNameTF;
 		sDate=startDate;
@@ -149,7 +149,7 @@ public class CreateActivityView implements Initializable{
 		
 		createActBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				if(createActivity()==false) {
+				if(!createActivity()) {
 					final Stage dialog = new Stage();
 	                dialog.initModality(Modality.NONE);
 	                dialog.initOwner(curr);
@@ -187,7 +187,6 @@ public class CreateActivityView implements Initializable{
 		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
 		                dialog.setScene(dialogScene);
 		                dialog.show();
-						return;
 					}
 					else if(placeAttr.length==3) {
 						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
@@ -200,7 +199,6 @@ public class CreateActivityView implements Initializable{
 			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
 			                dialog.setScene(dialogScene);
 			                dialog.show();
-							return;
 						}
 					}
 					else {
@@ -230,7 +228,6 @@ public class CreateActivityView implements Initializable{
 		for(int i=0;i<placesFound.size();i++) {
 			
 			for(i=0;i<placesFound.size();i++) {
-					Place pl = placesFound.get(i);
 					 	
 					ImageView plImage = new ImageView();
 					Text plName = new Text(placesFound.get(i).getName()+"\n");
@@ -337,7 +334,6 @@ public class CreateActivityView implements Initializable{
 		LocalTime closingTime = null;
 		LocalDate openingDate;
 		LocalDate closingDate;
-		Cadence cadence;
 		
 		if(placeSelected==null) {
 			return false;
@@ -377,7 +373,7 @@ public class CreateActivityView implements Initializable{
 			return false;
 		}
 		String[] prefs = tField.getText().toString().split(",");
-		ArrayList<String> prefsList = new ArrayList<String>();
+		ArrayList<String> prefsList = new ArrayList<>();
 		
 		for(int i=0;i<prefs.length;i++) {
 			prefsList.add(prefs[i]);

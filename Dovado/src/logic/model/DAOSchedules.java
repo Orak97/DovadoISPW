@@ -186,7 +186,7 @@ public class DAOSchedules {
 				Log.getInstance().logger.info("valore codeJSON:"+ codeJSON);
 				
 				
-				if (codeJSON.equals(Long.valueOf(userID))) {
+				if (codeJSON.equals(userID)) {
 					JSONArray schedule = (JSONArray) result.get(SCHEDKEY);
 					Log.getInstance().logger.info("schedule trovato");
 								
