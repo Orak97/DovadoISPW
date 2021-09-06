@@ -82,7 +82,7 @@ public class DAOSchedules {
 	}
 	
 	public boolean addScheduletoJSON(Schedule schedule, SuperUser su) {
-		try (FileWriter file = new FileWriter(SCHEDJSON)) {
+		try {
 			Object schedules = parser.parse(new FileReader(SCHEDJSON));
 			JSONObject scheduleObj = (JSONObject) schedules;
 			
@@ -96,9 +96,10 @@ public class DAOSchedules {
 				newSchedule.put(SCHEDKEY, new JSONArray());
 				
 				scheduleArray.add(newSchedule);
-				
-				file.write(scheduleObj.toString());
-				file.flush();
+				try (FileWriter file = new FileWriter(SCHEDJSON)){
+					file.write(scheduleObj.toString());
+					file.flush();
+				}
 				
 			} 
 				updateScheduleInJSON(schedule,su);
@@ -166,4 +167,54 @@ public class DAOSchedules {
 		 
 	}
 	
+	public boolean deleteSchedule(Long userID, int idSched) {
+		try {		
+			Log.getInstance().logger.info("valore code:"+ userID);
+			Log.getInstance().logger.info("Working Directory = " + System.getProperty("user.dir"));		
+
+			Object schedules = parser.parse(new FileReader(SCHEDJSON));
+			JSONObject scheduleObj = (JSONObject) schedules;
+			JSONArray scheduleArray = (JSONArray) scheduleObj.get(SCHEDULESKEY);
+			JSONObject result;
+			
+			for(int i=0; i<scheduleArray.size();i++) {
+				result = (JSONObject)scheduleArray.get(i);
+				
+				Long codeJSON = (Long) result.get(UIDKEY);
+				Log.getInstance().logger.info("valore codeJSON:"+ codeJSON);
+				
+				
+				if (codeJSON.equals(Long.valueOf(userID))) {
+					DAOActivity daoAc = DAOActivity.getInstance();
+					JSONArray schedule = (JSONArray) result.get(SCHEDKEY);
+					DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+						
+					Log.getInstance().logger.info("schedule trovato");
+						
+					Schedule schFound = new Schedule();
+					ArrayList<ScheduledActivity> scheduledActsArray = new ArrayList<>(); 
+					
+					schedule.remove(idSched);
+					
+					try(FileWriter file = new FileWriter(SCHEDJSON)) {
+						file.write(scheduleObj.toString());
+						file.flush();
+					}
+						
+					return true;
+					
+				}
+			}
+				
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} 
+
+		return false;
+	}
+	
 }
+

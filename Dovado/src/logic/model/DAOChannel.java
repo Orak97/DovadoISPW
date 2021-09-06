@@ -43,7 +43,7 @@ public class DAOChannel {
 		public boolean updateChannelInJSON(Channel ch, List<Message> msges, SuperActivity a) {
 			JSONParser pars = new JSONParser();
 			
-			try(FileWriter file = new FileWriter(CHANNJSON)) 
+			try
 			{
 				
 				Object channels = pars.parse(new FileReader(CHANNJSON));
@@ -76,10 +76,10 @@ public class DAOChannel {
 						result.remove(MESSKEY);
 						result.put(MESSKEY, newMessageArray);
 						
-						
-						file.write(channel.toString());
-						file.flush();
-						
+						try (FileWriter file = new FileWriter(CHANNJSON)) {	
+							file.write(channel.toString());
+							file.flush();
+						}
 						return true;
 					}
 				}
@@ -97,7 +97,7 @@ public class DAOChannel {
 		public Channel setupChannelJSON(Long aID) {
 			JSONParser pars = new JSONParser();
 			Channel foundCh = null;
-			try (FileWriter file = new FileWriter(CHANNJSON))
+			try 
 			{
 				
 				Object channels = pars.parse(new FileReader(CHANNJSON));
@@ -122,10 +122,10 @@ public class DAOChannel {
 				 * canali già esistenti.*/
 				newChannel.put(MESSKEY,newMessageArray);
 				channelArray.add(newChannel);
-					
-				file.write(channel.toString());
-				file.flush();
-					
+				try (FileWriter file = new FileWriter(CHANNJSON)){	
+					file.write(channel.toString());
+					file.flush();
+				}
 				foundCh = new Channel(aID);
 			} catch (Exception e) {
 				e.printStackTrace();

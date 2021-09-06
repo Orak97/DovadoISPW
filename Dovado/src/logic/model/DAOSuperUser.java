@@ -39,7 +39,7 @@ public class DAOSuperUser {
 	
 	public boolean addUserToJSON(String email, String username, int partner, String password) {
 		JSONParser parser = new JSONParser();
-		try (FileWriter file = new FileWriter(USERJSON)) {
+		try {
 			Object users = parser.parse(new FileReader(USERJSON));
 			JSONObject userObj = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userObj.get(USERSKEY);
@@ -60,9 +60,10 @@ public class DAOSuperUser {
 				newUser.put(PREFKEY, userPref);
 				userArray.add(newUser);
 
-				
+			try(FileWriter file = new FileWriter(USERJSON)) {	
 				file.write(userObj.toString());
 				file.flush();
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,7 +79,7 @@ public class DAOSuperUser {
 		int i;
 		int j;
 		
-		try (FileWriter file = new FileWriter(USERJSON)){
+		try {
 			Object users = parser.parse(new FileReader(USERJSON));
 			JSONObject userRes = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userRes.get(USERSKEY);
@@ -107,10 +108,10 @@ public class DAOSuperUser {
 					
 					if(!su.getPreferences().equals(oldpref)) {
 						result.put(PREFKEY, preferences);
-						
+					try (FileWriter file = new FileWriter(USERJSON)){
 						file.write(userRes.toString());
 						file.flush();
-						
+					}
 						return true;
 					} 
 					else return false;
@@ -130,7 +131,7 @@ public class DAOSuperUser {
 		Long daoWallet  =  (long) 0;
 		int i;
 		
-		try (FileWriter file = new FileWriter(USERJSON)){
+		try {
 			Object users = parser.parse(new FileReader(USERJSON));
 			JSONObject userRes = (JSONObject) users;
 			JSONArray userArray = (JSONArray) userRes.get(USERSKEY);
@@ -157,11 +158,13 @@ public class DAOSuperUser {
 					
 						result.put(WALLETKEY, daoWallet);
 						
+					try (FileWriter file = new FileWriter(USERJSON)){
+							
 						file.write(userRes.toString());
 						file.flush();
 						
 						return true;
-					
+					}
 				}
 			}			
 		} catch (Exception e) {
@@ -201,8 +204,8 @@ public class DAOSuperUser {
 				String passwordJSON = (String) result.get(PASSKEY);
 				Long idJson = (Long) result.get(IDKEY);
 			
-				//Qui controllo nel caso uso la mail per cercare. In caso di psw = null si può  creare un'eccezione apposita 
-				//per distinguere quando è lecita, nel caso di richieste del sistema, da quando non lo è
+				//Qui controllo nel caso uso la mail per cercare. In caso di psw = null si puï¿½  creare un'eccezione apposita 
+				//per distinguere quando ï¿½ lecita, nel caso di richieste del sistema, da quando non lo ï¿½
 				if (email != null && email.equals(emailJSON)) {
 					if(psw == null) {
 						Log.getInstance().logger.warning("PASSWORD NULLA");
