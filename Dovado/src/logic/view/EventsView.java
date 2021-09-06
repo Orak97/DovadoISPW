@@ -2,9 +2,13 @@ package logic.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -26,6 +30,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
@@ -47,7 +52,13 @@ public class EventsView implements Initializable{
     private static DAOChannel daoCH;
     private static DAOPlace daoPlc;
     private static DAOSchedules daoSch;
+    private static SuperActivity activitySelected;
+    private static StackPane lastEventBoxSelected;
 
+    private static Stage curr;
+    
+    private static int lastActivitySelected = -1;
+    
     @FXML
     private ListView<Object> eventsList;
     
@@ -119,22 +130,7 @@ public class EventsView implements Initializable{
 							"\n"+activities.get(i).getFrequency().getOpeningTime()+
 							"-"+activities.get(i).getFrequency().getClosingTime());
 					
-					Button deleteSched = new Button();
 
-					HBox eventLine = new HBox();
-					eventLine.setAlignment(Pos.CENTER);
-					VBox eventButtons = new VBox();
-					
-					eventButtons.getChildren().add(deleteSched);
-					eventButtons.setAlignment(Pos.CENTER_RIGHT);
-					
-					deleteSched.setText("Delete from schedule");
-					deleteSched.getStyleClass().add("src-btn");
-					deleteSched.setAlignment(Pos.CENTER);
-					
-					String width = Double.toString(root.getWidth()/2);
-					String height = Double.toString(root.getHeight()/2);
-					
 					eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
 					eventImage.getStyleClass().add("event-image");
 					
@@ -163,23 +159,21 @@ public class EventsView implements Initializable{
 					
 					
 					Text eventId = new Text();
-					Text placeId = new Text();
+					Text schedId = new Text();
 					
 					eventId.setId(activities.get(i).getId().toString());
-					placeId.setId(activities.get(i).getPlace().getId().toString());
+					schedId.setId(schedActivities.get(i).toString());
 					
 					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 					//dell'evento ed infine il testo dell'evento.
 					eventBox.getChildren().add(eventId);
-					eventBox.getChildren().add(placeId);
+					eventBox.getChildren().add(schedId);
 					eventBox.getChildren().add(eventImage);
 					eventBox.getChildren().add(eventText);
 					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 					eventBox.setAlignment(Pos.CENTER_LEFT);
 					
-					eventLine.getChildren().addAll(eventBox,eventButtons);
-					eventLine.setMinWidth(root.getWidth());
-					eventsList.getItems().add(eventLine);
+					eventsList.getItems().add(eventBox);
 				}
 			});
 			newThread.start();
@@ -192,6 +186,169 @@ public class EventsView implements Initializable{
 		}
 	}
 
+	public void scheduledActSelected() {
+
+		daoAct = DAOActivity.getInstance();
+		daoSU = DAOSuperUser.getInstance();
+		daoPlc = DAOPlace.getInstance();
+
+		StackPane eventBox = null;
+		try {
+			eventBox = (StackPane) eventsList.getSelectionModel().getSelectedItem();
+		} catch(ClassCastException ce) {
+			return;
+		}
+		
+		Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
+
+		if(lastEventBoxSelected == eventBox) return;
+		
+		if(lastEventBoxSelected!=null) activityDeselected(lastEventBoxSelected);
+		
+		int itemNumber = eventsList.getSelectionModel().getSelectedIndex();
+		
+		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
+		lastEventBoxSelected = eventBox;
+		int schedEventID = itemNumber; 
+		ImageView eventImage = (ImageView) eventBox.getChildren().get(2);
+		VBox eventInfo = (VBox) eventBox.getChildren().get(3);
+		
+		Text eventName = (Text) eventInfo.getChildren().get(0);
+		Text eventDetails = (Text) eventInfo.getChildren().get(1);
+		
+		Log.getInstance().logger.info(eventName+" "+eventDetails);
+
+		HBox selection = new HBox();
+		Button deleteSched = new Button();
+
+		deleteSched.setText("Delete from schedule");
+		
+		deleteSched.getStyleClass().add("evn-btn");
+		
+		deleteSched.getStyleClass().add("evn-btn");
+		
+		deleteSched.setAlignment(Pos.CENTER);
+		
+		String remind = schedActivities.get(itemNumber).getReminderTime().toString().replace('T', ' ');
+		String sched = schedActivities.get(itemNumber).getScheduledTime().toString().replace('T', ' ');
+		
+		Text reminderTime = new Text("Activity reminder at: "+remind);
+		Text scheduledTime = new Text("Activity scheduled for: "+sched);
+
+		reminderTime.getStyleClass().add("textEventInfo");
+		scheduledTime.getStyleClass().add("textEventName");
+		
+		VBox schedInfo = new VBox();
+		
+		schedInfo.setAlignment(Pos.CENTER_RIGHT);
+		schedInfo.getChildren().addAll(scheduledTime,reminderTime);
+		
+
+		selection.getChildren().addAll(deleteSched,schedInfo);
+		eventsList.getItems().add(itemNumber+1, selection);
+		lastActivitySelected = itemNumber;
+		eventImage.setScaleX(1.2);
+		eventImage.setScaleY(1.25);
+
+		Log.getInstance().logger.info("Attivit� trovata: "+activitySelected);
+
+		deleteSched.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+													
+					final Stage dialog = new Stage();
+					
+					if(deleteScheduledEvent(schedEventID)) {
+						eventsList.getItems().remove(itemNumber+1);
+						eventsList.getItems().remove(itemNumber);
+						lastActivitySelected= -1;
+						lastEventBoxSelected= null;
+						//Messaggio per il dialog box;
+						dialog.initModality(Modality.NONE);
+				        dialog.initOwner(curr);
+				        VBox dialogVbox = new VBox(20);
+				                
+				        Text success = (new Text("Scheduled activity successfully deleted"));
+				        success.setTextAlignment(TextAlignment.CENTER);
+				               
+				        dialogVbox.getChildren().add(success);
+				        Scene dialogScene = new Scene(dialogVbox, 100, 50);
+				        dialog.setScene(dialogScene);
+				        dialog.show();
+				        return;
+			        }
+			        else {
+				        dialog.initModality(Modality.NONE);
+				        dialog.initOwner(curr);
+				        VBox dialogVboxFail = new VBox(20);
+				                
+				        Text fail = (new Text("Scheduled activity successfully deleted"));
+				        fail.setTextAlignment(TextAlignment.CENTER);
+				                
+				        dialogVboxFail.getChildren().add(fail);
+				        Scene dialogSceneFail = new Scene(dialogVboxFail, 100, 50);
+				        dialog.setScene(dialogSceneFail);
+				        dialog.show();
+				        return;
+			         }
+				}
+			});
+			/*viewSchedInfo.setOnAction(new EventHandler<ActionEvent>(){
+				@Override public void handle(ActionEvent e) {
+					DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String dayStringed = day.format();
+							
+					String hourChosen = hourBox.getValue();
+					String minChosen = minBox.getValue();
+							
+					int hourReminderInt = Integer.parseInt(hourChosen);
+					String hourReminder;
+					hourReminder = Integer.toString(hourReminderInt-1);
+					
+					if(hourReminderInt-1<10) {
+						hourReminder = "0"+hourReminder;
+					}
+							
+					String dateChosen = dayStringed+' '+hourChosen+':'+minChosen;
+					String dateReminder = dayStringed+' '+hourReminder+':'+minChosen;
+							
+					DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+					LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
+					LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
+						
+					final Stage dialog = new Stage();
+			        dialog.initModality(Modality.NONE);
+			        dialog.initOwner(curr);
+			        VBox dialogVbox = new VBox(20);
+			        dialogVbox.getChildren().add(new Text("Activity successfully scheduled"));
+			        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+			        dialog.setScene(dialogScene);
+			        dialog.show();
+			                
+				}
+			});
+				*/	
+	}
+	
+	public void activityDeselected(StackPane lastEventBoxSelected2) {
+		if(lastActivitySelected>=0) 
+			eventsList.getItems().remove(lastActivitySelected+1);
+		
+		ImageView eventImage = (ImageView) lastEventBoxSelected2.getChildren().get(2);
+		VBox eventInfo = (VBox) lastEventBoxSelected2.getChildren().get(3);
+		
+		Text eventName = (Text) eventInfo.getChildren().get(0);
+		Text eventDetails = (Text) eventInfo.getChildren().get(1);
+		
+		eventImage.setScaleX(1);
+		eventImage.setScaleY(1);
+	}
+	
+	public boolean deleteScheduledEvent(int idSched) {
+		
+		return daoSch.deleteSchedule(Navbar.getUser().getUserID(),idSched);
+
+	}
+	
 	public void searchEvent() {
 		
 		String searchItem = null;
@@ -219,11 +376,11 @@ public class EventsView implements Initializable{
 					Text eventInfo = new Text(activities.get(i).getPlace().getName()+
 							"\n"+activities.get(i).getFrequency().getOpeningTime()+
 							"-"+activities.get(i).getFrequency().getClosingTime());
-					Button deleteSched = new Button();
-
 					HBox eventLine = new HBox();
 					eventLine.setAlignment(Pos.CENTER);
 					VBox eventButtons = new VBox();
+					
+					Button deleteSched = new Button();
 					
 					eventButtons.getChildren().add(deleteSched);
 					eventButtons.setAlignment(Pos.CENTER_RIGHT);

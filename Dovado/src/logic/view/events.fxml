@@ -14,6 +14,6 @@
             <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#searchEvent" text="Search" />
          </children>
       </HBox>
-      <ListView fx:id="eventsList" VBox.vgrow="ALWAYS" />
+      <ListView fx:id="eventsList" onMouseClicked="#scheduledActSelected" style="-fx-background-color: #212121;" VBox.vgrow="ALWAYS" />
    </children>
 </VBox>
