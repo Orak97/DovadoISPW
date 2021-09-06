@@ -39,92 +39,116 @@ public class CreateActivityController {
 	public void createActivity(String n, Place p) {
 		//spaghetti code here!!!
 		Long id;
-		
 		SuperActivity newActivity;
-
+		
 		Log.getInstance().logger.info("Ciao da dentro createActivity");
 		switch(bean.getType()) {
 		case CONTINUA:
 			{	
-				if(u instanceof User) {
-					
-					//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso;
-					//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
-					//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
-					
-					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime());					
-					id = daoAc.addActivityToJSON(p,newActivity,"no");
-					if(id<0) {
-						Log.getInstance().logger.warning(ERRNOCREATE);
-						return;
-					} else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
-					
-					newActivity.setId(id); 
-				}
-				else {
-					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime() );
-					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
-					if(id<0) {
-						Log.getInstance().logger.warning(ERRNOCREATE);
-						return;
-					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
-					newActivity.setId(id);
-				}
-			
-		}
+				createContinueActivity(n, p);
+			}
 		break;
 		case PERIODICA:
 			{
-				if(u instanceof User) {
-					//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso;
-					//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
-					//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
-					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
-					id = daoAc.addActivityToJSON(p,newActivity,"no");
-					if(id<0) {
-						Log.getInstance().logger.warning(ERRNOCREATE);
-						return;
-					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
-					newActivity.setId(id);
-				}
-				else {
-					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
-					id = daoAc.addActivityToJSON(p,newActivity,"yes");		
-					if(id<0) {
-						Log.getInstance().logger.warning(ERRNOCREATE);
-						return;
-					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
-					newActivity.setId(id);
-				}
+				createPeriodicActivity(n, p);
 			}
 		break;
 		case SCADENZA:
 			{
-				if(u instanceof User) {
-					//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso;
-					//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
-					//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
-					newActivity=Factory.createNormalActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
-					id = daoAc.addActivityToJSON(p,newActivity,"no");
-					if(id<0) {
-						Log.getInstance().logger.warning(ERRNOCREATE);
-						return;
-					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
-					newActivity.setId(id);
-				}
-				else { 
-					newActivity=Factory.createCertifiedActivity(n, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
-					id = daoAc.addActivityToJSON(p,newActivity,"yes");	
-					if(id<0) {
-						Log.getInstance().logger.warning(ERRNOCREATE);
-						return;
-					}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
-					newActivity.setId(id);				
-				}
+				createExpiredActivity(n, p);
 			}
 		break;
 		}
 		
+	}
+	private void createContinueActivity(String name, Place p) {
+		Long id;
+		SuperActivity newActivity;
+		
+		if(u instanceof User) {
+			
+			//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso
+			//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
+			//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
+			
+			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime());					
+			id = daoAc.addActivityToJSON(p,newActivity,"no");
+			if(id<0) {
+				Log.getInstance().logger.warning(ERRNOCREATE);
+				return;
+			} else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			
+			newActivity.setId(id); 
+		}
+		else {
+			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime() );
+			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
+			if(id<0) {
+				Log.getInstance().logger.warning(ERRNOCREATE);
+				return;
+			}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			newActivity.setId(id);
+		}
+	}
+	
+	private void createPeriodicActivity(String name, Place p) {
+		Long id;
+		SuperActivity newActivity;
+		
+		if(u instanceof User) {
+			
+			//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso
+			//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
+			//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
+			
+			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());				
+			id = daoAc.addActivityToJSON(p,newActivity,"no");
+			if(id<0) {
+				Log.getInstance().logger.warning(ERRNOCREATE);
+				return;
+			} else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			
+			newActivity.setId(id); 
+		}
+		else {
+			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
+			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
+			if(id<0) {
+				Log.getInstance().logger.warning(ERRNOCREATE);
+				return;
+			}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			newActivity.setId(id);
+		}
+	}
+	
+	private void createExpiredActivity(String name, Place p) {
+		Long id;
+		SuperActivity newActivity;
+		
+		if(u instanceof User) {
+			
+			//A seconda di che tipo di utente e abbiamo un metodo di aggiunta attivita al file JSON diverso
+			//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
+			//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
+			
+			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());				
+			id = daoAc.addActivityToJSON(p,newActivity,"no");
+			if(id<0) {
+				Log.getInstance().logger.warning(ERRNOCREATE);
+				return;
+			} else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			
+			newActivity.setId(id); 
+		}
+		else {
+			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
+			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
+			if(id<0) {
+				Log.getInstance().logger.warning(ERRNOCREATE);
+				return;
+			}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			newActivity.setId(id);
+		}
 	}
 	
 }
