@@ -173,9 +173,7 @@ public class DAOActivity {
 			}
 			
 			if (updatePref) {
-				for(i=0;i<sua.getPreferences().size();i++) {
-					preferences.add(sua.getPreferences().get(i));
-				}
+				AddToList(sua, preferences);
 			}
 			
 			for(i=0;i<activityArray.size();i++){
@@ -193,8 +191,8 @@ public class DAOActivity {
 							try (FileWriter file = new FileWriter(activityFileName)){
 								file.write(activitiesJOBJ.toString());
 								file.flush();
-							}						
-							return true;
+							}					
+						return true;
 						
 						} else return false;
 					}
@@ -218,6 +216,13 @@ public class DAOActivity {
 	}
 	
 	//----------metodi di supporto alla updateActivityPreferences---------
+	
+	private void AddToList(SuperActivity sua, JSONArray preferences) {
+		for(int i=0;i<sua.getPreferences().size();i++) {
+			preferences.add(sua.getPreferences().get(i));
+		}
+	}
+	
 	private ArrayList<String> funcUpdateActJObj(ArrayList<String> oldpref,JSONObject result, SuperActivity sua) {
 		int j;
 		if(((Long)result.get(jpID))==sua.getId()) {
@@ -519,7 +524,7 @@ public class DAOActivity {
 			}
 	}
 	
-	public boolean isInJSON(DAOSuperUser daoSU, Place p, String activityName, Long creatorId) {
+	public boolean isInJSON( Place p, String activityName, Long creatorId) {
 		JSONParser parser = new JSONParser();
 		int i;
 		int j;

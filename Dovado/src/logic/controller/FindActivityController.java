@@ -45,6 +45,6 @@ public class FindActivityController {
 	public boolean isInJSON(Place p, String activityName, Long creatorId) {
 		daoSU = DAOSuperUser.getInstance();
 		daoAc = DAOActivity.getInstance();
-		return daoAc.isInJSON(daoSU, p, activityName, creatorId);
+		return daoAc.isInJSON( p, activityName, creatorId);
 	}
 }
