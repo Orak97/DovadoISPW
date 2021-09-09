@@ -9,7 +9,7 @@ import java.util.logging.SimpleFormatter;
 
 public class Log {
 	private static Log INSTANCE;
-	
+	private static final String LOGLEVEL = "INFO"; //Qui alternare INFO o WARNING a seconda di ciò che si vuole intercettare;
 	private Logger logger;
 	private FileHandler fh;
 	private String fileName  = "log.txt";
@@ -40,7 +40,13 @@ public class Log {
 		SimpleFormatter formatter = new SimpleFormatter();
 		fh.setFormatter(formatter);
 		
-		logger.setLevel(Level.INFO);
+		
+		Level logLev;
+		if (LOGLEVEL.equals("INFO")) {
+			logLev = Level.INFO;
+		} else logLev = Level.WARNING;
+		
+		logger.setLevel(logLev);
 		
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
