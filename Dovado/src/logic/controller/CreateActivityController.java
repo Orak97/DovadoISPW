@@ -39,7 +39,7 @@ public class CreateActivityController {
 	public void createActivity(String n, Place p) {
 		//spaghetti code here!!!
 				
-		Log.getInstance().logger.info("Ciao da dentro createActivity");
+		Log.getInstance().getLogger().info("Ciao da dentro createActivity");
 		switch(bean.getType()) {
 		case CONTINUA:
 			{	
@@ -72,9 +72,9 @@ public class CreateActivityController {
 			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime());					
 			id = daoAc.addActivityToJSON(p,newActivity,"no");
 			if(id<0) {
-				Log.getInstance().logger.warning(ERRNOCREATE);
+				Log.getInstance().getLogger().warning(ERRNOCREATE);
 				return;
-			} else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			} else Log.getInstance().getLogger().log(Level.INFO,SHOWLOGID,id);
 			
 			newActivity.setId(id); 
 		}
@@ -82,9 +82,9 @@ public class CreateActivityController {
 			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime() );
 			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 			if(id<0) {
-				Log.getInstance().logger.warning(ERRNOCREATE);
+				Log.getInstance().getLogger().warning(ERRNOCREATE);
 				return;
-			}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			}else Log.getInstance().getLogger().log(Level.INFO,SHOWLOGID,id);
 			newActivity.setId(id);
 		}
 	}
@@ -102,9 +102,9 @@ public class CreateActivityController {
 			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());				
 			id = daoAc.addActivityToJSON(p,newActivity,"no");
 			if(id<0) {
-				Log.getInstance().logger.warning(ERRNOCREATE);
+				Log.getInstance().getLogger().warning(ERRNOCREATE);
 				return;
-			} else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			} else Log.getInstance().getLogger().log(Level.INFO,SHOWLOGID,id);
 			
 			newActivity.setId(id); 
 		}
@@ -112,9 +112,9 @@ public class CreateActivityController {
 			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
 			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 			if(id<0) {
-				Log.getInstance().logger.warning(ERRNOCREATE);
+				Log.getInstance().getLogger().warning(ERRNOCREATE);
 				return;
-			}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			}else Log.getInstance().getLogger().log(Level.INFO,SHOWLOGID,id);
 			newActivity.setId(id);
 		}
 	}
@@ -132,9 +132,9 @@ public class CreateActivityController {
 			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());				
 			id = daoAc.addActivityToJSON(p,newActivity,"no");
 			if(id<0) {
-				Log.getInstance().logger.warning(ERRNOCREATE);
+				Log.getInstance().getLogger().warning(ERRNOCREATE);
 				return;
-			} else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			} else Log.getInstance().getLogger().log(Level.INFO,SHOWLOGID,id);
 			
 			newActivity.setId(id); 
 		}
@@ -142,9 +142,9 @@ public class CreateActivityController {
 			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
 			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 			if(id<0) {
-				Log.getInstance().logger.warning(ERRNOCREATE);
+				Log.getInstance().getLogger().warning(ERRNOCREATE);
 				return;
-			}else Log.getInstance().logger.log(Level.INFO,SHOWLOGID,id);
+			}else Log.getInstance().getLogger().log(Level.INFO,SHOWLOGID,id);
 			newActivity.setId(id);
 		}
 	}

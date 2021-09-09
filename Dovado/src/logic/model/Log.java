@@ -10,7 +10,7 @@ import java.util.logging.SimpleFormatter;
 public class Log {
 	private static Log INSTANCE;
 	
-	public Logger logger;
+	private Logger logger;
 	private FileHandler fh;
 	private String fileName  = "log.txt";
 	
@@ -20,12 +20,17 @@ public class Log {
 		return INSTANCE;
 	}
 	
+	public Logger getLogger() {
+		return this.logger;
+	}
+	
 	private Log() {
 		try {
 			File fileLog = new File(fileName);
 				if (!fileLog.exists()) {
-			
-				fileLog.createNewFile();}
+					System.out.println("il file non esiste");
+					fileLog.createNewFile();
+				}
 		
 		
 		fh = new FileHandler(fileName, true);

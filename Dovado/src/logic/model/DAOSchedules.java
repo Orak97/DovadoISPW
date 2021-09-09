@@ -40,7 +40,7 @@ public class DAOSchedules {
 			int i;
 
 			if(scheduleArray==null) {
-				Log.getInstance().logger.info("Non ci sono attivita da dover modificare!\n");
+				Log.getInstance().getLogger().info("Non ci sono attivita da dover modificare!\n");
 				return false;
 			}
 			
@@ -117,8 +117,8 @@ public class DAOSchedules {
 	
 	public Schedule findSchedule(long userID) {
 		try {		
-			Log.getInstance().logger.info("valore code:"+ userID);
-			Log.getInstance().logger.info("Working Directory = " + System.getProperty("user.dir"));		
+			Log.getInstance().getLogger().info("valore code:"+ userID);
+			Log.getInstance().getLogger().info("Working Directory = " + System.getProperty("user.dir"));		
 
 			Object schedules = parser.parse(new FileReader(SCHEDJSON));
 			JSONObject scheduleObj = (JSONObject) schedules;
@@ -129,7 +129,7 @@ public class DAOSchedules {
 				result = (JSONObject)scheduleArray.get(i);
 				
 				Long codeJSON = (Long) result.get(UIDKEY);
-				Log.getInstance().logger.info("valore codeJSON:"+ codeJSON);
+				Log.getInstance().getLogger().info("valore codeJSON:"+ codeJSON);
 				
 				
 				if (codeJSON.equals(Long.valueOf(userID))) {
@@ -137,7 +137,7 @@ public class DAOSchedules {
 					JSONArray schedule = (JSONArray) result.get(SCHEDKEY);
 					DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 						
-					Log.getInstance().logger.info("schedule trovato");
+					Log.getInstance().getLogger().info("schedule trovato");
 						
 					Schedule schFound = new Schedule();
 					ArrayList<ScheduledActivity> scheduledActsArray = new ArrayList<>(); 
@@ -171,8 +171,8 @@ public class DAOSchedules {
 	
 	public boolean deleteSchedule(Long userID, int idSched) {
 		try {		
-			Log.getInstance().logger.info("valore code:"+ userID);
-			Log.getInstance().logger.info("Working Directory = " + System.getProperty("user.dir"));		
+			Log.getInstance().getLogger().info("valore code:"+ userID);
+			Log.getInstance().getLogger().info("Working Directory = " + System.getProperty("user.dir"));		
 
 			Object schedules = parser.parse(new FileReader(SCHEDJSON));
 			JSONObject scheduleObj = (JSONObject) schedules;
@@ -183,12 +183,12 @@ public class DAOSchedules {
 				result = (JSONObject)scheduleArray.get(i);
 				
 				Long codeJSON = (Long) result.get(UIDKEY);
-				Log.getInstance().logger.info("valore codeJSON:"+ codeJSON);
+				Log.getInstance().getLogger().info("valore codeJSON:"+ codeJSON);
 				
 				
 				if (codeJSON.equals(userID)) {
 					JSONArray schedule = (JSONArray) result.get(SCHEDKEY);
-					Log.getInstance().logger.info("schedule trovato");
+					Log.getInstance().getLogger().info("schedule trovato");
 								
 					schedule.remove(idSched);
 					

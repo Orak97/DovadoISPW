@@ -23,7 +23,7 @@ public class NavbarController {
     
     @FXML
     void Logout(ActionEvent event) {
-    	Log.getInstance().logger.info("Clicked Logout");
+    	Log.getInstance().getLogger().info("Clicked Logout");
     	nav.onHome();
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
@@ -33,13 +33,13 @@ public class NavbarController {
     @FXML
     void goChannels(ActionEvent event) {
     	nav.onChannels();
-    	Log.getInstance().logger.info("Clicked channels");
+    	Log.getInstance().getLogger().info("Clicked channels");
     }
 
     @FXML
     void goHome(ActionEvent event) {
     	nav.onHome();
-    	Log.getInstance().logger.info("Clicked home");
+    	Log.getInstance().getLogger().info("Clicked home");
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
     	//HomeView hv = new HomeView();
@@ -49,7 +49,7 @@ public class NavbarController {
     @FXML
     void goCreateActivity(ActionEvent event) {
     	nav.onCreateActivity();
-    	Log.getInstance().logger.info("Clicked create activity");
+    	Log.getInstance().getLogger().info("Clicked create activity");
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
     	//HomeView hv = new HomeView();
@@ -59,13 +59,13 @@ public class NavbarController {
     @FXML
     void goProfile(ActionEvent event) {
     	nav.onMyProfile();
-    	Log.getInstance().logger.info("Clicked My profile");
+    	Log.getInstance().getLogger().info("Clicked My profile");
     }
 
     @FXML
     void goPreferences(ActionEvent event) {
     	nav.onPreferences();
-    	Log.getInstance().logger.info("Clicked preferences");
+    	Log.getInstance().getLogger().info("Clicked preferences");
     }
 
     @FXML
@@ -75,7 +75,7 @@ public class NavbarController {
     	Navbar.loginSetup();
     	//EventsView ev = new EventsView();
     	EventsView.render(current);
-    	Log.getInstance().logger.info("Clicked events");
+    	Log.getInstance().getLogger().info("Clicked events");
     }
     
 

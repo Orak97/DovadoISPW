@@ -97,6 +97,6 @@ public abstract class SuperActivity {
 	public void setPreferences(List<String> newPreferences) {
 		this.preferences = (ArrayList<String>) newPreferences;
 		if(!DAOActivity.getInstance().updateActivityPreferences(this, true))
-			Log.getInstance().logger.info("Non è andato a buon fine l'aggiornamento delle preferenze");
+			Log.getInstance().getLogger().info("Non è andato a buon fine l'aggiornamento delle preferenze");
 	}
 }

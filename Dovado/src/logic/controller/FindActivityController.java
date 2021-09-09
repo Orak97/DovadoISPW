@@ -31,7 +31,7 @@ public class FindActivityController {
 		daoSU = DAOSuperUser.getInstance();
 		if((result = (ArrayList<SuperActivity>) daoAc.findActivityByPreference(daoSU, preference))!=null)
 			return result;
-		Log.getInstance().logger.warning("Non e stata trovata alcuna attivita con la preferenza specificata.");
+		Log.getInstance().getLogger().warning("Non e stata trovata alcuna attivita con la preferenza specificata.");
 		return null;
 	}
 	//Il metodo prende in ingresso un posto e un intero che rappresenta l'id dell'attivita che si vuole

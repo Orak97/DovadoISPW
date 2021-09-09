@@ -11,7 +11,7 @@
 		
 		String titolo = (String) application.getAttribute("titolo");
 		System.out.println(System.getProperty("user.dir"));
-		Log.getInstance().logger.info(titolo);
+		Log.getInstance().getLogger().info(titolo);
 		
 		if (titolo.equals("login")) {
 			if( session.getAttribute("user") != null) {				

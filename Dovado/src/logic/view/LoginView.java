@@ -42,19 +42,19 @@ public class LoginView{
 
     @FXML
     void login(ActionEvent event) {
-    	Log.getInstance().logger.info("Clicked login");
+    	Log.getInstance().getLogger().info("Clicked login");
     	SuperUser user = null;
     	if(username.getText().contains("@")) {
     		System.out.println(username);
     		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText(),null))==null) {
-    			Log.getInstance().logger.info("Email o password incorrette.");
+    			Log.getInstance().getLogger().info("Email o password incorrette.");
     			return;
     		} 
     	}
     	// Questo else diventa inutile visto che non possiamo cercare gli utenti in base agli Username
     	else {
     		if((user=DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText(),null))==null) {
-    			Log.getInstance().logger.info("Username o password incorretti.");
+    			Log.getInstance().getLogger().info("Username o password incorretti.");
     			return;
     		}
     	}
@@ -66,7 +66,7 @@ public class LoginView{
 
     @FXML
     void register(ActionEvent event) {
-    	Log.getInstance().logger.info("Clicked register");
+    	Log.getInstance().getLogger().info("Clicked register");
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	RegisterView.render(current);
     }

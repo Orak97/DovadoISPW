@@ -45,7 +45,7 @@ public class RegisterView {
 
     @FXML
     void register(ActionEvent event) {
-    	Log.getInstance().logger.info("User registered");
+    	Log.getInstance().getLogger().info("User registered");
     }
     
     public static void render(Stage current) {

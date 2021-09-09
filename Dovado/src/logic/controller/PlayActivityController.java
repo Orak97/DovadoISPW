@@ -22,7 +22,7 @@ public class PlayActivityController {
 		ArrayList<String[]> chat = (ArrayList<String[]>) this.cController.formattedChat(user);
 		
 		if (chat.isEmpty()) {
-			Log.getInstance().logger.info("Il canale e vuoto\n");
+			Log.getInstance().getLogger().info("Il canale e vuoto\n");
 			return;
 		}
 		// Qui bisognera implementare una comunicazione col bean per la pagina web o, credo meglio, piu in generale qualcosa che vada al view controller
@@ -30,9 +30,9 @@ public class PlayActivityController {
 
 			//volendo potrei mettere qui il controllo dell'utente cosi da avere comunque tutti gli utenti
 			if (i[0].equals(String.valueOf(0))) {
-				Log.getInstance().logger.info("<<MIO MESSAGGIO>>   " + i[1]);
+				Log.getInstance().getLogger().info("<<MIO MESSAGGIO>>   " + i[1]);
 			}
-			else Log.getInstance().logger.info(i[1]);
+			else Log.getInstance().getLogger().info(i[1]);
 
 		}
 	}

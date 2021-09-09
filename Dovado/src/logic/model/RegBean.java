@@ -74,7 +74,7 @@ public void setError(String error) {
 
 public boolean validate() {
 	int partner;
-	Log.getInstance().logger.info(username +": "+ password2 + "  " + password);	 
+	Log.getInstance().getLogger().info(username +": "+ password2 + "  " + password);	 
 	if (radio!=null) {
     	if (radio.equals("yes")) {
     		partner = 1;
@@ -89,7 +89,7 @@ public boolean validate() {
 	Matcher matchEmail = patternEmail.matcher(email);
 	if (!matchEmail.matches()) {
 			error = "Mail sintatticamente sbagliata";
-			Log.getInstance().logger.info("Mail sintatticamente sbagliata");
+			Log.getInstance().getLogger().info("Mail sintatticamente sbagliata");
 			
 			return false;}
 	
@@ -103,13 +103,13 @@ public boolean validate() {
 	Matcher matchPsw = patternPsw.matcher(password);
 	if (!matchPsw.matches()) {
 		error = "La password deve contenere almeno 8 cratteri e deve contenere numeri, lettere e un carattere tra:{',','.','&','!','?'} ";
-		Log.getInstance().logger.info("password non conforme");
+		Log.getInstance().getLogger().info("password non conforme");
 		return false;}
 	
 	if (username.length()>15 || username.length()<4 || username.lastIndexOf(" ") != -1) {
 	
 		error = "Lo username deve essere composto da una sola parola senza l'utilizzo di spazi e deve avere dai 4 ai 15 caratteri";
-		Log.getInstance().logger.info("Spazi nell'username: " + username + username.length()+ "  ci sono questi spazi:  " + username.lastIndexOf(" "));		
+		Log.getInstance().getLogger().info("Spazi nell'username: " + username + username.length()+ "  ci sono questi spazi:  " + username.lastIndexOf(" "));		
 		return false;}
 	
 	//Chiamo il controller che controlla se eventualmente gia esiste e lo aggiunge in alternativa

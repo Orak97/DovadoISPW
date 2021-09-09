@@ -209,16 +209,16 @@ public class DAOSuperUser {
 				//per distinguere quando � lecita, nel caso di richieste del sistema, da quando non lo �
 				if (email != null && email.equals(emailJSON)) {
 					if(psw == null) {
-						Log.getInstance().logger.warning("PASSWORD NULLA");
+						Log.getInstance().getLogger().warning("PASSWORD NULLA");
 						founded = true;
 						
 					}
 					else if (psw.equals(passwordJSON)) {				
-						Log.getInstance().logger.info("PASSWORD CORRETTA");
+						Log.getInstance().getLogger().info("PASSWORD CORRETTA");
 						founded = true;
 					} else {
 					
-					Log.getInstance().logger.info("PASSWORD SBAGLIATA");
+					Log.getInstance().getLogger().info("PASSWORD SBAGLIATA");
 					return null;
 					}	
 				}
@@ -232,7 +232,7 @@ public class DAOSuperUser {
 				}
 			}		
 					
-			Log.getInstance().logger.info("Nessun utente trovato");
+			Log.getInstance().getLogger().info("Nessun utente trovato");
 			return null;
 						
 		} catch (Exception e) {
@@ -244,12 +244,12 @@ public class DAOSuperUser {
 	private SuperUser getSuperUserByJSONObj(JSONObject result) {
 		if(Long.compare((Long)result.get(PARTNERKEY),1L)==0) {
 
-			Log.getInstance().logger.info("Partner Trovato");
+			Log.getInstance().getLogger().info("Partner Trovato");
 			Partner partner = new Partner((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY));
 			partner.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
 			return partner;
 		}
-		Log.getInstance().logger.info(String.valueOf(result.get(WALLETKEY)));
+		Log.getInstance().getLogger().info(String.valueOf(result.get(WALLETKEY)));
 		User user = new User((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY), (Long) result.get(WALLETKEY));
 		user.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
 		return user;	

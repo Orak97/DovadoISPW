@@ -21,7 +21,7 @@ public class CreateUserController {
 		
 	}
 	public void printTest(String n) {
-		Log.getInstance().logger.info(n);
+		Log.getInstance().getLogger().info(n);
 	}
 	
 }

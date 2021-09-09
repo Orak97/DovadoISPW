@@ -40,7 +40,7 @@ public class DAOChannel {
 	}
 	
 	//Metodo per aggiornare nella persistenza un canale
-		public boolean updateChannelInJSON(Channel ch, List<Message> msges, SuperActivity a) {
+		public boolean updateChannelInJSON(List<Message> msges, SuperActivity a) {
 			JSONParser pars = new JSONParser();
 			
 			try
@@ -56,7 +56,7 @@ public class DAOChannel {
 					result = (JSONObject)channelArray.get(j);
 					
 					Long aID = (Long) result.get(ACTIVITYKEY);
-					Log.getInstance().logger.info("id attività update:"+ aID);
+					Log.getInstance().getLogger().info("id attività update:"+ aID);
 
 					if(Long.compare(a.getId(), aID)==0) {
 						
@@ -105,11 +105,11 @@ public class DAOChannel {
 				JSONArray channelArray = (JSONArray) channel.get(CHANNKEY);
 				
 				if((foundCh = findChannel(aID))!=null) {
-					Log.getInstance().logger.info("Il canale è già presente nella persistenza.");
+					Log.getInstance().getLogger().info("Il canale è già presente nella persistenza.");
 					return foundCh;
 				}
 				
-				Log.getInstance().logger.info("Il canale non è presente nella persistenza, pertanto sarà aggiunto.");
+				Log.getInstance().getLogger().info("Il canale non è presente nella persistenza, pertanto sarà aggiunto.");
 				
 				JSONObject newChannel = new JSONObject();
 				JSONArray newMessageArray = new JSONArray();
@@ -152,19 +152,19 @@ public class DAOChannel {
 				
 				//Prendo l'id trovato nel JSON
 				aID = (Long) result.get(ACTIVITYKEY);
-				Log.getInstance().logger.info("id attività trovata nel json find:"+ aID + " id attività cercata "+ activityId);
+				Log.getInstance().getLogger().info("id attività trovata nel json find:"+ aID + " id attività cercata "+ activityId);
 				
 				//Se il JSON trovato ha lo stesso id dell'attività
 				if(Long.compare(aID, activityId) == 0) {
 					//Ricostruisco il canale compresi i messaggi ad esso collegati.
 					resultMss = (JSONArray) result.get(MESSKEY);
 					chFound = new Channel(aID);
-					Log.getInstance().logger.info("Ricostruendo l'istanza di canale dalla persistenza.");
+					Log.getInstance().getLogger().info("Ricostruendo l'istanza di canale dalla persistenza.");
 					//Per ora faccioo che ogni messaggio della chat viene 
 					//inserito uno alla volta all'interno della nuova istanza del canale.
 					for(int j=0;j<resultMss.size();j++) {
 						JSONObject mss = (JSONObject)resultMss.get(j);
-						Log.getInstance().logger.info("\n\nMessaggio scritto: "+mss.get(MTXTKEY)+"\n\n");
+						Log.getInstance().getLogger().info("\n\nMessaggio scritto: "+mss.get(MTXTKEY)+"\n\n");
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy'  'HH:mm");
 						
 						chFound.addMsg((Long)mss.get(UIDKEY), (String)mss.get(MTXTKEY),LocalDateTime.parse((String)mss.get(DATESENTKEY),dtf));

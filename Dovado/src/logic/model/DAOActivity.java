@@ -168,7 +168,7 @@ public class DAOActivity {
 			JSONObject result;
 
 			if(activityArray==null) {
-				Log.getInstance().logger.info("Non ci sono attivita da dover modificare!\n");
+				Log.getInstance().getLogger().info("Non ci sono attivita da dover modificare!\n");
 				return false;
 			}
 			
@@ -286,7 +286,7 @@ public class DAOActivity {
 			JSONObject result;
 
 			if(activityArray==null) {
-				Log.getInstance().logger.info("Non ci sono attivita da dover modificare!\n");
+				Log.getInstance().getLogger().info("Non ci sono attivita da dover modificare!\n");
 				return false;
 			}
 			
@@ -315,7 +315,7 @@ public class DAOActivity {
 						//Anche dall'array di eventi nel json dei places.
 						if(((Long)((JSONObject)activityInPlace.get(i)).get(jpID)==sua.getId())){
 							activityInPlace.remove(i);
-							Log.getInstance().logger.info("L'attivita e stata eliminata anche dalla lista dei places.\n");
+							Log.getInstance().getLogger().info("L'attivita e stata eliminata anche dalla lista dei places.\n");
 						}
 					}
 					
@@ -357,7 +357,7 @@ public class DAOActivity {
 
 			//Se nullo si conclude la ricerca restituendo null per indicarne il fallimento.
 			if(activityArray==null) {
-				Log.getInstance().logger.info("Non ci sono attivita da dover cercare!\n");
+				Log.getInstance().getLogger().info("Non ci sono attivita da dover cercare!\n");
 				return null;
 			}
 			

@@ -58,7 +58,7 @@ public class DAOPreferences {
 			Object preferences = parser.parse(new FileReader(PREFERJSON));
 			JSONObject preferenceOBJ = (JSONObject) preferences;
 			JSONArray prefArray = (JSONArray) preferenceOBJ.get("preferences");
-			Log.getInstance().logger.info("Ho trovato preferenze");
+			Log.getInstance().getLogger().info("Ho trovato preferenze");
 			JSONObject result;
 			preferenceName = preferenceName.toUpperCase();
 			

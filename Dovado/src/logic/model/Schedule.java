@@ -18,10 +18,10 @@ public class Schedule {
 
 		myActivity.add(s);
 		if(!daoSc.addScheduletoJSON(this, usr)) {
-			Log.getInstance().logger.warning("Errore nell'aggiunta dell'attività nello schedule.");
+			Log.getInstance().getLogger().warning("Errore nell'aggiunta dell'attività nello schedule.");
 			return;
 		}
-		Log.getInstance().logger.info("Aggiunta l'attività nello schedule.");
+		Log.getInstance().getLogger().info("Aggiunta l'attività nello schedule.");
 		
 	}
 	

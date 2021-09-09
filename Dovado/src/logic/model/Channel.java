@@ -15,7 +15,7 @@ public class Channel {
 
 	
 	public Channel (long activityId) {
-		Log.getInstance().logger.info("Creato il canale da zero");
+		Log.getInstance().getLogger().info("Creato il canale da zero");
 		this.activityReferenced=activityId;
 		this.listOfMsg = new ArrayList<>();
 	}
@@ -66,9 +66,9 @@ public class Channel {
 			chat.add(listOfMsg.get(i).getUsr() + "::" + listOfMsg.get(i).getMsgSentDate() + " ----> " + listOfMsg.get(i).getMsgText()+"\n");
 		}
 		/**if (chat.get(0) == null) {
-			Log.getInstance().logger.info("sono vuoto");
+			Log.getInstance().getLogger().info("sono vuoto");
 		}
-		else Log.getInstance().logger.info(+chat.get(0));**/
+		else Log.getInstance().getLogger().info(+chat.get(0));**/
 		return chat;
 	}
 

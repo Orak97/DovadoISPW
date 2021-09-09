@@ -133,7 +133,7 @@ public class HomeView implements Initializable{
 		
     	ArrayList<SuperActivity> activities = new ArrayList<>();
 		
-    	Log.getInstance().logger.info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
+    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 		try{
 			eng = map.getEngine();
 			eng.load("file:/DovadoISPW/Dovado/WebContent/map.html");
@@ -160,14 +160,14 @@ public class HomeView implements Initializable{
 			
 			int j;
 			for(j=0;j<activities.size();j++)
-			Log.getInstance().logger.info("tutte le attivitï¿½ "+activities.get(j).getId());
+			Log.getInstance().getLogger().info("tutte le attivitï¿½ "+activities.get(j).getId());
 			
 			Thread newThread = new Thread(() -> {
 				int i;
 				for(i=0;i<activities.size();i++) {
 					ImageView eventImage = new ImageView();
 					Text eventName = new Text(activities.get(i).getName()+"\n");
-					Log.getInstance().logger.info("\n\n"+activities.get(i).getName()+"\n\n");
+					Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
 					Text eventInfo = new Text(activities.get(i).getPlace().getName()+
 							"\n"+activities.get(i).getFrequency().getOpeningTime()+
 							"-"+activities.get(i).getFrequency().getClosingTime());
@@ -218,10 +218,10 @@ public class HomeView implements Initializable{
 			newThread.start();
 			eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 			newThread.join();
-		}catch(Error e) {	Log.getInstance().logger.warning(e.getMessage());
+		}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-			Log.getInstance().logger.info(e.getMessage());
+			Log.getInstance().getLogger().info(e.getMessage());
 		}
 	}
 
@@ -238,7 +238,7 @@ public void activitySelected() {
 			return;
 		}
 		
-Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
+Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 
 		if(lastEventBoxSelected == eventBox) return;
 		
@@ -257,7 +257,7 @@ Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 		Text eventName = (Text) eventInfo.getChildren().get(0);
 		Text eventDetails = (Text) eventInfo.getChildren().get(1);
 		
-		Log.getInstance().logger.info(eventName+" "+eventDetails);
+		Log.getInstance().getLogger().info(eventName+" "+eventDetails);
 
 		VBox selection = new VBox();
 		Button viewOnMap = new Button();
@@ -280,7 +280,7 @@ Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 		eventImage.setScaleY(1.25);
 
 		activitySelected = daoAct.findActivityByID(daoSU,daoPlc.findPlaceById(placeId),activityId); 
-		Log.getInstance().logger.info("Attivitï¿½ trovata: "+activitySelected);
+		Log.getInstance().getLogger().info("Attivitï¿½ trovata: "+activitySelected);
 
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
@@ -307,19 +307,20 @@ Log.getInstance().logger.info(String.valueOf(lastActivitySelected));
 					
 					send.setOnAction(new EventHandler<ActionEvent>() {
 						@Override public void handle(ActionEvent e) {
-							Log.getInstance().logger.info("\n\nInviando un messaggio...\n");
-							Log.getInstance().logger.info("\nMessaggi prima dell'invio:\n");
+							Log.getInstance().getLogger().info("\n\nInviando un messaggio...\n");
+							Log.getInstance().getLogger().info("\nMessaggi prima dell'invio:\n");
 							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
-								Log.getInstance().logger.info(activitySelected.getChannel().getChat().get(j).getMsgText());
+								Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
 							}
 							activitySelected.getChannel().addMsg(user.getUserID(), mss.getText());
 							
-							daoCH.updateChannelInJSON(activitySelected.getChannel(), activitySelected.getChannel().getChat(), activitySelected);
+							//TODO Nel metodo chiamato non conviene passare solo l'attività selezionata e da lì estrapolare gli altri parametri essendo tutti derivati? P.S:ho già levato uno dei parametri
+							daoCH.updateChannelInJSON(activitySelected.getChannel().getChat(), activitySelected);
 
-						Log.getInstance().logger.info("\nMessaggi dopo l'invio:\n");
+						Log.getInstance().getLogger().info("\nMessaggi dopo l'invio:\n");
 
 							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
-								Log.getInstance().logger.info(activitySelected.getChannel().getChat().get(j).getMsgText());
+								Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
 							}
 							updateChat(chat,activitySelected.getChannel());
 							mss.clear();
@@ -598,7 +599,7 @@ public void filterActivities() {
 	for(i=0;i<activities.size();i++) {
 		ImageView eventImage = new ImageView();
 		Text eventName = new Text(activities.get(i).getName()+"\n");
-		Log.getInstance().logger.info("\n\n"+activities.get(i).getName()+"\n\n");
+		Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
 		Text eventInfo = new Text(activities.get(i).getPlace().getName()+
 				"\n"+activities.get(i).getFrequency().getOpeningTime()+
 				"-"+activities.get(i).getFrequency().getClosingTime());

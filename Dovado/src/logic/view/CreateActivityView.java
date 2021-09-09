@@ -231,7 +231,7 @@ public class CreateActivityView implements Initializable{
 					 	
 					ImageView plImage = new ImageView();
 					Text plName = new Text(placesFound.get(i).getName()+"\n");
-					Log.getInstance().logger.info("\n\n"+placesFound.get(i).getName()+"\n\n");
+					Log.getInstance().getLogger().info("\n\n"+placesFound.get(i).getName()+"\n\n");
 					Text plInfo = new Text(placesFound.get(i).getCity()+
 							"\n"+placesFound.get(i).getRegion()+
 							"\n"+placesFound.get(i).getAddress()+
@@ -267,7 +267,7 @@ public class CreateActivityView implements Initializable{
 					Text placeId = new Text();
 					
 					Long pID = placesFound.get(i).getId();
-					Log.getInstance().logger.info("ID POSTO: "+pID);
+					Log.getInstance().getLogger().info("ID POSTO: "+pID);
 					placeId.setId(pID.toString());
 					
 					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
@@ -292,7 +292,7 @@ public class CreateActivityView implements Initializable{
 		try {
 			placeBox = (StackPane) pList.getSelectionModel().getSelectedItem();
 		} catch(ClassCastException ce) {
-			Log.getInstance().logger.info(ce.getMessage());
+			Log.getInstance().getLogger().info(ce.getMessage());
 			return;
 		}
 
@@ -303,7 +303,7 @@ public class CreateActivityView implements Initializable{
 		int itemNumber = pList.getSelectionModel().getSelectedIndex();
 		
 		lastPlaceSelected = itemNumber;
-		Log.getInstance().logger.info(String.valueOf(lastPlaceSelected));
+		Log.getInstance().getLogger().info(String.valueOf(lastPlaceSelected));
 		
 		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
 		lastPlaceBoxSelected = placeBox;
@@ -315,7 +315,7 @@ public class CreateActivityView implements Initializable{
 		placeImage.setScaleX(1.25);
 		placeImage.setScaleY(1.25);
 		
-		Log.getInstance().logger.info("Place id found: "+pID+" "+placeSelected.getName());
+		Log.getInstance().getLogger().info("Place id found: "+pID+" "+placeSelected.getName());
 			
 	}
 	
@@ -379,7 +379,7 @@ public class CreateActivityView implements Initializable{
 			prefsList.add(prefs[i]);
 		}
 		
-		Log.getInstance().logger.info(act.toString());
+		Log.getInstance().getLogger().info(act.toString());
 		act.setId(daoAc.addActivityToJSON(placeSelected,(SuperActivity)act,"no"));
 		int result = Long.compare(act.getId(),0L);
 		if(result>0) {
