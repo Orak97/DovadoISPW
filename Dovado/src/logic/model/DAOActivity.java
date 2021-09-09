@@ -126,7 +126,10 @@ public class DAOActivity {
 						file.flush();
 					}
 					
-					activityArray.add(activityToAdd);
+					if (activityToAdd != null) {
+						activityArray.add(activityToAdd);
+					}
+					
 					
 					try (FileWriter file2 = new FileWriter(activityFileName)){
 						file2.write(activitiesJOBJ.toString());
@@ -173,7 +176,7 @@ public class DAOActivity {
 			}
 			
 			if (updatePref) {
-				AddToList(sua, preferences);
+				addToList(sua, preferences);
 			}
 			
 			for(i=0;i<activityArray.size();i++){
@@ -217,7 +220,7 @@ public class DAOActivity {
 	
 	//----------metodi di supporto alla updateActivityPreferences---------
 	
-	private void AddToList(SuperActivity sua, JSONArray preferences) {
+	private void addToList(SuperActivity sua, JSONArray preferences) {
 		for(int i=0;i<sua.getPreferences().size();i++) {
 			preferences.add(sua.getPreferences().get(i));
 		}

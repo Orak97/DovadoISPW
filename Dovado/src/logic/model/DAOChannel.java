@@ -41,7 +41,7 @@ public class DAOChannel {
 	
 	//Metodo per aggiornare nella persistenza un canale
 		public boolean updateChannelInJSON(List<Message> msges, SuperActivity a) {
-			JSONParser pars = new JSONParser();
+			JSONParser pars = new JSONParser(); 
 			
 			try
 			{
