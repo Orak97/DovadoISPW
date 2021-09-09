@@ -5,6 +5,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -77,7 +78,9 @@ public class CreateActivityView implements Initializable{
 
 	@FXML
 	private ChoiceBox<String> cadenceBox;
-
+	
+	private static final  String[] CADENCEKEY = {"Non-stop","Weekly","Monthly","Annually"};
+	
 	private static ListView<Object> pList;
 	private static ChoiceBox<String> cadBox;
 	private static TextField clTime;
@@ -94,9 +97,7 @@ public class CreateActivityView implements Initializable{
 	private static Place placeSelected;
 	private static ArrayList<Place> placesFound;
 	private static StackPane lastPlaceBoxSelected;
-	
-	private static int lastPlaceSelected=-1;
-	
+		
 	public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
@@ -105,16 +106,14 @@ public class CreateActivityView implements Initializable{
 			
 			VBox createActivity = new VBox();
 			
-			try {
-				Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-				scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-				current.setTitle("Dovado - events");
-				current.setScene(scene);
-				createActivity = FXMLLoader.load(Main.class.getResource("createActivity.fxml"));
-				VBox.setVgrow(createActivity, Priority.SOMETIMES);
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+			
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
+			current.setTitle("Dovado - events");
+			current.setScene(scene);
+			createActivity = FXMLLoader.load(Main.class.getResource("createActivity.fxml"));
+			VBox.setVgrow(createActivity, Priority.SOMETIMES);
+			
 			root.getChildren().addAll(navbar,createActivity);
 			
 			current.show();	
@@ -145,7 +144,7 @@ public class CreateActivityView implements Initializable{
 		rt=root;
 		tField=tagField;
 		
-		cadBox.getItems().addAll("Non-stop","Weekly","Monthly","Annually");
+		cadBox.getItems().addAll(CADENCEKEY[0],CADENCEKEY[1],CADENCEKEY[2],CADENCEKEY[3]);
 		
 		createActBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
@@ -226,8 +225,8 @@ public class CreateActivityView implements Initializable{
 			pList.getItems().clear();
 		
 		for(int i=0;i<placesFound.size();i++) {
-			
-			for(i=0;i<placesFound.size();i++) {
+			//TODO guardare qui con Andre
+			for(int j=0;j<placesFound.size();j++) {
 					 	
 					ImageView plImage = new ImageView();
 					Text plName = new Text(placesFound.get(i).getName()+"\n");
@@ -288,6 +287,8 @@ public class CreateActivityView implements Initializable{
 	
 	public void selectedPlace() {
 		
+		int lastPlaceSelected=-1;
+		
 		StackPane placeBox = null;
 		try {
 			placeBox = (StackPane) pList.getSelectionModel().getSelectedItem();
@@ -335,24 +336,13 @@ public class CreateActivityView implements Initializable{
 		LocalDate openingDate;
 		LocalDate closingDate;
 		
-		if(placeSelected==null) {
+		if(!prevCheck()) {
 			return false;
 		}
 		
-		if(actNameField.getText().isEmpty())
-			return false;
 		activityName = actNameField.getText();
-		
-		if(opTime.getText().isEmpty() || !opTime.getText().contains(":") || opTime.getText().length()>5)
-			return false;
 		openingTime = LocalTime.parse(opTime.getText());
-			
-		if(clTime.getText().isEmpty() || !clTime.getText().contains(":") || clTime.getText().length()>5)
-			return false;
 		closingTime = LocalTime.parse(clTime.getText());
-			
-		if(sDate.getValue().isBefore(LocalDate.now()))
-			return false;
 		openingDate = sDate.getValue();
 			
 		if(eDate.getValue().isBefore(openingDate) || eDate.getValue().isBefore(LocalDate.now()))
@@ -360,13 +350,13 @@ public class CreateActivityView implements Initializable{
 		closingDate = eDate.getValue();
 		
 		SuperActivity act = null;
-		if(cadBox.getValue().equals("Non-stop") && (sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
+		if(cadBox.getValue().equals(CADENCEKEY[0]) && (sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
 			 act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime);
 		} 
-		else if(cadBox.getValue().equals("Non-stop") && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
+		else if(cadBox.getValue().equals(CADENCEKEY[0]) && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
 			act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime,openingDate,closingDate);
 		}
-		else if(!cadBox.getValue().equals("Non-stop") && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
+		else if(!cadBox.getValue().equals(CADENCEKEY[0]) && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
 			act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime,openingDate,closingDate);
 		}
 		else {
@@ -374,10 +364,8 @@ public class CreateActivityView implements Initializable{
 		}
 		String[] prefs = tField.getText().toString().split(",");
 		ArrayList<String> prefsList = new ArrayList<>();
-		
-		for(int i=0;i<prefs.length;i++) {
-			prefsList.add(prefs[i]);
-		}
+		//TODO questo dovrebbe funzionare ma va controllato
+		Collections.addAll(prefsList, prefs);
 		
 		Log.getInstance().getLogger().info(act.toString());
 		act.setId(daoAc.addActivityToJSON(placeSelected,(SuperActivity)act,"no"));
@@ -409,5 +397,29 @@ public class CreateActivityView implements Initializable{
 			return false;
 		}
 		return false;
+	}
+
+
+// ----------------------- Metodo di supporto per createActivity() ------------------------------
+
+	private static boolean prevCheck() {
+	
+		if(placeSelected==null) {
+			return false;
+		}
+		
+		if(actNameField.getText().isEmpty())
+			return false;
+	
+		if(opTime.getText().isEmpty() || !opTime.getText().contains(":") || opTime.getText().length()>5)
+			return false;
+		
+		if(clTime.getText().isEmpty() || !clTime.getText().contains(":") || clTime.getText().length()>5)
+			return false;
+		
+		if(sDate.getValue().isBefore(LocalDate.now()))
+			return false;
+		
+		return true;
 	}
 }

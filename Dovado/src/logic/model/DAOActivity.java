@@ -126,9 +126,8 @@ public class DAOActivity {
 						file.flush();
 					}
 					
-					if (activityToAdd != null) {
 						activityArray.add(activityToAdd);
-					}
+			
 					
 					
 					try (FileWriter file2 = new FileWriter(activityFileName)){
