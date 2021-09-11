@@ -79,16 +79,14 @@ public class EventsView implements Initializable{
 			
 			VBox eventSchedule = new VBox();
 			
-			try {
-				Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-				scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-				current.setTitle("Dovado - events");
-				current.setScene(scene);
-				eventSchedule = FXMLLoader.load(Main.class.getResource("events.fxml"));
-				VBox.setVgrow(eventSchedule, Priority.SOMETIMES);
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+			
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
+			current.setTitle("Dovado - events");
+			current.setScene(scene);
+			eventSchedule = FXMLLoader.load(Main.class.getResource("events.fxml"));
+			VBox.setVgrow(eventSchedule, Priority.SOMETIMES);
+		
 			root.getChildren().addAll(navbar,eventSchedule);
 			
 			current.show();	
@@ -104,8 +102,8 @@ public class EventsView implements Initializable{
 		daoSU = DAOSuperUser.getInstance();
 		daoSch = DAOSchedules.getInstance();
 		
-		schedActivities = new ArrayList<ScheduledActivity>();
-    	activities = new ArrayList<SuperActivity>();
+		schedActivities = new ArrayList<>();
+    	activities = new ArrayList<>();
 		
     	searchBtn.getStyleClass().add("src-btn");    	
     	

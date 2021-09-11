@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
  
-    
+<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity,logic.model.Log" %>
+   
 <jsp:useBean id ="logBean" scope="request" class="logic.model.LogBean" />
 <jsp:setProperty name="logBean" property="*" />
 <!DOCTYPE html>

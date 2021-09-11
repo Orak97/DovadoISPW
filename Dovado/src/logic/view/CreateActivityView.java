@@ -416,10 +416,7 @@ public class CreateActivityView implements Initializable{
 		
 		if(clTime.getText().isEmpty() || !clTime.getText().contains(":") || clTime.getText().length()>5)
 			return false;
-		
-		if(sDate.getValue().isBefore(LocalDate.now()))
-			return false;
-		
-		return true;
+				
+		return !sDate.getValue().isBefore(LocalDate.now());
 	}
 }

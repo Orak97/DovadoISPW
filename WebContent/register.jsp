@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity,logic.model.Log" %>
 
 <jsp:useBean id ="regBean" scope="request" class="logic.model.RegBean" />
 <jsp:setProperty name="regBean" property="*" />
