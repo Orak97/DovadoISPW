@@ -260,7 +260,7 @@ public class EventsView implements Initializable{
 						eventsList.getItems().remove(itemNumber);
 						lastActivitySelected= -1;
 						lastEventBoxSelected= null;
-						//Messaggio per il dialog box;
+						//Messaggio per il dialog box
 						dialog.initModality(Modality.NONE);
 				        dialog.initOwner(curr);
 				        VBox dialogVbox = new VBox(20);
@@ -274,6 +274,7 @@ public class EventsView implements Initializable{
 				        dialog.show();
 				        return;
 			        }
+					/**
 			        else {
 				        dialog.initModality(Modality.NONE);
 				        dialog.initOwner(curr);
@@ -287,7 +288,8 @@ public class EventsView implements Initializable{
 				        dialog.setScene(dialogSceneFail);
 				        dialog.show();
 				        return;
-			         }
+			         }**/
+				return;
 				}
 			});
 			/*viewSchedInfo.setOnAction(new EventHandler<ActionEvent>(){
