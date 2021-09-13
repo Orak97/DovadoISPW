@@ -45,7 +45,7 @@ public class LoginView{
     	Log.getInstance().getLogger().info("Clicked login");
     	SuperUser user = null;
     	if(username.getText().contains("@")) {
-    		System.out.println(username);
+    		Log.getInstance().getLogger().info(username.toString());
     		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText(),null))==null) {
     			Log.getInstance().getLogger().info("Email o password incorrette.");
     			return;
@@ -81,11 +81,9 @@ public class LoginView{
 			primaryStage.setTitle("Dovado - login");
 			primaryStage.setScene(scene);
 			GridPane login = new GridPane();
-			try {
-				login = FXMLLoader.load(Main.class.getResource("Login.fxml"));
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+			
+			login = FXMLLoader.load(Main.class.getResource("Login.fxml"));
+			
 			root.getChildren().addAll(navbar,login);
 			primaryStage.show();
 			

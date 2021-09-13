@@ -58,11 +58,9 @@ public class RegisterView {
 			primaryStage.setTitle("GoodHabits - Register");
 			primaryStage.setScene(scene);
 			GridPane home = new GridPane();
-			try {
-				home = FXMLLoader.load(Main.class.getResource("Register.fxml"));
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+	
+			home = FXMLLoader.load(Main.class.getResource("Register.fxml"));
+			
 			root.getChildren().addAll(navbar,home);
 			primaryStage.show();
 		} catch(Exception e) {

@@ -13,18 +13,21 @@ import logic.model.SuperUser;
  * 2- i didn't used The multithread safe navbar since i can't use more than one active program on the same computer
  */
 public class Navbar {
-	private static BorderPane navbar = null;
+	private static final  String NAVITEMKEY = ".navbar-item";
+	private static final  String ACTSTYLEKEY = "active";
+	
+	private static BorderPane bPNavbar = null;
 	private static SuperUser user;
 	
 	public static BorderPane getNavbar() {
-		if(Navbar.navbar == null) 
+		if(Navbar.bPNavbar == null) 
 			try {
-				Navbar.navbar = FXMLLoader.load(Main.class.getResource("navbar.fxml"));
+				Navbar.bPNavbar = FXMLLoader.load(Main.class.getResource("navbar.fxml"));
 				Navbar.loginSetup();
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
-		return navbar;
+		return bPNavbar;
 	}
 	
 	public static double getHeight() {
@@ -45,14 +48,14 @@ public class Navbar {
 	}
 	
 	public static void loginSetup() {
-	  	for(Node curr : navbar.lookupAll(".navbar-item")) {
+	  	for(Node curr : bPNavbar.lookupAll(NAVITEMKEY)) {
 	  		curr.setDisable(true);
 	    	curr.setVisible(false);
 	    }
 	}
 	    
 	public static void authenticatedSetup() {
-		for(Node curr : navbar.lookupAll(".navbar-item")) {
+		for(Node curr : bPNavbar.lookupAll(NAVITEMKEY)) {
 	       	curr.setDisable(false);
 	       	curr.setVisible(true);
 	    }
@@ -60,37 +63,37 @@ public class Navbar {
 	
 	public void onHome() {
 		this.changePage();
-		navbar.lookup("#home").getStyleClass().add("active");
+		bPNavbar.lookup("#home").getStyleClass().add(ACTSTYLEKEY);
 	}
 	
 	public void onChannels() {
 		this.changePage();
-		navbar.lookup("#channels").getStyleClass().add("active");
+		bPNavbar.lookup("#channels").getStyleClass().add(ACTSTYLEKEY);
 	}
 
 	public void onCreateActivity() {
 		this.changePage();
-		navbar.lookup("#createActivity").getStyleClass().add("active");
+		bPNavbar.lookup("#createActivity").getStyleClass().add(ACTSTYLEKEY);
 	}
 	
 	public void onEvents() {
 		this.changePage();
-		navbar.lookup("#events").getStyleClass().add("active");
+		bPNavbar.lookup("#events").getStyleClass().add(ACTSTYLEKEY);
 	}
 	
 	public void onPreferences() {
 		this.changePage();
-		navbar.lookup("#myProfile").getStyleClass().add("active");
+		bPNavbar.lookup("#myProfile").getStyleClass().add(ACTSTYLEKEY);
 	}
 	
 	public void onMyProfile() {
 		this.changePage();
-		navbar.lookup("#myProfile").getStyleClass().add("active");
+		bPNavbar.lookup("#myProfile").getStyleClass().add(ACTSTYLEKEY);
 	}
 	
 	private void changePage() {
-		for(Node curr : navbar.lookupAll(".navbar-item")) {
-	  		curr.getStyleClass().remove("active");
+		for(Node curr : bPNavbar.lookupAll(NAVITEMKEY)) {
+	  		curr.getStyleClass().remove(ACTSTYLEKEY);
 	    }
 	}
 

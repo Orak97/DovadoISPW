@@ -240,9 +240,7 @@ public class DAOSchedules {
 			e.printStackTrace();
 			return false;
 		} */
-		if(findSchedule(userID, true, idSched)==null)
-			return true;
-		return false;
+		return (findSchedule(userID, true, idSched)==null);
 	}
 	
 }

@@ -51,7 +51,12 @@ import logic.model.SuperUser;
 import logic.model.User;
 
 public class HomeView implements Initializable{
-
+	private static final  String BGCOLORKEY = "ffffff";
+	//botton KEYS
+	private static final  String BTNPREFKEY = "pref-btn";
+	private static final  String BTNSRCKEY = "src-btn";
+	private static final  String BTNEVNKEY = "evn-btn";
+	
 	private static StackPane lastEventBoxSelected;
 
 	private static VBox chatContainer;
@@ -102,16 +107,13 @@ public class HomeView implements Initializable{
 			
 			VBox home = new VBox();
 			
-			try {
-				Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-				scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-				current.setTitle("Dovado - home");
-				current.setScene(scene);
-				home = FXMLLoader.load(Main.class.getResource("home.fxml"));
-				VBox.setVgrow(home, Priority.SOMETIMES);
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
+			current.setTitle("Dovado - home");
+			current.setScene(scene);
+			home = FXMLLoader.load(Main.class.getResource("home.fxml"));
+			VBox.setVgrow(home, Priority.SOMETIMES);
+		
 			root.getChildren().addAll(navbar,home);
 			
 			user=Navbar.getUser();
@@ -142,16 +144,16 @@ public class HomeView implements Initializable{
 	        eng.setJavaScriptEnabled(true);
 	        
 	        searchButton.setText("SEARCH");
-			searchButton.getStyleClass().add("src-btn");
+			searchButton.getStyleClass().add(BTNSRCKEY);
 	        
 
 	        preference1.setText(daoPref.getPreferenceFromJSON(1));
 			preference2.setText(daoPref.getPreferenceFromJSON(2));
 			preference3.setText(daoPref.getPreferenceFromJSON(3));
 
-			preference1.getStyleClass().add("pref-btn");
-			preference2.getStyleClass().add("pref-btn");
-			preference3.getStyleClass().add("pref-btn");
+			preference1.getStyleClass().add(BTNPREFKEY);
+			preference2.getStyleClass().add(BTNPREFKEY);
+			preference3.getStyleClass().add(BTNPREFKEY);
 			
 			//Apro di default una lista di attivit� che hanno a che fare con Boxe e Tennis.
 			activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
@@ -178,14 +180,14 @@ public class HomeView implements Initializable{
 					eventInfo.getStyleClass().add("textEventInfo");
 			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
 					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-					eventInfo.setFill(Paint.valueOf("#ffffff"));
+					eventInfo.setFill(Paint.valueOf("#BGCOLOR"));
 					eventInfo.setStrokeWidth(0.3);
 					eventInfo.setStroke(Paint.valueOf("#000000"));
 				*/	
 					eventName.setId("eventName");
 					eventName.getStyleClass().add("textEventName");
 					/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-					eventName.setFill(Paint.valueOf("#ffffff"));
+					eventName.setFill(Paint.valueOf("#BGCOLOR"));
 					eventName.setStrokeWidth(0.3);
 					eventName.setStroke(Paint.valueOf("#000000"));
 					*/
@@ -268,9 +270,9 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		joinActivityChannel.setText("Join channel");
 		playActivity.setText("Play activity");
 		
-		viewOnMap.getStyleClass().add("evn-btn");
-		joinActivityChannel.getStyleClass().add("evn-btn");
-		playActivity.getStyleClass().add("evn-btn");
+		viewOnMap.getStyleClass().add(BTNEVNKEY);
+		joinActivityChannel.getStyleClass().add(BTNEVNKEY);
+		playActivity.getStyleClass().add(BTNEVNKEY);
 		
 		selection.getChildren().addAll(viewOnMap,joinActivityChannel,playActivity);
 		
@@ -328,10 +330,10 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					});
 					
 					send.setText("Send");
-					send.getStyleClass().add("src-btn");
+					send.getStyleClass().add(BTNSRCKEY);
 					
 					close.setText("x");
-					close.getStyleClass().add("src-btn");					
+					close.getStyleClass().add(BTNSRCKEY);					
 					close.setAlignment(Pos.TOP_RIGHT);
 					
 					textAndSend.getChildren().addAll(mss,send);
@@ -404,7 +406,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									}
 									minBox.getItems().add(min);
 								}
-								return;
+								
 							}
 							else {
 								for(int j=0;j<61;j++) {
@@ -414,7 +416,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									}
 									minBox.getItems().add(min);
 								}
-								return;
+								
 							}
 								
 						}
@@ -430,7 +432,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					
 					VBox dateBox = new VBox();
 					ok.setText("Ok");
-					ok.getStyleClass().add("src-btn");
+					ok.getStyleClass().add(BTNSRCKEY);
 					
 					HBox buttonBox = new HBox();
 					HBox pickTimeBox = new HBox();
@@ -438,7 +440,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					buttonBox.getChildren().addAll(close,ok);
 					
 					CornerRadii cr = new CornerRadii(4);
-					BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+					BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
 					Background b = new Background(bf);
 					
 					txt.getStyleClass().add("msstxt");
@@ -452,7 +454,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					selectedBox.getChildren().add(dateBox);
 					
 					close.setText("Close");
-					close.getStyleClass().add("src-btn");					
+					close.getStyleClass().add(BTNSRCKEY);					
 					
 					close.setOnAction(new EventHandler<ActionEvent>(){
 						@Override public void handle(ActionEvent e) {
@@ -505,6 +507,7 @@ private void updateChat(ListView chat, Channel ch) {
 	int i;
 	chat.getItems().clear();
 	for(i=0;i<ch.getChat().size();i++) {
+		//TODO qui posso nominarla in altro modo la VBOX?
 		VBox chatContainer = new VBox();
 		VBox chatMss = new VBox();
 		Text msstxt = new Text();
@@ -537,7 +540,7 @@ private void updateChat(ListView chat, Channel ch) {
 		if(user.getUsername().equals(usernameMss)) {
 			CornerRadii cr = new CornerRadii(4);
 		
-			BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+			BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
 			Background b = new Background(bf);
 
 			chatContainer.setBackground(b);
@@ -546,7 +549,7 @@ private void updateChat(ListView chat, Channel ch) {
 		}
 		else {
 			CornerRadii cr = new CornerRadii(4);
-			BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+			BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
 			Background b = new Background(bf);
 			
 			chatContainer.setBackground(b);
@@ -567,10 +570,10 @@ public void activityDeselected(StackPane lastBox) {
 		eventsList.getItems().remove(lastActivitySelected+1);
 	
 	ImageView eventImage = (ImageView) lastBox.getChildren().get(2);
-	VBox eventInfo = (VBox) lastBox.getChildren().get(3);
+/**CANCEL	VBox eventInfo = (VBox) lastBox.getChildren().get(3);
 	
 	Text eventName = (Text) eventInfo.getChildren().get(0);
-	Text eventDetails = (Text) eventInfo.getChildren().get(1);
+	Text eventDetails = (Text) eventInfo.getChildren().get(1);**/
 
 	eventImage.setScaleX(1);
 	eventImage.setScaleY(1);
