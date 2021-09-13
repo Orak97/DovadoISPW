@@ -31,12 +31,32 @@ public class DAOSchedules {
 		return INSTANCE;
 	}
 	
-	public boolean updateScheduleInJSON(Schedule schedule, SuperUser su) {
+
+	public boolean updateScheduleInJSON(Schedule schedule, SuperUser su, boolean isNew) {
 		try {
 			Object schedules = parser.parse(new FileReader(SCHEDJSON));
 			JSONObject scheduleObj = (JSONObject) schedules;
 			
 			JSONArray scheduleArray = (JSONArray) scheduleObj.get(SCHEDULESKEY);
+			
+			if(isNew) {
+				Schedule schedFound = findSchedule(su.getUserID());
+				
+				if(schedFound == null) {
+					JSONObject newSched = new JSONObject();
+					
+					newSched.put(UIDKEY, su.getUserID());
+					newSched.put(SCHEDKEY, new JSONArray());
+					
+					scheduleArray.add(newSched);
+					try (FileWriter file = new FileWriter(SCHEDJSON)){
+						file.write(scheduleObj.toString());
+						file.flush();
+					}
+					
+				} 
+			}
+			
 			int i;
 
 			if(scheduleArray==null) {
@@ -84,11 +104,13 @@ public class DAOSchedules {
 	}
 	
 	public boolean addScheduletoJSON(Schedule schedule, SuperUser su) {
-		try {
-			Object sched = parser.parse(new FileReader(SCHEDJSON));
-			JSONObject schedObj = (JSONObject) sched;
+
+/**CANCEL	
+  		try {
+			Object schedules = parser.parse(new FileReader(SCHEDJSON));
+			JSONObject scheduleObj = (JSONObject) schedules;
 			
-			JSONArray schedArray = (JSONArray) schedObj.get(SCHEDULESKEY);
+			JSONArray scheduleArray = (JSONArray) scheduleObj.get(SCHEDULESKEY);
 			Schedule schedFound = findSchedule(su.getUserID());
 			
 			if(schedFound == null) {
@@ -97,25 +119,23 @@ public class DAOSchedules {
 				newSched.put(UIDKEY, su.getUserID());
 				newSched.put(SCHEDKEY, new JSONArray());
 				
-				schedArray.add(newSched);
+				scheduleArray.add(newSched);
 				try (FileWriter file = new FileWriter(SCHEDJSON)){
-					file.write(schedObj.toString());
+					file.write(scheduleObj.toString());
 					file.flush();
 				}
 				
 			} 
-				updateScheduleInJSON(schedule,su);
-			
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+				updateScheduleInJSON(schedule,su, false);*/
+
+		return updateScheduleInJSON(schedule, su, true);
 	}
 	
 	public Schedule findSchedule(long userID) {
+		return findSchedule(userID, false,0);
+	}
+
+	public Schedule findSchedule(long userID, boolean isDelete,int idSched) {
 		try {		
 			Log.getInstance().getLogger().info("valore code:"+ userID);
 			Log.getInstance().getLogger().info("Working Directory = " + System.getProperty("user.dir"));		
@@ -132,7 +152,20 @@ public class DAOSchedules {
 				Log.getInstance().getLogger().info("valore codeJSON:"+ codeJSON);
 				
 				
-				if (codeJSON.equals(Long.valueOf(userID))) {
+				if (codeJSON.equals(userID) && isDelete) {
+					JSONArray schedule = (JSONArray) result.get(SCHEDKEY);
+					Log.getInstance().getLogger().info("schedule trovato");
+								
+					schedule.remove(idSched);
+					
+					try(FileWriter file = new FileWriter(SCHEDJSON)) {
+						file.write(scheduleObj.toString());
+						file.flush();						
+						return null;
+					}
+				}
+				
+				else if(codeJSON.equals(userID)) {
 					DAOActivity daoAc = DAOActivity.getInstance();
 					JSONArray schedule = (JSONArray) result.get(SCHEDKEY);
 					DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -170,6 +203,7 @@ public class DAOSchedules {
 	}
 	
 	public boolean deleteSchedule(Long userID, int idSched) {
+/**CANCEL		
 		try {		
 			Log.getInstance().getLogger().info("valore code:"+ userID);
 			Log.getInstance().getLogger().info("Working Directory = " + System.getProperty("user.dir"));		
@@ -205,8 +239,9 @@ public class DAOSchedules {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
-		} 
-
+		} */
+		if(findSchedule(userID, true, idSched)==null)
+			return true;
 		return false;
 	}
 	

@@ -117,7 +117,7 @@ public class EventsView implements Initializable{
 			}
 
 			for(int j=0;j<activities.size();j++)
-			Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+				Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
 			Thread newThread = new Thread(() -> {
 				int i;
 				for(i=0;i<activities.size();i++) {
@@ -272,9 +272,7 @@ public class EventsView implements Initializable{
 				        Scene dialogScene = new Scene(dialogVbox, 100, 50);
 				        dialog.setScene(dialogScene);
 				        dialog.show();
-				        return;
 			        }
-					/**
 			        else {
 				        dialog.initModality(Modality.NONE);
 				        dialog.initOwner(curr);
@@ -286,10 +284,8 @@ public class EventsView implements Initializable{
 				        dialogVboxFail.getChildren().add(fail);
 				        Scene dialogSceneFail = new Scene(dialogVboxFail, 100, 50);
 				        dialog.setScene(dialogSceneFail);
-				        dialog.show();
-				        return;
-			         }**/
-				return;
+				        dialog.show();    
+			         }
 				}
 			});
 			/*viewSchedInfo.setOnAction(new EventHandler<ActionEvent>(){
@@ -334,10 +330,10 @@ public class EventsView implements Initializable{
 			eventsList.getItems().remove(lastActivitySelected+1);
 		
 		ImageView eventImage = (ImageView) lastEventBoxSelected2.getChildren().get(2);
-		VBox eventInfo = (VBox) lastEventBoxSelected2.getChildren().get(3);
+/**CANCEL		VBox eventInfo = (VBox) lastEventBoxSelected2.getChildren().get(3);
 		
 		Text eventName = (Text) eventInfo.getChildren().get(0);
-		Text eventDetails = (Text) eventInfo.getChildren().get(1);
+		Text eventDetails = (Text) eventInfo.getChildren().get(1);**/
 		
 		eventImage.setScaleX(1);
 		eventImage.setScaleY(1);
@@ -355,7 +351,7 @@ public class EventsView implements Initializable{
 		
 		if((searchItem = searchBar.getText())==null) return;
 		
-		if(daoPref.preferenceIsInJSON(searchItem.toUpperCase())==false) return;
+		if(!daoPref.preferenceIsInJSON(searchItem.toUpperCase())) return;
 		
 		eventsList.getItems().clear();
 		
@@ -364,7 +360,7 @@ public class EventsView implements Initializable{
 			daoSU = DAOSuperUser.getInstance();
 			daoPlc = DAOPlace.getInstance();
 			daoPref = DAOPreferences.getInstance();
-			
+			//TODO Qui siamo sicuri sia corrretto?? nel for non dovremmo usare una diversa variabile?
 			for(i=0;i<activities.size();i++) {
 				SuperActivity act = activities.get(i);
 				for(int j=0;j<act.getPreferences().size();j++) {
@@ -389,8 +385,8 @@ public class EventsView implements Initializable{
 					deleteSched.getStyleClass().add("src-btn");
 					deleteSched.setAlignment(Pos.CENTER);
 					
-					String width = Double.toString(root.getWidth()/2);
-					String height = Double.toString(root.getHeight()/2);
+/**CANCEL					String width = Double.toString(root.getWidth()/2)
+					String height = Double.toString(root.getHeight()/2)**/
 					
 					eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
 					eventImage.getStyleClass().add("event-image");
