@@ -46,6 +46,7 @@ import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
+import logic.model.Partner;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
@@ -133,98 +134,221 @@ public class HomeView implements Initializable{
 		daoAct = DAOActivity.getInstance();
 		daoSU = DAOSuperUser.getInstance();
 		
-    	ArrayList<SuperActivity> activities = new ArrayList<>();
-		
-    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
-		try{
-			eng = map.getEngine();
-			eng.load("file:/DovadoISPW/Dovado/WebContent/map.html");
-			
-			// Setting permissions to interact with Js
-	        eng.setJavaScriptEnabled(true);
-	        
-	        searchButton.setText("SEARCH");
-			searchButton.getStyleClass().add(BTNSRCKEY);
-	        
+    	user = Navbar.getUser();
+    	if(user instanceof Partner) {
+    		
+	    	try{
+	    		//Al posto di scegliere preferenze casuali
+				//e mostrarne i risultati prendo le preferenze dell'utente e 
+				//in base a quello restituisco risultati appropriati.
+				
+	    		ArrayList<SuperActivity> activitiesPartn = (ArrayList<SuperActivity>) daoAct.findActivitiesByPartner(daoSU,(Partner)user);
+				
+    			eng = map.getEngine();
+    			eng.load("file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/map.html");
+    			
+    			// Setting permissions to interact with Js
+    	        eng.setJavaScriptEnabled(true);
+    	        
+    	        searchButton.setText("SEARCH");
+    			searchButton.getStyleClass().add(BTNSRCKEY);
+    	   
+    	        preference1.setText(daoPref.getPreferenceFromJSON(1));
+    			preference2.setText(daoPref.getPreferenceFromJSON(2));
+    			preference3.setText(daoPref.getPreferenceFromJSON(3));
 
-	        preference1.setText(daoPref.getPreferenceFromJSON(1));
-			preference2.setText(daoPref.getPreferenceFromJSON(2));
-			preference3.setText(daoPref.getPreferenceFromJSON(3));
-
-			preference1.getStyleClass().add(BTNPREFKEY);
-			preference2.getStyleClass().add(BTNPREFKEY);
-			preference3.getStyleClass().add(BTNPREFKEY);
-			
-			//Apro di default una lista di attivitï¿½ che hanno a che fare con Boxe e Tennis.
-			activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
-			activities.addAll(daoAct.findActivityByPreference(daoSU, "TENNIS"));
-
-			
-			int j;
-			for(j=0;j<activities.size();j++)
-			Log.getInstance().getLogger().info("tutte le attivitï¿½ "+activities.get(j).getId());
-			
-			Thread newThread = new Thread(() -> {
-				int i;
-				for(i=0;i<activities.size();i++) {
-					ImageView eventImage = new ImageView();
-					Text eventName = new Text(activities.get(i).getName()+"\n");
-					Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-					Text eventInfo = new Text(activities.get(i).getPlace().getName()+
-							"\n"+activities.get(i).getFrequency().getOpeningTime()+
-							"-"+activities.get(i).getFrequency().getClosingTime());
-					eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
-					eventImage.getStyleClass().add("event-image");
+    			preference1.getStyleClass().add(BTNPREFKEY);
+    			preference2.getStyleClass().add(BTNPREFKEY);
+    			preference3.getStyleClass().add(BTNPREFKEY);
+    			
+    			if(!activitiesPartn.isEmpty()){
+    				
+    				int j;
+    				for(j=0;j<activitiesPartn.size();j++)
+    				Log.getInstance().getLogger().info("tutte le attivitï¿½ "+activitiesPartn.get(j).getId());
+    				
+    				Thread newThread = new Thread(() -> {
+    					int i;
+    					for(i=0;i<activitiesPartn.size();i++) {
+    						ImageView eventImage = new ImageView();
+    						Text eventName = new Text(activitiesPartn.get(i).getName()+"\n");
+    						Log.getInstance().getLogger().info("\n\n"+activitiesPartn.get(i).getName()+"\n\n");
+    						Text eventInfo = new Text(activitiesPartn.get(i).getPlace().getName()+
+    								"\n"+activitiesPartn.get(i).getFrequency().getOpeningTime()+
+    								"-"+activitiesPartn.get(i).getFrequency().getClosingTime());
+    						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
+    						eventImage.getStyleClass().add("event-image");
+    						
+    						eventInfo.setId("eventInfo");
+    						eventInfo.getStyleClass().add("textEventInfo");
+    				/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
+    						eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
+    						eventInfo.setFill(Paint.valueOf("#BGCOLOR"));
+    						eventInfo.setStrokeWidth(0.3);
+    						eventInfo.setStroke(Paint.valueOf("#000000"));
+    					*/	
+    						eventName.setId("eventName");
+    						eventName.getStyleClass().add("textEventName");
+    						/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+    						eventName.setFill(Paint.valueOf("#BGCOLOR"));
+    						eventName.setStrokeWidth(0.3);
+    						eventName.setStroke(Paint.valueOf("#000000"));
+    						*/
+    						VBox eventText = new VBox(eventName,eventInfo);
+    						eventText.setAlignment(Pos.CENTER);
+    						eventText.getStyleClass().add("eventTextVbox");
+    						//Preparo un box in cui contenere il nome dell'attivitï¿½ e altre sue
+    						//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+    						StackPane eventBox = new StackPane();
+    						eventBox.getStyleClass().add("eventBox");
+    						
+    						Text eventId = new Text();
+    						Text placeId = new Text();
+    						
+    						eventId.setId(activitiesPartn.get(i).getId().toString());
+    						placeId.setId(activitiesPartn.get(i).getPlace().getId().toString());
+    						
+    						//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+    						//dell'evento ed infine il testo dell'evento.
+    						eventBox.getChildren().add(eventId);
+    						eventBox.getChildren().add(placeId);
+    						eventBox.getChildren().add(eventImage);
+    						eventBox.getChildren().add(eventText);
+    						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+    						eventBox.setAlignment(Pos.CENTER);
+    						
+    						eventsList.getItems().add(eventBox);
+    					}
+    				});
+    				newThread.start();
+    				eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+    				newThread.join();
+    			} else {
+    				StackPane infoBox = new StackPane();
+    				Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!");
+    				noPrefs.setTextAlignment(TextAlignment.CENTER);
+    				
+    				infoBox.getChildren().add(noPrefs);
+    				noPrefs.getStyleClass().add("textEventName");
+    				
+    				eventsList.getItems().add(infoBox);
+    			}
+    		}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
+    			} catch (InterruptedException e) {
+    				e.printStackTrace();
+    				Log.getInstance().getLogger().info(e.getMessage());
+    			}
+    	}
+    	else {
+	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
+			try{
+				ArrayList<SuperActivity> activities = new ArrayList<>();
+				
+				eng = map.getEngine();
+				eng.load("file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/map.html");
+				
+				// Setting permissions to interact with Js
+		        eng.setJavaScriptEnabled(true);
+		        
+		        searchButton.setText("SEARCH");
+				searchButton.getStyleClass().add(BTNSRCKEY);
+		   
+		        preference1.setText(daoPref.getPreferenceFromJSON(1));
+				preference2.setText(daoPref.getPreferenceFromJSON(2));
+				preference3.setText(daoPref.getPreferenceFromJSON(3));
+	
+				preference1.getStyleClass().add(BTNPREFKEY);
+				preference2.getStyleClass().add(BTNPREFKEY);
+				preference3.getStyleClass().add(BTNPREFKEY);
+				
+				//Al posto di scegliere preferenze casuali
+				//e mostrarne i risultati prendo le preferenze dell'utente e 
+				//in base a quello restituisco risultati appropriati.
+				
+				ArrayList<String> preferences = (ArrayList<String>)Navbar.getUser().getPreferences();
+				
+				if(!preferences.isEmpty()){
+						
+					for(int i=0;i<preferences.size();i++) {
+						activities.addAll(daoAct.findActivityByPreference(daoSU, preferences.get(i)));
+					}
 					
-					eventInfo.setId("eventInfo");
-					eventInfo.getStyleClass().add("textEventInfo");
-			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-					eventInfo.setFill(Paint.valueOf("#BGCOLOR"));
-					eventInfo.setStrokeWidth(0.3);
-					eventInfo.setStroke(Paint.valueOf("#000000"));
-				*/	
-					eventName.setId("eventName");
-					eventName.getStyleClass().add("textEventName");
-					/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-					eventName.setFill(Paint.valueOf("#BGCOLOR"));
-					eventName.setStrokeWidth(0.3);
-					eventName.setStroke(Paint.valueOf("#000000"));
-					*/
-					VBox eventText = new VBox(eventName,eventInfo);
-					eventText.setAlignment(Pos.CENTER);
-					eventText.getStyleClass().add("eventTextVbox");
-					//Preparo un box in cui contenere il nome dell'attivitï¿½ e altre sue
-					//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-					StackPane eventBox = new StackPane();
-					eventBox.getStyleClass().add("eventBox");
+					int j;
+					for(j=0;j<activities.size();j++)
+					Log.getInstance().getLogger().info("tutte le attivitï¿½ "+activities.get(j).getId());
 					
-					Text eventId = new Text();
-					Text placeId = new Text();
+					Thread newThread = new Thread(() -> {
+						int i;
+						for(i=0;i<activities.size();i++) {
+							ImageView eventImage = new ImageView();
+							Text eventName = new Text(activities.get(i).getName()+"\n");
+							Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+							Text eventInfo = new Text(activities.get(i).getPlace().getName()+
+									"\n"+activities.get(i).getFrequency().getOpeningTime()+
+									"-"+activities.get(i).getFrequency().getClosingTime());
+							eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
+							eventImage.getStyleClass().add("event-image");
+							
+							eventInfo.setId("eventInfo");
+							eventInfo.getStyleClass().add("textEventInfo");
+					/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
+							eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
+							eventInfo.setFill(Paint.valueOf("#BGCOLOR"));
+							eventInfo.setStrokeWidth(0.3);
+							eventInfo.setStroke(Paint.valueOf("#000000"));
+						*/	
+							eventName.setId("eventName");
+							eventName.getStyleClass().add("textEventName");
+							/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+							eventName.setFill(Paint.valueOf("#BGCOLOR"));
+							eventName.setStrokeWidth(0.3);
+							eventName.setStroke(Paint.valueOf("#000000"));
+							*/
+							VBox eventText = new VBox(eventName,eventInfo);
+							eventText.setAlignment(Pos.CENTER);
+							eventText.getStyleClass().add("eventTextVbox");
+							//Preparo un box in cui contenere il nome dell'attivitï¿½ e altre sue
+							//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+							StackPane eventBox = new StackPane();
+							eventBox.getStyleClass().add("eventBox");
+							
+							Text eventId = new Text();
+							Text placeId = new Text();
+							
+							eventId.setId(activities.get(i).getId().toString());
+							placeId.setId(activities.get(i).getPlace().getId().toString());
+							
+							//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+							//dell'evento ed infine il testo dell'evento.
+							eventBox.getChildren().add(eventId);
+							eventBox.getChildren().add(placeId);
+							eventBox.getChildren().add(eventImage);
+							eventBox.getChildren().add(eventText);
+							//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+							eventBox.setAlignment(Pos.CENTER);
+							
+							eventsList.getItems().add(eventBox);
+						}
+					});
+					newThread.start();
+					eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+					newThread.join();
+				} else {
+					StackPane infoBox = new StackPane();
+					Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!");
+					noPrefs.setTextAlignment(TextAlignment.CENTER);
 					
-					eventId.setId(activities.get(i).getId().toString());
-					placeId.setId(activities.get(i).getPlace().getId().toString());
+					infoBox.getChildren().add(noPrefs);
+					noPrefs.getStyleClass().add("textEventName");
 					
-					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-					//dell'evento ed infine il testo dell'evento.
-					eventBox.getChildren().add(eventId);
-					eventBox.getChildren().add(placeId);
-					eventBox.getChildren().add(eventImage);
-					eventBox.getChildren().add(eventText);
-					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-					eventBox.setAlignment(Pos.CENTER);
-					
-					eventsList.getItems().add(eventBox);
+					eventsList.getItems().add(infoBox);
 				}
-			});
-			newThread.start();
-			eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-			newThread.join();
-		}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			Log.getInstance().getLogger().info(e.getMessage());
-		}
+			}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					Log.getInstance().getLogger().info(e.getMessage());
+				}
+    	}
 	}
 
 public void activitySelected() {
@@ -316,7 +440,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							}
 							activitySelected.getChannel().addMsg(user.getUserID(), mss.getText());
 							
-							//TODO Nel metodo chiamato non conviene passare solo l'attività selezionata e da lì estrapolare gli altri parametri essendo tutti derivati? P.S:ho già levato uno dei parametri
+							//TODO Nel metodo chiamato non conviene passare solo l'attivitï¿½ selezionata e da lï¿½ estrapolare gli altri parametri essendo tutti derivati? P.S:ho giï¿½ levato uno dei parametri
 							daoCH.updateChannelInJSON(activitySelected.getChannel().getChat(), activitySelected);
 
 						Log.getInstance().getLogger().info("\nMessaggi dopo l'invio:\n");

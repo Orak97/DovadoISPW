@@ -581,5 +581,51 @@ public class DAOActivity {
 		}
 		return false;
 	}
+
+	public List<SuperActivity> findActivitiesByPartner(DAOSuperUser daoSU, Partner usr) {
+		ArrayList<SuperActivity> matchingActivities = new ArrayList<>();
+		SuperActivity matchingActivity;
+		JSONParser parser = new JSONParser();
+		
+		int i;
+		try 
+		{
+			//Si parsa il JSON delle attivita, si estrae poi l'array di attivita in esso contenuto.
+			Object activitiesParser = parser.parse(new FileReader(activityFileName));
+			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
+			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
+			Long owner;
+			//Si prepara l'oggetto result, dove contenere attivita estratte dall'array activityArray.
+			JSONObject result;
+
+			//Se nullo si conclude la ricerca restituendo null per indicarne il fallimento.
+			if(activityArray==null) {
+				Log.getInstance().getLogger().info("Non ci sono attivita da dover cercare!\n");
+				return null;
+			}
+			
+			//Si inizia a scandire l'array di attivita in cerca di quella che contenga almeno una preferenza che combaci con quella cercata.
+			for(i=0;i<activityArray.size();i++){
+				
+				result = (JSONObject) activityArray.get(i);
+				owner  = (Long) result.get("creator");
+				
+				if(owner.equals(usr.getUserID())) {
+					
+					if(((String)result.get(jpCert)).equals("yes")) {
+						matchingActivity = (CertifiedActivity) createActClass(daoSU, result, daoPl.findPlaceById((Long)result.get(jpPlace)));
+					} else {	
+						matchingActivity = (NormalActivity) createActClass(daoSU, result, daoPl.findPlaceById((Long)result.get(jpPlace)));
+					}
+					matchingActivities.add(matchingActivity);
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+			}
+		return matchingActivities;
+	}
 	
 }

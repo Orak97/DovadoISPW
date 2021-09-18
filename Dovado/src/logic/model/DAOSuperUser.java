@@ -125,7 +125,7 @@ public class DAOSuperUser {
 		}
 		return false;
 	}
-	
+
 	//metodo creato per l'aggiornamento del portafoglio dell'utente partendo dall'ID
 	public boolean updateUserWallet(Long id, Long wallet) {
 		JSONParser parser = new JSONParser();
@@ -190,7 +190,7 @@ public class DAOSuperUser {
 	public SuperUser findSuperUser (String email, String psw, Long id) {
 		JSONParser parser = new JSONParser();
 		int i;
-		boolean founded = false;
+		boolean found = false;
 		try 
 		{
 			Object users = parser.parse(new FileReader(USERJSON));
@@ -210,12 +210,12 @@ public class DAOSuperUser {
 				if (email != null && email.equals(emailJSON)) {
 					if(psw == null) {
 						Log.getInstance().getLogger().warning("PASSWORD NULLA");
-						founded = true;
+						found = true;
 						
 					}
 					else if (psw.equals(passwordJSON)) {				
 						Log.getInstance().getLogger().info("PASSWORD CORRETTA");
-						founded = true;
+						found = true;
 					} else {
 					
 					Log.getInstance().getLogger().info("PASSWORD SBAGLIATA");
@@ -224,10 +224,10 @@ public class DAOSuperUser {
 				}
 				//Qui invece entro se cerco tramite id
 				else if( id != null && Long.compare(id, idJson)==0){
-					founded = true;
+					found = true;
 				}
 				
-				if (founded) {
+				if (found) {
 					return getSuperUserByJSONObj(result);
 				}
 			}		

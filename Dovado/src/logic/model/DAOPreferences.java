@@ -74,19 +74,22 @@ public class DAOPreferences {
 				
 			}
 			
-			JSONObject newPref = new JSONObject();
+		//TODO: discutere se aggiungere o no le preferenze
+		//se non trovate.
+			
+			/*JSONObject newPref = new JSONObject();
 			newPref.put("name", preferenceName);
 			prefArray.add(newPref);
 			
 			try (FileWriter file = new FileWriter(PREFERJSON)){
 				file.write(preferenceOBJ.toString());
 				file.flush();
-			}
+			}*/
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		return true;
+		return false;
 	}
 }
