@@ -53,6 +53,7 @@ import logic.model.User;
 
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
+	private static final  String MAPPATHKEY = "file:C:\\Users\\Kora\\git\\DovadoISPW\\WebContent\\map.html";
 	//botton KEYS
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
@@ -145,7 +146,7 @@ public class HomeView implements Initializable{
 	    		ArrayList<SuperActivity> activitiesPartn = (ArrayList<SuperActivity>) daoAct.findActivitiesByPartner(daoSU,(Partner)user);
 				
     			eng = map.getEngine();
-    			eng.load("file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/map.html");
+    			eng.load(MAPPATHKEY);
     			
     			// Setting permissions to interact with Js
     	        eng.setJavaScriptEnabled(true);
@@ -245,7 +246,7 @@ public class HomeView implements Initializable{
 				ArrayList<SuperActivity> activities = new ArrayList<>();
 				
 				eng = map.getEngine();
-				eng.load("file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/map.html");
+				eng.load(MAPPATHKEY);
 				
 				// Setting permissions to interact with Js
 		        eng.setJavaScriptEnabled(true);
