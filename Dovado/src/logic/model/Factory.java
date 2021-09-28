@@ -3,7 +3,6 @@ package logic.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import logic.controller.CreateActivityBean;
 
 public class Factory {
 	private Factory(){}

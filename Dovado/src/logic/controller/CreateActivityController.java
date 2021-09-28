@@ -21,6 +21,7 @@ import logic.model.Place;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
+import logic.model.CreateActivityBean;
 
 public class CreateActivityController {
 	private SuperUser u;
@@ -30,7 +31,7 @@ public class CreateActivityController {
 	private static final  String ERRNOCREATE = "Attivita non creata.";
 	private static final  String SHOWLOGID = "ID: {0}";
 		
-	CreateActivityController(SuperUser u, CreateActivityBean bean){
+	public CreateActivityController(SuperUser u, CreateActivityBean bean){
 		this.u= u;
 		this.bean = bean;
 		daoAc = DAOActivity.getInstance();
@@ -69,7 +70,7 @@ public class CreateActivityController {
 			//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
 			//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
 			
-			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime());					
+			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningLocalTime(), bean.getClosingLocalTime());					
 			id = daoAc.addActivityToJSON(p,newActivity,"no");
 			if(id<0) {
 				Log.getInstance().getLogger().warning(ERRNOCREATE);
@@ -79,7 +80,7 @@ public class CreateActivityController {
 			newActivity.setId(id); 
 		}
 		else {
-			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime() );
+			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningLocalTime(), bean.getClosingLocalTime() );
 			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 			if(id<0) {
 				Log.getInstance().getLogger().warning(ERRNOCREATE);
@@ -99,7 +100,7 @@ public class CreateActivityController {
 			//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
 			//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
 			
-			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());				
+			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningLocalTime(), bean.getClosingLocalTime(), bean.getOpeningLocalDate(), bean.getEndLocalDate(), bean.getCadence());				
 			id = daoAc.addActivityToJSON(p,newActivity,"no");
 			if(id<0) {
 				Log.getInstance().getLogger().warning(ERRNOCREATE);
@@ -109,7 +110,7 @@ public class CreateActivityController {
 			newActivity.setId(id); 
 		}
 		else {
-			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate(), bean.getCadence());
+			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningLocalTime(), bean.getClosingLocalTime(), bean.getOpeningLocalDate(), bean.getEndLocalDate(), bean.getCadence());
 			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 			if(id<0) {
 				Log.getInstance().getLogger().warning(ERRNOCREATE);
@@ -129,7 +130,7 @@ public class CreateActivityController {
 			//se l'utente e normale l'attivita non e certificata, mentre se lo e avremo un'attivita certificata.
 			//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
 			
-			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());				
+			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningLocalTime(), bean.getClosingLocalTime(), bean.getOpeningLocalDate(), bean.getEndLocalDate());				
 			id = daoAc.addActivityToJSON(p,newActivity,"no");
 			if(id<0) {
 				Log.getInstance().getLogger().warning(ERRNOCREATE);
@@ -139,7 +140,7 @@ public class CreateActivityController {
 			newActivity.setId(id); 
 		}
 		else {
-			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningTime(), bean.getClosingTime(), bean.getStartDate(), bean.getEndDate());
+			newActivity=Factory.createCertifiedActivity(name, u, p, bean.getOpeningLocalTime(), bean.getClosingLocalTime(), bean.getOpeningLocalDate(), bean.getEndLocalDate());
 			id = daoAc.addActivityToJSON(p,newActivity,"yes");	
 			if(id<0) {
 				Log.getInstance().getLogger().warning(ERRNOCREATE);
