@@ -48,7 +48,7 @@
 				<% for(Place p: places){ %>
 		    
 				  <div class="col">
-				    <div class="card h-100">
+				    <div class="card card-dark text-white h-100" onclick="setPlace(this,<%= p.getId() %>)">
 				      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 				      <div class="card-body">
 				        <h5 class="card-title"><%= p.getName() %></h5>
@@ -74,33 +74,48 @@
 	    
 	<!-- da qui inizia il vecchi form -->
 	<form class="row g-3" name="createActivityForm" action="CreateActivity.jsp" method="GET">
+	  
+	  <div class="mb-3 visually-hidden">
+		<input type="number" class="form-control" id="place" name="place">
+	  </div>
+	  
 	  <div class="col-md-6">
 	    <label for="name" class="form-label">Nome attività:</label>
 	    <input type="text" class="form-control" id="name" name="activityName">
 	  </div>
-	  <div class="col-md-6">
+	  <div class="col-md-6" id="kindDiv">
+	  
 	    <label for="kind" class="form-label">Tipo:</label>
-	    <select name="type" id="kind" class="form-select">
+	    <select name="type" id="kind" class="form-select" onchange="changedKind(this.value)">
 	    	 <option value="CONTINUA">Continua</option>
 	    	 <option value="PERIODICA">Periodica</option>
 	    	 <option value="SCADENZA">Scadenza</option>
 	    </select>
 	  </div>
 	  
-	  <div class="col-md-6">
-	  	<label for="startDate" class="col-form-label">Start Date:</label>
-		<input type="date" class="form-control" id="startDate" name="openingDate">
-	  </div>
-	  <div class="col-md-6">
-	  	<label for="closingDate" class="col-form-label">Closing Date:</label>
-	  	<input type="date" class="form-control" id="closingDate" name="endDate">
+	  <div class="col-md-3 visually-hidden" id="cadenceDiv">
+	    <label for="cadence" class="form-label">Cadenza:</label>
+	    <select name="cadence" id="cadence" class="form-select" disabled>
+	    	 <option value="WEEKLY">Settimanale</option>
+	    	 <option value="MONTHLY">Mensile</option>
+	    	 <option value="ANNUALLY">Annuale</option>
+	    </select>
 	  </div>
 	  
-	  <div class="col-md-6">
+	  <div class="col-md-6 visually-hidden" id="openingDateDiv">
+	  	<label for="startDate" class="col-form-label">Start Date:</label>
+		<input type="date" class="form-control" id="startDate" name="openingDate" disabled>
+	  </div>
+	  <div class="col-md-6 visually-hidden" id="closingDateDiv">
+	  	<label for="closingDate" class="col-form-label">Closing Date:</label>
+	  	<input type="date" class="form-control" id="closingDate" name="endDate" disabled>
+	  </div>
+	  
+	  <div class="col-md-6" id="openingTimeDiv">
 	  	<label for="openingTime" class="col-form-label">Opening time:</label>
 	  	<input type="time" class="form-control" id="openingTime" name="openingTime">
 	  </div>
-	  <div class="col-md-6">
+	  <div class="col-md-6" id="closingTimeDiv">
 	  	<label for="closingTime" class="col-form-label">Closing time:</label>
 	  	<input type="time" class="form-control" id="closingTime" name="closingTime">
 	  </div>
@@ -112,5 +127,78 @@
 	</form> 
 	<% } %>
   </div>
+  
+  <script>
+  	function setPlace(event,p){
+  		document.getElementById('place').value=p;
+  		
+  		let oldPressed = document.getElementsByClassName('card-dark-pressed');
+  		
+  		if((oldPressed[0]) != undefined){
+  			oldPressed[0].classList.add('card-dark');
+  			oldPressed[0].classList.remove('card-dark-pressed');	
+  		}
+  		
+  		event.classList.remove('card-dark');
+  		event.classList.add('card-dark-pressed');
+  	}
+  	
+  	function changedKind(value){
+  		switch(value){
+  		case 'CONTINUA':
+  			console.log('continua');
+  			document.getElementById('openingDateDiv').classList.add('visually-hidden');
+  			document.getElementById('closingDateDiv').classList.add('visually-hidden');
+  			
+  			document.getElementById('startDate').disabled = true;
+  			document.getElementById('closingDate').disabled = true;
+  			
+  				
+  			document.getElementById('cadenceDiv').classList.add('visually-hidden');
+  			document.getElementById('cadence').disabled = true;
+  			
+  			document.getElementById('kindDiv').classList.add('col-md-6');
+  			document.getElementById('kindDiv').classList.remove('col-md-3');
+  			break;
+  		case 'PERIODICA':
+  			console.log('periodica');
+  			// section for opening and closing date
+  			document.getElementById('openingDateDiv').classList.remove('visually-hidden');
+  			document.getElementById('closingDateDiv').classList.remove('visually-hidden');
+  			
+  			document.getElementById('startDate').disabled = false;
+  			document.getElementById('closingDate').disabled = false;
+  			
+  			
+  			//section for cadence
+  			document.getElementById('cadenceDiv').classList.remove('visually-hidden');
+  			document.getElementById('cadence').disabled = false;
+  			
+  			document.getElementById('kindDiv').classList.remove('col-md-6');
+  			document.getElementById('kindDiv').classList.add('col-md-3');
+  			break;
+  		case 'SCADENZA':
+  			console.log('scadenza');
+  			// section for opening and closing date
+  			document.getElementById('openingDateDiv').classList.remove('visually-hidden');
+  			document.getElementById('closingDateDiv').classList.remove('visually-hidden');
+  			
+  			document.getElementById('startDate').disabled = false;
+  			document.getElementById('closingDate').disabled = false;
+  			
+  			// section for cadence
+  			
+  			document.getElementById('cadenceDiv').classList.add('visually-hidden');
+  			document.getElementById('cadence').disabled = true;
+  			
+  			document.getElementById('kindDiv').classList.add('col-md-6');
+  			document.getElementById('kindDiv').classList.remove('col-md-3');
+  			break;
+  		default:
+  			console.log('hai proprio fuccato up il codice bro');
+  			break;
+  		}
+  	}
+  </script>
 </body>
 </html>

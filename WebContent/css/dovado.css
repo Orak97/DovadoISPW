@@ -41,6 +41,10 @@ nav {
 	 background-color: #484848;
 }
 
+.card-dark-pressed{
+	background-color: #202020;
+}
+
 /********************body**********************************/
 body{
 	background-color: #9FB6CD;
