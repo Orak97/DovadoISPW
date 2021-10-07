@@ -32,6 +32,8 @@ var searchControl = L.esri.Geocoding.geosearch().addTo(mymap);
 
 var results = new L.LayerGroup().addTo(mymap);
 
+var markers = new L.LayerGroup().addTo(mymap);
+
 searchControl.on('results',function(data){
 	results.clearLayers();
 	for(var i = data.results.length - 1; i >= 0; i--){
@@ -51,10 +53,19 @@ function setCoords(latitude,longitude){
 
 function addMarker(latitude,longitude,placeName){
 
-  var marker = L.marker([latitude,longitude]).addTo(mymap);    //aggiungo un marker per indicare un posto speciale
-  marker.bindPopup(placeName).openPopup();
+  markers.addLayer(L.marker([latitude,longitude]).addTo(mymap));    //aggiungo un marker per indicare un posto speciale
+  let markArr = markers.getLayers();
+  
+  markArr[markArr.length-1].bindPopup(placeName).openPopup();
+  
   //e gli aggiungo un pop-up per indicare magari
   //un evento speciale o quel cazzo che ti pare.
+}
+
+function deleteMarkers(){
+
+	markers.clearLayers();
+	
 }
 
 function getLatitude(){

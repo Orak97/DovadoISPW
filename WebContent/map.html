@@ -24,20 +24,21 @@
 	<div id="Map"></div>
 	<script src="js/map.js">
 	</script>
-
+	<input type="button" onclick="clearMarkers()" > </input>
+	<input type="button" onclick="searchPlaces('anvedime-0')" > </input>
 </body>
 
 	<script>
 	var lat,long;
-	var i=0;
-
-	/*Se sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione success(position)*/
+	var i=0,j=0;
 	
+	/*Se sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione success(position)*/
+
 	function success(position){
 			console.log("latitudine posizione =",position.coords.latitude,"longitudine posizione =",position.coords.longitude);
 			setCoords(position.coords.latitude,position.coords.longitude);
 	}
-	
+
 	/*Se NON sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione error() e mi informa di quanto successo*/
 
 	function error(){
@@ -46,20 +47,20 @@
 
 	const options = {
 		enableHighAccuracy: true,
-		maximumAge: 30000,
+		maximumAge: 0,
 		timeout: 27000
 	};
 
 	/*Cerco di prendere anche la posizione dell'utente tramite la geolocalizzazione.*/
-	
+
 	if('geolocation' in navigator) {
 	  console.log("geolocation available");
-		console.log(navigator.geolocation.watchPosition(success,error,options));
+		console.log(navigator.geolocation.getCurrentPosition(success,error,options));
 	} else {
 	  console.log("geolocation not available");
 	}
-	
-	/*Tramite fetchPlaces carico sulla mappa tutti i posti che sono salvati nel nostro db e con loro in seguito si mostreranno sulla pagina 
+
+	/*Tramite fetchPlaces carico sulla mappa tutti i posti che sono salvati nel nostro db e con loro in seguito si mostreranno sulla pagina
 	* anche i loro eventi.
 	*/
 	fetchPlaces().then(response => {
@@ -71,38 +72,151 @@
 	async function fetchPlaces(){
 		const response = await fetch('places.json');
 		const result = await response.json();
+		
+		var j=0;
+		
 		for (place in result.places){
 			console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico);
 			
-			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca è un oggetto contenente la percentuale di precisione
-			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una città nella mappa.*/
+			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca ï¿½ un oggetto contenente la percentuale di precisione
+			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una cittï¿½ nella mappa.*/
 			
 			L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
-  				if (err) {
+  				
+				if (err) {
     				console.log(err);
     				return;
   				}
   				console.log(results.results[0]);
-				addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[i].name);
+  				console.log(result.places[j].address+' '+result.places[j].civico+' '+result.places[j].name);
+  				addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[j].name);
+  				j++;
 			});
 
 			i++;
 		}
 		i=0;
 	}
-	
+
+	async function searchPlaces(keywordmodeSearch){
+		const response = await fetch('places.json');
+		const result = await response.json();
+
+		const responseAct = await fetch('activities.json');
+		const resultAct = await responseAct.json();
+		
+		var input = keywordmodeSearch.split('-');
+		
+		console.log("keyword: "+input[0]+" mode "+input[1]);
+		
+		var keyword = input[0];
+		var mode = parseInt(input[1]);
+		
+		var k=0; //usato per scandire aggiungere markers in ordine nella mappa
+		var l=0; //usato per scandire le attività del activity.json
+		var y=0; //usato per scandire le attività di un posto.
+		var j=0; //usato per scandire le preferenze.
+		
+		for (place in result.places){
+
+			//In ogni attività di ciascun posto cerco 
+			//tra le attività quella con il nome uguale a
+			//quello cercato.
+			
+			for(activity in result.places[i].activities){
+				for(act in resultAct.activities){
+					if(result.places[i].activities[y]===undefined){
+						console.log(result.places[i].name+" non ha attività da svolgere.");
+						break;
+					}
+					console.log(result.places[i].activities[y].id + " " + resultAct.activities[l].id);
+								
+					if(result.places[i].activities[y].id == resultAct.activities[l].id && mode == 0 && resultAct.activities[l].name == keyword){
+						console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico);
+						L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
+			  				if (err) {
+			    				console.log(err);
+			    				return;
+			  				}
+			  				console.log(results.results[0]);
+			  				(addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name));
+			  				k++;
+						});
+					}
+					
+					if(mode == 1){
+		
+						console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico);
+									
+						const preferences = activity.preferences;
+								
+						for(preference in preferences){
+																	
+							if(preferences.preferences[j]==keyword){
+								L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
+									if (err) {
+										console.log(err);
+										return;
+									}
+									console.log(results.results[0]);
+									(addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name));
+									k++;
+								});
+							}
+							j++;
+						}
+						j=0;
+					}
+					
+					l++;
+				}
+				y++;
+				l=0;
+			}
+			y=0;
+			if(mode == 2){
+				L.esri.Geocoding.geocode().address(place.civico+' '+place.address).city(place.city).region(place.region).run(function (err, results, response) {
+	  				if (err) {
+	    				console.log(err);
+	    				return;
+	  				}
+	  				console.log(results.results[0]);
+	  				(addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name));
+	  				k++;
+				});
+			}
+			else if(mode < 0){console.log("Modalitï¿½ non accettata.");return;}
+
+		
+			i++;
+			l=0;
+			}
+			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca ï¿½ un oggetto contenente la percentuale di precisione
+			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una cittï¿½ nella mappa.*/
+
+
+			i=0;
+		}
+
+	async function clearMarkers(){
+		
+		deleteMarkers();
+		
+	}
+
 	async function spotPlace(civico,address,city,region){
+
 		L.esri.Geocoding.geocode().address(civico+' '+address).city(city).region(region).run(function (err, results, response) {
 				if (err) {
 				console.log(err);
 				return;
 				}
 				console.log(results.results);
-				console.log(address+' '+civico+' questo è il posto trovato -> '+results.results[0].properties.StAddr);
+				console.log(address+' '+civico+' questo ï¿½ il posto trovato -> '+results.results[0].properties.StAddr);
 				setCoords(results.results[0].latlng.lat,results.results[0].latlng.lng);
-			});
+		});
 	}
-	
+
 
 	</script>
 </html>

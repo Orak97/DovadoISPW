@@ -68,9 +68,9 @@ public class DAOPreferences {
 				String name = ((String) result.get("name")).toUpperCase();
 			
 				if (preferenceName.equals(name)) {
+					Log.getInstance().getLogger().info(name+" uguale a "+preferenceName);
 					return true;
 				}
-				
 				
 			}
 			
@@ -85,11 +85,12 @@ public class DAOPreferences {
 				file.write(preferenceOBJ.toString());
 				file.flush();
 			}*/
+			Log.getInstance().getLogger().info("Non ho trovato preferenze uguali a "+preferenceName);
 			
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		return false;
 	}
 }

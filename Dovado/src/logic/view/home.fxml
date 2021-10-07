@@ -3,13 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox id="root" fx:id="root" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.HomeView">
+<VBox id="root" fx:id="root" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.HomeView">
    <children>
       <BorderPane VBox.vgrow="ALWAYS">
          <center>
@@ -27,6 +28,11 @@
                         <Button fx:id="searchButton" mnemonicParsing="false" onAction="#filterActivities" text="Button" />
                      </children>
                   </HBox>
+                  <Slider fx:id="distanceSelector">
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Slider>
                   <HBox alignment="CENTER">
                      <children>
                         <Button fx:id="preference1" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Preference1">

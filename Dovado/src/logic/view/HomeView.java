@@ -19,6 +19,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,7 +31,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -38,6 +42,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.model.Channel;
 import logic.model.DAOActivity;
@@ -47,13 +52,14 @@ import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.Partner;
+import logic.model.Place;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
 
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
-	private static final  String MAPPATHKEY = "file:C:\\Users\\Kora\\git\\DovadoISPW\\WebContent\\map.html";
+	private static final  String MAPPATHKEY = "file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/map.html";
 	//botton KEYS
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
@@ -69,6 +75,9 @@ public class HomeView implements Initializable{
 	
 	@FXML
 	private VBox root;
+	
+	@FXML
+	private Slider distanceSelector;
 
     @FXML
     private Button searchButton;
@@ -140,7 +149,7 @@ public class HomeView implements Initializable{
     		
 	    	try{
 	    		//Al posto di scegliere preferenze casuali
-				//e mostrarne i risultati prendo le preferenze dell'utente e 
+				//e mostrarne i risultati prendo le attività del partner e 
 				//in base a quello restituisco risultati appropriati.
 				
 	    		ArrayList<SuperActivity> activitiesPartn = (ArrayList<SuperActivity>) daoAct.findActivitiesByPartner(daoSU,(Partner)user);
@@ -219,6 +228,8 @@ public class HomeView implements Initializable{
     						eventBox.setAlignment(Pos.CENTER);
     						
     						eventsList.getItems().add(eventBox);
+    						
+    						//eng.executeScript("");
     					}
     				});
     				newThread.start();
@@ -369,7 +380,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 
 		if(lastEventBoxSelected == eventBox) return;
 		
-		if(lastEventBoxSelected!=null) activityDeselected(lastEventBoxSelected);
+		if(lastEventBoxSelected!=null) activityDeselected(lastEventBoxSelected,false);
 		
 		int itemNumber = eventsList.getSelectionModel().getSelectedIndex();
 		
@@ -389,17 +400,14 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		VBox selection = new VBox();
 		Button viewOnMap = new Button();
 		Button joinActivityChannel = new Button();
-		Button playActivity = new Button();
-
+		
 		viewOnMap.setText("View event");
 		joinActivityChannel.setText("Join channel");
-		playActivity.setText("Play activity");
 		
 		viewOnMap.getStyleClass().add(BTNEVNKEY);
 		joinActivityChannel.getStyleClass().add(BTNEVNKEY);
-		playActivity.getStyleClass().add(BTNEVNKEY);
 		
-		selection.getChildren().addAll(viewOnMap,joinActivityChannel,playActivity);
+		selection.getChildren().addAll(viewOnMap,joinActivityChannel);
 		
 		eventsList.getItems().add(itemNumber+1, selection);
 		lastActivitySelected = itemNumber;
@@ -476,157 +484,200 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 				}
 		});
 		
-		playActivity.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-					VBox selectedBox = (VBox)eventsList.getItems().get(lastActivitySelected+1);			
-					
-					if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
-						return;
-					}
-					//Apro un pop up in cui si può scegliere una
-					//Data in cui svolgere l'attività
-					DatePicker pickDate = new DatePicker();
-					ChoiceBox<String> hourBox = new ChoiceBox<>();
-					ChoiceBox<String> minBox = new ChoiceBox<>();
-
-					int upperLimit;
-					int lowerLimit;
-					int upperLimMin;
-					int lowerLimMin;
-					
-					lowerLimit = activitySelected.getFrequency().getOpeningTime().getHour();
-					upperLimit = activitySelected.getFrequency().getClosingTime().getHour();
-					
-					lowerLimMin = activitySelected.getFrequency().getOpeningTime().getMinute();
-					upperLimMin = activitySelected.getFrequency().getClosingTime().getMinute();
-					
-					for(int i=lowerLimit;i<=upperLimit;i++) {
-						String hr = Integer.toString(i);
-						if(i<10) {
-							hr = "0"+hr;
+		if(user instanceof User) {
+			Button playActivity = new Button();
+			playActivity.setText("Play activity");
+			playActivity.getStyleClass().add(BTNEVNKEY);
+			
+			selection.getChildren().add(playActivity);
+			
+			playActivity.setOnAction(new EventHandler<ActionEvent>() {
+				@Override public void handle(ActionEvent e) {
+						VBox selectedBox = (VBox)eventsList.getItems().get(lastActivitySelected+1);			
+						
+						if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
+							return;
 						}
-						hourBox.getItems().add(hr);
-					}
-					
-					hourBox.setOnAction(new EventHandler<ActionEvent>() {
-						@Override public void handle(ActionEvent e) {
-							minBox.getItems().clear();
-							int selectedHour = Integer.parseInt(hourBox.getValue());
-							if(selectedHour==lowerLimit) {
-								for(int j=lowerLimMin;j<61;j++) {
-									String min = Integer.toString(j);
-									if(j<10) {
-										min = "0"+min;
+						//Apro un pop up in cui si può scegliere una
+						//Data in cui svolgere l'attività
+						DatePicker pickDate = new DatePicker();
+						ChoiceBox<String> hourBox = new ChoiceBox<>();
+						ChoiceBox<String> minBox = new ChoiceBox<>();
+	
+						int upperLimit;
+						int lowerLimit;
+						int upperLimMin;
+						int lowerLimMin;
+						
+						lowerLimit = activitySelected.getFrequency().getOpeningTime().getHour();
+						upperLimit = activitySelected.getFrequency().getClosingTime().getHour();
+						
+						lowerLimMin = activitySelected.getFrequency().getOpeningTime().getMinute();
+						upperLimMin = activitySelected.getFrequency().getClosingTime().getMinute();
+						
+						for(int i=lowerLimit;i<=upperLimit;i++) {
+							String hr = Integer.toString(i);
+							if(i<10) {
+								hr = "0"+hr;
+							}
+							hourBox.getItems().add(hr);
+						}
+						
+						hourBox.setOnAction(new EventHandler<ActionEvent>() {
+							@Override public void handle(ActionEvent e) {
+								minBox.getItems().clear();
+								int selectedHour = Integer.parseInt(hourBox.getValue());
+								if(selectedHour==lowerLimit) {
+									for(int j=lowerLimMin;j<61;j++) {
+										String min = Integer.toString(j);
+										if(j<10) {
+											min = "0"+min;
+										}
+										minBox.getItems().add(min);
+										
 									}
-									minBox.getItems().add(min);
+									return;
+								}
+								if(selectedHour==upperLimit) {
+									for(int j=0;j<=upperLimMin;j++) {
+										String min = Integer.toString(j);
+										if(j<10) {
+											min = "0"+min;
+										}
+										minBox.getItems().add(min);
+									}
 									
 								}
-								return;
-							}
-							if(selectedHour==upperLimit) {
-								for(int j=0;j<=upperLimMin;j++) {
-									String min = Integer.toString(j);
-									if(j<10) {
-										min = "0"+min;
+								else {
+									for(int j=0;j<61;j++) {
+										String min = Integer.toString(j);
+										if(j<10) {
+											min = "0"+min;
+										}
+										minBox.getItems().add(min);
 									}
-									minBox.getItems().add(min);
+									
+								}
+									
+							}
+						});
+						
+						/*for(int j=0;j<61;j++) {
+							minBox.getItems().add(Integer.toString(j));
+						}*/
+						
+						Text txt = new Text("Select date");
+						Button ok = new Button();
+						Button close = new Button();
+						
+						VBox dateBox = new VBox();
+						ok.setText("Ok");
+						ok.getStyleClass().add(BTNSRCKEY);
+						
+						HBox buttonBox = new HBox();
+						HBox pickTimeBox = new HBox();
+						
+						buttonBox.getChildren().addAll(close,ok);
+						
+						CornerRadii cr = new CornerRadii(4);
+						BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
+						Background b = new Background(bf);
+						
+						txt.getStyleClass().add("msstxt");
+						
+						pickTimeBox.getChildren().addAll(hourBox,minBox);
+						
+						dateBox.setBackground(b);
+						dateBox.getChildren().addAll(txt,pickDate,pickTimeBox,buttonBox);
+						dateBox.setId("dateBox");
+						
+						selectedBox.getChildren().add(dateBox);
+						
+						close.setText("Close");
+						close.getStyleClass().add(BTNSRCKEY);					
+						
+						close.setOnAction(new EventHandler<ActionEvent>(){
+							@Override public void handle(ActionEvent e) {
+								selectedBox.getChildren().remove(dateBox);
+							}
+						});
+						
+						ok.setOnAction(new EventHandler<ActionEvent>(){
+							@Override public void handle(ActionEvent e) {
+								DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								String dayStringed = day.format(pickDate.getValue());
+								
+								String hourChosen = hourBox.getValue();
+								String minChosen = minBox.getValue();
+								
+								int hourReminderInt = Integer.parseInt(hourChosen);
+								String hourReminder;
+								hourReminder = Integer.toString(hourReminderInt-1);
+						
+								if(hourReminderInt-1<10) {
+									hourReminder = "0"+hourReminder;
 								}
 								
-							}
-							else {
-								for(int j=0;j<61;j++) {
-									String min = Integer.toString(j);
-									if(j<10) {
-										min = "0"+min;
-									}
-									minBox.getItems().add(min);
-								}
+								String dateChosen = dayStringed+' '+hourChosen+':'+minChosen;
+								String dateReminder = dayStringed+' '+hourReminder+':'+minChosen;
 								
-							}
+								DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+								LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
+								LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
 								
-						}
-					});
-					
-					/*for(int j=0;j<61;j++) {
-						minBox.getItems().add(Integer.toString(j));
-					}*/
-					
-					Text txt = new Text("Select date");
-					Button ok = new Button();
-					Button close = new Button();
-					
-					VBox dateBox = new VBox();
-					ok.setText("Ok");
-					ok.getStyleClass().add(BTNSRCKEY);
-					
-					HBox buttonBox = new HBox();
-					HBox pickTimeBox = new HBox();
-					
-					buttonBox.getChildren().addAll(close,ok);
-					
-					CornerRadii cr = new CornerRadii(4);
-					BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
-					Background b = new Background(bf);
-					
-					txt.getStyleClass().add("msstxt");
-					
-					pickTimeBox.getChildren().addAll(hourBox,minBox);
-					
-					dateBox.setBackground(b);
-					dateBox.getChildren().addAll(txt,pickDate,pickTimeBox,buttonBox);
-					dateBox.setId("dateBox");
-					
-					selectedBox.getChildren().add(dateBox);
-					
-					close.setText("Close");
-					close.getStyleClass().add(BTNSRCKEY);					
-					
-					close.setOnAction(new EventHandler<ActionEvent>(){
-						@Override public void handle(ActionEvent e) {
-							selectedBox.getChildren().remove(dateBox);
-						}
-					});
-					
-					ok.setOnAction(new EventHandler<ActionEvent>(){
-						@Override public void handle(ActionEvent e) {
-							DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-							String dayStringed = day.format(pickDate.getValue());
-							
-							String hourChosen = hourBox.getValue();
-							String minChosen = minBox.getValue();
-							
-							int hourReminderInt = Integer.parseInt(hourChosen);
-							String hourReminder;
-							hourReminder = Integer.toString(hourReminderInt-1);
-					
-							if(hourReminderInt-1<10) {
-								hourReminder = "0"+hourReminder;
+								((User) user).getSchedule().addActivityToSchedule(activitySelected, dateSelected, remindDate, user);		
+								
+								final Stage dialog = new Stage();
+				                dialog.initModality(Modality.NONE);
+				                dialog.initOwner(curr);
+				                VBox dialogVbox = new VBox(20);
+				                dialogVbox.getChildren().add(new Text("Activity successfully scheduled"));
+				                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+				                dialog.setScene(dialogScene);
+				                dialog.show();
+				                
 							}
-							
-							String dateChosen = dayStringed+' '+hourChosen+':'+minChosen;
-							String dateReminder = dayStringed+' '+hourReminder+':'+minChosen;
-							
-							DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-							LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
-							LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
-							
-							((User) user).getSchedule().addActivityToSchedule(activitySelected, dateSelected, remindDate, user);		
-							
-							final Stage dialog = new Stage();
-			                dialog.initModality(Modality.NONE);
-			                dialog.initOwner(curr);
-			                VBox dialogVbox = new VBox(20);
-			                dialogVbox.getChildren().add(new Text("Activity successfully scheduled"));
-			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-			                dialog.setScene(dialogScene);
-			                dialog.show();
-			                
-						}
-					});
-					
+						});
+						
+					}
+			});
+		}
+		else {
+			Button deleteActivity = new Button();
+			deleteActivity.setText("Delete activity");
+			deleteActivity.getStyleClass().add(BTNEVNKEY);
+			
+			selection.getChildren().add(deleteActivity);
+			
+			deleteActivity.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					 final Popup popup = new Popup(); popup.centerOnScreen();
+					 
+					    Text deletionText = new Text("Activity"+'\n'+"deleted"+'\n'+"correctly");
+					    deletionText.getStyleClass().add("textEventInfo");
+					    deletionText.setTextAlignment(TextAlignment.CENTER);;
+					    
+					    Circle c = new Circle(0, 0, 50, Color.valueOf("212121"));
+					    
+					    StackPane popupContent = new StackPane(c,deletionText); 
+					    
+					    c.setStrokeType(StrokeType.OUTSIDE);
+					    c.setStrokeWidth(0.3);
+					    c.setStroke(Paint.valueOf(BGCOLORKEY));
+					    
+					    popup.getContent().add(popupContent);
+					    
+					    popup.show(curr);
+					    popup.setAutoHide(true);
+					    
+					Log.getInstance().getLogger().info("Attività cancellata dalla persistenza");
+					activityDeselected(lastEventBoxSelected,true);
 				}
-		});
-	}
+			});
+			
+		}
+}
 
 private void updateChat(ListView chat, Channel ch) {
 	int i;
@@ -690,9 +741,17 @@ private void updateChat(ListView chat, Channel ch) {
 //Penso che questo metodo come anche activity selected etc... vadano spostati in un'apposita classe
 //HomeController.
 
-public void activityDeselected(StackPane lastBox) {
+public void activityDeselected(StackPane lastBox,boolean delete) {
+	
 	if(lastActivitySelected>=0)
 		eventsList.getItems().remove(lastActivitySelected+1);
+	
+	if(delete==true) {
+		eventsList.getItems().remove(lastEventBoxSelected);
+		daoAct.deleteActivityJSON(activitySelected);
+		lastEventBoxSelected=null;
+		return;
+	}
 	
 	ImageView eventImage = (ImageView) lastBox.getChildren().get(2);
 /**CANCEL	VBox eventInfo = (VBox) lastBox.getChildren().get(3);
@@ -711,16 +770,40 @@ public void filterActivities() {
 	daoSU = DAOSuperUser.getInstance();
 	daoPlc = DAOPlace.getInstance();
 	daoPref = DAOPreferences.getInstance();
+	int searchMode = -1;
 	
 	String searchItem = null;
 	
-	if((searchItem = searchBar.getText())==null) return;
+	eng.executeScript("clearMarkers()");
 	
-	if(!daoPref.preferenceIsInJSON(searchItem.toUpperCase())) return;
+	if((searchItem = searchBar.getText())==null) return;
 	
 	ArrayList<SuperActivity> activities = new ArrayList<>();
 	
-	activities.addAll(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
+	if(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase())!=null) {
+		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
+		searchMode = 1;
+	}
+	
+	else if(daoAct.findActivityByName(daoSU, searchItem.toUpperCase())!=null) {
+		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByName(daoSU, searchItem.toUpperCase()));
+		searchMode = 0;
+	}
+	
+	//else if() {
+		
+	//}
+	
+	if(searchMode == -1) return;
+	
+	if(user instanceof Partner) {
+		ArrayList<SuperActivity> partnerAct = new ArrayList<SuperActivity>();
+		for(int i=0;i<activities.size();i++) {
+			if((activities.get(i).getCreator().getUserID()).equals(user.getUserID()))
+				partnerAct.add(activities.get(i));
+		}
+		activities=partnerAct;
+	}
 	eventsList.getItems().clear();
 	
 	int i;
@@ -769,7 +852,7 @@ public void filterActivities() {
 		
 		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 		eventBox.setAlignment(Pos.CENTER);
-		
+		eng.executeScript("searchPlaces('"+searchItem+"-"+searchMode+"')");
 		eventsList.getItems().add(eventBox);
 	}
 }

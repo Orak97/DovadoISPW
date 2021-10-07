@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -346,6 +347,11 @@ public class DAOActivity {
 		SuperActivity matchingActivity;
 		JSONParser parser = new JSONParser();
 		
+		if(DAOPreferences.getInstance().preferenceIsInJSON(preference)==false) {
+			Log.getInstance().getLogger().info("Non è stata trovata la preferenza cercata.");
+			return null;
+		}
+		
 		int i;
 		try 
 		{
@@ -461,7 +467,7 @@ public class DAOActivity {
 			for(j=0;j<activityArray.size();j++) {
 				
 				activity = (JSONObject) activityArray.get(j);
-				if(Long.compare((Long)activity.get("id"),id)==0) {
+				if(((Long)activity.get("id")).equals(id)) {
 					//Si controlla se certificata o no l'attivita, passato il test si controlla anche che tipo di attivita ricorrente sia:
 						
 					JSONObject activityJSON = (JSONObject)activityArray.get(id.intValue());
@@ -612,6 +618,52 @@ public class DAOActivity {
 				
 				if(owner.equals(usr.getUserID())) {
 					
+					if(((String)result.get(jpCert)).equals("yes")) {
+						matchingActivity = (CertifiedActivity) createActClass(daoSU, result, daoPl.findPlaceById((Long)result.get(jpPlace)));
+					} else {	
+						matchingActivity = (NormalActivity) createActClass(daoSU, result, daoPl.findPlaceById((Long)result.get(jpPlace)));
+					}
+					matchingActivities.add(matchingActivity);
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+			}
+		return matchingActivities;
+	}
+
+	public List<SuperActivity> findActivityByName(DAOSuperUser daoSU, String actName) {
+		ArrayList<SuperActivity> matchingActivities = new ArrayList<>();
+		SuperActivity matchingActivity;
+		JSONParser parser = new JSONParser();
+		
+		int i;
+		try 
+		{
+			//Si parsa il JSON delle attivita, si estrae poi l'array di attivita in esso contenuto.
+			Object activitiesParser = parser.parse(new FileReader(activityFileName));
+			JSONObject activitiesJOBJ = (JSONObject) activitiesParser;
+			JSONArray activityArray = (JSONArray) activitiesJOBJ.get(jpResActivity);
+			String activityName;
+			//Si prepara l'oggetto result, dove contenere attivita estratte dall'array activityArray.
+			JSONObject result;
+
+			//Se nullo si conclude la ricerca restituendo null per indicarne il fallimento.
+			if(activityArray==null) {
+				Log.getInstance().getLogger().info("Non ci sono attivita da dover cercare!\n");
+				return null;
+			}
+			
+			//Si inizia a scandire l'array di attivita in cerca di quella che contenga almeno una preferenza che combaci con quella cercata.
+			for(i=0;i<activityArray.size();i++){
+				
+				result = (JSONObject) activityArray.get(i);
+				activityName  = (String) result.get("name");
+				
+				if(actName.equals(activityName.toUpperCase())) {
+					Log.getInstance().getLogger().info("Trovata "+activityName.toUpperCase());
 					if(((String)result.get(jpCert)).equals("yes")) {
 						matchingActivity = (CertifiedActivity) createActClass(daoSU, result, daoPl.findPlaceById((Long)result.get(jpPlace)));
 					} else {	

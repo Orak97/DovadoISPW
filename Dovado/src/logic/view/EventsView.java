@@ -3,6 +3,7 @@ package logic.view;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -15,12 +16,17 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -39,8 +45,11 @@ import logic.model.DAOPreferences;
 import logic.model.DAOSchedules;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
+import logic.model.Partner;
 import logic.model.ScheduledActivity;
 import logic.model.SuperActivity;
+import logic.model.SuperUser;
+import logic.model.User;
 
 public class EventsView implements Initializable{
 	
@@ -54,7 +63,8 @@ public class EventsView implements Initializable{
     private static DAOSchedules daoSch;
     private static SuperActivity activitySelected;
     private static StackPane lastEventBoxSelected;
-
+    private static SuperUser user;
+    
     private static Stage curr;
     
     private static int lastActivitySelected = -1;
@@ -107,81 +117,155 @@ public class EventsView implements Initializable{
 		
     	searchBtn.getStyleClass().add("src-btn");    	
     	
-    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
-		try{
-			//Apro di default la lista di attività schedulate.
-			schedActivities = (ArrayList) (daoSch.findSchedule(Navbar.getUser().getUserID())).getScheduledActivities();
-
-			for(int j=0;j<schedActivities.size();j++) {
-				activities.add(daoAct.findActivityByID(daoSU,schedActivities.get(j).getReferencedActivity().getId()));
-			}
-
-			for(int j=0;j<activities.size();j++)
-				Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
-			Thread newThread = new Thread(() -> {
-				int i;
-				for(i=0;i<activities.size();i++) {
-					ImageView eventImage = new ImageView();
-					Text eventName = new Text(activities.get(i).getName()+"\n");
-					Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-					Text eventInfo = new Text(activities.get(i).getPlace().getName()+
-							"\n"+activities.get(i).getFrequency().getOpeningTime()+
-							"-"+activities.get(i).getFrequency().getClosingTime());
-					
-
-					eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
-					eventImage.getStyleClass().add("event-image");
-					
-					eventInfo.setId("eventInfo");
-					eventInfo.getStyleClass().add("textEventInfo");
-			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-					eventInfo.setFill(Paint.valueOf("#ffffff"));
-					eventInfo.setStrokeWidth(0.3);
-					eventInfo.setStroke(Paint.valueOf("#000000"));
-			*/		
-					eventName.setId("eventName");
-					eventName.getStyleClass().add("textEventName");
-			/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-					eventName.setFill(Paint.valueOf("#ffffff"));
-					eventName.setStrokeWidth(0.3);
-					eventName.setStroke(Paint.valueOf("#000000"));
-				*/	
-					VBox eventText = new VBox(eventName,eventInfo);
-					eventText.setAlignment(Pos.CENTER);
-					eventText.getStyleClass().add("eventTextVbox");
-					//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-					//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-					StackPane eventBox = new StackPane();
-					eventBox.getStyleClass().add("eventBox");
-					
-					
-					Text eventId = new Text();
-					Text schedId = new Text();
-					
-					eventId.setId(activities.get(i).getId().toString());
-					schedId.setId(schedActivities.get(i).toString());
-					
-					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-					//dell'evento ed infine il testo dell'evento.
-					eventBox.getChildren().add(eventId);
-					eventBox.getChildren().add(schedId);
-					eventBox.getChildren().add(eventImage);
-					eventBox.getChildren().add(eventText);
-					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-					eventBox.setAlignment(Pos.CENTER_LEFT);
-					
-					eventsList.getItems().add(eventBox);
+    	user = Navbar.getUser();
+    	
+    	if (user instanceof User) {
+	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
+			try{
+				//Apro di default la lista di attività schedulate.
+				
+				schedActivities = (ArrayList) (daoSch.findSchedule(user.getUserID())).getScheduledActivities();
+	
+				for(int j=0;j<schedActivities.size();j++) {
+					activities.add(daoAct.findActivityByID(daoSU,schedActivities.get(j).getReferencedActivity().getId()));
 				}
-			});
-			newThread.start();
-			eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-			newThread.join();
-		}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			Log.getInstance().getLogger().info(e.getMessage());
-		}
+	
+				for(int j=0;j<activities.size();j++)
+					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+				Thread newThread = new Thread(() -> {
+					int i;
+					for(i=0;i<activities.size();i++) {
+						ImageView eventImage = new ImageView();
+						Text eventName = new Text(activities.get(i).getName()+"\n");
+						Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+						Text eventInfo = new Text(activities.get(i).getPlace().getName()+
+								"\n"+activities.get(i).getFrequency().getOpeningTime()+
+								"-"+activities.get(i).getFrequency().getClosingTime());
+						
+	
+						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
+						eventImage.getStyleClass().add("event-image");
+						
+						eventInfo.setId("eventInfo");
+						eventInfo.getStyleClass().add("textEventInfo");
+				/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
+						eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
+						eventInfo.setFill(Paint.valueOf("#ffffff"));
+						eventInfo.setStrokeWidth(0.3);
+						eventInfo.setStroke(Paint.valueOf("#000000"));
+				*/		
+						eventName.setId("eventName");
+						eventName.getStyleClass().add("textEventName");
+				/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+						eventName.setFill(Paint.valueOf("#ffffff"));
+						eventName.setStrokeWidth(0.3);
+						eventName.setStroke(Paint.valueOf("#000000"));
+					*/	
+						VBox eventText = new VBox(eventName,eventInfo);
+						eventText.setAlignment(Pos.CENTER);
+						eventText.getStyleClass().add("eventTextVbox");
+						//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+						//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+						StackPane eventBox = new StackPane();
+						eventBox.getStyleClass().add("eventBox");
+						
+						
+						Text eventId = new Text();
+						Text schedId = new Text();
+						
+						eventId.setId(activities.get(i).getId().toString());
+						schedId.setId(schedActivities.get(i).toString());
+						
+						//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+						//dell'evento ed infine il testo dell'evento.
+						eventBox.getChildren().add(eventId);
+						eventBox.getChildren().add(schedId);
+						eventBox.getChildren().add(eventImage);
+						eventBox.getChildren().add(eventText);
+						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+						eventBox.setAlignment(Pos.CENTER_LEFT);
+						
+						eventsList.getItems().add(eventBox);
+					}
+				});
+				newThread.start();
+				eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+				newThread.join();
+			}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				Log.getInstance().getLogger().info(e.getMessage());
+			}
+	    }else{
+	    	try {
+	    		activities = (ArrayList<SuperActivity>)daoAct.findActivitiesByPartner(daoSU, (Partner)user);
+		    	for(int j=0;j<activities.size();j++)
+					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+				Thread newThread = new Thread(() -> {
+						int i;
+					for(i=0;i<activities.size();i++) {
+						ImageView eventImage = new ImageView();
+						Text eventName = new Text(activities.get(i).getName()+"\n");
+						Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+						Text eventInfo = new Text(activities.get(i).getPlace().getName()+
+								"\n"+activities.get(i).getFrequency().getOpeningTime()+
+								"-"+activities.get(i).getFrequency().getClosingTime());
+						
+	
+						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
+						eventImage.getStyleClass().add("event-image");
+						
+						eventInfo.setId("eventInfo");
+						eventInfo.getStyleClass().add("textEventInfo");
+				/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
+						eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
+						eventInfo.setFill(Paint.valueOf("#ffffff"));
+						eventInfo.setStrokeWidth(0.3);
+						eventInfo.setStroke(Paint.valueOf("#000000"));
+				*/		
+						eventName.setId("eventName");
+						eventName.getStyleClass().add("textEventName");
+				/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+						eventName.setFill(Paint.valueOf("#ffffff"));
+						eventName.setStrokeWidth(0.3);
+						eventName.setStroke(Paint.valueOf("#000000"));
+					*/	
+						VBox eventText = new VBox(eventName,eventInfo);
+						eventText.setAlignment(Pos.CENTER);
+						eventText.getStyleClass().add("eventTextVbox");
+						//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+						//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+						StackPane eventBox = new StackPane();
+						eventBox.getStyleClass().add("eventBox");
+						
+						
+						Text eventId = new Text();
+						Text schedId = new Text();
+						
+						eventId.setId(activities.get(i).getId().toString());
+						schedId.setId(Integer.toString(i));
+						
+						//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+						//dell'evento ed infine il testo dell'evento.
+						eventBox.getChildren().add(eventId);
+						eventBox.getChildren().add(schedId);
+						eventBox.getChildren().add(eventImage);
+						eventBox.getChildren().add(eventText);
+						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+						eventBox.setAlignment(Pos.CENTER_LEFT);
+						
+						eventsList.getItems().add(eventBox);
+					}
+				});
+				newThread.start();
+				eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+				newThread.join();
+			}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				Log.getInstance().getLogger().info(e.getMessage());
+			}
+	    }
 	}
 
 	public void scheduledActSelected() {
@@ -218,31 +302,222 @@ public class EventsView implements Initializable{
 
 		HBox selection = new HBox();
 		Button deleteSched = new Button();
-
-		deleteSched.setText("Delete from schedule");
-		
-		deleteSched.getStyleClass().add("evn-btn");
+		if(user instanceof User)
+			deleteSched.setText("Delete from schedule");
+		else
+			deleteSched.setText("Delete event");
 		
 		deleteSched.getStyleClass().add("evn-btn");
 		
 		deleteSched.setAlignment(Pos.CENTER);
-		
-		String remind = schedActivities.get(itemNumber).getReminderTime().toString().replace('T', ' ');
-		String sched = schedActivities.get(itemNumber).getScheduledTime().toString().replace('T', ' ');
-		
-		Text reminderTime = new Text("Activity reminder at: "+remind);
-		Text scheduledTime = new Text("Activity scheduled for: "+sched);
 
-		reminderTime.getStyleClass().add("textEventInfo");
-		scheduledTime.getStyleClass().add("textEventName");
-		
-		VBox schedInfo = new VBox();
-		
-		schedInfo.setAlignment(Pos.CENTER_RIGHT);
-		schedInfo.getChildren().addAll(scheduledTime,reminderTime);
-		
+		Button modifyEvent = new Button();
+		if(user instanceof Partner) {
+			activitySelected = daoAct.findActivityByID(daoSU, activities.get(itemNumber).getId());
+			
+			modifyEvent.setText("Modify event info.");
+			
+			modifyEvent.getStyleClass().add("evn-btn");
+			
+			modifyEvent.setAlignment(Pos.CENTER);
+			
+			modifyEvent.setOnAction(new EventHandler<ActionEvent>() {
 
-		selection.getChildren().addAll(deleteSched,schedInfo);
+				@Override
+				public void handle(ActionEvent event) {
+					HBox selectedBox = (HBox)eventsList.getItems().get(lastActivitySelected+1);			
+					
+					if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
+						return;
+					}
+					//Apro un pop up in cui si può scegliere una
+					//Data in cui svolgere l'attività
+					DatePicker pickDate = new DatePicker();
+					
+					ChoiceBox<String> hourBox = new ChoiceBox<>();
+					Text columnsOp = new Text(":");
+					Text columnsCl = new Text(":");
+					ChoiceBox<String> minBox = new ChoiceBox<>();
+					
+					ChoiceBox<String> clhourBox = new ChoiceBox<>();
+					ChoiceBox<String> clminBox = new ChoiceBox<>();
+
+					int upperLimit, lowerLimit, upperLimMin, lowerLimMin;
+					
+					lowerLimit = 0;
+					upperLimit = 23;
+					
+					lowerLimMin = 0;
+					upperLimMin = 60;
+
+					for(int i=lowerLimit;i<=upperLimit;i++) {
+						String hr = Integer.toString(i);
+						if(i<10) {
+							hr = "0"+hr;
+						}
+						hourBox.getItems().add(hr);
+					}
+					
+					for(int i=lowerLimit;i<=upperLimit;i++) {
+						String hr = Integer.toString(i);
+						if(i<10) {
+							hr = "0"+hr;
+						}
+						clhourBox.getItems().add(hr);
+					}
+					
+					minBox.getItems().clear();
+							
+					for(int j=0;j<60;j++) {
+							String min = Integer.toString(j);
+							if(j<10) {
+								min = "0"+min;
+							}
+							minBox.getItems().add(min);
+					}
+							
+					clminBox.getItems().clear();
+					for(int j=0;j<60;j++) {
+						String min = Integer.toString(j);
+						if(j<10) {
+							min = "0"+min;
+						}
+						clminBox.getItems().add(min);
+					}
+							
+					/*for(int j=0;j<61;j++) {
+						minBox.getItems().add(Integer.toString(j));
+					}*/
+
+					Text txt = new Text("Select date");
+					Text txtOp = new Text("Select opening time");
+					Text txtCl = new Text("Select closing time");
+					Button ok = new Button();
+					Button close = new Button();
+					
+					VBox dateBox = new VBox();
+					ok.setText("Ok");
+					ok.getStyleClass().add("src-btn");
+					
+					HBox buttonBox = new HBox();
+					HBox pickTimeOpBox = new HBox();
+					HBox pickTimeClBox = new HBox();
+					
+					buttonBox.getChildren().addAll(close,ok);
+					
+					CornerRadii cr = new CornerRadii(4);
+					BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+					Background b = new Background(bf);
+					
+					txt.getStyleClass().add("msstxt");
+					
+					pickTimeOpBox.getChildren().addAll(hourBox,columnsOp,minBox);
+					pickTimeClBox.getChildren().addAll(clhourBox,columnsCl,clminBox);
+					
+					dateBox.setBackground(b);
+					dateBox.getChildren().addAll(txt,pickDate,txtOp,pickTimeOpBox,txtCl,pickTimeClBox,buttonBox);
+					dateBox.setId("dateBox");
+					
+					selectedBox.getChildren().add(dateBox);
+					
+					close.setText("Close");
+					close.getStyleClass().add("src-btn");					
+					
+					close.setOnAction(new EventHandler<ActionEvent>(){
+						@Override public void handle(ActionEvent e) {
+							selectedBox.getChildren().remove(dateBox);
+						}
+					});
+					
+					ok.setOnAction(new EventHandler<ActionEvent>(){
+						@Override public void handle(ActionEvent e) {
+							DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+							String dayStringed = day.format(pickDate.getValue());
+							
+							String ophourChosen = hourBox.getValue();
+							String opminChosen = minBox.getValue();
+							String clhourChosen = clhourBox.getValue();
+							String clminChosen = clminBox.getValue();
+							
+							
+							String openingTimeChosen = ophourChosen+':'+opminChosen;
+							String closingTimeChosen = clhourChosen+':'+clminChosen;
+							
+							String dateChosen = dayStringed+' '+ophourChosen+':'+opminChosen;
+							
+							DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+							LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
+											
+							activitySelected.getFrequency().setOpeningTime(LocalTime.parse(openingTimeChosen));
+							
+							activitySelected.getFrequency().setClosingTime(LocalTime.parse(closingTimeChosen));
+
+							if(daoAct.updateActivityJSON(activitySelected)) {
+								final Stage dialog = new Stage();
+				                dialog.initModality(Modality.NONE);
+				                dialog.initOwner(curr);
+				                VBox dialogVbox = new VBox(20);
+				                dialogVbox.getChildren().add(new Text("Activity successfully modified"));
+				                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+				                dialog.setScene(dialogScene);
+				                dialog.show();
+							} else {
+								final Stage dialog = new Stage();
+				                dialog.initModality(Modality.NONE);
+				                dialog.initOwner(curr);
+				                VBox dialogVbox = new VBox(20);
+				                dialogVbox.getChildren().add(new Text("Activity not modified"));
+				                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+				                dialog.setScene(dialogScene);
+				                dialog.show();
+							}
+							
+							
+			                
+						}
+					});
+				}
+				
+			});
+		}
+		
+		if(user instanceof User) {
+			String remind = schedActivities.get(itemNumber).getReminderTime().toString().replace('T', ' ');
+			String sched = schedActivities.get(itemNumber).getScheduledTime().toString().replace('T', ' ');
+
+			Text reminderTime = new Text("Activity reminder at: "+remind);
+			Text scheduledTime = new Text("Activity scheduled for: "+sched);
+			
+			reminderTime.getStyleClass().add("textEventInfo");
+			scheduledTime.getStyleClass().add("textEventName");
+			
+			VBox schedInfo = new VBox();
+			
+			schedInfo.setAlignment(Pos.CENTER_RIGHT);
+			schedInfo.getChildren().addAll(scheduledTime,reminderTime);
+			
+
+			selection.getChildren().addAll(deleteSched,schedInfo);
+				
+		} else {
+			String remind = activities.get(itemNumber).getFrequency().getOpeningTime().toString().replace('T', ' ');
+			String sched = activities.get(itemNumber).getFrequency().getClosingTime().toString().replace('T', ' ');
+
+			Text reminderTime = new Text("Activity opening at: "+remind);
+			Text scheduledTime = new Text("Activity closing at: "+sched);
+			
+			reminderTime.getStyleClass().add("textEventInfo");
+			scheduledTime.getStyleClass().add("textEventName");
+			
+			VBox eventsInfo = new VBox();
+			
+			eventsInfo.setAlignment(Pos.CENTER_RIGHT);
+			eventsInfo.getChildren().addAll(scheduledTime,reminderTime);
+
+			selection.getChildren().addAll(eventsInfo,modifyEvent,deleteSched);
+			
+		}
+		
 		eventsList.getItems().add(itemNumber+1, selection);
 		lastActivitySelected = itemNumber;
 		eventImage.setScaleX(1.2);

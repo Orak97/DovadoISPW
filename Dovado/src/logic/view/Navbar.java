@@ -4,7 +4,10 @@ import java.io.IOException;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import logic.model.Partner;
 import logic.model.SuperUser;
 
 /*
@@ -15,6 +18,7 @@ import logic.model.SuperUser;
 public class Navbar {
 	private static final  String NAVITEMKEY = ".navbar-item";
 	private static final  String ACTSTYLEKEY = "active";
+	private static final  String EVNTPARTNER = "My events";
 	
 	private static BorderPane bPNavbar = null;
 	private static SuperUser user;
@@ -99,6 +103,11 @@ public class Navbar {
 
 	public static void setUser(SuperUser usr) {
 		user = usr;
+		if(user instanceof Partner) {
+			HBox selections = (HBox)Navbar.getNavbar().getChildren().get(2);
+			Button activity = (Button)selections.getChildren().get(2);
+			activity.setText(EVNTPARTNER);
+		}
 	}
 
 	public static SuperUser getUser() {

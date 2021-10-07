@@ -38,6 +38,13 @@ public abstract class FrequencyOfRepeat {
 	public LocalTime getClosingTime() {
 		return closingTime;
 	}
+	public void setOpeningTime(LocalTime newOpeningTime) {
+		this.openingTime = newOpeningTime;
+	}
+
+	public void setClosingTime(LocalTime newClosingTime) {
+		this.closingTime = newClosingTime;
+	}
 	
 	public abstract boolean checkPlayability(LocalDateTime timestamp);
 
