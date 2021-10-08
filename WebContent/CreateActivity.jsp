@@ -68,7 +68,7 @@
 				</div>
 			</div>
 			
-			<div class="row p-2"> <p>Non hai trovato il luogo che cerchi? <button type="button" class="btn btn-primary btn-sm">Creane uno tu!</button> </p> </div>
+			<div class="row p-2"> <p>Non hai trovato il luogo che cerchi? <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createPlaceModal">Creane uno tu!</button> oppure <a href="CreateActivity.jsp" class="link-primary"> effettua un'altra ricerca</a></p> </div>
 		</div>
 	    
 	    
@@ -127,6 +127,69 @@
 	</form> 
 	<% } %>
   </div>
+  
+  <!-- Modal -->
+	<div class="modal fade" id="createPlaceModal" tabindex="-1" aria-labelledby="createPlaceModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Crea un posto</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	        <form class="row g-3" action="CreateActivity.jsp" method="GET">
+	          <div class="col-12">
+			    <label for="placeName" class="form-label">Nome posto:</label>
+			    <input type="text" class="form-control" id="placeName" placeholder="Colosseo ..." name="placeName">
+			  </div>
+			  <div class="col-2">
+			    <label for="numeroCivico" class="form-label">Civico:</label>
+			    <input type="number" class="form-control" id="numeroCivico" placeholder="1234" name="streetNumber">
+			  </div>
+			  <div class="col-10">
+			    <label for="inputAddress" class="form-label">Indirizzo:</label>
+			    <input type="text" class="form-control" id="inputAddress" placeholder="Main St" name="address">
+			  </div>
+			  <div class="col-md-6">
+			    <label for="inputCity" class="form-label">Città:</label>
+			    <input type="text" class="form-control" id="inputCity" name="city">
+			  </div>
+			  <div class="col-md-6">
+			    <label for="inputState" class="form-label">Regione:</label>
+			    <select id="inputState" class="form-select" name="region">
+			      <option selected>Choose...</option>
+			      <option>Abruzzo</option>
+			      <option>Basilicata</option>
+			      <option>Calabria</option>
+			      <option>Campania</option>
+			      <option>Emilia-Romagna</option>
+			      <option>Friuli Venezia Giulia</option>
+			      <option>Lazio</option>
+			      <option>Liguria</option>
+			      <option>Lombardia</option>
+			      <option>Marche</option>
+			      <option>Molise</option>
+			      <option>Piemonte</option>
+			      <option>Puglia</option>
+			      <option>Sardegna</option>
+			      <option>Sicilia</option>
+			      <option>Toscana</option>
+			      <option>Trentino-Alto Adige</option>
+			      <option>Umbria</option>
+			      <option>Valle d'Aosta</option>
+			      <option>Veneto</option>
+			    </select>
+			  </div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	        <button type="submit" class="btn btn-primary">Create Place</button>
+	      	</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	  
   
   <script>
   	function setPlace(event,p){
