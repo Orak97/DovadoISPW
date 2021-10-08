@@ -38,12 +38,14 @@
 	<script>
 	var lat,long;
 	var i=0,j=0;
+	var latLngUser;
 	
 	/*Se sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione success(position)*/
 
 	function success(position){
 			console.log("latitudine posizione =",position.coords.latitude,"longitudine posizione =",position.coords.longitude);
 			setCoords(position.coords.latitude,position.coords.longitude);
+			latLngUser = L.latLng(position.coords.latitude,position.coords.longitude);
 	}
 
 	/*Se NON sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione error() e mi informa di quanto successo*/
@@ -180,13 +182,19 @@
 			}
 			y=0;
 			if(mode == 2){
-				L.esri.Geocoding.geocode().address(place.civico+' '+place.address).city(place.city).region(place.region).run(function (err, results, response) {
+				deleteMarkers()
+				//Solo i posti vicini vengono aggiunti alla mappa
+				//La distanza è settata tramite la keyword.
+				L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
 	  				if (err) {
 	    				console.log(err);
 	    				return;
 	  				}
-	  				console.log(results.results[0]);
-	  				(addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name));
+	  				console.log(response);
+	  				console.log(results);
+	  				if(results.results[0].latlng.distanceTo(latLngUser) < keyword){
+		  				addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name);
+					}
 	  				k++;
 				});
 			}
