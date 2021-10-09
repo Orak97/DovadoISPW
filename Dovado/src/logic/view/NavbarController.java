@@ -81,5 +81,15 @@ public class NavbarController {
     	Log.getInstance().getLogger().info("Clicked events");
     }
     
+    @FXML
+    void goSpotPlace(ActionEvent event) {
+    	nav.onSpotPlace();
+    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
+    	Navbar.loginSetup();
+    	SpotPlaceView sv = new SpotPlaceView();
+    	SpotPlaceView.render(current);
+    	Log.getInstance().getLogger().info("Clicked Spot place");
+    }
+    
 
 }

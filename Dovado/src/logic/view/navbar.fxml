@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane maxHeight="60.0" minHeight="60.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="60.0" prefWidth="619.0" style="-fx-background-color: #484848;" styleClass="navbar" stylesheets="@Dovado.css" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.NavbarController">
+<BorderPane maxHeight="60.0" minHeight="60.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="60.0" prefWidth="619.0" style="-fx-background-color: #484848;" styleClass="navbar" stylesheets="@Dovado.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.NavbarController">
    <right>
       <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER">
          <children>
@@ -59,6 +59,11 @@
                <HBox.margin>
                   <Insets top="5.0" />
                </HBox.margin></Button>
+            <Button id="spotPlace" mnemonicParsing="false" onAction="#goSpotPlace" prefHeight="50.0" styleClass="navbar-item" text="Spot place" textFill="WHITE">
+               <HBox.margin>
+                  <Insets top="5.0" />
+               </HBox.margin>
+            </Button>
          </children>
          <opaqueInsets>
             <Insets />

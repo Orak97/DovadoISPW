@@ -64,10 +64,15 @@ public class Navbar {
 	       	curr.setVisible(true);
 	    }
 	}
-	
+
 	public void onHome() {
 		this.changePage();
 		bPNavbar.lookup("#home").getStyleClass().add(ACTSTYLEKEY);
+	}
+	
+	public void onSpotPlace() {
+		this.changePage();
+		bPNavbar.lookup("#spotPlace").getStyleClass().add(ACTSTYLEKEY);
 	}
 	
 	public void onChannels() {
@@ -84,7 +89,7 @@ public class Navbar {
 		this.changePage();
 		bPNavbar.lookup("#events").getStyleClass().add(ACTSTYLEKEY);
 	}
-	
+
 	public void onPreferences() {
 		this.changePage();
 		bPNavbar.lookup("#myProfile").getStyleClass().add(ACTSTYLEKEY);
