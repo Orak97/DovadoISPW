@@ -26,6 +26,7 @@
 	</script>
 	<input type="button" onclick="clearMarkers()" > </input>
 	<input type="button" onclick="searchPlaces('anvedime-0')" > </input>
+	<input type="button" onclick="searchPlaces('boxe-1')" > </input>
 </body>
 
 	<script>
@@ -132,7 +133,6 @@
 					console.log(result.places[i].activities[y].id + " " + resultAct.activities[l].id);
 								
 					if(result.places[i].activities[y].id == resultAct.activities[l].id && mode == 0 && resultAct.activities[l].name == keyword){
-						console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico);
 						L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
 			  				if (err) {
 			    				console.log(err);
@@ -146,13 +146,12 @@
 					
 					if(mode == 1){
 		
-						console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico);
-									
-						const preferences = activity.preferences;
-								
-						for(preference in preferences){
+						console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico, "mode =", mode);
 																	
-							if(preferences.preferences[j]==keyword){
+						for(preference in resultAct.activities[l].preferences){
+							//Se il posto ha l'attività interessata al suo interno e con stessa preferenza
+							//Allora si aggiunge alla mappa il marker ad essa inerente.
+							if(resultAct.activities[l].id == result.places[i].activities[y].id && resultAct.activities[l].preferences[j]==keyword.toUpperCase()){
 								L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
 									if (err) {
 										console.log(err);
@@ -161,9 +160,9 @@
 									console.log(results.results[0]);
 									(addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name));
 									k++;
-								});
-							}
-							j++;
+									});
+								}
+								j++;
 						}
 						j=0;
 					}
