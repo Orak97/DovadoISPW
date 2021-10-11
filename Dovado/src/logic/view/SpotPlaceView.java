@@ -148,11 +148,17 @@ public class SpotPlaceView implements Initializable{
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				
+				Log.getInstance().getLogger().info("Clicked on search.");
+				
+				placeSelected = null;
+				placesFound.clear();
+				
 				String[] placeAttr;
 				placeAttr = searchBar.getText().split(",");
+				boolean found = false;
 				
 				if(placeAttr.length==1) {
-					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByCity(placeAttr[0]))==null){
+					if(!found && (placesFound =  (ArrayList<Place>) daoPl.findPlacesByNameOrCity(placeAttr[0],0))==null){
 						final Stage dialog = new Stage();
 		                dialog.initModality(Modality.NONE);
 		                dialog.initOwner(curr);
@@ -161,7 +167,38 @@ public class SpotPlaceView implements Initializable{
 		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
 		                dialog.setScene(dialogScene);
 		                dialog.show();
-					}
+
+		                return;
+					} else {found=true;}
+					if (!found && (placesFound = (ArrayList<Place>)daoPl.findPlacesByNameOrCity(placeAttr[0], 1))==null){
+						final Stage dialog = new Stage();
+		                dialog.initModality(Modality.NONE);
+		                dialog.initOwner(curr);
+		                VBox dialogVbox = new VBox(20);
+		                dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
+		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+		                dialog.setScene(dialogScene);
+		                dialog.show();
+
+		                return;
+					} else {found=true;}
+					if (!found && (placesFound = (ArrayList<Place>)daoPl.findPlacesByNameOrCity(placeAttr[0], 2))==null){
+						final Stage dialog = new Stage();
+		                dialog.initModality(Modality.NONE);
+		                dialog.initOwner(curr);
+		                VBox dialogVbox = new VBox(20);
+		                dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
+		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+		                dialog.setScene(dialogScene);
+		                dialog.show();
+
+		                return;
+					} else {found=true;}
+					
+					if(found=true)
+						updatePlaces();
+					
+				}
 					else if(placeAttr.length==3) {
 						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
 						if(placesFound.contains(null)){
@@ -173,10 +210,14 @@ public class SpotPlaceView implements Initializable{
 			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
 			                dialog.setScene(dialogScene);
 			                dialog.show();
+			                
+			                return;
 						}
-					}
-					else {
 						updatePlaces();
+					}
+
+					for(int i=0;i<placesFound.size();i++) {
+						System.out.println(placesFound.get(i).getName());
 					}
 				}
 				/*if(placeAttr.length<3) {
@@ -189,12 +230,57 @@ public class SpotPlaceView implements Initializable{
 	                dialog.setScene(dialogScene);
 	                dialog.show();
 					return;
-				}*/
-				
-			}
-
-			
+				}*/		
 		});
+		
+		if(Navbar.getUser() instanceof Partner) {
+			Button reclaimPlace = new Button("Reclaim the place");
+			reclaimPlace.getStyleClass().add("src-btn");
+			
+			BorderPane bp = (BorderPane) root.getChildren().get(0);
+			VBox placeSrcBox = (VBox) bp.getChildren().get(1);
+			
+			placeSrcBox.getChildren().add(reclaimPlace);
+			
+			reclaimPlace.setOnAction(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					if (placeSelected==null) {
+						final Stage dialog = new Stage();
+		                dialog.initModality(Modality.NONE);
+		                dialog.initOwner(curr);
+		                VBox dialogVbox = new VBox(20);
+		                dialogVbox.getChildren().add(new Text("You didn't select a place!"));
+		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+		                dialog.setScene(dialogScene);
+		                dialog.show();
+		                
+		                return;
+					}
+					
+					placeSelected.setOwner((Partner)Navbar.getUser());
+					
+					if(daoPl.updatePlaceJSON(placeSelected)) {
+						final Stage dialog = new Stage();
+		                dialog.initModality(Modality.NONE);
+		                dialog.initOwner(curr);
+		                VBox dialogVbox = new VBox(20);
+		                dialogVbox.getChildren().add(new Text("Your place has been reclaimed!"));
+		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+		                dialog.setScene(dialogScene);
+		                dialog.show();
+		                
+		                updatePlaces();
+		                
+		                return;
+					}
+					
+				}
+				
+			});
+			
+		}
 	}
 
 public void selectedPlace() {
@@ -326,20 +412,19 @@ public void selectedPlace() {
 		pList.getItems().clear();
 		
 		for(int i=0;i<placesFound.size();i++) {
-			//TODO guardare qui con Andre
-			for(int j=0;j<placesFound.size();j++) {
-					 	
+			System.out.println(placesFound.get(i).getOwner());
+				if(placesFound.get(i).getOwner()==null) {
 					ImageView plImage = new ImageView();
 					Text plName = new Text(placesFound.get(i).getName()+"\n");
 					Log.getInstance().getLogger().info("\n\n"+placesFound.get(i).getName()+"\n\n");
 					Text plInfo = new Text(placesFound.get(i).getCity()+
-							"\n"+placesFound.get(i).getRegion()+
-							"\n"+placesFound.get(i).getAddress()+
-							"-"+placesFound.get(i).getCivico());
-					
-					plImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
+						"\n"+placesFound.get(i).getRegion()+
+						"\n"+placesFound.get(i).getAddress()+
+						"-"+placesFound.get(i).getCivico());
+						
+					plImage.setImage(new Image("https://source.unsplash.com/user/erondu/350x100"));
 					plImage.getStyleClass().add("place-image");
-					
+						
 					plInfo.setId("placeInfo");
 					plInfo.getStyleClass().add("placeInfo");
 			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
@@ -347,7 +432,7 @@ public void selectedPlace() {
 					eventInfo.setFill(Paint.valueOf("#ffffff"));
 					eventInfo.setStrokeWidth(0.3);
 					eventInfo.setStroke(Paint.valueOf("#000000"));
-			*/		
+				*/		
 					plName.setId("placeName");
 					plName.getStyleClass().add("placeName");
 			/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
@@ -362,28 +447,29 @@ public void selectedPlace() {
 					//informazioni; uso uno StackPane per poter mettere scritte su immagini.
 					StackPane eventBox = new StackPane();
 					eventBox.getStyleClass().add("eventBox");
-					
-					
+						
+						
 					Text placeId = new Text();
-					
+						
 					Long pID = placesFound.get(i).getId();
 					Log.getInstance().getLogger().info("ID POSTO: "+pID);
 					placeId.setId(pID.toString());
-					
+						
 					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 					//dell'evento ed infine il testo dell'evento.
 					eventBox.getChildren().add(placeId);
 					eventBox.getChildren().add(plImage);
 					eventBox.getChildren().add(eventText);
-					
+						
 					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 					eventBox.setAlignment(Pos.CENTER_LEFT);
-					
+						
 					eventBox.setMinWidth(rt.getWidth()/2);
 					eventBox.setMaxWidth(rt.getWidth()/2);
 					pList.getItems().add(eventBox);
-					}
 				}
+			}
+			
 	}
 	
 	public static void render(Stage current) {

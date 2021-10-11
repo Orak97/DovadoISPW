@@ -177,7 +177,7 @@ public class CreateActivityView implements Initializable{
 				placeAttr = searchBar.getText().split(",");
 				
 				if(placeAttr.length==1) {
-					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByCity(placeAttr[0]))==null){
+					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByNameOrCity(placeAttr[0],0))==null){
 						final Stage dialog = new Stage();
 		                dialog.initModality(Modality.NONE);
 		                dialog.initOwner(curr);
@@ -187,7 +187,18 @@ public class CreateActivityView implements Initializable{
 		                dialog.setScene(dialogScene);
 		                dialog.show();
 					}
-					else if(placeAttr.length==3) {
+					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByNameOrCity(placeAttr[0],1))==null){
+						final Stage dialog = new Stage();
+		                dialog.initModality(Modality.NONE);
+		                dialog.initOwner(curr);
+		                VBox dialogVbox = new VBox(20);
+		                dialogVbox.getChildren().add(new Text("No place found named "+placeAttr[0]));
+		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+		                dialog.setScene(dialogScene);
+		                dialog.show();
+					}
+				}
+				else if(placeAttr.length==3) {
 						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
 						if(placesFound.contains(null)){
 							final Stage dialog = new Stage();
@@ -199,11 +210,11 @@ public class CreateActivityView implements Initializable{
 			                dialog.setScene(dialogScene);
 			                dialog.show();
 						}
-					}
-					else {
-						updatePlaces();
-					}
 				}
+				else {
+					updatePlaces();
+				}
+				
 				/*if(placeAttr.length<3) {
 					final Stage dialog = new Stage();
 	                dialog.initModality(Modality.NONE);

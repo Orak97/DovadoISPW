@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="root" alignment="CENTER" style="-fx-background-color: #212121;" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.SpotPlaceView">
+<VBox fx:id="root" alignment="CENTER" style="-fx-background-color: #212121;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.SpotPlaceView">
    <children>
       <BorderPane style="-fx-background-color: #212121;">
          <left>
-            <VBox alignment="CENTER" style="-fx-background-color: #212121;">
+            <VBox alignment="CENTER" style="-fx-background-color: #212121;" BorderPane.alignment="CENTER">
                <children>
                   <VBox VBox.vgrow="ALWAYS">
                      <VBox.margin>
@@ -86,10 +86,13 @@
                      </VBox.margin>
                   </Button>
                </children>
+               <BorderPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
             </VBox>
          </left>
          <right>
-            <VBox alignment="CENTER" style="-fx-background-color: #212121;" BorderPane.alignment="TOP_CENTER">
+            <VBox alignment="CENTER" style="-fx-background-color: #212121;" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </BorderPane.margin>

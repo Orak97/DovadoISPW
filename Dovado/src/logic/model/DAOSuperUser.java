@@ -191,6 +191,9 @@ public class DAOSuperUser {
 		JSONParser parser = new JSONParser();
 		int i;
 		boolean found = false;
+		if(email==null && psw==null && id==null) {
+			return null;
+		}
 		try 
 		{
 			Object users = parser.parse(new FileReader(USERJSON));

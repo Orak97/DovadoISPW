@@ -46,7 +46,7 @@ public class DAOPlace {
 		return findPlace(name, city, region, null);
 	}
 	
-	public List<Place> findPlacesByCity(String city) {
+	public List<Place> findPlacesByNameOrCity(String keyword,int mode) {
 		JSONParser parser = new JSONParser();
 		int i;
 		ArrayList<Place> placesFound = new ArrayList<>();
@@ -67,10 +67,21 @@ public class DAOPlace {
 				String cityPrint = (String) result.get(CITYKEY);
 				String regionPrint = (String) result.get(REGIONKEY);
 				
-				if(city == null) {
+				if(keyword == null) {
 					expression = true;
 				} else {
-					expression = city.equals(cityPrint);
+					if(mode==0) {
+						expression = (keyword.toUpperCase()).equals(cityPrint.toUpperCase());
+					}
+					else if(mode==1) {
+						expression = (keyword.toUpperCase()).equals(namePrint.toUpperCase());
+					}
+					else if (mode==2) {
+						expression = (keyword.toUpperCase()).equals(regionPrint.toUpperCase());
+					}
+					else {
+						expression = false;
+					}
 				}
 				
 				if (expression) {
