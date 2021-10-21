@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
- <%@ page import = "java.io.*,java.util.*, logic.model.Place, logic.model.DAOPlace, java.time.LocalDate, java.time.format.DateTimeFormatter, java.time.LocalTime, logic.controller.CreateActivityController, logic.model.SuperUser, logic.model.User" %>
+ <%@ page import = "java.io.*,java.util.*, logic.model.Place, logic.model.DAOPlace, java.time.LocalDate, java.time.format.DateTimeFormatter, java.time.LocalTime, logic.controller.CreateActivityController, logic.model.SuperUser, logic.model.User, logic.controller.SpotPlaceController" %>
 
     <% application.setAttribute( "titolo" , "Create Activity"); %>
 
@@ -12,12 +12,27 @@
 	<jsp:useBean id="createActivityBean" scope="request" class="logic.model.CreateActivityBean" />
 	<jsp:setProperty name="createActivityBean" property="*" />
 	
+	<jsp:useBean id="spotPlaceBean" scope="request" class="logic.model.SpotPlaceBean" />
+	<jsp:setProperty name="spotPlaceBean" property="*" />
+	
+	
 	<%
+		//controllo se place name è null, se non lo è ho fatto una request per creare un posto, istanzio il createplacecontroller etc etc
+		if(request.getParameter("placeName")!=null){
+			SuperUser u = (User) session.getAttribute("user");
+			SpotPlaceController spController = new SpotPlaceController(u, spotPlaceBean);
+			
+			if(spController.spotPlace()) out.println("posto creato");
+			else out.println("posto NON creato");
+		}
+	
+		
+		//controllo se 'openingDate' è null, se non lo è ho fatto una request per creare un' attività, istanzio il createActivityController etc etc
 		if(request.getParameter("openingDate")!= null){
 			SuperUser u = (User) session.getAttribute("user");
 			CreateActivityController c = new CreateActivityController(u,createActivityBean);
-			ArrayList<Place> places = (ArrayList<Place>)DAOPlace.getInstance().findPlacesByCity("Roma");
-			c.createActivity("ciao", places.get(0));
+			Place place = (Place) DAOPlace.getInstance().findPlaceById(Long.parseLong(request.getParameter("place")));
+			c.createActivity("ciao", place);
 			out.println("fatto");
 		
 		}
@@ -36,7 +51,7 @@
 		</div>
 	 <% } else {
 		String comune = request.getParameter("comune");
-		ArrayList<Place> places = (ArrayList<Place>)DAOPlace.getInstance().findPlacesByCity(comune);
+		ArrayList<Place> places = (ArrayList<Place>)DAOPlace.getInstance().findPlacesByNameOrCity(comune,0);
 		%>
 		
 		<div class= "row p-3">
@@ -144,7 +159,7 @@
 			  </div>
 			  <div class="col-2">
 			    <label for="numeroCivico" class="form-label">Civico:</label>
-			    <input type="number" class="form-control" id="numeroCivico" placeholder="1234" name="streetNumber">
+			    <input type="number" class="form-control" id="numeroCivico" placeholder="1" name="streetNumber">
 			  </div>
 			  <div class="col-10">
 			    <label for="inputAddress" class="form-label">Indirizzo:</label>
