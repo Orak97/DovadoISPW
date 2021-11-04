@@ -64,7 +64,7 @@
 	
 	%>
 	<div class="container-fluid home">
-		<div class="row pt-6">
+		<div class="row pt-6 home-body">
 		
 			<div class="col-4 events-list">
 			<div class="row row-cols-1 row-cols-md-1 g-1">

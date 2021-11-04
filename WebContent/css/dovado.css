@@ -1,6 +1,7 @@
  
 nav {
     background-color: #484848;
+    min-height: 12vh;
     
 }
 
@@ -18,12 +19,12 @@ nav {
   overflow: scroll;
 }
 
-.home .row{
-	height:100vh;
+.home-body{
+	 height:100vh;
 }
 
 .pt-6 {
-  padding-top: 12vh; !important;
+  padding-top: 12vh !important;
  }
 
 /*********************home*********************************/
@@ -50,3 +51,51 @@ body{
 	background-color: #9FB6CD;
 }
 
+/***********************Chat*******************************/
+#chatField{
+	margin-bottom: 1vh;
+	margin-left: 1vh;
+	border-radius: 15px;
+	
+	
+}
+
+.message{
+	padding-right: 0px !important;
+    padding-left: 0px !important;
+    margin-top: 1vh;
+    
+}
+
+.chatroom{
+	margin-left:1vh;
+	/*new*/
+	overflow-y: scroll !important;
+    /*height: 92.5%;*/
+    padding-bottom:1vh;
+}
+
+.chat{
+	 /*overflow-y: scroll;*/
+	 height:100%;
+	 padding-left:0px;
+	 
+}
+
+.msg-bar{
+	background-color:#484848;
+	padding-top:1vh;
+	/*min-height: 7.5%; new*/
+}
+
+.toast,.toast-header,.toast-body{
+	border-radius:30px;
+}
+
+.msg-sent{
+	border-bottom-right-radius: 0 !important;
+}
+
+.msg-recieved{
+	border-bottom-left-radius: 0 !important;
+}
