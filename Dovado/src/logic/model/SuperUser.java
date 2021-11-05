@@ -39,6 +39,7 @@ public abstract class SuperUser {
 	
 	public void setPreferences(List<String> newPreferences) {
 		this.preferences = (ArrayList<String>) newPreferences;
+		DAOSuperUser.getInstance().updateUserPreferences(this);
 	}
 	
 	public SuperUser getUser(String username) {

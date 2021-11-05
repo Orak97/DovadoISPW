@@ -59,7 +59,8 @@ import logic.model.User;
 
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
-	private static final  String MAPPATHKEY = "file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/map.html";
+	private static final  String BGUCOLORKEY = "BC9416";
+	private static final  String MAPPATHKEY = "http://localhost:8614/Dovado/map.html";
 	//botton KEYS
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
@@ -99,7 +100,7 @@ public class HomeView implements Initializable{
 
     @FXML
     private WebEngine eng;
-    
+	 
     private static int lastActivitySelected = -1;
 
     private static DAOPreferences daoPref;
@@ -714,17 +715,18 @@ private void updateChat(ListView chat, Channel ch) {
 		
 		
 		if(user.getUsername().equals(usernameMss)) {
-			CornerRadii cr = new CornerRadii(4);
+			CornerRadii cr = new CornerRadii(8);
 		
-			BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
+			BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGUCOLORKEY ), cr, null);
 			Background b = new Background(bf);
-
+			
 			chatContainer.setBackground(b);
 			chatContainer.setAlignment(Pos.CENTER_RIGHT);
+			
 			chatMss.setAlignment(Pos.CENTER_RIGHT);
 		}
 		else {
-			CornerRadii cr = new CornerRadii(4);
+			CornerRadii cr = new CornerRadii(8);
 			BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
 			Background b = new Background(bf);
 			

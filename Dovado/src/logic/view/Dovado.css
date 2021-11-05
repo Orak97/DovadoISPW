@@ -179,7 +179,14 @@
   	-fx-fill: #212121;
     -fx-font-size:10.0;
 }
+
+.chat-cnt{
+  	-fx-background-radius: 0 70 70 70;
+}
  
+.chat-cnt-sender{
+  	-fx-background-radius: 70 70 70 0;
+}
  /*Event buttons*/
  
  .evn-btn{
@@ -221,6 +228,11 @@
 .pref-btn:pressed{
   -fx-scale-y: 0.9;
   -fx-scale-x: 0.9;
+}
+
+.pref-sel-btn{
+	-fx-background-radius: 70 70 70 70;
+	-fx-border-color: #212121;
 }
 
 .src-btn{

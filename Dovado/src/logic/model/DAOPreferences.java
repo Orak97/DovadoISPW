@@ -3,6 +3,8 @@ package logic.model;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -37,6 +39,35 @@ public class DAOPreferences {
 			preference = ((String) result.get("name"));
 			
 			return preference;
+			
+			//Se uscito dal ciclo for la preferenza non era presente nella persistenza
+			//Per un possibile uso futuro quindi la si aggiunge; restituendo il suo id.
+			
+			// POTREMMO VOLERLO CAMBIARE ( SE NON VOGLIAMO IL JSON INTASATO DI SINONIMI DI UNO STESSO
+			// INSERITO DIVERSE VOLTE DA PARTE DI UTENTI ) TOGLIENDO L'AGGIUNTA IN AUTOMATICO DELLA PREFERENZA.
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<String> getAllPreferencesFromJSON() {
+		ArrayList<String> preferencesFound = new ArrayList<String>();
+		JSONParser parser = new JSONParser();
+		try 
+		{
+			Object preferences = parser.parse(new FileReader(PREFERJSON));
+			JSONObject preferenceOBJ = (JSONObject) preferences;
+			JSONArray prefArray = (JSONArray) preferenceOBJ.get("preferences");
+			JSONObject result;
+			
+			for(int i=0;i<prefArray.size();i++) {
+				result = (JSONObject)prefArray.get(i);
+				preferencesFound.add(((String) result.get("name")));
+			}
+			
+			return (List<String>)preferencesFound;
 			
 			//Se uscito dal ciclo for la preferenza non era presente nella persistenza
 			//Per un possibile uso futuro quindi la si aggiunge; restituendo il suo id.
