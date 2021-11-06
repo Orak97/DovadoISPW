@@ -15,7 +15,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -66,8 +69,7 @@ public class PreferenceSelectView implements Initializable{
 		    
 		    newBtn.setText(preferences.get(i));
 		    newBtn.setTextFill(Paint.valueOf("000000"));
-		    newBtn.getStyleClass().add("src-btn");
-		    newBtn.getStyleClass().add("pref-sel-btn");
+		    newBtn.getStyleClass().add("pref-btn");
 		    
 		    newBtn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -75,9 +77,29 @@ public class PreferenceSelectView implements Initializable{
 				public void handle(ActionEvent event) {
 					if(preferencesChosen.contains(newBtn.getText())) {
 						preferencesChosen.remove(newBtn.getText());
+						
+//						CornerRadii cr = new CornerRadii(4);
+//						BackgroundFill bf = new BackgroundFill(Paint.valueOf("BC9416"), cr, null);
+//						Background b = new Background(bf);
+//						newBtn.setBackground(b);
+						newBtn.getStyleClass().clear();
+						
+						newBtn.getStyleClass().add("pref-btn");
+					    
 						return;
 					}
 					preferencesChosen.add(newBtn.getText());
+					
+//					CornerRadii cr = new CornerRadii(4);
+//					BackgroundFill bf = new BackgroundFill(Paint.valueOf("212121"), cr, null);
+//					Background b = new Background(bf);
+//					newBtn.setBackground(b);
+					
+
+					newBtn.getStyleClass().clear();
+					
+					newBtn.getStyleClass().add("pref-sel-btn");
+					
 				}
 		    	
 		    });

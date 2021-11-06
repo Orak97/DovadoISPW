@@ -231,8 +231,23 @@
 }
 
 .pref-sel-btn{
-	-fx-background-radius: 70 70 70 70;
-	-fx-border-color: #212121;
+	-fx-background-color: #251d04;
+  	-fx-background-radius: 999;
+  	-fx-font-family: 'Montserrat';
+  	-fx-font-weight: normal;
+  	-fx-text-fill: white;
+    -fx-font-size:10.0;
+    -fx-padding: 12px;
+    -fx-border-insets: 5px;
+    -fx-background-insets: 5px;
+}
+
+.pref-sel-btn:hover {
+  -fx-background-color: #212121;
+}
+.pref-sel-btn:pressed{
+  -fx-scale-y: 0.9;
+  -fx-scale-x: 0.9;
 }
 
 .src-btn{
