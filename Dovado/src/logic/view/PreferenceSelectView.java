@@ -16,6 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -30,7 +31,7 @@ public class PreferenceSelectView implements Initializable{
 	private Button continueBtn;
 
 	@FXML
-	private Group preferencesGroup;
+	private GridPane preferencesGrid;
 	
 	private static ArrayList<String> preferences;
 	private static ArrayList<String> preferencesChosen;
@@ -46,6 +47,15 @@ public class PreferenceSelectView implements Initializable{
 		ArrayList<Button> prefBtns = new ArrayList<Button>();
 
 		continueBtn.getStyleClass().add("src-btn");
+		
+		int col = 0;
+		int row = 0;
+		
+		double rows_cols = Math.sqrt(preferences.size());
+		int rc = (int) Math.round(rows_cols);
+		
+		System.out.println("Rows and columns: "+rows_cols+" Square root: "+rc);
+		
 		
 		for(int i=0;i<preferences.size();i++) {
 			Button newBtn = new Button();
@@ -71,7 +81,22 @@ public class PreferenceSelectView implements Initializable{
 				}
 		    	
 		    });
-		    preferencesGroup.getChildren().add(newBtn);
+		    //Se sto alla prima preferenza aggiunta alla
+		    //griglia, allora non ho bisogno di aggiungere
+		    //righe.
+		    if(i==0 && col==0) {
+		    	preferencesGrid.add(newBtn, col, row);
+		    } else {
+		    	preferencesGrid.add(newBtn, col, row);
+		    }
+		    //Se ho finito di inserire bottoni sulla riga
+		    //aggiungo una colonna.
+		    row++;
+		    if(i%rc == 0 && i!=0) {
+		    	col++;
+		    	row=0;
+		    	System.out.println("column updated: "+i%rc+"col: "+col);
+		    }
 		}
 		
 	}
