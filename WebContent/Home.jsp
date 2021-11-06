@@ -64,7 +64,7 @@
 	
 	%>
 	<div class="container-fluid home">
-		<div class="row pt-6 home-body">
+		<div class="row pt-6 home-body" id="home-body">
 		
 			<div class="col-4 events-list">
 			<div class="row row-cols-1 row-cols-md-1 g-1">
@@ -81,7 +81,7 @@
 			    </div>
 			    <div class="collapse" id="collapse<%= curr.getId() %>">
 				    <div class="d-grid gap-2 activityButtonGroup">
-				        	<button type="button" class="btn btn-dark btnHome">Join Channel</button>
+				        	<button type="button" class="btn btn-dark btnHome" onclick="loadChat(<%=curr.getId()%>)">Join Channel</button>
 				        
 				        	<button type="button" class="btn btn-dark btnHome" onclick="document.getElementById('map').contentWindow.spotPlace('<%=curr.getPlace().getCivico()%>','<%=curr.getPlace().getAddress()%>','<%=curr.getPlace().getCity()%>','<%=curr.getPlace().getRegion()%>');">View on map</button>
 				        
@@ -95,7 +95,7 @@
 			</div>
 			</div>
 			
-			<div class="col-8" style="overflow-y:hidden">
+			<div class="col-8" id="map" style="overflow-y:hidden">
 				<iframe src="map.html" title="maps" id="map" style="width:100%; height:100%"></iframe> 
 			</div>
 		</div>
@@ -200,6 +200,34 @@
 		
 		 		let form = document.getElementById('reminder-form');
 		 		form.classList.add("visually-hidden");
+		 	}
+		 	
+		 	function loadChat(activity){
+		 		//step 1: genero oggetto per richiesta al server
+		 		var req = new XMLHttpRequest();
+		 		
+				//controllo che non ci siano già chat aperte, in caso le chiudo
+		 		let existingChat = document.getElementById('chat');
+		 		if(existingChat != null) existingChat.remove();
+		 		
+		 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+		 		req.onload = function(){
+					console.log(this.responseXML.body.firstChild);
+					document.getElementById('home-body').append(this.responseXML.body.firstChild)
+					document.getElementById('map').classList.add("visually-hidden");
+					
+					//comando per scrollare in fondo alla chat
+					let chat = document.getElementsByClassName('chatroom')[0];
+				 	chat.scrollTop = chat.scrollHeight;
+				}
+		 		
+		 		//step 3: dico quale richiesta fare al server
+				req.open("GET", "chat.jsp?activity="+activity);
+				//step 3.1 : imposto document come response type, perché sto per ricevere html html
+				req.responseType = "document";
+				
+				//step 4: invio la richiesta 
+				req.send();
 		 	}
 		
 		 </script>

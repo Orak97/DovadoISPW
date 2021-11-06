@@ -53,11 +53,7 @@ body{
 
 /***********************Chat*******************************/
 #chatField{
-	margin-bottom: 1vh;
-	margin-left: 1vh;
 	border-radius: 15px;
-	
-	
 }
 
 .message{
@@ -68,7 +64,7 @@ body{
 }
 
 .chatroom{
-	margin-left:1vh;
+	/* margin-left:1vh; */
 	/*new*/
 	overflow-y: scroll !important;
     /*height: 92.5%;*/
@@ -79,13 +75,17 @@ body{
 	 /*overflow-y: scroll;*/
 	 height:100%;
 	 padding-left:0px;
-	 
+	 padding-right:0px;
 }
 
 .msg-bar{
 	background-color:#484848;
 	padding-top:1vh;
 	/*min-height: 7.5%; new*/
+	padding-top: 1vh;
+	padding-bottom: 1vh;
+	padding-left: 2vh;
+	padding-right: 2vh;
 }
 
 .toast,.toast-header,.toast-body{
@@ -98,4 +98,15 @@ body{
 
 .msg-recieved{
 	border-bottom-left-radius: 0 !important;
+}
+
+.chat-bar{
+	background-color: #484848;
+	padding-top: 1vh;
+	padding-bottom: 1vh;
+}
+
+.send-btn{
+	border-radius:99px;
+	margin-left: 2vh;
 }
