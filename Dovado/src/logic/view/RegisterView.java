@@ -200,6 +200,6 @@ public class RegisterView implements Initializable{
 	}
     
     public void switchToRegisterPartner() {
-    	
+    	PartnerRegisterView.render(curr);
     }
 }
