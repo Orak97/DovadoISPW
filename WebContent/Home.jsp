@@ -158,6 +158,10 @@
 		
 		<!-- fine modal -->
 		 <script>
+			//---------------------------------------------------------------
+		 	//|						 	modal								|
+		 	//---------------------------------------------------------------
+		 
 		 	var exampleModal = document.getElementById('exampleModal')
 		 	exampleModal.addEventListener('show.bs.modal', function (event) {
 			   // Button that triggered the modal
@@ -202,27 +206,68 @@
 		 		form.classList.add("visually-hidden");
 		 	}
 		 	
+		 	//---------------------------------------------------------------
+		 	//|							chat								|
+		 	//---------------------------------------------------------------
+		 	
+		 	var refreshInterval;
+		 	
 		 	function loadChat(activity){
+		 		let request = "chat.jsp?activity="+activity;
+		 		
+		 		//cancello il timer nel caso esistesse già
+		 		if(refreshInterval != undefined)
+		 		clearInterval(refreshInterval);
+		 		
+		 		//imposto un intervallo per refresharela chat
+	 			refreshInterval= setInterval(() => {sendRequest(request)
+	 				console.log('finito timer')},500);
+		 		
+		 		
+		 		sendRequest(request);
+		 	}
+		 	
+		 	function sendMsg(activity){
+		 		let message = document.getElementById("chatField").value;
+		 		
+		 		
+		 		let request = "chat.jsp?activity="+activity+"&textMsg="+message;
+		 		sendRequest(request);
+		 	}
+		 	
+		 	function sendRequest(request){
 		 		//step 1: genero oggetto per richiesta al server
 		 		var req = new XMLHttpRequest();
 		 		
-				//controllo che non ci siano già chat aperte, in caso le chiudo
-		 		let existingChat = document.getElementById('chat');
-		 		if(existingChat != null) existingChat.remove();
 		 		
 		 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
 		 		req.onload = function(){
+		 			
+		 			//controllo che non ci siano già chat aperte, in caso le chiudo
+			 		let existingChat = document.getElementById('chat');
+			 		if(existingChat != null) existingChat.remove();
+		 			
+		 			
 					console.log(this.responseXML.body.firstChild);
 					document.getElementById('home-body').append(this.responseXML.body.firstChild)
+					//nascondo la mappa -DA RIVEDERE-
 					document.getElementById('map').classList.add("visually-hidden");
 					
 					//comando per scrollare in fondo alla chat
 					let chat = document.getElementsByClassName('chatroom')[0];
 				 	chat.scrollTop = chat.scrollHeight;
-				}
+				
+		 			//disabilito il bottone se non ho testo da inviare
+		 			let chatField = document.getElementById('chatField');
+		 			chatField.addEventListener('keyup', ()=>{
+		 				if(chatField.value.length > 0) document.getElementById('send-btn').classList.remove("disabled");
+		 				else document.getElementById('send-btn').classList.add("disabled");
+		 			})
+		 			
+		 		}
 		 		
 		 		//step 3: dico quale richiesta fare al server
-				req.open("GET", "chat.jsp?activity="+activity);
+				req.open("GET", request);
 				//step 3.1 : imposto document come response type, perché sto per ricevere html html
 				req.responseType = "document";
 				
