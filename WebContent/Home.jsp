@@ -95,9 +95,27 @@
 			</div>
 			</div>
 			
+			<%-- map --%>
 			<div class="col-8" id="map" style="overflow-y:hidden">
 				<iframe src="map.html" title="maps" id="map" style="width:100%; height:100%"></iframe> 
 			</div>
+		
+			<%-- chat --%>
+			<div class="col-8 chat d-flex flex-column visually-hidden" id="chat">
+				<div class="chat-bar d-flex">
+					<div class="text-center text-white flex-grow-1 fs-2" id="chatTitle"></div>
+					<button type="button" class="btn-close btn-close-white me-2 m-auto" aria-label="Close"></button>
+				</div>
+				<div class="container-fluid chatroom flex-grow-1" id="msg-container">
+				</div>
+				<div class="d-flex msg-bar">
+					<input type="text" class="form-control flex-grow-1" id="chatField" placeholder="scrivi qualcosa"> 
+					<button type="button" class="btn btn-outline-light send-btn disabled" id="send-btn"> <i class="bi bi-send"></i> </button>
+				</div>
+			</div>
+			
+			<%-- fine chat --%>
+		
 		</div>
 	
 	
@@ -212,30 +230,48 @@
 		 	
 		 	var refreshInterval;
 		 	
+			//disabilito il bottone se non ho testo da inviare
+ 			var chatField = document.getElementById('chatField');
+ 			chatField.addEventListener('keyup', ()=>{
+ 				if(chatField.value.length > 0) document.getElementById('send-btn').classList.remove("disabled");
+ 				else document.getElementById('send-btn').classList.add("disabled");
+ 			});
+		 	
 		 	function loadChat(activity){
 		 		let request = "chat.jsp?activity="+activity;
 		 		
-		 		//cancello il timer nel caso esistesse già
+		 		//rendo visibile la chat nel caso non lo sia già
+		 		document.getElementById('chat').classList.remove('visually-hidden');
+		 		
+		 		//cancello il timer di refresh nel caso sia attivo
 		 		if(refreshInterval != undefined)
 		 		clearInterval(refreshInterval);
 		 		
-		 		//imposto un intervallo per refresharela chat
-	 			refreshInterval= setInterval(() => {sendRequest(request)
-	 				console.log('finito timer')},500);
+		 		//imposto un intervallo per refreshare la chat
+		 		startRefreshing(request);
 		 		
-		 		
-		 		sendRequest(request);
+		 		sendRequest(request,true);
 		 	}
+		 	
 		 	
 		 	function sendMsg(activity){
-		 		let message = document.getElementById("chatField").value;
+		 		var message = document.getElementById("chatField").value;
 		 		
 		 		
-		 		let request = "chat.jsp?activity="+activity+"&textMsg="+message;
-		 		sendRequest(request);
+		 		//TODO: primo controllo che il campo non sia vuoto
+		 		if(message=='') alert('Chiudi console sviluppatore, è molto poco carino da parte tua voler rompere il sito 🥺')
+		 		
+		 		else{
+		 			let request = "chat.jsp?activity="+activity+"&textMsg="+message;
+		 			sendRequest(request,true);
+		 			
+		 			//pulisco l'input di invio DOPO che ho inviato e riblocco il pulsante
+		 			document.getElementById('chatField').value = '';
+		 			document.getElementById('send-btn').classList.add("disabled");
+		 		}
 		 	}
 		 	
-		 	function sendRequest(request){
+		 	function sendRequest(request,firstLoad){
 		 		//step 1: genero oggetto per richiesta al server
 		 		var req = new XMLHttpRequest();
 		 		
@@ -245,38 +281,75 @@
 		 			
 		 			//controllo che non ci siano già chat aperte, in caso le chiudo
 			 		let existingChat = document.getElementById('chat');
-			 		if(existingChat != null) existingChat.remove();
+			 		if(existingChat != null) existingChat.classList.remove('visually-hidden');
 		 			
 		 			
-					console.log(this.responseXML.body.firstChild);
-					document.getElementById('home-body').append(this.responseXML.body.firstChild)
+					console.log(this);
+					
+					//pulisco la chat
+					document.getElementById('msg-container').innerHTML='';
+;					
+					populateChat(this.response, firstLoad);
+					
 					//nascondo la mappa -DA RIVEDERE-
 					document.getElementById('map').classList.add("visually-hidden");
 					
-					//comando per scrollare in fondo alla chat
-					let chat = document.getElementsByClassName('chatroom')[0];
-				 	chat.scrollTop = chat.scrollHeight;
-				
-		 			//disabilito il bottone se non ho testo da inviare
-		 			let chatField = document.getElementById('chatField');
-		 			chatField.addEventListener('keyup', ()=>{
-		 				if(chatField.value.length > 0) document.getElementById('send-btn').classList.remove("disabled");
-		 				else document.getElementById('send-btn').classList.add("disabled");
-		 			})
-		 			
+					if(firstLoad){
+						//comando per scrollare in fondo alla chat
+						let chat = document.getElementsByClassName('chatroom')[0];
+				 		chat.scrollTop = chat.scrollHeight;
+					}
 		 		}
 		 		
 		 		//step 3: dico quale richiesta fare al server
 				req.open("GET", request);
 				//step 3.1 : imposto document come response type, perché sto per ricevere html html
-				req.responseType = "document";
+				req.responseType = "json";
 				
 				//step 4: invio la richiesta 
 				req.send();
 		 	}
-		
-		 </script>
+		 	
+		 	function populateChat(chat,firstLoad){
+		 		
+		 		//imposto il titolo del canale
+		 		if(firstLoad) document.getElementById('chatTitle').innerText = chat.activityName+"'s channel";
+		 		
+		 		//imposto l'action del bottone
 
-	
+		 		if(firstLoad) document.getElementById('send-btn').addEventListener("click", function(){sendMsg(chat.activityId)}, {"once": true});
+		 		
+		 		console.log(chat.messages);
+		 		
+		 		
+		 		chat.messages.forEach( curr => {
+		 					
+		 			let htmlMsg = '<div class="row d-flex '+(curr.sender == chat.user ? 'justify-content-end' : 'justify-content-start')+'">';
+		 			htmlMsg+= ' <div class="toast show message '+(curr.sender == chat.user ? 'msg-sent' : 'msg-recieved')+'" role="alert" aria-live="assertive" aria-atomic="true">';
+		 			htmlMsg+= ' <div class="toast-header">';
+		 			htmlMsg+= ' <strong class="me-auto">'+curr.sender+'</strong>';
+		 			htmlMsg+= ' <small class="text-muted">'+curr.sendDate+'</small>';
+		 			htmlMsg+= ' </div>';
+		 			htmlMsg+= ' <div class="toast-body">'+curr.text+'</div>';
+		 			htmlMsg+= ' </div> </div>';
+		 			
+		 			//generaro un nodo html da stringhe per creare il box del messaggio 
+		 			let placeholder = document.createElement('div');
+			 		placeholder.insertAdjacentHTML('afterbegin', htmlMsg);
+			 		
+			 		let message = placeholder.firstElementChild;
+			 		
+			 		//console.log(message);
+			 		//appendo il messaggio dentro il suo container di messaggi
+			 		document.getElementById('msg-container').append(message);
+		 		});	
+		 	}
+		 	
+		 	function startRefreshing(request){
+	 			refreshInterval= setInterval(() => {
+	 				sendRequest(request,false);
+	 				console.log('finito timer')},2000);
+		 	}
+	</script>
 </body>
 </html>
