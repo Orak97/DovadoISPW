@@ -6,23 +6,23 @@ import java.time.LocalDateTime;
 
 public class Message {
 	private String msgText;
-	private long user;
+	private String userName;
 	private LocalDateTime sentDate;
 	
 	public Message() {
-		this(0,"");
+		this("","");
 	}
 
-	public Message (long user, String msgText) {
+	public Message (String user, String msgText) {
 		
-	   this.user = user;
+	   this.userName = user;
 	   this.msgText = msgText;
 	   this.sentDate = LocalDateTime.now();		
 	}
 	
-	public Message (long user, String msgText,LocalDateTime time) {
+	public Message (String user, String msgText,LocalDateTime time) {
 		
-		   this.user = user;
+		   this.userName = user;
 		   this.msgText = msgText;
 		   this.sentDate = time;		
 		}
@@ -31,7 +31,7 @@ public class Message {
 	public boolean equals(Message m) {
 		if ( m != null) {
 			
-			return this.user == m.getUsr() &&
+			return this.userName == m.getUsr() &&
 					this.getMsgSentDate().equals(m.getMsgSentDate()) &&
 					 this.msgText == m.getMsgText()	;
 		}
@@ -43,8 +43,8 @@ public class Message {
 	
 	}
 	
-	public long getUsr() {
-		return this.user;
+	public String getUsr() {
+		return this.userName;
 	}		
 	
 	

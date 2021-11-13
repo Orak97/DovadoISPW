@@ -27,7 +27,7 @@ public class Channel {
 	}
 
 
-	public void addMsg(long user, String msgText) {
+	public void addMsg(String user, String msgText) {
 
 		Message newMessage = new Message(user, msgText); 
 		listOfMsg.add(newMessage);
@@ -73,9 +73,9 @@ public class Channel {
 	}
 
 
-	public void addMsg(Long userID, String message, LocalDateTime time) {
+	public void addMsg(String userName, String message, LocalDateTime time) {
 
-		Message newMessage = new Message(userID, message, time); 
+		Message newMessage = new Message(userName, message, time); 
 		listOfMsg.add(newMessage);
 		
 	}

@@ -166,6 +166,32 @@ public class PartnerRegisterView implements Initializable{
 		    popup.setAutoHide(true);
 			return;
     	}
+		
+		if(password.length()<8) {
+			
+			Log.getInstance().getLogger().info("The password isn't long enough!");
+			final Popup popup = new Popup(); popup.centerOnScreen();
+			 
+		    Text passwordNotEqualTxt = new Text("Password must"+'\n'+"at least be"+'\n'+"8 letters long");
+		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
+		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
+		    
+		    Circle c = new Circle(0, 0, 70, Color.valueOf("212121"));
+		    
+		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
+		    
+		    c.setStrokeType(StrokeType.OUTSIDE);
+		    c.setStrokeWidth(0.3);
+		    c.setStroke(Paint.valueOf(BGCOLORKEY));
+		    
+		    popup.getContent().add(popupContent);
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
+			return;
+			
+		}
+		
 		daoSu = DAOSuperUser.getInstance();
 		
 		if(daoSu.findSuperUserByEmail(email) != null) {

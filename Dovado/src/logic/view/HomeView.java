@@ -60,7 +60,7 @@ import logic.model.User;
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
 	private static final  String BGUCOLORKEY = "BC9416";
-	private static final  String MAPPATHKEY = "http://localhost:8614/Dovado/map.html";
+	private static final  String MAPPATHKEY = "file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/map.html";
 	//botton KEYS
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
@@ -258,11 +258,11 @@ public class HomeView implements Initializable{
 				ArrayList<SuperActivity> activities = new ArrayList<>();
 				
 				eng = map.getEngine();
-				eng.load(MAPPATHKEY);
 				
 				// Setting permissions to interact with Js
 		        eng.setJavaScriptEnabled(true);
-		        
+		        eng.load(MAPPATHKEY);
+				
 		        searchButton.setText("SEARCH");
 				searchButton.getStyleClass().add(BTNSRCKEY);
 		   
@@ -448,7 +448,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
 								Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
 							}
-							activitySelected.getChannel().addMsg(user.getUserID(), mss.getText());
+							activitySelected.getChannel().addMsg(user.getUsername(), mss.getText());
 							
 							//TODO Nel metodo chiamato non conviene passare solo l'attivit� selezionata e da l� estrapolare gli altri parametri essendo tutti derivati? P.S:ho gi� levato uno dei parametri
 							daoCH.updateChannelInJSON(activitySelected.getChannel().getChat(), activitySelected);
@@ -690,7 +690,7 @@ private void updateChat(ListView chat, Channel ch) {
 		Text msstxt = new Text();
 		Text username = new Text();
 		Text dateSent = new Text();
-		String usernameMss = daoSU.findSuperUserByID(ch.getChat().get(i).getUsr()).getUsername();
+		String usernameMss = ch.getChat().get(i).getUsr();
 		
 		//Mi trovo lo username da mettere sopra il messaggio:
 		username.setText(usernameMss);

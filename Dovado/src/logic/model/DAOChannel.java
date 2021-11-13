@@ -167,7 +167,7 @@ public class DAOChannel {
 						Log.getInstance().getLogger().info("\n\nMessaggio scritto: "+mss.get(MTXTKEY)+"\n\n");
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy'  'HH:mm");
 						
-						chFound.addMsg((Long)mss.get(UIDKEY), (String)mss.get(MTXTKEY),LocalDateTime.parse((String)mss.get(DATESENTKEY),dtf));
+						chFound.addMsg(DAOSuperUser.getInstance().findSuperUserByID((Long)mss.get(UIDKEY)).getUsername(), (String)mss.get(MTXTKEY),LocalDateTime.parse((String)mss.get(DATESENTKEY),dtf));
 					}
 					return chFound;
 				}

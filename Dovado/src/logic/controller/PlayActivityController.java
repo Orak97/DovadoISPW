@@ -12,7 +12,7 @@ public class PlayActivityController {
 		this.activity = activity;
 	}
 	
-	public void readOnChannell(int user) {
+	public void readOnChannell(String user) {
 		
 		if (this.cController == null) {
 			
@@ -37,7 +37,7 @@ public class PlayActivityController {
 		}
 	}
 	
-	public void writeOnChannell(int user, String textMsg) {
+	public void writeOnChannell(String user, String textMsg) {
 		cController.writeMessage(user, textMsg);
 		}
 }

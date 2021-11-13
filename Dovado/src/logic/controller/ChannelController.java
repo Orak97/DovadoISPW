@@ -12,12 +12,12 @@ public class ChannelController {
 		this.channell = activity.getChannel();
 		}
 	
-	public void writeMessage(int user, String textMsg) {
+	public void writeMessage(String user, String textMsg) {
 		this.channell.addMsg(user, textMsg);
 	}
 	
 	
-	public List<String[]> formattedChat(int user){
+	public List<String[]> formattedChat(String user){
 		ArrayList<Message> listOfMsg = (ArrayList<Message>) this.channell.getChat();
 		ArrayList<String[]> chat = new ArrayList<>();
 		String[] msg;
@@ -26,7 +26,7 @@ public class ChannelController {
 		}
 		for (int i = 1; i < listOfMsg.size() ; i++) {
 			msg = new String[2];
-			if (listOfMsg.get(i).getUsr() == user) {
+			if (listOfMsg.get(i).getUsr().equals(user)) {
 				msg[0] = "0";
 			}
 			else msg[0] = "1";
