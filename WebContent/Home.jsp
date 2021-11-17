@@ -110,7 +110,7 @@
 				</div>
 				<div class="d-flex msg-bar">
 					<input type="text" class="form-control flex-grow-1" id="chatField" placeholder="scrivi qualcosa"> 
-					<button type="button" class="btn btn-outline-light send-btn disabled" id="send-btn"> <i class="bi bi-send"></i> </button>
+					<button type="button" class="btn btn-outline-light send-btn disabled" id="send-btn" onclick="sendMsg()"> <i class="bi bi-send"></i> </button>
 				</div>
 			</div>
 			
@@ -229,6 +229,7 @@
 		 	//---------------------------------------------------------------
 		 	
 		 	var refreshInterval;
+		 	var chat;
 		 	
 			//disabilito il bottone se non ho testo da inviare
  			var chatField = document.getElementById('chatField');
@@ -243,6 +244,9 @@
 		 		//rendo visibile la chat nel caso non lo sia già
 		 		document.getElementById('chat').classList.remove('visually-hidden');
 		 		
+		 		//nascondo la mappa -DA RIVEDERE-
+				document.getElementById('map').classList.add("visually-hidden");
+		 		
 		 		//cancello il timer di refresh nel caso sia attivo
 		 		if(refreshInterval != undefined)
 		 		clearInterval(refreshInterval);
@@ -250,55 +254,25 @@
 		 		//imposto un intervallo per refreshare la chat
 		 		startRefreshing(request);
 		 		
-		 		sendRequest(request,true);
-		 	}
-		 	
-		 	
-		 	function sendMsg(activity){
-		 		var message = document.getElementById("chatField").value;
-		 		
-		 		
-		 		//TODO: primo controllo che il campo non sia vuoto
-		 		if(message=='') alert('Chiudi console sviluppatore, è molto poco carino da parte tua voler rompere il sito 🥺')
-		 		
-		 		else{
-		 			let request = "chat.jsp?activity="+activity+"&textMsg="+message;
-		 			sendRequest(request,true);
-		 			
-		 			//pulisco l'input di invio DOPO che ho inviato e riblocco il pulsante
-		 			document.getElementById('chatField').value = '';
-		 			document.getElementById('send-btn').classList.add("disabled");
-		 		}
-		 	}
-		 	
-		 	function sendRequest(request,firstLoad){
 		 		//step 1: genero oggetto per richiesta al server
 		 		var req = new XMLHttpRequest();
 		 		
 		 		
 		 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
 		 		req.onload = function(){
-		 			
-		 			//controllo che non ci siano già chat aperte, in caso le chiudo
-			 		let existingChat = document.getElementById('chat');
-			 		if(existingChat != null) existingChat.classList.remove('visually-hidden');
-		 			
-		 			
-					console.log(this);
+					console.log(this);	
+					chat = this.response;
 					
-					//pulisco la chat
-					document.getElementById('msg-container').innerHTML='';
-;					
-					populateChat(this.response, firstLoad);
-					
-					//nascondo la mappa -DA RIVEDERE-
-					document.getElementById('map').classList.add("visually-hidden");
-					
-					if(firstLoad){
-						//comando per scrollare in fondo alla chat
-						let chat = document.getElementsByClassName('chatroom')[0];
-				 		chat.scrollTop = chat.scrollHeight;
-					}
+					console.log(chat);
+			 		
+			 		//imposto il titolo del canale
+			 		document.getElementById('chatTitle').innerText = chat.activityName+"'s channel";
+			 		
+			 		clearChat();
+			 		
+			 		populateChat(chat.messages);
+			 		
+			 		scrollToBottomChat()
 		 		}
 		 		
 		 		//step 3: dico quale richiesta fare al server
@@ -310,19 +284,74 @@
 				req.send();
 		 	}
 		 	
-		 	function populateChat(chat,firstLoad){
+		 	
+		 	function sendMsg(){
+		 		var message = document.getElementById("chatField").value;
+		 		let activity = chat.activityId;
 		 		
-		 		//imposto il titolo del canale
-		 		if(firstLoad) document.getElementById('chatTitle').innerText = chat.activityName+"'s channel";
+		 		//TODO: primo controllo che il campo non sia vuoto
+		 		if(message=='') alert('Chiudi console sviluppatore, è molto poco carino da parte tua voler rompere il sito 🥺')
 		 		
-		 		//imposto l'action del bottone
-
-		 		if(firstLoad) document.getElementById('send-btn').addEventListener("click", function(){sendMsg(chat.activityId)}, {"once": true});
+		 		else{
+		 			let request = "chat.jsp?activity="+activity+"&textMsg="+message;
+		 			//chat = sendRequest(request);
+		 			
+		 			//----------------------------------------AJAX----------------------------------------------
+		 			//step 1: genero oggetto per richiesta al server
+			 		var req = new XMLHttpRequest();
+			 		
+			 		
+			 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+			 		req.onload = function(){
+						console.log(this);	
+						chat = this.response;
+						
+						clearChat();
+						populateChat(chat.messages);
+			 			scrollToBottomChat()
+			 			
+			 			//pulisco l'input di invio DOPO che ho inviato e riblocco il pulsante
+			 			document.getElementById('chatField').value = '';
+			 			document.getElementById('send-btn').classList.add("disabled");
+			 		}
+			 		
+			 		//step 3: dico quale richiesta fare al server
+					req.open("GET", request);
+					//step 3.1 : imposto document come response type, perché sto per ricevere html html
+					req.responseType = "json";
+					
+					//step 4: invio la richiesta 
+					req.send();
+		 			
+			 		//-----------------------------------Fine AJAX----------------------------------------------
+		 			
+		 		}
+		 	}
+		 	
+		 	function sendRequest(request){
+		 		//step 1: genero oggetto per richiesta al server
+		 		var req = new XMLHttpRequest();
 		 		
-		 		console.log(chat.messages);
 		 		
+		 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+		 		req.onload = function(){
+					console.log(this);	
+					this.response;
+		 		}
 		 		
-		 		chat.messages.forEach( curr => {
+		 		//step 3: dico quale richiesta fare al server
+				req.open("GET", request);
+				//step 3.1 : imposto document come response type, perché sto per ricevere html html
+				req.responseType = "json";
+				
+				//step 4: invio la richiesta 
+				req.send();
+		 	}
+		 	
+		 	function populateChat(messages){
+		 		
+		 		//console.log(messages);		 		
+		 		messages.forEach( curr => {
 		 					
 		 			let htmlMsg = '<div class="row d-flex '+(curr.sender == chat.user ? 'justify-content-end' : 'justify-content-start')+'">';
 		 			htmlMsg+= ' <div class="toast show message '+(curr.sender == chat.user ? 'msg-sent' : 'msg-recieved')+'" role="alert" aria-live="assertive" aria-atomic="true">';
@@ -347,9 +376,46 @@
 		 	
 		 	function startRefreshing(request){
 	 			refreshInterval= setInterval(() => {
-	 				sendRequest(request,false);
-	 				console.log('finito timer')},2000);
+	 				//step 1: genero oggetto per richiesta al server
+			 		var req = new XMLHttpRequest();
+			 		
+			 		
+			 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+			 		req.onload = function(){
+						console.log(this);	
+						let newChat = this.response;
+						if( JSON.stringify(chat) !=  JSON.stringify(newChat)){
+		 					clearChat();
+		 					chat = newChat;
+		 					populateChat(chat.messages);
+		 					scrollToBottomChat();
+		 				}
+			 		}
+			 		
+			 		//step 3: dico quale richiesta fare al server
+					req.open("GET", request);
+					//step 3.1 : imposto document come response type, perché sto per ricevere html html
+					req.responseType = "json";
+					
+					//step 4: invio la richiesta 
+					req.send();
+	 				//aggiorno la chat solo se ci sono nuovi messaggi
+	 				console.log('finito timer');
+	 				}
+	 			,2000);
 		 	}
+		 	
+		 	function scrollToBottomChat(){
+		 		//comando per scrollare in fondo alla chat
+				let chat = document.getElementsByClassName('chatroom')[0];
+		 		chat.scrollTop = chat.scrollHeight;
+		 	}
+		 	
+		 	function clearChat(){
+		 		//pulisco la chat
+				document.getElementById('msg-container').innerHTML='';
+		 	}
+		 	
 	</script>
 </body>
 </html>
