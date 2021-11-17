@@ -104,7 +104,7 @@
 			<div class="col-8 chat d-flex flex-column visually-hidden" id="chat">
 				<div class="chat-bar d-flex">
 					<div class="text-center text-white flex-grow-1 fs-2" id="chatTitle"></div>
-					<button type="button" class="btn-close btn-close-white me-2 m-auto" aria-label="Close"></button>
+					<button type="button" class="btn-close btn-close-white me-2 m-auto" aria-label="Close" id="closeChat"></button>
 				</div>
 				<div class="container-fluid chatroom flex-grow-1" id="msg-container">
 				</div>
@@ -236,6 +236,22 @@
  			chatField.addEventListener('keyup', ()=>{
  				if(chatField.value.length > 0) document.getElementById('send-btn').classList.remove("disabled");
  				else document.getElementById('send-btn').classList.add("disabled");
+ 			});
+ 			
+ 			document.getElementById('closeChat').addEventListener('click', ()=>{
+ 				
+ 				//stop refreshing
+ 				if(refreshInterval != undefined) clearInterval(refreshInterval);
+ 				
+ 				clearChat();
+ 				
+ 				//rendo visibile la chat nel caso non lo sia già
+		 		document.getElementById('chat').classList.add('visually-hidden');
+		 		
+		 		//nascondo la mappa -DA RIVEDERE-
+				document.getElementById('map').classList.remove("visually-hidden");
+ 				
+ 				
  			});
 		 	
 		 	function loadChat(activity){
