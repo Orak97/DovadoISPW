@@ -47,7 +47,7 @@
       			<label for="emailID">Email address</label>
     		</div>
     		<div class="form-floating">
-      			<input type="password" class="form-control" id="passwordID" name="password"  placeholder="Password" pattern=".{8,}" maxlength="20" required>
+      			<input type="password" class="form-control" id="passwordID" name="password"  placeholder="Password"  maxlength="20" required>
       			<label for="passwordID">Password</label>
     		</div>    		   
  			<button class="w-100 btn btn-lg btn-dark" type="submit" name="logForm"  value="Login">Sign in</button>       
@@ -55,6 +55,7 @@
       <%--   Implementa Dimenticata  <a href="#">Password</a>   --%>    
     </form>   
     <p class="mt-5 mb-3 text-muted">Se ancora non sei registrato clicca <a href="register.jsp"> qui </a></p>
+    <p class="mt-5 mb-3 text-muted">Hai un'attività commerciale e vuoi farla conoscere sulla piattaforma? clicca <a href="loginPartner.jsp"> qui </a></p>
   </div>
 </main>
   

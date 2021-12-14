@@ -6,19 +6,32 @@ import java.util.List;
 import logic.model.*;
 public class ChannelController {
 	
-	private Channel channell;	
+	private Channel channel;	
+	private DAOChannel dao = DAOChannel.getInstance();
 	
 	public ChannelController(Activity activity) {
-		this.channell = activity.getChannel();
+		this.channel = activity.getChannel();
 		}
 	
 	public void writeMessage(String user, String textMsg) {
-		this.channell.addMsg(user, textMsg);
+		this.channel.addMsg(user, textMsg);
+	}
+	
+	/*SPAGHETTI CODE:
+	 * 
+	 * Credo sia necessario che il Controller sia collegato al DAO in maniera migliore
+	 * forse dando come parametro una SuperActivity si risparmia ma credo si violi la legge di Demetra
+	 * also: come mai channel deve passare la lista di messaggi per salvare in persistenza?
+	 * 
+	 * */
+	public void writeMessage(String user, String textMsg, SuperActivity activity) {
+		this.channel.addMsg(user, textMsg);
+		this.dao.updateChannelInJSON(this.channel.getChat(), activity);
 	}
 	
 	
 	public List<String[]> formattedChat(String user){
-		ArrayList<Message> listOfMsg = (ArrayList<Message>) this.channell.getChat();
+		ArrayList<Message> listOfMsg = (ArrayList<Message>) this.channel.getChat();
 		ArrayList<String[]> chat = new ArrayList<>();
 		String[] msg;
 		if (listOfMsg.size() == 1) {

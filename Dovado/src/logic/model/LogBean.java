@@ -8,7 +8,7 @@ public class LogBean {
 	private String error;
 	
 	//Qui vanno differenziati partner e user 
-	private SuperUser sUser;
+	private User user;
 	private LoginController logController;
 
 	public LogBean() {
@@ -42,17 +42,17 @@ public class LogBean {
 	    this.error = error;
 	} 
 	
-	public SuperUser getUser() {
-		return sUser;
+	public User getUser() {
+		return user;
 	}
 	
-	public void setUser(SuperUser sUser) {
-		this.sUser = sUser;
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
-	public boolean validate() {
-		sUser = logController.findUser(email, password);
-		if (sUser == null) {
+	public boolean validate() throws Exception {
+		user = logController.loginExplorer(email, password);
+		if (user == null) {
 			error = "Mail o password errate";
 			Log.getInstance().getLogger().info("login failed");
 			return false;
