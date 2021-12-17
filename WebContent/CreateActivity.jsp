@@ -20,7 +20,7 @@
 		//controllo se place name è null, se non lo è ho fatto una request per creare un posto, istanzio il createplacecontroller etc etc
 		if(request.getParameter("placeName")!=null){
 			SuperUser u = (User) session.getAttribute("user");
-			SpotPlaceController spController = new SpotPlaceController(u, spotPlaceBean);
+			SpotPlaceController spController = new SpotPlaceController(spotPlaceBean);
 			
 			if(spController.spotPlace()) out.println("posto creato");
 			else out.println("posto NON creato");
@@ -31,8 +31,8 @@
 		if(request.getParameter("openingDate")!= null){
 			SuperUser u = (User) session.getAttribute("user");
 			CreateActivityController c = new CreateActivityController(u,createActivityBean);
-			Place place = (Place) DAOPlace.getInstance().findPlaceById(Long.parseLong(request.getParameter("place")));
-			c.createActivity("ciao", place);
+			//Place place = (Place) DAOPlace.getInstance().findPlaceById(Long.parseLong(request.getParameter("place")));
+			//c.createActivity("ciao", place);
 			out.println("fatto");
 		
 		}
@@ -51,7 +51,7 @@
 		</div>
 	 <% } else {
 		String comune = request.getParameter("comune");
-		ArrayList<Place> places = (ArrayList<Place>)DAOPlace.getInstance().findPlacesByNameOrCity(comune,0);
+		ArrayList<Place> places = (ArrayList<Place>)DAOPlace.getInstance().searchPlaces(comune);
 		%>
 		
 		<div class= "row p-3">

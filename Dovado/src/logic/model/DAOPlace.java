@@ -1,29 +1,28 @@
 package logic.model;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+
 
 public class DAOPlace {
 	
 	private static DAOPlace INSTANCE;
-	private static final  String PLACEJSON = "WebContent/places.json" ;
-	private static final  String PLACESKEY = "places";
-	private static final  String NAMEKEY = "name";
-	private static final  String REGIONKEY = "region";
-	private static final  String CITYKEY = "city";
-	private static final  String ADDRESSKEY = "address";
-	private static final  String CIVICOKEY = "civico";
-	private static final  String ACTIVITIESKEY = "activities";
-	private static final  String IDKEY = "id";
-	private static final  String OWNERKEY = "owner";
-
+	
+	//----------database--------------------------------------
+	
+	private static String USER = "sav"; //DA CAMBIARE
+	private static String PASSWORD = "pellegrini"; //DA CAMBIARE
+	private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
+	private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+			
+	//------------------------------------------------------------
 	
 	
 	private DAOPlace() {
@@ -34,212 +33,124 @@ public class DAOPlace {
 			INSTANCE = new DAOPlace();
 		return INSTANCE;
 	}
+	
+	public List<Place> searchPlaces(String str) throws Exception {
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+        
+        ArrayList<Place> places = new ArrayList<Place>();
+        
+        try {
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+            
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+            
+            //STEP4.1: preparo la stored procedure
+            String call =  "{call search_places(?)}";
+            
+            stmt = conn.prepareCall(call);
+            
+            stmt.setString(1,str);
+            
+            if(!stmt.execute()) {
+            	//NOTA: restituisce true solo è un result set, quindi non usare per le operazioni CURD!!!
+            	Exception e = new Exception("Sembra che non esista nessun luogo per: "+str);
+            	throw e;
+            };
+            
+            ResultSet rs = stmt.getResultSet();
+            
+            
+            while(rs.next()) {
+            	Place p = new Place(
+            			rs.getLong("idLuogo"),
+            			rs.getString("nome"),
+            			rs.getString("indirizzo"),
+            			rs.getString("citta"),
+            			rs.getString("regione"),
+            			rs.getString("civico"),
+            			rs.getString("cap")
+            			);
+            	places.add(p);
+            }
+            
+            rs.close();
+        }finally {
+            // STEP 5.2: Clean-up dell'ambiente
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            	throw(se2);
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+                	System.out.println("Disconnetted database successfully...");
+                	
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+        
+        return places;
+	}
 
-	public String getJsonFileName() {
-		return PLACEJSON;
-	}
-	//Aggiunto un metodo per trovare un posto tramite ID, utile durante la reistanzazione da persistenza delle attivita.
-	public Place findPlaceById(Long id) {
-		return findPlace(null, null, null, id);
-	}
-	public Place findPlaceInJSON(String name, String city, String region) {
-		return findPlace(name, city, region, null);
+	public int spotPlace(String address, String placeName, String city, String region, String civico, String cap) throws Exception{
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+        
+        try {
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+            
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+            
+            //STEP4.1: preparo la stored procedure
+            String call =  "{call create_place(?,?,?,?,?,?)}";
+            
+            
+            
+            stmt = conn.prepareCall(call);
+            
+            stmt.setString(1,placeName);
+            stmt.setString(2,address);
+            stmt.setString(3,city);
+            stmt.setString(4,region);
+            stmt.setString(5,civico);
+            stmt.setString(6,cap);
+              
+            
+        }finally {
+            // STEP 5.2: Clean-up dell'ambiente
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            	throw(se2);
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+                	System.out.println("Disconnetted database successfully...");
+                	
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+        
+        
+		return 1;
 	}
 	
-	public List<Place> findPlacesByNameOrCity(String keyword,int mode) {
-		JSONParser parser = new JSONParser();
-		int i;
-		ArrayList<Place> placesFound = new ArrayList<>();
-		DAOSuperUser daoSu = DAOSuperUser.getInstance();
-		try 
-		{
-			Object places = parser.parse(new FileReader(PLACEJSON));
-			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get(PLACESKEY);
-			JSONObject result;
-			boolean expression;
 
-			for(i=0;i<placeArray.size();i++) 
-			{
-				result = (JSONObject)placeArray.get(i);
-				
-				String namePrint = (String) result.get(NAMEKEY);
-				String cityPrint = (String) result.get(CITYKEY);
-				String regionPrint = (String) result.get(REGIONKEY);
-				
-				if(keyword == null) {
-					expression = true;
-				} else {
-					if(mode==0) {
-						expression = (keyword.toUpperCase()).equals(cityPrint.toUpperCase());
-					}
-					else if(mode==1) {
-						expression = (keyword.toUpperCase()).equals(namePrint.toUpperCase());
-					}
-					else if (mode==2) {
-						expression = (keyword.toUpperCase()).equals(regionPrint.toUpperCase());
-					}
-					else {
-						expression = false;
-					}
-				}
-				
-				if (expression) {
-					Place placeFound = new Place(namePrint,(String) result.get(ADDRESSKEY),cityPrint,regionPrint,(String) result.get(CIVICOKEY),(Partner) daoSu.findSuperUserByID((Long)result.get(OWNERKEY)));
-					placeFound.setId((Long) result.get(IDKEY));
-					
-					placesFound.add(placeFound);
-					
-				}
-				
-			}
-			return placesFound;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-			}
-	}
 	
-	public Place findPlace (String name, String city, String region,Long id) {
-		JSONParser parser = new JSONParser();
-		int i;
-		DAOSuperUser daoSu = DAOSuperUser.getInstance();
-		try 
-		{
-			Object places = parser.parse(new FileReader(PLACEJSON));
-			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get(PLACESKEY);
-			JSONObject result;
-			boolean expression;
-
-			for(i=0;i<placeArray.size();i++) 
-			{
-				result = (JSONObject)placeArray.get(i);
-				
-				Long idJSON = (Long) result.get(IDKEY);
-				String namePrint = (String) result.get(NAMEKEY);
-				String cityPrint = (String) result.get(CITYKEY);
-				String regionPrint = (String) result.get(REGIONKEY);
-				
-				if (id != null) {
-					expression = idJSON.equals(id);
-				} else {
-					expression = name.equals(namePrint) && city.equals(cityPrint) && region.equals(regionPrint);
-				}
-				
-				if (expression) {
-					Place placeFound = new Place(namePrint,(String) result.get(ADDRESSKEY),cityPrint,regionPrint,(String) result.get(CIVICOKEY),(Partner) daoSu.findSuperUserByID((Long)result.get(OWNERKEY)));
-					placeFound.setId((Long) result.get(IDKEY));
-					return placeFound;
-				}
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-			}
-		return null;
-	}
-	
-	
-	public int addPlaceToJSON(String address, String name, String city, String region,String civico, Partner owner) {
-		int i;
-		int id=0;
-		
-		JSONParser parser = new JSONParser();
-		JSONObject newPlace = new JSONObject();
-		JSONArray newPlaceActivities = new JSONArray();
-		
-		newPlace.put(ADDRESSKEY, address);
-		newPlace.put(CIVICOKEY, civico);
-		newPlace.put(NAMEKEY, name);
-		newPlace.put(CITYKEY, city);
-		newPlace.put(REGIONKEY, region);
-		newPlace.put(ACTIVITIESKEY, newPlaceActivities);
-		if(owner!=null)
-			newPlace.put(OWNERKEY, owner.getUserID());
-		else 
-			newPlace.put(OWNERKEY, null); 
-		
-		try 
-		{
-			Object places = parser.parse(new FileReader(PLACEJSON));
-			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get(PLACESKEY);
-			JSONObject result;
-			
-			for(i=0;i<placeArray.size();i++) 
-			{
-				result = (JSONObject)placeArray.get(i);
-
-				String addressPrint = (String) result.get(ADDRESSKEY);
-				String civicoPrint = (String) result.get(CIVICOKEY);
-				String namePrint = (String) result.get(NAMEKEY);
-				String cityPrint = (String) result.get(CITYKEY);
-				String regionPrint = (String) result.get(REGIONKEY);
-				
-				if(address.equals(addressPrint) && civico.equals(civicoPrint) && name.equals(namePrint) && city.equals(cityPrint) && region.equals(regionPrint))
-					return ((Long) result.get(IDKEY)).intValue();
-			}
-			id=i;
-			newPlace.put(IDKEY, id);
-			placeArray.add(newPlace);
-			
-			try (FileWriter file = new FileWriter(PLACEJSON)){
-				file.write(place.toString());
-				file.flush();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return -1;
-			}
-		return id;
-	}
-
-	//Aggiunto per permettere la modifica di qualsiasi attributo in Place
-	//salvandola anche in persistenza.
-	public boolean updatePlaceJSON(Place p) {
-		
-		int i;
-		JSONParser parser = new JSONParser();
-		
-		try {
-			Object places = parser.parse(new FileReader(PLACEJSON));
-			JSONObject place = (JSONObject) places;
-			JSONArray placeArray = (JSONArray) place.get(PLACESKEY);
-			JSONObject result;
-			
-			for(i=0;i<placeArray.size();i++) 
-			{
-				result = (JSONObject)placeArray.get(i);
-
-				Long placeId = ((Long) result.get(IDKEY));
-				
-				/*--------------------PRINT DI CONTROLLO-----------------------------------------------*/
-				Log.getInstance().getLogger().info("Controllo di comparazione ID posti:");
-				Log.getInstance().getLogger().info(String.valueOf(p.getId()==(placeId)));
-				Log.getInstance().getLogger().info(String.valueOf(p.getOwner().getUserID()));
-				/*--------------------PRINT DI CONTROLLO-----------------------------------------------*/				
-				
-				if(p.getId()==(placeId)) {
-					//Salvo nella persistenza il proprietario con il suo nome. In futuro lo si potrebbe salvare in base all'id.
-					result.put(OWNERKEY, p.getOwner().getUserID());
-					placeArray.set(i, result);
-					break;
-				}
-			}
-			try (FileWriter file = new FileWriter(PLACEJSON)) {
-				file.write(place.toString());
-				file.flush();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-			}
-		return true;
-	}
-
 	
 }
