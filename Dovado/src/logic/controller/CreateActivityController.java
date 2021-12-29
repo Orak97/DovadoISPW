@@ -24,6 +24,17 @@ import logic.model.User;
 import logic.model.CreateActivityBean;
 
 public class CreateActivityController {
+	
+	/*
+	 * ---------------------------------------------------------
+	 * Tabella delle responsabilità
+	 * ---------------------------------------------------------
+	 * 
+	 * Q: chi si preoccupa di controllare che il luogo esista?
+	 * A: IL DMBS quando fa il controllo sulla foreign key 
+	 * 
+	 * */
+	
 	private SuperUser u;
 	private DAOActivity daoAc;
 	private CreateActivityBean bean;
@@ -35,6 +46,12 @@ public class CreateActivityController {
 		this.u= u;
 		this.bean = bean;
 		daoAc = DAOActivity.getInstance();
+	}
+	
+	public CreateActivityController(CreateActivityBean bean){
+		this.bean = bean;
+		daoAc = DAOActivity.getInstance();
+
 	}
 	
 	public void createActivity(String n, Place p) {
@@ -101,7 +118,7 @@ public class CreateActivityController {
 			//e importante nella ricostruzione delle attivita ricavate dalla persistenza.
 			
 			newActivity=Factory.createNormalActivity(name, u, p, bean.getOpeningLocalTime(), bean.getClosingLocalTime(), bean.getOpeningLocalDate(), bean.getEndLocalDate(), bean.getCadence());				
-			id = daoAc.addActivityToJSON(p,newActivity,"no");
+			//ERRid = daoAc.addActivityToJSON(p,newActivity,"no");
 			if(id<0) {
 				Log.getInstance().getLogger().warning(ERRNOCREATE);
 				return;
@@ -147,6 +164,29 @@ public class CreateActivityController {
 				return;
 			}else Log.getInstance().getLogger().log(Level.INFO,SHOWLOGID,id);
 			newActivity.setId(id);
+		}
+	}
+	
+	public void saveActivity() throws Exception {
+		/*
+		 * Medoto per chiamare il DAO, quello che controllo è che qua il tipo sia continua, periodica o a scadenza
+		 * 
+		 * */
+		
+		switch(bean.getType()) {
+			case CONTINUA:  
+				daoAc.createNormalActivity(bean.getActivityName(),bean.getActivityDescription(),null,null,bean.getPlace(),null,bean.isArte(),bean.isCibo(),bean.isMusica(),bean.isSport(),bean.isSocial(),bean.isNatura(),bean.isEsplorazione(),bean.isRicorrenze(),bean.isModa(),bean.isShopping(),bean.isAdrenalina(),bean.isMonumenti(),bean.isRelax(),bean.isIstruzione(),bean.getType().name(),bean.getOpeningLocalTime().toString(), bean.getClosingLocalTime().toString(), null, null,null);
+			break;
+			case PERIODICA:
+				daoAc.createNormalActivity(bean.getActivityName(),bean.getActivityDescription(),null,null,bean.getPlace(),null,bean.isArte(),bean.isCibo(),bean.isMusica(),bean.isSport(),bean.isSocial(),bean.isNatura(),bean.isEsplorazione(),bean.isRicorrenze(),bean.isModa(),bean.isShopping(),bean.isAdrenalina(),bean.isMonumenti(),bean.isRelax(),bean.isIstruzione(),bean.getType().name(),bean.getOpeningLocalTime().toString(), bean.getClosingLocalTime().toString(), bean.getOpeningLocalDate().toString(), bean.getEndLocalDate().toString(),bean.getCadence().name());
+			break;
+			case SCADENZA:
+				daoAc.createNormalActivity(bean.getActivityName(),bean.getActivityDescription(),null,null,bean.getPlace(),null,bean.isArte(),bean.isCibo(),bean.isMusica(),bean.isSport(),bean.isSocial(),bean.isNatura(),bean.isEsplorazione(),bean.isRicorrenze(),bean.isModa(),bean.isShopping(),bean.isAdrenalina(),bean.isMonumenti(),bean.isRelax(),bean.isIstruzione(),bean.getType().name(),bean.getOpeningLocalTime().toString(), bean.getClosingLocalTime().toString(), bean.getOpeningLocalDate().toString(), bean.getEndLocalDate().toString(),null);
+			break;
+			default:
+				//TODO: handle the error;
+			break;
+			
 		}
 	}
 	

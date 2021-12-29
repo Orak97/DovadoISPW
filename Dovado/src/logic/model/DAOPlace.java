@@ -127,6 +127,7 @@ public class DAOPlace {
             stmt.setString(5,civico);
             stmt.setString(6,cap);
               
+            stmt.execute();
             
         }finally {
             // STEP 5.2: Clean-up dell'ambiente
