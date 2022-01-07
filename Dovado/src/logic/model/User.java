@@ -37,6 +37,7 @@ public class User extends SuperUser{
 	private Schedule schedule;
 	private int wallet;
 	private String name;
+	private Preferences preferences;
 	
 	public User(String username, String email, Long id, Long wallet) {
 		super(username,email, id);
@@ -58,6 +59,14 @@ public class User extends SuperUser{
 	
 	public Schedule getSchedule() {
 		return schedule;
+	}
+
+	public Preferences getPreferences() {
+		return preferences;
+	}
+
+	public void setPreferences(Preferences preferences) {
+		this.preferences = preferences;
 	}
 	
 	

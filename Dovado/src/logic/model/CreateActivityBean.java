@@ -41,6 +41,9 @@ public class CreateActivityBean {
 	private boolean istruzione= false;
 	private boolean monumenti = false;
 	
+	private int idActivity;
+	private int owner;
+	
 	public LocalDate getOpeningLocalDate() {
 		return stringToLocalDate(openingDate);
 	}
@@ -255,6 +258,22 @@ public class CreateActivityBean {
 
 	public void setPlace(int place) {
 		this.place = place;
+	}
+
+	public int getOwner() {
+		return owner;
+	}
+
+	public void setOwner(int owner) {
+		this.owner = owner;
+	}
+
+	public int getIdActivity() {
+		return idActivity;
+	}
+
+	public void setIdActivity(int idActivity) {
+		this.idActivity = idActivity;
 	}
 
 }

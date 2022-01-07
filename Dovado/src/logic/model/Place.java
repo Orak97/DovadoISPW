@@ -9,20 +9,24 @@ public class Place {
 	private String address;
 	private String name;
 	private String cap;
+	private float latitudine;
+	private float longitudine;
 	
 	//Modificato l'arraylist di attivita in un array di long, in questo modo
 	//Verranno indicate le attivita a cui fa riferimento il posto mediante il loro id.
 	private ArrayList<Long> hostedActivities;
 	
-	public Place(Long id,String name,String address,String city,String region,String civico,String cap){
+	public Place(Long id,String name,String address,String city,String region,String civico,String cap, float latitudine, float longitudine){
 		this.id = id;
 		this.name = name;
 		this.address = address;
 		this.city = city;
 		this.region = region;
 		this.civico = civico;
-		this.cap = cap;
+		this.setCap(cap);
 		this.hostedActivities = new ArrayList<>();
+		this.latitudine = latitudine;
+		this.longitudine = longitudine;
 		
 	}
 
@@ -56,5 +60,29 @@ public class Place {
 
 	public Object getCivico() {
 		return this.civico;
+	}
+
+	public String getCap() {
+		return cap;
+	}
+
+	public void setCap(String cap) {
+		this.cap = cap;
+	}
+
+	public float getLatitudine() {
+		return latitudine;
+	}
+
+	public void setLatitudine(float latitudine) {
+		this.latitudine = latitudine;
+	}
+
+	public float getLongitudine() {
+		return longitudine;
+	}
+
+	public void setLongitudine(float longitudine) {
+		this.longitudine = longitudine;
 	}
 }
