@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User" %>
+    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity" %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
@@ -11,64 +11,63 @@
 	<jsp:useBean id="scheduleBean" scope="request" class="logic.model.ScheduleBean" />
 
 	<jsp:setProperty name="scheduleBean" property="*" />
+	
 	<%
 
 		if(request.getParameter("date")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
 		 //out.println("printo prop:"+scheduleBean.getScheduledDateTime());
+		 /*
 		 
-		SuperUser u = (User) session.getAttribute("user");
-		 
-		 try {
-			 out.println(u.getUsername());
-			 DAOActivity a = DAOActivity.getInstance();
-			 DAOSuperUser su = DAOSuperUser.getInstance();
-			 Long idA = scheduleBean.getIdActivity();
-			 SuperActivity att = a.findActivityByID(su,idA);
-			 ((User) u).getSchedule().addActivityToSchedule(att, scheduleBean.getScheduledDateTime(),scheduleBean.getScheduledDateTime(), u);
-		 }catch(Exception e){
-			 e.printStackTrace();
+		 ********************************************************
+		 * TODO: sistemare questa parte di schedule activity	* 
+		 ********************************************************
+			SuperUser u = (User) session.getAttribute("user");
+			 
+			 try {
+				 out.println(u.getUsername());
+				 DAOActivity a = DAOActivity.getInstance();
+				 DAOSuperUser su = DAOSuperUser.getInstance();
+				 Long idA = scheduleBean.getIdActivity();
+				 SuperActivity att = a.findActivityByID(su,idA);
+				 ((User) u).getSchedule().addActivityToSchedule(att, scheduleBean.getScheduledDateTime(),scheduleBean.getScheduledDateTime(), u);
+			 }catch(Exception e){
+				 e.printStackTrace();
+			 }
+		 */
 		 }
-		 }
-
-		
-		/*
-		Enumeration paramNames = request.getParameterNames();
-		while(paramNames.hasMoreElements()) {
-			String paramName = (String)paramNames.nextElement();
-			String paramValue = request.getParameter(paramName);
-			if(paramValue == "") out.println("zi, is null");
-			out.println(paramName+':'+paramValue);
-		} */
 		
 
 	%>
 
-	
-	
-	
-	
-
-	<% //tentativo di fare una home decente:
-		
-		DAOPreferences daoPref = DAOPreferences.getInstance();
-		DAOActivity daoAct = DAOActivity.getInstance();
-		DAOSuperUser daoSU = DAOSuperUser.getInstance();
-	
-		ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
-		
-		System.err.println("\n"+"Working Directory = " + System.getProperty("user.dir"));	
-		activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
-		activities.addAll(daoAct.findActivityByPreference(daoSU, "TENNIS"));
-
-		System.err.println("\n"+"\nNumero di attivita trovate: "+activities.size());
-	
-	%>
 	<div class="container-fluid home">
+	<% //tentativo di fare una home decente:
+		User utente = (User) session.getAttribute("user");
+		if(utente == null) response.sendRedirect("login.jsp");
+		
+		//controllo latiduine e longitudine, se sono 0 -> non è stata inizializzata -> porto l'utente alla pagina per attivare la geolocalizzazione
+		if(utente.getLatitude() == 0 || utente.getLongitude() == 0) response.sendRedirect("localization.jsp");
+		
+		
+		DAOActivity daoAct = DAOActivity.getInstance();
+		ArrayList<Activity> activities = new ArrayList<Activity>();
+		
+		try{
+			double userLat = 41.8901232;
+			double userLong = 12.4960768;
+			float maxDistance = 2.0f; //in km
+					
+			activities = daoAct.getNearbyActivities(userLat, userLong, maxDistance);
+		}catch(Exception e) {
+			//TODO: Fixare ASAP facendo comparire un messaggio di errore!!!!
+			e.printStackTrace();
+		}
+	%>
+	
 		<div class="row pt-6 home-body" id="home-body">
 		
 			<div class="col-4 events-list">
 			<div class="row row-cols-1 row-cols-md-1 g-1">
-			  <% for(SuperActivity curr:activities){ %>
+			  <% for(Activity curr:activities){ %>
 			  
 			  <div class="col" >
 			    <div class="card card-dark text-white" data-bs-toggle="collapse" href="#collapse<%= curr.getId() %>" aria-expanded="false" aria-controls="collapse<%= curr.getId() %>">
@@ -418,7 +417,7 @@
 	 				//aggiorno la chat solo se ci sono nuovi messaggi
 	 				console.log('finito timer');
 	 				}
-	 			,2000);
+	 			,30000);
 		 	}
 		 	
 		 	function scrollToBottomChat(){
