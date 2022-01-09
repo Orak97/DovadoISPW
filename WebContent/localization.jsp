@@ -1,41 +1,78 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
-<%@ page import = "java.io.*,java.util.*" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.User" %>
 
 <% application.setAttribute( "titolo" , "Home"); %>
 
 <%@ include file="Navbar.jsp" %>
 
+
+<%
+	if(request.getParameter("latitude") != null && request.getParameter("longitude") != null){
+		User usr = (User)session.getAttribute("user");
+		try{
+			String lat = request.getParameter("latitude");
+			String lng = request.getParameter("longitude");
+			
+			double latd = Double.parseDouble(lat);
+			double lngd = Double.parseDouble(lng);
+			
+			usr.setLatitude(latd);
+			usr.setLongitude(lngd);
+			
+			response.sendRedirect("Home.jsp");
+		}catch(Exception e){
+			
+			//TODO: unico modo per andare in errore qua è fare in modo che uno modifichi i campi esistenti con le proprie manine e l'editor sviluppatore
+			//dovremmo far comparire un messaggio di errore?
+			response.sendRedirect("localization.jsp");
+		}	
+	}
+
+%>
+
 <div class="container-fluid home">
 	
 	<div class="search-place justify-content-center">
-			<p class="text-center icon-kind text-white"><i class="bi bi-pin-map"></i></p> 
-			<h2 class="text-center text-white" id="headerLoc">Attiva la geolocalizzazione</h2>
-			<h4 class="text-center text-white" id="explanationLoc"> per funzionare, questa applicazione ha bisogno della tua posizione, ti preghiamo di attivarla accettando il box in alto a destra!</h4>
-			
-			<h5 class="text-center text-white" id="statusLocalization"></h5>
-			<div class="d-flex justify-content-center" id="spinnerLocalization">
-				<div class="spinner-grow text-light" role="status">
-				  <span class="visually-hidden">Loading...</span>
+				<p class="text-center icon-kind text-white"><i class="bi bi-pin-map"></i></p> 
+				<h2 class="text-center text-white" id="headerLoc">Attiva la geolocalizzazione</h2>
+				<h4 class="text-center text-white" id="explanationLoc"> per funzionare, questa applicazione ha bisogno della tua posizione, ti preghiamo di attivarla accettando il box in alto a destra!</h4>
+				
+				<h5 class="text-center text-white" id="statusLocalization"></h5>
+				<div class="d-flex justify-content-center" id="spinnerLocalization">
+					<div class="spinner-grow text-light" role="status">
+					  <span class="visually-hidden">Loading...</span>
+					</div>
 				</div>
-			</div>
 			
-			<div class="d-flex justify-content-center visually-hidden" id="mapContainer">
+			<div class="visually-hidden" id="mapContainer">
 				<div id="Map" class="localizationMap"></div>
 			</div>
 			
-			<div class="d-flex justify-content-center pt-1 visually-hidden">
-				<input type="text" class="form-control" id="placeField" name="src" placeholder="Nome,Luogo,Regione o via">
-				<button type="submit" class="btn btn-success search-btn" id="search-btn"><i class="bi bi-search"></i></button>
+			<h5 class="text-center text-white visually-hidden mt-3" id="retrievedAddress"></h5>
+			<div class="d-flex justify-content-center pt-1 visually-hidden" id="confirmButton">
+				<button type="button" class="btn btn-danger btn-lg reposition-btn" id="reposition-btn"><i class="bi bi-map"></i> No, fammi riposizionare</button>				
+				<form action="localization.jsp" method="GET">
+					<input type="text" class="visually-hidden" name="latitude" id="latField">
+					<input type="text" class="visually-hidden" name="longitude" id="longField">
+					<button type="submit" class="btn btn-success btn-lg lesgo-btn" id="lesgo-btn"><i class="bi bi-signpost-2"></i> Si, Dovado?</button>			
+				</form>
 			</div>
+			
 	</div>
 
 </div>
 
+
+<script src="js/map.js"></script>
 <script type="text/javascript">
 	const status = document.querySelector('#statusLocalization');
 	var mymap;
+	var lastMarker;
+	
+
+	document.querySelector('#reposition-btn').addEventListener('click', removeLastMark);
 	
 	if(!navigator.geolocation) {
 	    status.textContent = 'Geolocation is not supported by your browser';
@@ -56,29 +93,14 @@
 		document.querySelector('#explanationLoc').classList.add('visually-hidden');
 		document.querySelector('#headerLoc').classList.add('visually-hidden');
 		
-		//inizio copypaste di roba che sto cercando di capire ancora
-		mymap = L.map('Map').setView([latitude, longitude],5);
+		status.textContent = 'la tua posizione, con un accuratezza di circa '+accuracy+' metri è:';
 		
-		const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-		}); // Utilizzo le tiles di openstreetmap ponendo un link al sito (questione di copyright).
-		tiles.addTo(mymap);
-		
-		var searchControl = L.esri.Geocoding.geosearch().addTo(mymap);
-
-		var results = new L.LayerGroup().addTo(mymap);
-
-		searchControl.on('results',function(data){
-			results.clearLayers();
-			for(var i = data.results.length - 1; i >= 0; i--){
-				results.addLayer(L.marker(data.results[i].latlng));
-		  }
-		});
-		//fine copypaste dal robo di andre
-		
+		//faccio comparire la mappa:
 		document.querySelector('#mapContainer').classList.remove('visually-hidden');
+		startup(latitude,longitude);
+		lastMarker = setCoords(latitude,longitude);	
+		retrieveAddress(latitude,longitude);
 		
-		setCoords(latitude,longitude);
 	}
 	
 	function error() {
@@ -86,24 +108,54 @@
         document.querySelector('#spinnerLocalization').classList.add('visually-hidden');
 	}
 	
-	//funzione di andre:
-	
-	function setCoords(latitude,longitude){
-	  mymap.setView([latitude,longitude],5+10);
-	  var marker = L.marker([latitude,longitude]).addTo(mymap);
-	  //La linea sottostante aggiunge un popup con un messaggio, ma si può anche evitare.
-	  marker.bindPopup("<b>Ti trovi qui</b>").openPopup();
+	function retrieveAddress(latitude,longitude){
+		L.esri.Geocoding.reverseGeocode()
+		.latlng([latitude,longitude])
+		.run(function (error,result,response){
+			if (error) {
+				console.log(err);
+				return;
+			}
+			
+			console.log({result, response});
+			
+			//faccio comparire il "ti trovi vicino a..."
+			document.querySelector('#retrievedAddress').classList.remove('visually-hidden');
+			document.querySelector('#retrievedAddress').textContent = 'Ti trovi vicino a '+result.address.Match_addr+'?';
+			
+			//faccio comparire i pulsanti per confermare o smentire
+			document.querySelector('#confirmButton').classList.remove('visually-hidden');
+			
+			//imposto come testo i valori di latitutine e longitudine nascosti nel form
+			document.querySelector('#latField').value = latitude;
+			document.querySelector('#longField').value = longitude;
+		});
 	}
 	
-	function addMarker(latitude,longitude,placeName){
-	
-	  var marker = L.marker([latitude,longitude]).addTo(mymap);    //aggiungo un marker per indicare un posto speciale
-	  marker.bindPopup(placeName).openPopup();
-	  //e gli aggiungo un pop-up per indicare magari
-	  //un evento speciale o quel cazzo che ti pare.
+	function removeLastMark(){
+		document.querySelector('#retrievedAddress').textContent = 'Premi sulla mappa per indicare dove ti trovi!';
+		document.querySelector('#confirmButton').classList.add('visually-hidden');
+		
+		status.textContent = '';
+		
+		console.log(lastMarker);
+		
+		lastMarker.remove();
+		mymap.on('click', repositionMark);
 	}
 	
-	//fine funzioni di andre
+	function repositionMark(e){
+		mymap.off('click',repositionMark);
+		
+		let latitude = e.latlng.lat;
+		let longitude = e.latlng.lng;
+		
+		status.textContent = 'Anche se la via trovata non corrisponde, se hai posizionato bene il pin puoi andare avanti!';
+		
+		lastMarker = setCoords(latitude,longitude);
+		retrieveAddress(latitude,longitude);
+		
+	}
 
 </script>
 

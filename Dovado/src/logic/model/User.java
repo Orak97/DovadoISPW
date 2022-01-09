@@ -38,6 +38,8 @@ public class User extends SuperUser{
 	private int wallet;
 	private String name;
 	private Preferences preferences;
+	private double latitude;
+	private double longitude;
 	
 	public User(String username, String email, Long id, Long wallet) {
 		super(username,email, id);
@@ -67,6 +69,22 @@ public class User extends SuperUser{
 
 	public void setPreferences(Preferences preferences) {
 		this.preferences = preferences;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 	
 	
