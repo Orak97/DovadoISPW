@@ -18,4 +18,6 @@ public interface Activity {
 	FrequencyOfRepeat getFrequency();
 
 	void setIntrestedCategories(Preferences intrestedCategories);
+
+	void setChannel(Channel channel);
 }

@@ -10,8 +10,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import logic.model.Activity;
+import logic.model.Channel;
 import logic.model.ContinuosActivity;
 import logic.model.DAOActivity;
+import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DateBean;
 import logic.model.ExpiringActivity;
@@ -47,6 +49,7 @@ public class CreateActivityController {
 	private Place place;
 	private Activity newActivity;
 	private Long idActivity;
+	private Channel channel;
 	
 	//attributi solo per le certificate
 	private Partner owner;
@@ -79,6 +82,7 @@ public class CreateActivityController {
 		this.fillPreferences();
 		this.retrievePlace();
 		this.parseId();
+		this.createChannel();
 		
 		switch(bean.getType()) {
 		case CONTINUA:
@@ -99,6 +103,8 @@ public class CreateActivityController {
 		}
 		
 		newActivity.setIntrestedCategories(intrestedCategories);
+		
+		newActivity.setChannel(channel);
 		
 		return newActivity;
 		
@@ -204,6 +210,12 @@ public class CreateActivityController {
 					owner
 					);
 		}
+	}
+	
+	private void createChannel() throws Exception {
+		DAOChannel daoc = DAOChannel.getInstance();
+		channel = daoc.getChannel(idActivity);
+		
 	}
 	
 	private void parseId() {

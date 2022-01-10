@@ -95,9 +95,33 @@
 			</div>
 			
 			<%-- map --%>
-			<div class="col-8" id="map" style="overflow-y:hidden">
-				<iframe src="map.html" title="maps" id="map" style="width:100%; height:100%"></iframe> 
+			<div class="col-8" id="mapContainer">
+				<div id="Map" class="homeMap"></div>
 			</div>
+			
+			<%-- js for the map --%>
+			<script src="js/map.js"></script>
+			<script type="text/javascript">
+				var mymap;
+				var latitude = <%= utente.getLatitude() %>
+				var longitude = <%= utente.getLongitude() %>
+				
+				<%-- debugging mode: per assicurarmi che funziona, cancellare questo codice appena ne abbiamo la certezza --%>
+				latitude = 41.8901232;
+				longitude = 12.4960768;
+				<%-- fine del debuggin mode ayooo--%>
+				
+					
+				startup(latitude,longitude);
+				
+				
+				 <% for(Activity curr:activities){ %>
+				 	spotPlace(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, '<%= curr.getName() %>');
+				 <% }%>
+				 
+				 var lastMarker = setUser(latitude,longitude);
+				 
+			</script>
 		
 			<%-- chat --%>
 			<div class="col-8 chat d-flex flex-column visually-hidden" id="chat">
@@ -247,8 +271,8 @@
  				//rendo visibile la chat nel caso non lo sia già
 		 		document.getElementById('chat').classList.add('visually-hidden');
 		 		
-		 		//nascondo la mappa -DA RIVEDERE-
-				document.getElementById('map').classList.remove("visually-hidden");
+		 		//Faccio riapparire la mappa -DA RIVEDERE-
+				document.getElementById('mapContainer').classList.remove("visually-hidden");
  				
  				
  			});
@@ -260,7 +284,7 @@
 		 		document.getElementById('chat').classList.remove('visually-hidden');
 		 		
 		 		//nascondo la mappa -DA RIVEDERE-
-				document.getElementById('map').classList.add("visually-hidden");
+				document.getElementById('mapContainer').classList.add("visually-hidden");
 		 		
 		 		//cancello il timer di refresh nel caso sia attivo
 		 		if(refreshInterval != undefined)

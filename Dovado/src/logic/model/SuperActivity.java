@@ -81,6 +81,10 @@ public abstract class SuperActivity {
 		return this.channel;
 	}
 	
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
+	
 	public boolean playableOnThisDate(LocalDateTime timestamp) {
 		/*
 		 * Metodo usato per capire se questa attività è fattibile in un dato giorno

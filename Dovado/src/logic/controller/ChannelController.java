@@ -8,10 +8,18 @@ public class ChannelController {
 	
 	private Channel channel;	
 	private DAOChannel dao = DAOChannel.getInstance();
+	private SuperUser usr;
+	
+	private Long idActivity;
 	
 	public ChannelController(Activity activity) {
 		this.channel = activity.getChannel();
 		}
+	
+	public ChannelController(SuperUser usr,Long idActivity) {
+		this.usr = usr;
+		this.idActivity = idActivity;
+	}
 	
 	public void writeMessage(String user, String textMsg) {
 		this.channel.addMsg(user, textMsg);
@@ -48,5 +56,14 @@ public class ChannelController {
 			chat.add(msg);
 		}
 		return chat;
+	}
+	
+	//metodo da chiamare per inviare il messaggio sul DB
+	public void sendMessage(String content) throws Exception {
+		
+		//eseguire qui i controlli del contenuto!!!
+		
+		Long idSender = usr.getUserID();
+		dao.sendMsg(idActivity, content, idSender);
 	}
 }
