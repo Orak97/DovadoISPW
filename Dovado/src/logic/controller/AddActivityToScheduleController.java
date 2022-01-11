@@ -1,6 +1,11 @@
 package logic.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import logic.model.Activity;
+import logic.model.DAOActivity;
+import logic.model.DAOSchedules;
 import logic.model.DateBean;
 import logic.model.Schedule;
 import logic.model.SuperActivity;
@@ -43,18 +48,38 @@ public class AddActivityToScheduleController {
 	private User session;
 	private DateBean timestamp;
 	
+	private Schedule schedule = new Schedule();
+	
+	public AddActivityToScheduleController(Schedule schedule) {
+		this.schedule = schedule;
+	}
+	
 	public AddActivityToScheduleController(User usr, DateBean timestamp) {
 		session = usr;
 		this.timestamp= timestamp;
 	}
 	
 	//questo metodo andrebbe chiamato dal controller di playActivity
-	public void addActivityToSchedule(SuperActivity a) {
+	public void addActivityToSchedule(Long activity) throws Exception {
 		Schedule s = session.getSchedule();
+		DAOSchedules daoSc = DAOSchedules.getInstance();
 		
-		s.addActivityToSchedule((SuperActivity) a, timestamp.getScheduledTime(), timestamp.getReminderTime(), (SuperUser) session);
-	
+		Activity a = DAOActivity.getInstance().getActivityById(activity);
+		
+		s.addActivityToSchedule(a, timestamp.getScheduledTime(), timestamp.getReminderTime());
+		daoSc.addActivityToSchedule(session.getUserID(),activity,timestamp.getScheduledTime(),timestamp.getReminderTime());
 	}
+	
+	//questo metodo va chiamato dal DAOSchedules!!
+	public void addActivityToSchedule(Long activity, String scheduled_time, String reminder_time) throws Exception {		
+		Activity a = DAOActivity.getInstance().getActivityById(activity);
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime scheduledTime = LocalDateTime.parse(scheduled_time,dtf);
+		LocalDateTime reminderTime = LocalDateTime.parse(reminder_time,dtf);
+		
+		schedule.addActivityToSchedule(a, scheduledTime, reminderTime);
+	}
+	
 	
 
 }

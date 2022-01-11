@@ -1,6 +1,7 @@
 package logic.controller;
 
 import logic.model.DAOExplorer;
+import logic.model.DAOSchedules;
 import logic.model.DAOSuperUser;
 import logic.model.SuperUser;
 import logic.model.User;
@@ -20,6 +21,8 @@ private DAOSuperUser dao;
 	}
 	
 	public User loginExplorer(String email, String password) throws Exception {
-		return DAOExplorer.getInstance().login(email, password);
+		User u = DAOExplorer.getInstance().login(email, password);
+		u.setSchedule(DAOSchedules.getInstance().getSchedule(u.getUserID()));
+		return u;
 	}
 }

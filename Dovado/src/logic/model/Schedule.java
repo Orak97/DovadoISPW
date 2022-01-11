@@ -12,16 +12,12 @@ public class Schedule {
 		myActivity = new ArrayList<>();
 	}
 	
-	public void addActivityToSchedule(SuperActivity a, LocalDateTime scheduledTime, LocalDateTime reminderTime, SuperUser usr) {
+	public void addActivityToSchedule(Activity a, LocalDateTime scheduledTime, LocalDateTime reminderTime) {
 		ScheduledActivity s = new ScheduledActivity(a,scheduledTime,reminderTime);
 		//Salva in persistenza l'attività schedulata:
 
 		myActivity.add(s);
-		if(!daoSc.addScheduletoJSON(this, usr)) {
-			Log.getInstance().getLogger().warning("Errore nell'aggiunta dell'attività nello schedule.");
-			return;
-		}
-		Log.getInstance().getLogger().info("Aggiunta l'attività nello schedule.");
+		
 		
 	}
 	
