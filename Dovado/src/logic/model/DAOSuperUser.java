@@ -87,7 +87,7 @@ public class DAOSuperUser {
 			JSONObject result;
 			
 			//Aggiungo tutte le preferenze al nuovo JSONArray che ho creato.
-			preferences.addAll(su.getPreferences());
+			//preferences.addAll(su.getPreferences());
 			
 			//Fatto cio vado a cercare all'interno del JSON il SuperUser che ho come istanza.
 			for(i=0;i<userArray.size();i++) {
@@ -106,16 +106,16 @@ public class DAOSuperUser {
 						oldpref.add((String)oldpreferences.get(j));
 					}
 					
-					if(!su.getPreferences().equals(oldpref)) {
-						result.put(PREFKEY, preferences);
-						
-						try (FileWriter file = new FileWriter(USERJSON)){
-							file.write(userRes.toString());
-							file.flush();
-						}
-						return true;
-					} 
-					else return false;
+//					if(!su.getPreferences().equals(oldpref)) {
+//						result.put(PREFKEY, preferences);
+//						
+//						try (FileWriter file = new FileWriter(USERJSON)){
+//							file.write(userRes.toString());
+//							file.flush();
+//						}
+//						return true;
+//					} 
+//					else return false;
 				}
 			}			
 		} catch (Exception e) {
@@ -248,13 +248,12 @@ public class DAOSuperUser {
 		if(Long.compare((Long)result.get(PARTNERKEY),1L)==0) {
 
 			Log.getInstance().getLogger().info("Partner Trovato");
-			Partner partner = new Partner((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY));
-			partner.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
+			Partner partner = new Partner((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY), null, null);
 			return partner;
 		}
 		Log.getInstance().getLogger().info(String.valueOf(result.get(WALLETKEY)));
 		User user = new User((String) result.get(USERNAMEKEY),(String) result.get(EMAILKEY),(Long) result.get(IDKEY), (Long) result.get(WALLETKEY));
-		user.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
+		//user.setPreferences(((ArrayList<String>)result.get(PREFKEY)));
 		return user;	
 	}
 }

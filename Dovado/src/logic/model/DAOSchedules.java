@@ -22,8 +22,8 @@ public class DAOSchedules {
 	
 	//----------database--------------------------------------
 
-	private static String USER = "sav"; //DA CAMBIARE
-	private static String PASSWORD = "pellegrini"; //DA CAMBIARE
+	private static String USER = "dovado"; //DA CAMBIARE
+	private static String PASSWORD = "dovadogang"; //DA CAMBIARE
 	private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
 	private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 			
