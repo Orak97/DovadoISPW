@@ -1,6 +1,6 @@
 	<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-	<%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules, logic.model.SuperUser, logic.model.User, logic.model.Schedule, logic.model.ScheduledActivity " %>
+	<%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules, logic.model.SuperUser, logic.model.User, logic.model.Schedule, logic.model.ScheduledActivity, logic.controller.AddActivityToScheduleController " %>
 
 	<% application.setAttribute( "titolo" , "Schedule"); %>
 	
@@ -10,64 +10,51 @@
 
   <jsp:setProperty name="scheduleBean" property="*" />
 	<%
-
-		if(request.getParameter("date")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
-		 out.println("printo prop:"+scheduleBean.getScheduledDate());
+		
+		User u = (User) session.getAttribute("user");
+		if(request.getParameter("idSchedule")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
+		 	AddActivityToScheduleController controller = new AddActivityToScheduleController(u,scheduleBean);
+		
+			try{ 
+				controller.modifySchedule();
+			}catch(Exception e){
+				%> 
+				<script> alert('Qualcosa è andato storto!')</script>
+				<%
+				e.printStackTrace();
+			}
 		}
 
-		/*
-		Enumeration paramNames = request.getParameterNames();
-		while(paramNames.hasMoreElements()) {
-			String paramName = (String)paramNames.nextElement();
-			String paramValue = request.getParameter(paramName);
-			if(paramValue == "") out.println("zi, is null");
-			out.println(paramValue);
-		}
-		*/
-
-		DAOSchedules schedule = DAOSchedules.getInstance();
-		SuperUser u = (User) session.getAttribute("user");
-		Schedule s = schedule.findSchedule(u.getUserID());
+		
+		Schedule s = u.getSchedule();
 		ArrayList<ScheduledActivity> activities = (ArrayList<ScheduledActivity>) s.getScheduledActivities();
-		//if(schedule.findSchedule(0) == null) out.println("ok");
+		
 	%>
 
 
 
 	<!-- frame per gli eventi -->
-	<div class="container gy-5">
-
-
-	<%
-		
-	
-	%>
-	<div class="row  p-3">
-		<div class="col-2">
-			<h2> Oggi</h2>
-		</div>
-	</div>
-
-	<div class= "row p-3">
-		
-		<div class="col">
-			<div class="row flex-row flex-nowrap row-cols-1 row-cols-md-3 g-4" style="overflow-x: scroll">
-			  <% for(ScheduledActivity curr:activities){ %>
-			  <div class="col">
-			    <div class="card h-100" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%= curr.getReferencedActivity().getName() %>" data-bs-orario="<%= curr.getScheduledTime().toLocalTime() %>" data-bs-luogo="Roma" data-bs-data="<%= curr.getScheduledTime().toLocalDate() %>">
-			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
-			      <div class="card-body">
-			        <h5 class="card-title"><%= curr.getReferencedActivity().getName() %></h5>
-			        <p class="card-text">Orario: <%=curr.getScheduledTime().toLocalTime() %> </p>
-			        <p class="card-text">Luogo : <%=curr.getReferencedActivity().getPlace().getName()  %> </p>
-			      </div>
-			    </div>
-			  </div>
-			  <% } %>
-			
+	<div class="container schedule pt-6">
+		<h1 class="text-center impegni">I tuoi impegni:</h1>
+				<div class="row row-cols-1 row-cols-md-3 g-4">
+				  <% for(ScheduledActivity curr:activities){ %>
+				  <div class="col">
+				    <div class="card h-100 scheduledActivityCards shadow" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-id="<%= curr.getId() %>" data-bs-titolo="<%= curr.getReferencedActivity().getName() %>" data-bs-orario="<%= curr.getScheduledTime().toLocalTime() %>" data-bs-luogo="<%= curr.getReferencedActivity().getPlace().getCity() %>" data-bs-data="<%= curr.getScheduledTime().toLocalDate() %>" data-bs-description="<%=curr.getReferencedActivity().getDescription()%>">
+				      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
+				      <div class="card-body">
+				        <h5 class="card-title"><%= curr.getReferencedActivity().getName() %></h5>
+				        <p class="card-text">Luogo : <%=curr.getReferencedActivity().getPlace().getName()  %> </p>
+				      </div>
+				      <div class="card-footer">
+					  	<small class="text-muted">Schedulato per: <%=curr.getScheduledFormattedTime() %></small>
+					  </div>
+				    </div>
+				  </div>
+				  <% } %>
+				
+				</div>
 			</div>
 		</div>
-	</div>
 
 	</div>
 
@@ -84,7 +71,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+      <p id="activityDescription"></p>
       <form action="Schedule.jsp" name="myform" method="GET">
+      	  <input type="text" class="visually-hidden" id="idSchedule" name="idSchedule">
 	      <div class="scheduled-time">
 		        <div class="mb-3">
 		        	<label for="scheduledDate" class="col-form-label">Data:</label>
@@ -119,6 +108,7 @@
 
       </div>
       <div class="modal-footer">
+      	
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success"  name="date">Save changes</button>
       </div>
@@ -138,6 +128,8 @@
 	   var orario = button.getAttribute('data-bs-orario')
 	   var luogo = button.getAttribute('data-bs-luogo')
 	   var data = button.getAttribute('data-bs-data')
+	   var idScheduled = button.getAttribute('data-bs-id')
+	   var description = button.getAttribute('data-bs-description')
 
 	   var orarioReminder = button.getAttribute('data-bs-orarioReminder')
 	   var dataReminder = button.getAttribute('data-bs-dataReminder')
@@ -152,11 +144,14 @@
 	   var modalTitle = exampleModal.querySelector('.modal-title')
 	   var modalBodyDate = exampleModal.querySelector('.modal-body #scheduledDate')
 	   var modalBodyTime = exampleModal.querySelector('.modal-body #scheduledTime')
+	   var modalIdSchedule = exampleModal.querySelector('#idSchedule');
+	   var modalDescription = exampleModal.querySelector('#activityDescription');
 
-
+	   modalIdSchedule.value = idScheduled
 	   modalTitle.textContent = titolo
 	   modalBodyDate.value = data
 	   modalBodyTime.value = orario
+	   modalDescription.textContent = description
 	})
 
 	function addPromemoria(){

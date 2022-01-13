@@ -12,8 +12,8 @@ public class Schedule {
 		myActivity = new ArrayList<>();
 	}
 	
-	public void addActivityToSchedule(Activity a, LocalDateTime scheduledTime, LocalDateTime reminderTime) {
-		ScheduledActivity s = new ScheduledActivity(a,scheduledTime,reminderTime);
+	public void addActivityToSchedule(Long idScheduledActivity,Activity a, LocalDateTime scheduledTime, LocalDateTime reminderTime) {
+		ScheduledActivity s = new ScheduledActivity(idScheduledActivity,a,scheduledTime,reminderTime);
 		//Salva in persistenza l'attività schedulata:
 
 		myActivity.add(s);

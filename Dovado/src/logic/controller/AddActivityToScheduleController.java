@@ -8,6 +8,7 @@ import logic.model.DAOActivity;
 import logic.model.DAOSchedules;
 import logic.model.DateBean;
 import logic.model.Schedule;
+import logic.model.ScheduleBean;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
@@ -47,8 +48,14 @@ import logic.model.User;
 public class AddActivityToScheduleController {
 	private User session;
 	private DateBean timestamp;
+	private ScheduleBean editBean;
 	
 	private Schedule schedule = new Schedule();
+	
+	public AddActivityToScheduleController(User session, ScheduleBean editBean) {
+		this.session = session;
+		this.editBean = editBean;
+	}
 	
 	public AddActivityToScheduleController(Schedule schedule) {
 		this.schedule = schedule;
@@ -70,14 +77,25 @@ public class AddActivityToScheduleController {
 		daoSc.addActivityToSchedule(session.getUserID(),activity,timestamp.getScheduledTime(),timestamp.getReminderTime());
 	}
 	
-	//questo metodo va chiamato dal DAOSchedules!!
-	public void addActivityToSchedule(Long activity, String scheduled_time, String reminder_time) throws Exception {		
-		Activity a = DAOActivity.getInstance().getActivityById(activity);
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime scheduledTime = LocalDateTime.parse(scheduled_time,dtf);
-		LocalDateTime reminderTime = LocalDateTime.parse(reminder_time,dtf);
+	public void modifySchedule() throws Exception {
+		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
 		
-		schedule.addActivityToSchedule(a, scheduledTime, reminderTime);
+		DAOSchedules daoSc = DAOSchedules.getInstance();
+		Long idSchedule = editBean.getIdSchedule();
+		LocalDateTime scheduledDate = editBean.getScheduledDateTime();
+		LocalDateTime reminderDate;
+		
+		//se non è disponibile il reminder Date dal bean, imposta come ora di reminder lo scheduledtime - 1h
+		try{
+			reminderDate = editBean.getReminderDateTime();
+		}catch(Exception e) {
+			reminderDate = scheduledDate.minusHours(1);
+		}
+		
+		daoSc.changeSchedule(idSchedule, scheduledDate, reminderDate);
+		
+		session.setSchedule(daoSc.getSchedule(session.getUserID()));
+		
 	}
 	
 	

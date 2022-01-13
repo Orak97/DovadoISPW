@@ -50,6 +50,17 @@ nav {
 	background-color: #202020;
 }
 
+.homeMap{
+	width:100%;
+	height:100%;
+}
+
+
+#mapContainer.col-8{
+	padding-left: 0;
+	padding-right: 0;
+}
+
 /********************body**********************************/
 body{
 	background-color: #9FB6CD;
@@ -179,4 +190,49 @@ body{
 .create-activity{
 	border-radius:30px;
 	margin-bottom: 20vh;
+}
+
+/*******************************************************************Localization*****************************************/
+
+#statusLocalization{
+	margin-top:2vh;
+}
+
+#Map.localizationMap{
+	width: 100%;
+	height:35vh;
+}
+
+#addressField{
+	border-radius: 25px;
+}
+
+.lesgo-btn{
+	border-radius:10px;
+	margin-left: 1vh;
+}
+
+.reposition-btn{
+	border-radius:10px;
+	margin-left: 1vh;
+}
+
+/****************************************************************Schedule********************************************/
+
+.impegni{
+	margin-top: 2vh;
+	margin-bottom: 2vh;	
+}
+
+.scheduledActivityCards{
+	border-radius: 30px;
+}
+
+.scheduledActivityCards img{
+	border-top-left-radius: 30px;
+	border-top-right-radius: 30px;
+}
+
+.scheduledActivityCards:hover{
+	background-color:#b0b0b0;
 }

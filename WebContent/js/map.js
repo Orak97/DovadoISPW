@@ -5,6 +5,8 @@ var coords=[0,0];
 
 var mymap
 
+var markersOnMap = [];
+
 var userIcon = L.icon({
 	iconUrl: 'logo/user2.png',
 	
@@ -73,9 +75,11 @@ function addMarker(latitude,longitude,placeName){
   //un evento speciale o quel cazzo che ti pare.
 }
 
-function spotPlace(latitude,longitude,placeName){
+function spotPlace(latitude,longitude,placeName,id){
   var marker = L.marker([latitude,longitude]).addTo(mymap);    //aggiungo un marker per indicare un posto speciale
   marker.bindPopup(placeName);
+  markersOnMap.push({'id': id, 'marker': marker});
+  
   //e gli aggiungo un pop-up per indicare magari
   //un evento speciale o quel cazzo che ti pare.
 }
@@ -84,13 +88,11 @@ function spotPlace(latitude,longitude,placeName){
 function setUser(latitude,longitude){
 	mymap.setView([lat,long],zoom+15);
 	return L.marker([latitude,longitude], {icon: userIcon}).addTo(mymap).bindPopup("Ti trovi qui!");
+}
+
+function moveView(latitude,longitude,id){
+	let activity = markersOnMap.find(element => element.id == id);
+	mymap.setView([latitude,longitude],zoom+15);
+	console.log(activity);
+	activity.marker.openPopup();
 } 
-
-function getLatitude(){
-
-}
-
-function getLongitude(){
-
-}
-

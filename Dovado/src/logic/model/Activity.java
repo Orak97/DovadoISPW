@@ -20,4 +20,6 @@ public interface Activity {
 	void setIntrestedCategories(Preferences intrestedCategories);
 
 	void setChannel(Channel channel);
+	
+	String getDescription();
 }

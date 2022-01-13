@@ -82,7 +82,7 @@
 				    <div class="d-grid gap-2 activityButtonGroup">
 				        	<button type="button" class="btn btn-dark btnHome" onclick="loadChat(<%=curr.getId()%>)">Join Channel</button>
 				        
-				        	<button type="button" class="btn btn-dark btnHome" onclick="document.getElementById('map').contentWindow.spotPlace('<%=curr.getPlace().getCivico()%>','<%=curr.getPlace().getAddress()%>','<%=curr.getPlace().getCity()%>','<%=curr.getPlace().getRegion()%>');">View on map</button>
+				        	<button type="button" class="btn btn-dark btnHome" onclick="moveView(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, <%= curr.getId()%>)">View on map</button>
 				        
 				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>">Play Activity</button>
 				    </div>
@@ -116,7 +116,7 @@
 				
 				
 				 <% for(Activity curr:activities){ %>
-				 	spotPlace(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, '<%= curr.getName() %>');
+				 	spotPlace(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, '<%= curr.getName() %>', <%=curr.getId()%>);
 				 <% }%>
 				 
 				 var lastMarker = setUser(latitude,longitude);

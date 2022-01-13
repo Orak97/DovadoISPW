@@ -17,6 +17,7 @@ public class ScheduleBean {
 	private String reminderDate;
 	private String reminderTime;
 	private Long idActivity;
+	private Long idSchedule;
 	
 	public String getScheduledDate() {
 		return scheduledDate;
@@ -48,11 +49,26 @@ public class ScheduleBean {
 		return LocalDateTime.parse(scheduledDate+' '+scheduledTime, formatter);
 
 	}
+	
+	public LocalDateTime getReminderDateTime() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		return LocalDateTime.parse(reminderDate+' '+reminderTime, formatter);
+
+	}
+	
 	public Long getIdActivity() {
 		return idActivity;
 	}
 	public void setIdActivity(Long idActivity) {
 		this.idActivity = idActivity;
+	}
+	
+	public void setIdSchedule(Long idSchedule) {
+		this.idSchedule = idSchedule;
+	}
+	
+	public Long getIdSchedule() {
+		return idSchedule;
 	}
 
 }
