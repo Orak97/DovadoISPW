@@ -18,6 +18,7 @@ public class ScheduleBean {
 	private String reminderTime;
 	private Long idActivity;
 	private Long idSchedule;
+	private Long scheduleToRemove;
 	
 	public String getScheduledDate() {
 		return scheduledDate;
@@ -69,6 +70,12 @@ public class ScheduleBean {
 	
 	public Long getIdSchedule() {
 		return idSchedule;
+	}
+	public Long getScheduleToRemove() {
+		return scheduleToRemove;
+	}
+	public void setScheduleToRemove(Long scheduleToRemove) {
+		this.scheduleToRemove = scheduleToRemove;
 	}
 
 }

@@ -76,7 +76,7 @@ public class DAOSchedules {
 	            	String reminder_time = rs.getString("data_reminder");
 
 	            	Activity a = DAOActivity.getInstance().getActivityById(activity);
-	        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 	        		LocalDateTime scheduledTime = LocalDateTime.parse(scheduled_time,dtf);
 	        		LocalDateTime reminderTime = LocalDateTime.parse(reminder_time,dtf);
 
@@ -205,6 +205,49 @@ public class DAOSchedules {
 		        se.printStackTrace();
 		    }
 		}
+	}
+
+	public void removeActFromSchedule(Long scheduleToRemove,Long user) throws Exception {
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+
+        try {
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+
+            //STEP4.1: preparo la stored procedure
+            String call = "{call remove_activity_from_schedule(?,?)}";
+
+            stmt = conn.prepareCall(call);
+
+            stmt.setLong(1, scheduleToRemove);
+            stmt.setLong(2, user);
+
+            stmt.execute();
+
+        }finally {
+		    // STEP 5.2: Clean-up dell'ambiente
+		    try {
+		        if (stmt != null)
+		            stmt.close();
+		    } catch (SQLException se2) {
+		    	throw(se2);
+		    }
+		    try {
+		        if (conn != null)
+		            conn.close();
+		        	System.out.println("Disconnetted database successfully...");
+
+		    } catch (SQLException se) {
+		        se.printStackTrace();
+		    }
+		}
+		
 	}
 
 }

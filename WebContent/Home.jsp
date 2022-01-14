@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity" %>
+    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController" %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
@@ -12,32 +12,6 @@
 
 	<jsp:setProperty name="scheduleBean" property="*" />
 	
-	<%
-
-		if(request.getParameter("date")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
-		 //out.println("printo prop:"+scheduleBean.getScheduledDateTime());
-		 /*
-		 
-		 ********************************************************
-		 * TODO: sistemare questa parte di schedule activity	* 
-		 ********************************************************
-			SuperUser u = (User) session.getAttribute("user");
-			 
-			 try {
-				 out.println(u.getUsername());
-				 DAOActivity a = DAOActivity.getInstance();
-				 DAOSuperUser su = DAOSuperUser.getInstance();
-				 Long idA = scheduleBean.getIdActivity();
-				 SuperActivity att = a.findActivityByID(su,idA);
-				 ((User) u).getSchedule().addActivityToSchedule(att, scheduleBean.getScheduledDateTime(),scheduleBean.getScheduledDateTime(), u);
-			 }catch(Exception e){
-				 e.printStackTrace();
-			 }
-		 */
-		 }
-		
-
-	%>
 
 	<div class="container-fluid home">
 	<% //tentativo di fare una home decente:
@@ -46,6 +20,18 @@
 		
 		//controllo latiduine e longitudine, se sono 0 -> non è stata inizializzata -> porto l'utente alla pagina per attivare la geolocalizzazione
 		if(utente.getLatitude() == 0 || utente.getLongitude() == 0) response.sendRedirect("localization.jsp");
+		
+		if(request.getParameter("idActivity")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
+			AddActivityToScheduleController controller = new AddActivityToScheduleController(utente,scheduleBean);
+			try{
+				controller.addActivityToSchedule();
+			}catch(Exception e){
+				%>
+					<script> alert('Sembra che ci sia un errore nell\' aggiungere l\'attività nello schedulo!') </script>
+				<%
+				e.printStackTrace();
+			} 
+		}
 		
 		
 		DAOActivity daoAct = DAOActivity.getInstance();

@@ -8,9 +8,9 @@ var mymap
 var markersOnMap = [];
 
 var userIcon = L.icon({
-	iconUrl: 'logo/user2.png',
+	iconUrl: 'logo/User.png',
 	
-	iconSize: [38,95],
+	iconSize: [90,95],
 	iconAnchor: [22, 94],
 });
 

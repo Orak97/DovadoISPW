@@ -24,6 +24,20 @@
 				e.printStackTrace();
 			}
 		}
+		
+		if(request.getParameter("scheduleToRemove")!=null){
+			AddActivityToScheduleController controller = new AddActivityToScheduleController(u,scheduleBean);
+			try{ 
+				controller.removeSchedule();
+				 response.sendRedirect("Schedule.jsp");
+			}catch(Exception e){
+				%> 
+				<script> alert('Qualcosa è andato storto!')</script>
+				<%
+				e.printStackTrace();
+			}
+		
+		}
 
 		
 		Schedule s = u.getSchedule();
@@ -68,6 +82,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel"></h5>
+        <button type="button" class="btn btn-outline-danger btn-sm btn-remove-activity" id="remove-schedule"> Remove activity <i class="bi bi-trash"></i></button>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -120,6 +135,9 @@
 <!-- fine modal -->
  <script>
  	var exampleModal = document.getElementById('exampleModal')
+ 	
+ 	document.querySelector('#remove-schedule').addEventListener('click', deleteSchedule)
+ 	
  	exampleModal.addEventListener('show.bs.modal', function (event) {
 	   // Button that triggered the modal
 	   var button = event.relatedTarget
@@ -169,6 +187,12 @@
 
  		let form = document.getElementById('reminder-form');
  		form.classList.add("visually-hidden");
+ 	}
+ 	
+ 	function deleteSchedule(){
+ 		let scheduleToRemove = document.querySelector('#idSchedule').value;
+ 		
+ 		window.location.href = "Schedule.jsp?scheduleToRemove="+scheduleToRemove;
  	}
 
  </script>

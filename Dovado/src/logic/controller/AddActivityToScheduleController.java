@@ -67,14 +67,25 @@ public class AddActivityToScheduleController {
 	}
 	
 	//questo metodo andrebbe chiamato dal controller di playActivity
-	public void addActivityToSchedule(Long activity) throws Exception {
-		Schedule s = session.getSchedule();
+	public void addActivityToSchedule() throws Exception {
+		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
+		
 		DAOSchedules daoSc = DAOSchedules.getInstance();
+		Long idUser = session.getUserID();
+		Long idActivity = editBean.getIdActivity();
+		LocalDateTime scheduledDate = editBean.getScheduledDateTime();
+		LocalDateTime reminderDate;
 		
-		Activity a = DAOActivity.getInstance().getActivityById(activity);
+		//se non è disponibile il reminder Date dal bean, imposta come ora di reminder lo scheduledtime - 1h
+		try{
+			reminderDate = editBean.getReminderDateTime();
+		}catch(Exception e) {
+			reminderDate = scheduledDate.minusHours(1);
+		}
 		
-		s.addActivityToSchedule(a, timestamp.getScheduledTime(), timestamp.getReminderTime());
-		daoSc.addActivityToSchedule(session.getUserID(),activity,timestamp.getScheduledTime(),timestamp.getReminderTime());
+		daoSc.addActivityToSchedule(idUser,idActivity, scheduledDate, reminderDate);
+		
+		session.setSchedule(daoSc.getSchedule(session.getUserID()));
 	}
 	
 	public void modifySchedule() throws Exception {
@@ -93,6 +104,19 @@ public class AddActivityToScheduleController {
 		}
 		
 		daoSc.changeSchedule(idSchedule, scheduledDate, reminderDate);
+		
+		session.setSchedule(daoSc.getSchedule(session.getUserID()));
+		
+	}
+	
+	public void removeSchedule() throws Exception {
+		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
+		
+		DAOSchedules daoSc = DAOSchedules.getInstance();
+		Long scheduleToRemove = editBean.getScheduleToRemove();
+		Long idUser = session.getUserID();
+		
+		daoSc.removeActFromSchedule(scheduleToRemove,idUser);
 		
 		session.setSchedule(daoSc.getSchedule(session.getUserID()));
 		
