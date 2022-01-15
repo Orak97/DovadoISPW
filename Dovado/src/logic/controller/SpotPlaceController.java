@@ -39,6 +39,8 @@ public class SpotPlaceController {
 		String civico = bean.getStreetNumber();
 		String city = bean.getCity();
 		String cap = bean.getCap();
+		double latitude = bean.getLatitude();
+		double longitude = bean.getLongitude();
 		
 		/*
 		 * TODO: implementare un controllo che la via esista veramente!
@@ -48,7 +50,7 @@ public class SpotPlaceController {
 		 * */
 		
 		try{
-			daoPl.spotPlace(address, placeName, city, region, civico, cap);
+			daoPl.spotPlace(address, placeName, city, region, civico, cap,latitude,longitude);
 		}
 		catch(Exception e) {
 			System.out.println("posto non creato");

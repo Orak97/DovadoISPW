@@ -61,7 +61,7 @@ function startup(userLat, userLong){
 function setCoords(latitude,longitude){
   lat=latitude;
   long=longitude;
-  mymap.setView([lat,long],zoom+10);
+  mymap.setView([lat,long],zoom+15);
   var marker = L.marker([lat,long]).addTo(mymap);
   //La linea sottostante aggiunge un popup con un messaggio, ma si può anche evitare.
   //marker.bindPopup("<b>Ti trovi qui</b>").openPopup();

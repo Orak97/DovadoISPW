@@ -22,8 +22,12 @@
 			SuperUser u = (User) session.getAttribute("user");
 			SpotPlaceController spController = new SpotPlaceController(spotPlaceBean);
 			
-			if(spController.spotPlace()) out.println("posto creato"); //TODO: renderlo più appetibile
-			else out.println("posto NON creato");
+			if(spController.spotPlace()) response.sendRedirect("CreateActivity.jsp?src="+request.getParameter("placeName")); //TODO: renderlo più appetibile
+			else {
+				%>
+				<script>alert('Errore nella creazione del posto, riprova!')</script>
+				<%
+			}
 		}
 	
 		
@@ -36,17 +40,13 @@
 			try{c.saveActivity();}
 			catch(Exception e){
 				e.printStackTrace();
+				%>
+				<script>alert('Errore nella creazione dell\'attivita\', riprova!')</script>
+				<%
 			}
-			out.println("fatto");
-			System.out.println("HEREEEEEEEEEEEE:"+createActivityBean.isArte());
-			System.out.println("HEREEEEEEEEEEEE:"+createActivityBean.isAdrenalina());
-			System.out.println(createActivityBean.getActivityDescription());
-			System.out.println(createActivityBean.getOpeningTime());
-			System.out.println(createActivityBean.getClosingTime());
-			System.out.println("ooo "+request.getParameter("openingTime"));
-			System.out.println(createActivityBean.getActivityName());
-			System.out.println(createActivityBean.getPlace());
-			System.out.println(createActivityBean.getType());
+			%>
+			<script>alert('Attività creata correttamente!')</script>
+			<%
 			
 		
 		}
@@ -278,14 +278,20 @@
   
   <!-- Modal -->
 	<div class="modal fade" id="createPlaceModal" tabindex="-1" aria-labelledby="createPlaceModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
+	  <div class="modal-dialog modal-fullscreen">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h5 class="modal-title" id="exampleModalLabel">Crea un posto</h5>
+	        <h5 class="modal-title" id="exampleModalLabel">Premi sulla mappa o inserisci i dati per creare un posto</h5>
 	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      </div>
 	      <div class="modal-body">
-	        <form class="row g-3" action="CreateActivity.jsp" method="GET">
+	        <form class="row g-3" action="CreateActivity.jsp" method="GET" id="formPlace">
+	          <div  class="visually-hidden" id="mapContainer">
+				<div id="Map" class="SpotPlaceMap"></div>
+				<input type="text" class="visually-hidden" name="latitude" id="latField">
+				<input type="text" class="visually-hidden" name="longitude" id="longField">
+		  	  </div>
+	         
 	          <div class="col-12">
 			    <label for="placeName" class="form-label">Nome posto:</label>
 			    <input type="text" class="form-control" id="placeName" placeholder="Colosseo ..." name="placeName">
@@ -296,7 +302,7 @@
 			  </div>
 			  <div class="col-3">
 			    <label for="numeroCivico" class="form-label">Civico:</label>
-			    <input type="number" class="form-control" id="numeroCivico" placeholder="1" name="streetNumber">
+			    <input type="text" class="form-control" id="numeroCivico" placeholder="1" name="streetNumber">
 			  </div>
 			  <div class="col-md-12">
 			    <label for="inputCity" class="form-label">Città:</label>
@@ -332,18 +338,161 @@
 			  	<label for="cap" class="form-label">Cap:</label>
 			    <input type="text" class="form-control" id="cap" name="cap" placeholder="00100">
 			  </div>
+	      
+	      <div class="visually-hidden" id="mapContainer">
+				<div id="Map" class="SpotPlaceMap"></div>
+				<p class="h5 text-center pt-3" id="resultMap"><p>
+				<input type="text" class="visually-hidden" name="latitude" id="latField">
+				<input type="text" class="visually-hidden" name="longitude" id="longField">
+		  </div>
+	      
 	      </div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-	        <button type="submit" class="btn btn-primary">Create Place</button>
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close-btn">Close</button>
+	        <button type="button" class="btn btn-primary" id="spotPlace">Trova posto sulla mappa</button>
+	        <button type="submit" class="btn btn-success visually-hidden" id="confirmButton">Conferma</button>
 	      	</form>
 	      </div>
 	    </div>
 	  </div>
 	</div>
 	  
-  
+  <script src="js/map.js"></script>
   <script>
+  	const spotPlaceButton = document.querySelector('#spotPlace');
+  	spotPlaceButton.addEventListener('click', spotPlace);
+  	
+  	var modalSpotPlace = document.querySelector('#createPlaceModal');
+  	modalSpotPlace.addEventListener('shown.bs.modal', inizializeMap);
+  	modalSpotPlace.addEventListener('hide.bs.modal', emptyModal)
+  	
+  	const indirizzo = document.querySelector('#inputAddress');
+  	const civico = document.querySelector('#numeroCivico');
+  	const citta = document.querySelector('#inputCity');
+  	const regione = document.querySelector('#inputState');
+  	const cap = document.querySelector('#cap');
+  	
+  	indirizzo.addEventListener('change',disableSubmit)
+  	civico.addEventListener('change',disableSubmit)
+  	citta.addEventListener('change',disableSubmit)
+  	regione.addEventListener('change',disableSubmit)
+  	cap.addEventListener('change',disableSubmit)
+  	
+  	var lastMarker;
+  	
+  	function emptyModal(){
+  		document.querySelector('#formPlace').reset();
+  		disableSubmit();
+  		if(lastMarker != null) lastMarker.remove();
+  		
+  	}
+  	
+  	function disableSubmit(){
+  		document.querySelector('#confirmButton').classList.add('visually-hidden')
+  		document.querySelector('#confirmButton').disable=true;
+  		
+  		document.querySelector('#spotPlace').classList.remove('visually-hidden')
+  	}
+  	
+  	function enableSubmit(){
+  		document.querySelector('#confirmButton').classList.remove('visually-hidden')
+  		document.querySelector('#confirmButton').disable=false;
+  		
+  		document.querySelector('#spotPlace').classList.add('visually-hidden')
+  	}
+  	
+  	function inizializeMap(){
+  		document.querySelector('#mapContainer').classList.remove('visually-hidden');
+  		try{
+  			startup(41.9109,12.4818);
+  			mymap.on('click', repositionPlace);
+  		}catch(e){
+  			console.log("mappa già creata")
+  		}
+  	}
+  	
+  	function repositionPlace(e){
+		//mymap.off('click',repositionMark);
+		
+		console.log(e);
+		
+		if(lastMarker != null) lastMarker.remove();
+		
+		let latitude = e.latlng.lat;
+		let longitude = e.latlng.lng;
+		
+		lastMarker = setCoords(latitude,longitude);
+		
+		retrieveAddress(latitude,longitude);
+		
+	}
+  	
+  	function retrieveAddress(latitude,longitude){
+		L.esri.Geocoding.reverseGeocode()
+		.latlng([latitude,longitude])
+		.run(function (error,result,response){
+			if (error) {
+				console.log(error);
+				return;
+			}
+			
+			console.log({result, response});
+			
+			//imposto come testo i valori di latitutine e longitudine nascosti nel form
+			document.querySelector('#latField').value = latitude;
+			document.querySelector('#longField').value = longitude;
+			
+			indirizzo.value = result.address.Address.replace(result.address.AddNum,'');
+			civico.value = result.address.AddNum;
+			citta.value = result.address.City;
+			regione.value = result.address.Region;
+			cap.value = result.address.Postal;
+			
+			enableSubmit();
+		});
+	}
+  	
+  	function spotPlace(){
+  		
+  		let indirizzoTxt = indirizzo.value;
+  		let civicoTxt = civico.value;
+  		let cittaTxt = citta.value;
+  		let regioneTxt =regione.value;
+  		let capTxt =cap.value;
+  		
+		
+  		L.esri.Geocoding.geocode().address(civicoTxt+' '+indirizzoTxt).city(cittaTxt).region(regioneTxt).postal(capTxt).run(function (err, results, response) {
+  		  if (err) {
+  		    console.log(err);
+  		    return;
+  		  }
+  		  
+  		  if(results.results.length < 1){
+  			alert("Nessun posto trovato, inserisci più informazioni nei campi!") 
+  		  }else{
+  		  
+	  		  console.log(results.results)
+	  		  
+	  		  let latitude = results.results[0].latlng.lat;
+	  		  let longitude = results.results[0].latlng.lng
+	  		  
+	  		  if(lastMarker != null) lastMarker.remove();
+	  		  
+	  		  lastMarker = setCoords(latitude,longitude);
+	  		  
+	  		  
+		 	  //imposto come testo i valori di latitutine e longitudine nascosti nel form
+		      document.querySelector('#latField').value = latitude;
+			  document.querySelector('#longField').value = longitude;
+			  
+			  enableSubmit();
+  		  }
+  		});
+  		
+  	}
+  	
+  	
+  	
   	function setPlace(event,p){
   		document.getElementById('place').value=p;
   		

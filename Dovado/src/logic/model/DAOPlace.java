@@ -102,7 +102,7 @@ public class DAOPlace {
         return places;
 	}
 
-	public int spotPlace(String address, String placeName, String city, String region, String civico, String cap, float latitudine, float longitudine) throws Exception{
+	public int spotPlace(String address, String placeName, String city, String region, String civico, String cap, double latitudine, double longitudine) throws Exception{
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -128,8 +128,8 @@ public class DAOPlace {
             stmt.setString(4,region);
             stmt.setString(5,civico);
             stmt.setString(6,cap);
-            stmt.setFloat(7, latitudine);
-            stmt.setFloat(8, longitudine);
+            stmt.setDouble(7, latitudine);
+            stmt.setDouble(8, longitudine);
               
             stmt.execute();
             
