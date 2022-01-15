@@ -53,7 +53,7 @@
 				<div class="row row-cols-1 row-cols-md-3 g-4">
 				  <% for(ScheduledActivity curr:activities){ %>
 				  <div class="col">
-				    <div class="card h-100 scheduledActivityCards shadow" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-id="<%= curr.getId() %>" data-bs-titolo="<%= curr.getReferencedActivity().getName() %>" data-bs-orario="<%= curr.getScheduledTime().toLocalTime() %>" data-bs-luogo="<%= curr.getReferencedActivity().getPlace().getCity() %>" data-bs-data="<%= curr.getScheduledTime().toLocalDate() %>" data-bs-description="<%=curr.getReferencedActivity().getDescription()%>">
+				    <div class="card h-100 scheduledActivityCards shadow" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-id="<%= curr.getId() %>" data-bs-titolo="<%= curr.getReferencedActivity().getName() %>" data-bs-orario="<%= curr.getScheduledTime().toLocalTime() %>" data-bs-luogo="<%= curr.getReferencedActivity().getPlace().getCity() %>" data-bs-data="<%= curr.getScheduledTime().toLocalDate() %>" data-bs-description="<%=curr.getReferencedActivity().getDescription()%>" data-bs-orario-reminder="<%= curr.getReminderTime().toLocalTime() %>" data-bs-data-reminder="<%= curr.getReminderTime().toLocalDate() %>">
 				      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 				      <div class="card-body">
 				        <h5 class="card-title"><%= curr.getReferencedActivity().getName() %></h5>
@@ -76,20 +76,20 @@
 
 <!-- inizio modal -->
 
-<!-- Modal -->
+<!-- Modal modifica schedulo-->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel"></h5>
-        <button type="button" class="btn btn-outline-danger btn-sm btn-remove-activity" id="remove-schedule"> Remove activity <i class="bi bi-trash"></i></button>
+        <button type="button" class="btn btn-outline-danger btn-sm btn-remove-activity" id="remove-schedule" data-bs-toggle="modal" data-bs-target="#deleteScheduleModal"> Remove activity <i class="bi bi-trash"></i></button>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
       <p id="activityDescription"></p>
       <form action="Schedule.jsp" name="myform" method="GET">
       	  <input type="text" class="visually-hidden" id="idSchedule" name="idSchedule">
-	      <div class="scheduled-time">
+	      <div class="scheduled-time mb-5">
 		        <div class="mb-3">
 		        	<label for="scheduledDate" class="col-form-label">Data:</label>
 		            <input type="date" class="form-control" id="scheduledDate" name="scheduledDate">
@@ -100,23 +100,25 @@
 		            <input type="time" class="form-control" id="scheduledTime" name="scheduledTime">
 		        </div>
 		  </div>
-
+			
+			<hr>
+			
 		  <div class="reminder-time">
 		        <div class="mb-3" id="promemoria">
-		        	<p>Non hai impostato nessun promemoria per questo evento:</p>
-		        	<button type="button" class="btn btn-primary btn-sm" onclick="addPromemoria()">Impostane uno</button>
+		        	<p>Vuoi modificare quando riceverai il reminder?</p>
+		        	<button type="button" class="btn btn-primary btn-sm" onclick="addPromemoria()">Modifica reminder</button>
 		        </div>
 
 		        <div class="reminder-form visually-hidden" id="reminder-form">
-		        	<p>Dati del reminder:</p>
+		        	<p class="text-center h5">Dati del reminder:</p>
 			        <div class="mb-3">
 			        	<label for="scheduledDate" class="col-form-label">Data:</label>
-			            <input type="date" class="form-control" id="scheduledDate" name="reminderDate">
+			            <input type="date" class="form-control" id="scheduledReminderDate" name="reminderDate">
 			        </div>
 
 			        <div class="mb-3">
 			        	<label for="scheduledTime" class="col-form-label">Orario:</label>
-			            <input type="time" class="form-control" id="scheduledTime" name="reminderTime">
+			            <input type="time" class="form-control" id="scheduledReminderTime" name="reminderTime">
 			        </div>
 		        </div>
 	      </div>
@@ -133,10 +135,31 @@
 </div>
 
 <!-- fine modal -->
+
+<!-- Modal elimina -->
+<div class="modal fade" id="deleteScheduleModal" tabindex="-1" aria-labelledby="deleteScheduleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sei sicuro di voler rimuovere questa attività dallo schedulo?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="delete-icon-schedule text-center"><i class="bi bi-x-circle-fill"></i></p>
+        <h5 class="text-center irreversible-process">Questo processo è irreversibile</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Torna indietro</button>
+        <button type="button" class="btn btn-danger" id="confirm-remove-schedule">Rimuovi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
  <script>
  	var exampleModal = document.getElementById('exampleModal')
  	
- 	document.querySelector('#remove-schedule').addEventListener('click', deleteSchedule)
+ 	document.querySelector('#confirm-remove-schedule').addEventListener('click', deleteSchedule)
  	
  	exampleModal.addEventListener('show.bs.modal', function (event) {
 	   // Button that triggered the modal
@@ -149,12 +172,11 @@
 	   var idScheduled = button.getAttribute('data-bs-id')
 	   var description = button.getAttribute('data-bs-description')
 
-	   var orarioReminder = button.getAttribute('data-bs-orarioReminder')
-	   var dataReminder = button.getAttribute('data-bs-dataReminder')
-	   if(orarioReminder == null || dataReminder == null){
-		   console.log('nessun promemoria')
-		   removePromemoria()
-	   }
+	   var orarioReminder = button.getAttribute('data-bs-orario-reminder')
+	   var dataReminder = button.getAttribute('data-bs-data-reminder')
+	   
+	   removePromemoria()
+	   
 	   // If necessary, you could initiate an AJAX request here
 	   // and then do the updating in a callback.
 	   //
@@ -164,11 +186,15 @@
 	   var modalBodyTime = exampleModal.querySelector('.modal-body #scheduledTime')
 	   var modalIdSchedule = exampleModal.querySelector('#idSchedule');
 	   var modalDescription = exampleModal.querySelector('#activityDescription');
+	   var modalReminderTime = exampleModal.querySelector('#scheduledReminderTime')
+	   var modalReminderDate = exampleModal.querySelector('#scheduledReminderDate')
 
 	   modalIdSchedule.value = idScheduled
 	   modalTitle.textContent = titolo
 	   modalBodyDate.value = data
 	   modalBodyTime.value = orario
+	   modalReminderDate.value = dataReminder
+	   modalReminderTime.value = orarioReminder
 	   modalDescription.textContent = description
 	})
 

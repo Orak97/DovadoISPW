@@ -240,3 +240,13 @@ body{
 .btn-remove-activity{
 	margin-left: 1vh;
 }
+
+.delete-icon-schedule{
+	margin-top: 5vh;
+	margin-bottom: 5vh;
+	font-size: 5em;
+	color: #dc3545;
+}
+.irreversible-process{
+	margin-bottom: 5vh;
+}
