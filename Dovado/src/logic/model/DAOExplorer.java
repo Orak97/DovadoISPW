@@ -36,10 +36,10 @@ public class DAOExplorer {
         
         try {
         	
-        	System.out.println("here1");
+        	
         	// STEP 2: loading dinamico del driver mysql
             Class.forName(DRIVER_CLASS_NAME);
-            System.out.println("here");
+            
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             System.out.println("Connected database successfully...");
@@ -61,31 +61,35 @@ public class DAOExplorer {
             
             
             while(rs.next()) {
-            u = new User(
-            		rs.getString("username"),
-            		rs.getString("email"),
-            		rs.getLong("id"),
-            		rs.getLong("wallet"));
+	            u = new User(
+	            		rs.getString("username"),
+	            		rs.getString("email"),
+	            		rs.getLong("id"),
+	            		rs.getLong("wallet"));
+	            
+	            
+	            Preferences p = new Preferences(
+	            rs.getBoolean("Arte"),
+	        	rs.getBoolean("Cibo"),
+	        	rs.getBoolean("Musica"),
+	        	rs.getBoolean("Sport"),
+	        	rs.getBoolean("Social"),
+	        	rs.getBoolean("Natura"),
+	        	rs.getBoolean("Esplorazione"),
+	        	rs.getBoolean("Ricorrenze_locali"),
+	        	rs.getBoolean("Moda"),
+	        	rs.getBoolean("Shopping"),
+	        	rs.getBoolean("Adrenalina"),
+	        	rs.getBoolean("Relax"),
+	        	rs.getBoolean("Istruzione"),
+	        	rs.getBoolean("Monumenti")
+	            );
+	            
+	            
+	            u.setPreferences(p);
             }
             
-            Preferences p = new Preferences(
-            rs.getBoolean("Arte"),
-        	rs.getBoolean("Cibo"),
-        	rs.getBoolean("Musica"),
-        	rs.getBoolean("Sport"),
-        	rs.getBoolean("Social"),
-        	rs.getBoolean("Natura"),
-        	rs.getBoolean("Esplorazione"),
-        	rs.getBoolean("Ricorrenze_locali"),
-        	rs.getBoolean("Moda"),
-        	rs.getBoolean("Shopping"),
-        	rs.getBoolean("Adrenalina"),
-        	rs.getBoolean("Relax"),
-        	rs.getBoolean("Istruzione"),
-        	rs.getBoolean("Monumenti")
-            );
             
-            u.setPreferences(p);
             
             rs.close();
             

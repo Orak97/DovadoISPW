@@ -40,7 +40,7 @@
 		try{
 			double userLat = 41.8901232;
 			double userLong = 12.4960768;
-			float maxDistance = 2.0f; //in km
+			float maxDistance = 20.0f; //in km
 					
 			activities = daoAct.getNearbyActivities(userLat, userLong, maxDistance);
 		}catch(Exception e) {

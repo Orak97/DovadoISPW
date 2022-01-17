@@ -2,11 +2,15 @@ package logic.controller;
 
 import java.util.ArrayList;
 
+import logic.model.Activity;
 import logic.model.DAOActivity;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
+import logic.model.PreferenceBean;
+import logic.model.Preferences;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
+import logic.model.User;
 
 public class SetPreferencesController {
 	
@@ -14,40 +18,59 @@ public class SetPreferencesController {
 	DAOActivity daoAc;
 	DAOPreferences daoPr;
 	
-	public boolean updatePreferencesUser(SuperUser su, String name) {
-		if(name == null) return false;
-		daoSu = DAOSuperUser.getInstance();
-		daoPr = DAOPreferences.getInstance();
-		//Prendo l'arraylist delle preferenze e lo preparo.
-		ArrayList<String> preferences = (ArrayList<String>) su.getPreferences();
-		
-		//Tramite il DAO delle preferenze vado a cercare il suo id usando il nome.
-		//Se il nome non esiste il metodo chiamato restituisce l'id dell'appena aggiunta
-		//preferenza.
-		if(preferences.contains(name.toUpperCase()))
-			return true;
-		preferences.add(name.toUpperCase());
-		su.setPreferences(preferences);
-		
-		return daoSu.updateUserPreferences(su);
+	User session;
+	PreferenceBean bean;
+	
+	public SetPreferencesController(User user, PreferenceBean bean){
+		this.session = user;
+		this.bean = bean;
 	}
 	
-	public boolean updatePreferencesActivity(SuperActivity sua, String name) {
-		if(name == null) return false;
-		daoAc = DAOActivity.getInstance();
-		daoPr = DAOPreferences.getInstance();
-		//Prendo l'arraylist delle preferenze e lo preparo.
-		ArrayList<String> preferences = (ArrayList<String>) sua.getPreferences();
+	public void updatePreferences() throws Exception{
+		Long id = session.getUserID();
 		
-		//Tramite il DAO delle preferenze vado a cercare il suo id usando il nome.
-		//Se il nome non esiste il metodo chiamato restituisce l'id dell'appena aggiunta
-		//preferenza.
-		if(preferences.contains(name.toUpperCase()))
-			return true;
-		preferences.add(name.toUpperCase());
-		sua.setPreferences(preferences);
+		DAOPreferences.getInstance().updateUserPreferences(
+				id,
+				bean.isArte(),
+				bean.isCibo(),
+				bean.isMusica(),
+				bean.isSport(),
+				bean.isSocial(),
+				bean.isNatura(),
+				bean.isEsplorazione(),
+				bean.isRicorrenze(),
+				bean.isModa(),
+				bean.isShopping(),
+				bean.isAdrenalina(),
+				bean.isRelax(),
+				bean.isIstruzione(),
+				bean.isMonumenti()
+				);
 		
-		return daoAc.updateActivityPreferences(sua);
+		Preferences p = new Preferences(bean.isArte(),
+				bean.isCibo(),
+				bean.isMusica(),
+				bean.isSport(),
+				bean.isSocial(),
+				bean.isNatura(),
+				bean.isEsplorazione(),
+				bean.isRicorrenze(),
+				bean.isModa(),
+				bean.isShopping(),
+				bean.isAdrenalina(),
+				bean.isRelax(),
+				bean.isIstruzione(),
+				bean.isMonumenti());
+		
+		session.setPreferences(p);
+	}
+	
+	public void updatePreferencesUser() {
+		//TODO;
+	}
+	
+	public void updatePreferencesActivity() {
+		//TODO;
 	}
 	
 	

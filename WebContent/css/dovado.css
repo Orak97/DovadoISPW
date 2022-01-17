@@ -258,3 +258,24 @@ body{
 .irreversible-process{
 	margin-bottom: 5vh;
 }
+
+/************************************User Profile*****************************/
+
+.titleUser{
+	margin-top: 2vh;
+	padding-top: 20px;
+}
+
+.infoBox{
+	background-color:#fbfbfb;
+	padding-left: 2vh;
+	padding-right: 2vh;
+}
+
+.info{
+	background-color:#ffffff;
+}
+
+.savePref-btn{
+	border-radius:30px;
+}

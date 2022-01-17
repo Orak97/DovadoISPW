@@ -46,6 +46,9 @@
 
 	  			case "HomeLogin": active = 3;
 	  			break;
+	  			
+	  			case "User Profile": active = 4;
+	  			break;
 	  		};
 	  	%>
 
@@ -113,6 +116,19 @@
 	            <li class="nav-item">
 	              <a class="nav-link <% if(active == 2) out.print("active"); %>" href="Schedule.jsp">Schedule</a>
 	            </li>
+	            
+	            <li class="nav-item dropdown">
+		          <a class="nav-link dropdown-toggle <% if(active == 4) out.print("active"); %>"" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+		            My profile <i class="bi bi-person-circle"></i>
+		          </a>
+		          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+		            <li><a class="dropdown-item" href="UserProfile.jsp">My profile</a></li>
+		            <li><hr class="dropdown-divider"></li>
+		            <li><a class="dropdown-item" href="#">Log out</a></li>
+		          </ul>
+		        </li>
+	            
+	            
 	          </ul>
 	        </div>
 	        <% } %>
