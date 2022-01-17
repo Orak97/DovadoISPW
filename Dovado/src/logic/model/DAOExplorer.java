@@ -68,10 +68,29 @@ public class DAOExplorer {
             		rs.getLong("wallet"));
             }
             
-            rs.close();
-            System.out.println(u.getUsername());
+            Preferences p = new Preferences(
+            rs.getBoolean("Arte"),
+        	rs.getBoolean("Cibo"),
+        	rs.getBoolean("Musica"),
+        	rs.getBoolean("Sport"),
+        	rs.getBoolean("Social"),
+        	rs.getBoolean("Natura"),
+        	rs.getBoolean("Esplorazione"),
+        	rs.getBoolean("Ricorrenze_locali"),
+        	rs.getBoolean("Moda"),
+        	rs.getBoolean("Shopping"),
+        	rs.getBoolean("Adrenalina"),
+        	rs.getBoolean("Relax"),
+        	rs.getBoolean("Istruzione"),
+        	rs.getBoolean("Monumenti")
+            );
             
-        }catch(Exception e){e.printStackTrace();}
+            u.setPreferences(p);
+            
+            rs.close();
+            
+            
+        }
         finally {
             // STEP 5.2: Clean-up dell'ambiente
             try {
