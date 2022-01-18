@@ -5,7 +5,7 @@ nav {
     
 }
 
-.col-4.events-list{
+.events-list{
 	 background-color:#212121;
 	 height:100%;
 	 overflow-y: scroll;
@@ -61,6 +61,32 @@ nav {
 	padding-right: 0;
 }
 
+.search-activity{
+	background-color: #212121;
+	padding-top: 2vh;
+	padding-bottom:2vh;
+}
+
+.search-home{
+	border-radius: 15px;
+}
+
+.filters{
+	z-index: 1000;
+	padding-top: 1vh;
+	padding-left: 5vw;
+}
+
+.btn-filters{
+	background-color: #ffffff;
+	margin-left: 2vw;
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+}
+
+.btn-filters:hover{
+	background-color: #f4f4f4;
+}
 /********************body**********************************/
 body{
 	background-color: #9FB6CD;

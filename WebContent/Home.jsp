@@ -37,11 +37,26 @@
 		DAOActivity daoAct = DAOActivity.getInstance();
 		ArrayList<Activity> activities = new ArrayList<Activity>();
 		
+		//only for debugging, then you should pick those from 'utente'
+		double userLat = 41.8901232;
+		double userLong = 12.4960768;
+				
+		
+		float maxDistance = 20.0f; //in km
+		
+		
 		try{
-			double userLat = 41.8901232;
-			double userLong = 12.4960768;
-			float maxDistance = 20.0f; //in km
-					
+			maxDistance = Float.parseFloat(request.getParameter("max-distance"));
+		}catch(NumberFormatException e){
+			%>
+				<script>alert('Inserisci un valore corretto per la distanza!')</script>
+			<%
+		}catch(NullPointerException e){
+			//non faccio nulla perché non mi interessa
+		}
+		
+		
+		try{	
 			activities = daoAct.getNearbyActivities(userLat, userLong, maxDistance);
 		}catch(Exception e) {
 			//TODO: Fixare ASAP facendo comparire un messaggio di errore!!!!
@@ -52,6 +67,9 @@
 		<div class="row pt-6 home-body" id="home-body">
 		
 			<div class="col-4 events-list">
+			<div class="d-flex sticky-top search-activity shadow">
+				<input type="text" class="form-control flex-grow-1 search-home" placeholder="Cerca Attività">
+			</div>
 			<div class="row row-cols-1 row-cols-md-1 g-1">
 			  <% for(Activity curr:activities){ %>
 			  
@@ -82,6 +100,12 @@
 			
 			<%-- map --%>
 			<div class="col-8" id="mapContainer">
+				<div class="d-flex flex-row position-absolute filters gx-5"> 
+					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#distanceModal">Distanza</button>
+					<button type="button" class="btn btn-filters">Categorie</button>
+					<button type="button" class="btn btn-filters">Data</button>
+					<button type="button" class="btn btn-filters">Ricerca avanzata <i class="bi bi-search"></i></button>									
+				</div>
 				<div id="Map" class="homeMap"></div>
 			</div>
 			
@@ -156,7 +180,7 @@
 				  <div class="reminder-time">
 				        <div class="mb-3" id="promemoria">
 				        	<p>Vuoi ricevere un promemoria per questo evento?</p>
-				        	<button type="button" class="btn btn-primary btn-sm" onclick="addPromemoria()">Impostaun promemoria</button>
+				        	<button type="button" class="btn btn-primary btn-sm" onclick="addPromemoria()">Imposta un promemoria</button>
 				        </div>
 		
 				        <div class="reminder-form visually-hidden" id="reminder-form">
@@ -184,6 +208,40 @@
 		</div>
 		
 		<!-- fine modal -->
+		
+		
+		<!-- modal per la distanza -->
+		
+		<div class="modal fade" id="distanceModal" tabindex="-1" aria-labelledby="distanceModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="distanceModalLabel">Di quanto ti vuoi spostare?</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <form method="GET" action="Home.jsp">
+		      <div class="modal-body">
+		      	<p>Dovado trova le attività che ti potrebbero piacere nel raggio che decidi tu!</p>
+		        <label for="max-distance" class="form-label">Voglio spostarmi di massimo:</label>
+		        <div class="input-group mb-3">
+				  <input type=number step=0.5 min=1 class="form-control" placeholder="Inserisci la distanza" aria-label="kilometriDaPercorrere" aria-describedby="kilometri" value="<%= maxDistance %>" name="max-distance" id="max-distance">
+				  <span class="input-group-text" id="kilometri">km</span>
+				</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Trova attività</button>
+		      </div>
+		      </form>
+		    </div>
+		  </div>
+		</div>
+				
+		
+		
+		
+		<!-- fine modal per la distanza -->
+		
 		 <script>
 			//---------------------------------------------------------------
 		 	//|						 	modal								|
@@ -441,6 +499,8 @@
 				document.getElementById('msg-container').innerHTML='';
 		 	}
 		 	
+		 	
+
 	</script>
 </body>
 </html>
