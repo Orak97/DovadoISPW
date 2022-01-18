@@ -8,12 +8,26 @@ import logic.model.SuperUser;
 import logic.view.Navbar;
 
 public class SpotPlaceController {
-	private SuperUser user;
+	/************************************************************
+	 * Tabella delle responsabilità:
+	 * **********************************************************
+	 * 	Q:	Chi crea il posto? 
+	 * 	A:	il dao perché è l'information expert
+	 * 	
+	 * 	Q:	Chi si preoccupa se il posto esiste sulla mappa?
+	 * 	A:	questa classe, perché è il controller
+	 * 
+	 * 	Q: Chi si preoccupa di controllare che il posto non sia un duplicato?
+	 * 	A: Il Trigger Before insert nel database relazionale, perché è la via più ottimale
+	 * 
+	 * Se hai altre repsonabilità da verificare aggiungile qui
+	 * ********************************************************** 
+	 * */
+	
 	private SpotPlaceBean bean;
 	private DAOPlace daoPl = DAOPlace.getInstance();
 	
-	public SpotPlaceController(SuperUser user, SpotPlaceBean bean){
-		this.user = user;
+	public SpotPlaceController(SpotPlaceBean bean){
 		this.bean = bean;
 	}
 	
@@ -24,16 +38,21 @@ public class SpotPlaceController {
 		String address = bean.getAddress();
 		String civico = bean.getStreetNumber();
 		String city = bean.getCity();
+		String cap = bean.getCap();
+		double latitude = bean.getLatitude();
+		double longitude = bean.getLongitude();
 		
-		if(daoPl.findPlaceInJSON(placeName, city, region)!=null) {
-			System.out.println("posto già creato da handlare l'exception");
-			return false;
+		/*
+		 * TODO: implementare un controllo che la via esista veramente!
+		 * 
+		 * 
+		 * 
+		 * */
+		
+		try{
+			daoPl.spotPlace(address, placeName, city, region, civico, cap,latitude,longitude);
 		}
-		
-		Partner owner = null;
-		if(user instanceof Partner) owner = (Partner) user;
-		
-		if(daoPl.addPlaceToJSON(address, placeName, city, region, civico, owner)==-1) { 
+		catch(Exception e) {
 			System.out.println("posto non creato");
 			return false;
 		}
@@ -41,8 +60,5 @@ public class SpotPlaceController {
 		return true;
 	
 	}
-	
-	
-	
 
 }

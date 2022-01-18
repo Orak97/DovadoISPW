@@ -29,7 +29,7 @@
 				response.sendRedirect("login.jsp");
 				
 		} else {
-			session.setMaxInactiveInterval(2*60);
+			session.setMaxInactiveInterval(25*60);
 		}
 
 	  		int active = 0;
@@ -46,6 +46,9 @@
 
 	  			case "HomeLogin": active = 3;
 	  			break;
+	  			
+	  			case "User Profile": active = 4;
+	  			break;
 	  		};
 	  	%>
 
@@ -60,6 +63,27 @@
 
     <!-- nostro css -->
     <link rel="stylesheet" href="css/dovado.css">
+    
+    <!-- css di leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+	  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+	  crossorigin=""/>
+	   
+	  <!-- Make sure you put this AFTER Leaflet's CSS -->
+	 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+	   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+	   crossorigin=""></script>
+	   
+	   <!-- robe che ha messo andre non ho capito bene a che servono -->
+	   
+	   <!-- Load Esri Leaflet from CDN -->
+		<script src="https://unpkg.com/esri-leaflet@2.5.3/dist/esri-leaflet.js"></script>
+		
+		 <!-- Load Esri Leaflet Geocoder from CDN -->
+		<link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.css">
+		<script src="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.js"></script>
+		
+		<!-- fine delle robe di andre -->
 
   	</head>
 	  <body>
@@ -92,6 +116,19 @@
 	            <li class="nav-item">
 	              <a class="nav-link <% if(active == 2) out.print("active"); %>" href="Schedule.jsp">Schedule</a>
 	            </li>
+	            
+	            <li class="nav-item dropdown">
+		          <a class="nav-link dropdown-toggle <% if(active == 4) out.print("active"); %>"" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+		            My profile <i class="bi bi-person-circle"></i>
+		          </a>
+		          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+		            <li><a class="dropdown-item" href="UserProfile.jsp">My profile</a></li>
+		            <li><hr class="dropdown-divider"></li>
+		            <li><a class="dropdown-item" href="#">Log out</a></li>
+		          </ul>
+		        </li>
+	            
+	            
 	          </ul>
 	        </div>
 	        <% } %>

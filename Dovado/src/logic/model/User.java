@@ -37,6 +37,10 @@ public class User extends SuperUser{
 	private Schedule schedule;
 	private int wallet;
 	private String name;
+	private Preferences preferences;
+	private double latitude;
+	private double longitude;
+	private float maxDistance = 2.0f; //this would be in km;
 	
 	public User(String username, String email, Long id, Long wallet) {
 		super(username,email, id);
@@ -58,6 +62,42 @@ public class User extends SuperUser{
 	
 	public Schedule getSchedule() {
 		return schedule;
+	}
+	
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
+	}
+
+	public Preferences getPreferences() {
+		return preferences;
+	}
+
+	public void setPreferences(Preferences preferences) {
+		this.preferences = preferences;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public float getMaxDistance() {
+		return maxDistance;
+	}
+
+	public void setMaxDistance(float maxDistance) {
+		this.maxDistance = maxDistance;
 	}
 	
 	

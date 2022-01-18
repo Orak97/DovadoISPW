@@ -7,6 +7,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+
+import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -44,6 +49,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import logic.model.Activity;
 import logic.model.Channel;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
@@ -53,6 +59,7 @@ import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
+import logic.model.Preferences;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
@@ -99,7 +106,7 @@ public class HomeView implements Initializable{
     private WebView map;
 
     @FXML
-    private WebEngine eng;
+    private static WebEngine eng;
 	 
     private static int lastActivitySelected = -1;
 
@@ -110,6 +117,9 @@ public class HomeView implements Initializable{
     private static DAOPlace daoPlc;
     private static SuperActivity activitySelected;
     private static SuperUser user;
+    private static double usrLat;
+    private static double usrLon;
+    
     
     public static void render(Stage current) {
 		try {
@@ -132,6 +142,8 @@ public class HomeView implements Initializable{
 			curr=current;
 			
 			current.show();	
+			//eng.executeScript("addMarker('"+usrLat+"','"+usrLon+"','your position')");
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -145,7 +157,18 @@ public class HomeView implements Initializable{
 		daoAct = DAOActivity.getInstance();
 		daoSU = DAOSuperUser.getInstance();
 		
-    	user = Navbar.getUser();
+
+		//Prendo la geolocalizazione da questa 
+		//libreria per poi non utilizzarla mai più
+        JMapViewer jpm = new JMapViewer();
+        ICoordinate coords = jpm.getPosition();
+        
+        usrLat = coords.getLat();
+        usrLon = coords.getLon();
+        
+        System.out.println("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
+        
+        user = Navbar.getUser();
     	if(user instanceof Partner) {
     		
 	    	try{
@@ -153,7 +176,7 @@ public class HomeView implements Initializable{
 				//e mostrarne i risultati prendo le attività del partner e 
 				//in base a quello restituisco risultati appropriati.
 				
-	    		ArrayList<SuperActivity> activitiesPartn = (ArrayList<SuperActivity>) daoAct.findActivitiesByPartner(daoSU,(Partner)user);
+	    		ArrayList<Activity> activitiesPartn = (ArrayList<Activity>) daoAct.getPartnerActivities(user.getUserID());
 				
     			eng = map.getEngine();
     			eng.load(MAPPATHKEY);
@@ -176,17 +199,17 @@ public class HomeView implements Initializable{
     				
     				int j;
     				for(j=0;j<activitiesPartn.size();j++)
-    				Log.getInstance().getLogger().info("tutte le attivit� "+activitiesPartn.get(j).getId());
+    				Log.getInstance().getLogger().info("tutte le attivit� "+((SuperActivity)activitiesPartn.get(j)).getId());
     				
     				Thread newThread = new Thread(() -> {
     					int i;
     					for(i=0;i<activitiesPartn.size();i++) {
     						ImageView eventImage = new ImageView();
-    						Text eventName = new Text(activitiesPartn.get(i).getName()+"\n");
-    						Log.getInstance().getLogger().info("\n\n"+activitiesPartn.get(i).getName()+"\n\n");
-    						Text eventInfo = new Text(activitiesPartn.get(i).getPlace().getName()+
-    								"\n"+activitiesPartn.get(i).getFrequency().getOpeningTime()+
-    								"-"+activitiesPartn.get(i).getFrequency().getClosingTime());
+    						Text eventName = new Text(((SuperActivity)activitiesPartn.get(i)).getName()+"\n");
+    						Log.getInstance().getLogger().info("\n\n"+((SuperActivity)activitiesPartn.get(i)).getName()+"\n\n");
+    						Text eventInfo = new Text(((SuperActivity)activitiesPartn.get(i)).getPlace().getName()+
+    								"\n"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getOpeningTime()+
+    								"-"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getClosingTime());
     						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
     						eventImage.getStyleClass().add("event-image");
     						
@@ -216,8 +239,8 @@ public class HomeView implements Initializable{
     						Text eventId = new Text();
     						Text placeId = new Text();
     						
-    						eventId.setId(activitiesPartn.get(i).getId().toString());
-    						placeId.setId(activitiesPartn.get(i).getPlace().getId().toString());
+    						eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
+    						placeId.setId(((SuperActivity)activitiesPartn.get(i)).getPlace().getId().toString());
     						
     						//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
     						//dell'evento ed infine il testo dell'evento.
@@ -250,12 +273,15 @@ public class HomeView implements Initializable{
     			} catch (InterruptedException e) {
     				e.printStackTrace();
     				Log.getInstance().getLogger().info(e.getMessage());
-    			}
+    			} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     	}
     	else {
 	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 			try{
-				ArrayList<SuperActivity> activities = new ArrayList<>();
+				ArrayList<Activity> activities = new ArrayList<>();
 				
 				eng = map.getEngine();
 				
@@ -278,13 +304,11 @@ public class HomeView implements Initializable{
 				//e mostrarne i risultati prendo le preferenze dell'utente e 
 				//in base a quello restituisco risultati appropriati.
 				
-				ArrayList<String> preferences = (ArrayList<String>)Navbar.getUser().getPreferences();
+				Preferences preferences = ((User)Navbar.getUser()).getPreferences();
 				
-				if(!preferences.isEmpty()){
+				if(preferences!=null){
 						
-					for(int i=0;i<preferences.size();i++) {
-						activities.addAll(daoAct.findActivityByPreference(daoSU, preferences.get(i)));
-					}
+					activities.addAll(daoAct.getNearbyActivities(41.952928,12.518342,50));
 					
 					int j;
 					for(j=0;j<activities.size();j++)
@@ -360,6 +384,9 @@ public class HomeView implements Initializable{
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					Log.getInstance().getLogger().info(e.getMessage());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
     	}
 	}
@@ -388,7 +415,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
 		lastEventBoxSelected = eventBox;
 		
-		int activityId = Integer.parseInt(eventBox.getChildren().get(0).getId());
+		Long activityId = Long.parseLong(eventBox.getChildren().get(0).getId());
 		Long placeId = Long.parseLong(eventBox.getChildren().get(1).getId());
 		ImageView eventImage = (ImageView) eventBox.getChildren().get(2);
 		VBox eventInfo = (VBox) eventBox.getChildren().get(3);
@@ -415,7 +442,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		eventImage.setScaleX(1.2);
 		eventImage.setScaleY(1.25);
 
-		activitySelected = daoAct.findActivityByID(daoSU,daoPlc.findPlaceById(placeId),activityId); 
+		try {
+			activitySelected = (SuperActivity) daoAct.getActivityById(activityId);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
 		Log.getInstance().getLogger().info("Attivit� trovata: "+activitySelected);
 
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
@@ -626,7 +658,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
 								LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
 								
-								((User) user).getSchedule().addActivityToSchedule(activitySelected, dateSelected, remindDate, user);		
+								((User) user).getSchedule().addActivityToSchedule((Activity)activitySelected, dateSelected, remindDate);		
 								
 								final Stage dialog = new Stage();
 				                dialog.initModality(Modality.NONE);
@@ -750,7 +782,11 @@ public void activityDeselected(StackPane lastBox,boolean delete) {
 	
 	if(delete==true) {
 		eventsList.getItems().remove(lastEventBoxSelected);
-		daoAct.deleteActivityJSON(activitySelected);
+	
+	//	Metodo da aggiungere al DAO
+	//		
+	//	daoAct.DELETEACTIVITYFROMDB(activitySelected);
+	
 		lastEventBoxSelected=null;
 		return;
 	}
@@ -781,16 +817,18 @@ public void filterActivities() {
 	if((searchItem = searchBar.getText())==null) return;
 	
 	ArrayList<SuperActivity> activities = new ArrayList<>();
-	
-	if(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase())!=null) {
-		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
-		searchMode = 1;
-	}
-	
-	else if(daoAct.findActivityByName(daoSU, searchItem.toUpperCase())!=null) {
-		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByName(daoSU, searchItem.toUpperCase()));
-		searchMode = 0;
-	}
+//  In base all'input dell'utente le righe sottostanti vedono se
+//	l'utente cercava tramite preferenza o tramite nome dell'attività
+//	
+//	if(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase())!=null) {
+//		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
+//		searchMode = 1;
+//	}
+//	
+//	else if(daoAct.findActivityByName(daoSU, searchItem.toUpperCase())!=null) {
+//		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByName(daoSU, searchItem.toUpperCase()));
+//		searchMode = 0;
+//	}
 	
 	//else if() {
 		
@@ -798,14 +836,14 @@ public void filterActivities() {
 	
 	if(searchMode == -1) return;
 	
-	if(user instanceof Partner) {
-		ArrayList<SuperActivity> partnerAct = new ArrayList<SuperActivity>();
-		for(int i=0;i<activities.size();i++) {
-			if((activities.get(i).getCreator().getUserID()).equals(user.getUserID()))
-				partnerAct.add(activities.get(i));
-		}
-		activities=partnerAct;
-	}
+//	if(user instanceof Partner) {
+//		ArrayList<SuperActivity> partnerAct = new ArrayList<SuperActivity>();
+//		for(int i=0;i<activities.size();i++) {
+//			if((activities.get(i).getCreator().getUserID()).equals(user.getUserID()))
+//				partnerAct.add(activities.get(i));
+//		}
+//		activities=partnerAct;
+//	}
 	eventsList.getItems().clear();
 	
 	int i;

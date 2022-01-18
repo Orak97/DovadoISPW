@@ -5,16 +5,16 @@ import java.time.LocalTime;
 
 public class NormalActivity extends SuperActivity implements Activity{
 
-	public NormalActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime) {
-		super(nome, c, p,openingTime,closingTime);
+	public NormalActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime) {
+		super(id,nome, description, p,openingTime,closingTime);
 	}
 	
-	public NormalActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate) {
-		super(nome, c, p,openingTime,closingTime,startDate,endDate);
+	public NormalActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate) {
+		super(id,nome, description, p,openingTime,closingTime,startDate,endDate);
 	}
 	
-	public NormalActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate,Cadence cadence) {
-		super(nome, c, p,openingTime,closingTime,startDate,endDate, cadence);
+	public NormalActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate,Cadence cadence) {
+		super(id,nome, description, p,openingTime,closingTime,startDate,endDate, cadence);
 	}
 
 	@Override

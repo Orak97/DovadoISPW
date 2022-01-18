@@ -4,20 +4,22 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class CertifiedActivity extends SuperActivity implements Activity {
+	
+	private Partner owner;
 
-	public CertifiedActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime) {
-		super(nome, c, p,openingTime,closingTime);
-		
+	public CertifiedActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, Partner owner) {
+		super(id,nome, description, p,openingTime,closingTime);
+		this.owner = owner;
 	}
 
-	public CertifiedActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate) {
-		super(nome, c, p,openingTime,closingTime,startDate,endDate);
-		
+	public CertifiedActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate, Partner owner) {
+		super(id,nome, description, p,openingTime,closingTime,startDate,endDate);
+		this.owner = owner;
 	}
 
-	public CertifiedActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate,Cadence cadence) {
-		super(nome, c, p,openingTime,closingTime,startDate,endDate, cadence);
-		
+	public CertifiedActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate,Cadence cadence, Partner owner) {
+		super(id,nome, description, p,openingTime,closingTime,startDate,endDate, cadence);
+		this.owner = owner;
 	}
 
 	@Override

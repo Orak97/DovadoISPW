@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User" %>
+    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController" %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
@@ -11,64 +11,67 @@
 	<jsp:useBean id="scheduleBean" scope="request" class="logic.model.ScheduleBean" />
 
 	<jsp:setProperty name="scheduleBean" property="*" />
-	<%
-
-		if(request.getParameter("date")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
-		 //out.println("printo prop:"+scheduleBean.getScheduledDateTime());
-		 
-		SuperUser u = (User) session.getAttribute("user");
-		 
-		 try {
-			 out.println(u.getUsername());
-			 DAOActivity a = DAOActivity.getInstance();
-			 DAOSuperUser su = DAOSuperUser.getInstance();
-			 Long idA = scheduleBean.getIdActivity();
-			 SuperActivity att = a.findActivityByID(su,idA);
-			 ((User) u).getSchedule().addActivityToSchedule(att, scheduleBean.getScheduledDateTime(),scheduleBean.getScheduledDateTime(), u);
-		 }catch(Exception e){
-			 e.printStackTrace();
-		 }
-		 }
-
-		
-		/*
-		Enumeration paramNames = request.getParameterNames();
-		while(paramNames.hasMoreElements()) {
-			String paramName = (String)paramNames.nextElement();
-			String paramValue = request.getParameter(paramName);
-			if(paramValue == "") out.println("zi, is null");
-			out.println(paramName+':'+paramValue);
-		} */
-		
-
-	%>
-
-	
-	
-	
 	
 
-	<% //tentativo di fare una home decente:
-		
-		DAOPreferences daoPref = DAOPreferences.getInstance();
-		DAOActivity daoAct = DAOActivity.getInstance();
-		DAOSuperUser daoSU = DAOSuperUser.getInstance();
-	
-		ArrayList<SuperActivity> activities = new ArrayList<SuperActivity>();
-		
-		System.err.println("\n"+"Working Directory = " + System.getProperty("user.dir"));	
-		activities.addAll(daoAct.findActivityByPreference(daoSU, "BOXE"));
-		activities.addAll(daoAct.findActivityByPreference(daoSU, "TENNIS"));
-
-		System.err.println("\n"+"\nNumero di attivita trovate: "+activities.size());
-	
-	%>
 	<div class="container-fluid home">
+	<% //tentativo di fare una home decente:
+		User utente = (User) session.getAttribute("user");
+		if(utente == null) response.sendRedirect("login.jsp");
+		
+		//controllo latiduine e longitudine, se sono 0 -> non è stata inizializzata -> porto l'utente alla pagina per attivare la geolocalizzazione
+		if(utente.getLatitude() == 0 || utente.getLongitude() == 0) response.sendRedirect("localization.jsp");
+		
+		if(request.getParameter("idActivity")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
+			AddActivityToScheduleController controller = new AddActivityToScheduleController(utente,scheduleBean);
+			try{
+				controller.addActivityToSchedule();
+			}catch(Exception e){
+				%>
+					<script> alert('Sembra che ci sia un errore nell\' aggiungere l\'attività nello schedulo!') </script>
+				<%
+				e.printStackTrace();
+			} 
+		}
+		
+		
+		DAOActivity daoAct = DAOActivity.getInstance();
+		ArrayList<Activity> activities = new ArrayList<Activity>();
+		
+		//only for debugging, then you should pick those from 'utente'
+		double userLat = 41.8901232;
+		double userLong = 12.4960768;
+				
+		
+		float maxDistance = 20.0f; //in km
+		
+		
+		try{
+			maxDistance = Float.parseFloat(request.getParameter("max-distance"));
+		}catch(NumberFormatException e){
+			%>
+				<script>alert('Inserisci un valore corretto per la distanza!')</script>
+			<%
+		}catch(NullPointerException e){
+			//non faccio nulla perché non mi interessa
+		}
+		
+		
+		try{	
+			activities = daoAct.getNearbyActivities(userLat, userLong, maxDistance);
+		}catch(Exception e) {
+			//TODO: Fixare ASAP facendo comparire un messaggio di errore!!!!
+			e.printStackTrace();
+		}
+	%>
+	
 		<div class="row pt-6 home-body" id="home-body">
 		
 			<div class="col-4 events-list">
+			<div class="d-flex sticky-top search-activity shadow">
+				<input type="text" class="form-control flex-grow-1 search-home" placeholder="Cerca Attività">
+			</div>
 			<div class="row row-cols-1 row-cols-md-1 g-1">
-			  <% for(SuperActivity curr:activities){ %>
+			  <% for(Activity curr:activities){ %>
 			  
 			  <div class="col" >
 			    <div class="card card-dark text-white" data-bs-toggle="collapse" href="#collapse<%= curr.getId() %>" aria-expanded="false" aria-controls="collapse<%= curr.getId() %>">
@@ -83,7 +86,7 @@
 				    <div class="d-grid gap-2 activityButtonGroup">
 				        	<button type="button" class="btn btn-dark btnHome" onclick="loadChat(<%=curr.getId()%>)">Join Channel</button>
 				        
-				        	<button type="button" class="btn btn-dark btnHome" onclick="document.getElementById('map').contentWindow.spotPlace('<%=curr.getPlace().getCivico()%>','<%=curr.getPlace().getAddress()%>','<%=curr.getPlace().getCity()%>','<%=curr.getPlace().getRegion()%>');">View on map</button>
+				        	<button type="button" class="btn btn-dark btnHome" onclick="moveView(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, <%= curr.getId()%>)">View on map</button>
 				        
 				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>">Play Activity</button>
 				    </div>
@@ -96,9 +99,39 @@
 			</div>
 			
 			<%-- map --%>
-			<div class="col-8" id="map" style="overflow-y:hidden">
-				<iframe src="map.html" title="maps" id="map" style="width:100%; height:100%"></iframe> 
+			<div class="col-8" id="mapContainer">
+				<div class="d-flex flex-row position-absolute filters gx-5"> 
+					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#distanceModal">Distanza</button>
+					<button type="button" class="btn btn-filters">Categorie</button>
+					<button type="button" class="btn btn-filters">Data</button>
+					<button type="button" class="btn btn-filters">Ricerca avanzata <i class="bi bi-search"></i></button>									
+				</div>
+				<div id="Map" class="homeMap"></div>
 			</div>
+			
+			<%-- js for the map --%>
+			<script src="js/map.js"></script>
+			<script type="text/javascript">
+				var mymap;
+				var latitude = <%= utente.getLatitude() %>
+				var longitude = <%= utente.getLongitude() %>
+				
+				<%-- debugging mode: per assicurarmi che funziona, cancellare questo codice appena ne abbiamo la certezza --%>
+				latitude = 41.8901232;
+				longitude = 12.4960768;
+				<%-- fine del debuggin mode ayooo--%>
+				
+					
+				startup(latitude,longitude);
+				
+				
+				 <% for(Activity curr:activities){ %>
+				 	spotPlace(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, '<%= curr.getName() %>', <%=curr.getId()%>);
+				 <% }%>
+				 
+				 var lastMarker = setUser(latitude,longitude);
+				 
+			</script>
 		
 			<%-- chat --%>
 			<div class="col-8 chat d-flex flex-column visually-hidden" id="chat">
@@ -147,7 +180,7 @@
 				  <div class="reminder-time">
 				        <div class="mb-3" id="promemoria">
 				        	<p>Vuoi ricevere un promemoria per questo evento?</p>
-				        	<button type="button" class="btn btn-primary btn-sm" onclick="addPromemoria()">Impostaun promemoria</button>
+				        	<button type="button" class="btn btn-primary btn-sm" onclick="addPromemoria()">Imposta un promemoria</button>
 				        </div>
 		
 				        <div class="reminder-form visually-hidden" id="reminder-form">
@@ -175,6 +208,40 @@
 		</div>
 		
 		<!-- fine modal -->
+		
+		
+		<!-- modal per la distanza -->
+		
+		<div class="modal fade" id="distanceModal" tabindex="-1" aria-labelledby="distanceModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="distanceModalLabel">Di quanto ti vuoi spostare?</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <form method="GET" action="Home.jsp">
+		      <div class="modal-body">
+		      	<p>Dovado trova le attività che ti potrebbero piacere nel raggio che decidi tu!</p>
+		        <label for="max-distance" class="form-label">Voglio spostarmi di massimo:</label>
+		        <div class="input-group mb-3">
+				  <input type=number step=0.5 min=1 class="form-control" placeholder="Inserisci la distanza" aria-label="kilometriDaPercorrere" aria-describedby="kilometri" value="<%= maxDistance %>" name="max-distance" id="max-distance">
+				  <span class="input-group-text" id="kilometri">km</span>
+				</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Trova attività</button>
+		      </div>
+		      </form>
+		    </div>
+		  </div>
+		</div>
+				
+		
+		
+		
+		<!-- fine modal per la distanza -->
+		
 		 <script>
 			//---------------------------------------------------------------
 		 	//|						 	modal								|
@@ -248,8 +315,8 @@
  				//rendo visibile la chat nel caso non lo sia già
 		 		document.getElementById('chat').classList.add('visually-hidden');
 		 		
-		 		//nascondo la mappa -DA RIVEDERE-
-				document.getElementById('map').classList.remove("visually-hidden");
+		 		//Faccio riapparire la mappa -DA RIVEDERE-
+				document.getElementById('mapContainer').classList.remove("visually-hidden");
  				
  				
  			});
@@ -261,7 +328,7 @@
 		 		document.getElementById('chat').classList.remove('visually-hidden');
 		 		
 		 		//nascondo la mappa -DA RIVEDERE-
-				document.getElementById('map').classList.add("visually-hidden");
+				document.getElementById('mapContainer').classList.add("visually-hidden");
 		 		
 		 		//cancello il timer di refresh nel caso sia attivo
 		 		if(refreshInterval != undefined)
@@ -418,7 +485,7 @@
 	 				//aggiorno la chat solo se ci sono nuovi messaggi
 	 				console.log('finito timer');
 	 				}
-	 			,2000);
+	 			,30000);
 		 	}
 		 	
 		 	function scrollToBottomChat(){
@@ -432,6 +499,8 @@
 				document.getElementById('msg-container').innerHTML='';
 		 	}
 		 	
+		 	
+
 	</script>
 </body>
 </html>

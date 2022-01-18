@@ -1,8 +1,14 @@
 package logic.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import logic.model.Activity;
+import logic.model.DAOActivity;
+import logic.model.DAOSchedules;
 import logic.model.DateBean;
 import logic.model.Schedule;
+import logic.model.ScheduleBean;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
@@ -42,6 +48,18 @@ import logic.model.User;
 public class AddActivityToScheduleController {
 	private User session;
 	private DateBean timestamp;
+	private ScheduleBean editBean;
+	
+	private Schedule schedule = new Schedule();
+	
+	public AddActivityToScheduleController(User session, ScheduleBean editBean) {
+		this.session = session;
+		this.editBean = editBean;
+	}
+	
+	public AddActivityToScheduleController(Schedule schedule) {
+		this.schedule = schedule;
+	}
 	
 	public AddActivityToScheduleController(User usr, DateBean timestamp) {
 		session = usr;
@@ -49,12 +67,61 @@ public class AddActivityToScheduleController {
 	}
 	
 	//questo metodo andrebbe chiamato dal controller di playActivity
-	public void addActivityToSchedule(SuperActivity a) {
-		Schedule s = session.getSchedule();
+	public void addActivityToSchedule() throws Exception {
+		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
 		
-		s.addActivityToSchedule((SuperActivity) a, timestamp.getScheduledTime(), timestamp.getReminderTime(), (SuperUser) session);
-	
+		DAOSchedules daoSc = DAOSchedules.getInstance();
+		Long idUser = session.getUserID();
+		Long idActivity = editBean.getIdActivity();
+		LocalDateTime scheduledDate = editBean.getScheduledDateTime();
+		LocalDateTime reminderDate;
+		
+		//se non è disponibile il reminder Date dal bean, imposta come ora di reminder lo scheduledtime - 1h
+		try{
+			reminderDate = editBean.getReminderDateTime();
+		}catch(Exception e) {
+			reminderDate = scheduledDate.minusHours(1);
+		}
+		
+		daoSc.addActivityToSchedule(idUser,idActivity, scheduledDate, reminderDate);
+		
+		session.setSchedule(daoSc.getSchedule(session.getUserID()));
 	}
+	
+	public void modifySchedule() throws Exception {
+		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
+		
+		DAOSchedules daoSc = DAOSchedules.getInstance();
+		Long idSchedule = editBean.getIdSchedule();
+		LocalDateTime scheduledDate = editBean.getScheduledDateTime();
+		LocalDateTime reminderDate;
+		
+		//se non è disponibile il reminder Date dal bean, imposta come ora di reminder lo scheduledtime - 1h
+		try{
+			reminderDate = editBean.getReminderDateTime();
+		}catch(Exception e) {
+			reminderDate = scheduledDate.minusHours(1);
+		}
+		
+		daoSc.changeSchedule(idSchedule, scheduledDate, reminderDate);
+		
+		session.setSchedule(daoSc.getSchedule(session.getUserID()));
+		
+	}
+	
+	public void removeSchedule() throws Exception {
+		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
+		
+		DAOSchedules daoSc = DAOSchedules.getInstance();
+		Long scheduleToRemove = editBean.getScheduleToRemove();
+		Long idUser = session.getUserID();
+		
+		daoSc.removeActFromSchedule(scheduleToRemove,idUser);
+		
+		session.setSchedule(daoSc.getSchedule(session.getUserID()));
+		
+	}
+	
 	
 
 }

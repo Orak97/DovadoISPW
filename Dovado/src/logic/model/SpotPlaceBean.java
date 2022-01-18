@@ -6,6 +6,9 @@ public class SpotPlaceBean {
 	private String address;
 	private String city;
 	private String region;
+	private String cap;
+	private double latitude;
+	private double longitude;
 	
 	public String getPlaceName() {
 		return placeName;
@@ -36,5 +39,23 @@ public class SpotPlaceBean {
 	}
 	public void setRegion(String region) {
 		this.region = region;
+	}
+	public String getCap() {
+		return cap;
+	}
+	public void setCap(String cap) {
+		this.cap = cap;
+	}
+	public double getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+	public double getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 }

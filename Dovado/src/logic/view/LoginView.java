@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
+import logic.model.LogBean;
 import logic.model.SuperUser;
 
 public class LoginView{
@@ -43,24 +44,26 @@ public class LoginView{
     @FXML
     void login(ActionEvent event) {
     	Log.getInstance().getLogger().info("Clicked login");
+    	LogBean  logbean = new LogBean();
+    	logbean.setEmail(username.getText());
+    	logbean.setPassword(password.getText());
     	SuperUser user = null;
     	if(username.getText().contains("@")) {
     		Log.getInstance().getLogger().info(username.toString());
-    		if((user = DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText(),null))==null) {
-    			Log.getInstance().getLogger().info("Email o password incorrette.");
-    			return;
-    		} 
-    	}
-    	// Questo else diventa inutile visto che non possiamo cercare gli utenti in base agli Username
-    	else {
-    		if((user=DAOSuperUser.getInstance().findSuperUser(username.getText(), password.getText(),null))==null) {
-    			Log.getInstance().getLogger().info("Username o password incorretti.");
-    			return;
-    		}
+    		try {
+				if(!logbean.validate()) {
+					Log.getInstance().getLogger().info("Email o password incorrette.");
+					return;
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			} 
     	}
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	//HomeView hv = new HomeView();
-    	Navbar.setUser(user);
+    	Navbar.setUser(logbean.getUser());
     	HomeView.render(current);
     }
 

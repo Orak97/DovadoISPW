@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="ISO-8859-1"></meta>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+		<title>Esempio di mappa con openstreetmaps</title>
+		<link
+		rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+		<script
+		src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+		<!-- Load Esri Leaflet from CDN -->
+		<script src="https://unpkg.com/esri-leaflet@2.5.3/dist/esri-leaflet.js"></script>
+
+		  <!-- Load Esri Leaflet Geocoder from CDN -->
+		<link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.css">
+		<script src="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.js"></script>
+		<!--NON SO PERCHE' MA VIENE RESPONSIVE--> 
+			<!--SOLO SE COMMENTATA #Map-->
+		<style>
+			body, html {
+				border: 0px; 
+				margin: 0px; 
+				padding: 0px; 
+				height:100%; 
+				position:relative; 
+				width:100%;
+			}
+			
+			<!--#Map {height: 100%}-->
+		</style>
+	</head>
+<body>
+	<div id="Map"></div>
+		<script src="js/map.js">
+	</script>
+</body>
+
+	<script>
+	var lat,long;
+	var i=0,j=0;
+	var latLngUser;
+	
+	/*Se sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione success(position)*/
+
+	function success(position){
+			console.log("latitudine posizione =",position.coords.latitude,"longitudine posizione =",position.coords.longitude);
+			setCoords(position.coords.latitude,position.coords.longitude);
+			latLngUser = L.latLng(position.coords.latitude,position.coords.longitude);
+	}
+
+	/*Se NON sono riuscito a prendere informazioni sulla geolocalizzazione dell'utente parte la funzione error() e mi informa di quanto successo*/
+
+	function error(){
+		 alert("Nessuna informazione sulla geolocalizzazione dell'utente trovata.");
+	}
+
+	const options = {
+		enableHighAccuracy: true,
+		maximumAge: 0,
+		timeout: 27000
+	};
+
+	/*Cerco di prendere anche la posizione dell'utente tramite la geolocalizzazione.*/
+
+	if('geolocation' in navigator) {
+	  console.log("geolocation available");
+		console.log(navigator.geolocation.getCurrentPosition(success,error,options));
+	} else {
+	  console.log("geolocation not available");
+	}
+
+	/*Tramite fetchPlaces carico sulla mappa tutti i posti che sono salvati nel nostro db e con loro in seguito si mostreranno sulla pagina
+	* anche i loro eventi.
+	*/
+	fetchPlaces().then(response => {
+		console.log("Ricevuti i dati sui places.");
+	}).catch(error => {
+		console.error(error);
+	});
+
+	async function fetchPlaces(){
+		const response = await fetch('places.json');
+		const result = await response.json();
+		
+		var j=0;
+		
+		for (place in result.places){
+			console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico);
+			
+			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca ï¿½ un oggetto contenente la percentuale di precisione
+			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una cittï¿½ nella mappa.*/
+			
+			L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
+  				
+				if (err) {
+    				console.log(err);
+    				return;
+  				}
+  				console.log(results.results[0]);
+  				console.log(result.places[j].address+' '+result.places[j].civico+' '+result.places[j].name);
+  				addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[j].name);
+  				j++;
+			});
+
+			i++;
+		}
+		i=0;
+	}
+
+	async function searchPlaces(keywordmodeSearch){
+		const response = await fetch('places.json');
+		const result = await response.json();
+
+		const responseAct = await fetch('activities.json');
+		const resultAct = await responseAct.json();
+		
+		var input = keywordmodeSearch.split('-');
+		
+		console.log("keyword: "+input[0]+" mode "+input[1]);
+		
+		var keyword = input[0];
+		var mode = parseInt(input[1]);
+		
+		var k=0; //usato per scandire aggiungere markers in ordine nella mappa
+		var l=0; //usato per scandire le attività del activity.json
+		var y=0; //usato per scandire le attività di un posto.
+		var j=0; //usato per scandire le preferenze.
+		
+		for (place in result.places){
+
+			//In ogni attività di ciascun posto cerco 
+			//tra le attività quella con il nome uguale a
+			//quello cercato.
+			
+			for(activity in result.places[i].activities){
+				for(act in resultAct.activities){
+					if(result.places[i].activities[y]===undefined){
+						console.log(result.places[i].name+" non ha attività da svolgere.");
+						break;
+					}
+					console.log(result.places[i].activities[y].id + " " + resultAct.activities[l].id);
+								
+					if(result.places[i].activities[y].id == resultAct.activities[l].id && mode == 0 && resultAct.activities[l].name == keyword){
+						L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
+			  				if (err) {
+			    				console.log(err);
+			    				return;
+			  				}
+			  				console.log(results.results[0]);
+			  				(addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name));
+			  				k++;
+						});
+					}
+					
+					if(mode == 1){
+		
+						console.log("indirizzo =",result.places[i].address,"civico =",result.places[i].civico, "mode =", mode);
+																	
+						for(preference in resultAct.activities[l].preferences){
+							//Se il posto ha l'attività interessata al suo interno e con stessa preferenza
+							//Allora si aggiunge alla mappa il marker ad essa inerente.
+							if(resultAct.activities[l].id == result.places[i].activities[y].id && resultAct.activities[l].preferences[j]==keyword.toUpperCase()){
+								L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
+									if (err) {
+										console.log(err);
+										return;
+									}
+									console.log(results.results[0]);
+									(addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name));
+									k++;
+									});
+								}
+								j++;
+						}
+						j=0;
+					}
+					
+					l++;
+				}
+				y++;
+				l=0;
+			}
+			y=0;
+			if(mode == 2){
+				deleteMarkers()
+				//Solo i posti vicini vengono aggiunti alla mappa
+				//La distanza è settata tramite la keyword.
+				L.esri.Geocoding.geocode().address(result.places[i].civico+' '+result.places[i].address).city(result.places[i].city).region(result.places[i].region).run(function (err, results, response) {
+	  				if (err) {
+	    				console.log(err);
+	    				return;
+	  				}
+	  				console.log(response);
+	  				console.log(results);
+	  				if(results.results[0].latlng.distanceTo(latLngUser) < keyword){
+		  				addMarker(results.results[0].latlng.lat,results.results[0].latlng.lng,result.places[k].name);
+					}
+	  				k++;
+				});
+			}
+			else if(mode < 0){console.log("Modalitï¿½ non accettata.");return;}
+
+		
+			i++;
+			l=0;
+			}
+			/*Grazie a Geocode si effettua una ricerca del Place in base all'indirizzo; il risultato della ricerca ï¿½ un oggetto contenente la percentuale di precisione
+			*della ricerca, la latitudine e longitudine ed altre informazioni. Facciamo uso della latitudine e longitudine per indicare i posti che si trovano in una cittï¿½ nella mappa.*/
+
+
+			i=0;
+		}
+
+	async function clearMarkers(){
+		
+		deleteMarkers();
+		
+	}
+
+	async function spotPlace(civico,address,city,region){
+
+		L.esri.Geocoding.geocode().address(civico+' '+address).city(city).region(region).run(function (err, results, response) {
+				if (err) {
+				console.log(err);
+				return;
+				}
+				console.log(results.results);
+				console.log(address+' '+civico+' questo ï¿½ il posto trovato -> '+results.results[0].properties.StAddr);
+				setCoords(results.results[0].latlng.lat,results.results[0].latlng.lng);
+		});
+	}
+
+
+	</script>
+</html>

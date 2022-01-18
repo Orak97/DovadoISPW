@@ -6,41 +6,44 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 
 public abstract class SuperActivity {
 	private Long id;
 	private String name;
-	private SuperUser creator;
+	private String description;
 	private Place place;
 	private FrequencyOfRepeat frequencyOfRepeat;
 	private Channel channel;
-	private ArrayList<String> preferences;
+	private Preferences intrestedCategories;
 	
-	protected SuperActivity(String nome, SuperUser user, Place place) {
+	
+	protected SuperActivity(Long id,String nome, String description, Place place) {
 		//chiamare questo metodo quando si vuole creare una attività continua!
+		this.id = id;
 		this.name= nome;
-		this.creator = user;
+		this.setDescription(description);
 		this.place = place;
-		this.preferences = new ArrayList<>();
 		this.frequencyOfRepeat = new ContinuosActivity(null,null);
 	}
 	
-	protected SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime) {
+	protected SuperActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime) {
 		//chiamare questo metodo quando si vuole creare una attività continua con orario apertura e chiusura
-		this(nome,c,p);
+		this(id,nome,description,p);
 		this.frequencyOfRepeat = new ContinuosActivity(openingTime,closingTime);
 	}
 	
-	protected SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate) {
+	protected SuperActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate) {
 		//chiamare questo metodo quando si vuole creare una attività a scadenza!
-		this(nome,c,p);
+		this(id,nome,description,p);
 		this.frequencyOfRepeat = new ExpiringActivity(openingTime,closingTime,startDate,endDate);
 	}
 	
-	protected SuperActivity(String nome, SuperUser c, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate, Cadence cadence) {
+	protected SuperActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate, Cadence cadence) {
 		//chiamare questo metodo quando si vuole creare una attività periodica !
-		this(nome,c,p);
+		this(id,nome,description,p);
 		this.frequencyOfRepeat = new PeriodicActivity(openingTime,closingTime,startDate,endDate,cadence);
 	}
 	
@@ -60,24 +63,26 @@ public abstract class SuperActivity {
 		this.id=id;
 		this.channel = DAOChannel.getInstance().setupChannelJSON(id);
 	}
+	
 	public FrequencyOfRepeat getFrequency() {
 		return this.frequencyOfRepeat;
 	}
+	
 	public void setFrequency(FrequencyOfRepeat frequencyOfRepeat) {
 		this.frequencyOfRepeat=frequencyOfRepeat;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
-	public SuperUser getCreator() {
-		return this.creator;
-	}
-	public void setCreator(SuperUser creator) {
-		this.creator = creator;
-	}
+	
 	
 	public Channel getChannel() {
 		return this.channel;
+	}
+	
+	public void setChannel(Channel channel) {
+		this.channel = channel;
 	}
 	
 	public boolean playableOnThisDate(LocalDateTime timestamp) {
@@ -89,13 +94,21 @@ public abstract class SuperActivity {
 		return (frequencyOfRepeat.checkPlayability(timestamp));
 	}
 
-	public List<String> getPreferences() {
-		return this.preferences;
+	public String getDescription() {
+		return description;
 	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Preferences getIntrestedCategories() {
+		return intrestedCategories;
+	}
+
+	public void setIntrestedCategories(Preferences intrestedCategories) {
+		this.intrestedCategories = intrestedCategories;
+	}
+
 	
-	public void setPreferences(List<String> newPreferences) {
-		this.preferences = (ArrayList<String>) newPreferences;
-		if(!DAOActivity.getInstance().updateActivityPreferences(this, true))
-			Log.getInstance().getLogger().info("Non è andato a buon fine l'aggiornamento delle preferenze");
-	}
 }
