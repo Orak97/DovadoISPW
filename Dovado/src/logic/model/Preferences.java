@@ -37,6 +37,7 @@ public class Preferences {
 		this.istruzione = istruzione;
 		this.monumenti = monumenti;
 	}
+
 	
 	/******************************************************************************
 	 *  getter e setter 
@@ -125,7 +126,18 @@ public class Preferences {
 	public void setMonumenti(boolean monumenti) {
 		this.monumenti = monumenti;
 	}
-	
+	public boolean[] getSetPreferences() {
+		boolean[] prefSet = {isArte(),isCibo(),isMusica(),isSport(),isSocial(),isNatura(),
+				isEsplorazione(),isRicorrenzeLocali(),isModa(),isShopping(),isAdrenalina(),
+				isRelax(),isIstruzione(),isMonumenti()};
+		return prefSet;
+	}
+	public String[] getPreferencesName() {
+		String[] prefNames = {"Arte","Cibo","Musica","Sport","Social","Natura","Esplorazione","Ricorrenze_locali", 
+				"Moda","Shopping","Adrenalina","Relax","Istruzione","Monumenti"};
+		
+		return prefNames;
+	}
 	/******************************************************************************
 	 *  fine getter e setter 
 	 ******************************************************************************/

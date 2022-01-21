@@ -7,11 +7,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+//import org.openstreetmap.gui.jmapviewer.JMapViewer;
+//import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+//import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -49,6 +48,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import logic.controller.AddActivityToScheduleController;
 import logic.model.Activity;
 import logic.model.Channel;
 import logic.model.DAOActivity;
@@ -56,13 +56,17 @@ import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
+import logic.model.DateBean;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
 import logic.model.Preferences;
+import logic.model.ScheduleBean;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
+import logic.view.Main;
+import logic.view.Navbar;
 
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
@@ -159,13 +163,13 @@ public class HomeView implements Initializable{
 		
 
 		//Prendo la geolocalizazione da questa 
-		//libreria per poi non utilizzarla mai più
-        JMapViewer jpm = new JMapViewer();
-        ICoordinate coords = jpm.getPosition();
-        
-        usrLat = coords.getLat();
-        usrLon = coords.getLon();
-        
+//		libreria per poi non utilizzarla mai più
+//        JMapViewer jpm = new JMapViewer();
+//        ICoordinate coords = jpm.getPosition();
+//        
+//        usrLat = coords.getLat();
+//        usrLon = coords.getLon();
+//        
         System.out.println("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
         
         user = Navbar.getUser();
@@ -186,14 +190,6 @@ public class HomeView implements Initializable{
     	        
     	        searchButton.setText("SEARCH");
     			searchButton.getStyleClass().add(BTNSRCKEY);
-    	   
-    	        preference1.setText(daoPref.getPreferenceFromJSON(1));
-    			preference2.setText(daoPref.getPreferenceFromJSON(2));
-    			preference3.setText(daoPref.getPreferenceFromJSON(3));
-
-    			preference1.getStyleClass().add(BTNPREFKEY);
-    			preference2.getStyleClass().add(BTNPREFKEY);
-    			preference3.getStyleClass().add(BTNPREFKEY);
     			
     			if(!activitiesPartn.isEmpty()){
     				
@@ -292,14 +288,6 @@ public class HomeView implements Initializable{
 		        searchButton.setText("SEARCH");
 				searchButton.getStyleClass().add(BTNSRCKEY);
 		   
-		        preference1.setText(daoPref.getPreferenceFromJSON(1));
-				preference2.setText(daoPref.getPreferenceFromJSON(2));
-				preference3.setText(daoPref.getPreferenceFromJSON(3));
-	
-				preference1.getStyleClass().add(BTNPREFKEY);
-				preference2.getStyleClass().add(BTNPREFKEY);
-				preference3.getStyleClass().add(BTNPREFKEY);
-				
 				//Al posto di scegliere preferenze casuali
 				//e mostrarne i risultati prendo le preferenze dell'utente e 
 				//in base a quello restituisco risultati appropriati.
@@ -640,6 +628,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 								String dayStringed = day.format(pickDate.getValue());
 								
+								String[] date = dayStringed.split("-");
+								
 								String hourChosen = hourBox.getValue();
 								String minChosen = minBox.getValue();
 								
@@ -647,6 +637,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								String hourReminder;
 								hourReminder = Integer.toString(hourReminderInt-1);
 						
+								System.out.println("AGGIUNGERE UN QUALCOSA CHE FACCIA SCEGLIERE I REMINDER!!!");
+								
 								if(hourReminderInt-1<10) {
 									hourReminder = "0"+hourReminder;
 								}
@@ -658,7 +650,27 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
 								LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
 								
-								((User) user).getSchedule().addActivityToSchedule((Activity)activitySelected, dateSelected, remindDate);		
+								
+//								DateBean dateB = new DateBean();
+//								dateB.setDay(Integer.parseInt(date[2]));
+//								dateB.setHour(Integer.parseInt(hourChosen));
+//								dateB.setMinutes(Integer.parseInt(minChosen));
+//								dateB.setMonth(Integer.parseInt(date[1]));
+//								dateB.setYear(Integer.parseInt(date[0]));
+								
+								ScheduleBean sb = new ScheduleBean();
+								sb.setIdActivity(activityId);
+								sb.setScheduledDate(dateChosen);
+								sb.setScheduledTime(hourChosen+':'+minChosen);
+								
+								AddActivityToScheduleController sc = new AddActivityToScheduleController((User) user, sb);
+								
+								try {
+									sc.addActivityToSchedule();
+								} catch (Exception e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
 								
 								final Stage dialog = new Stage();
 				                dialog.initModality(Modality.NONE);

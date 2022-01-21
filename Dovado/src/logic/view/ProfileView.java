@@ -21,6 +21,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
+import logic.model.Preferences;
+import logic.model.User;
 
 public class ProfileView implements Initializable{
 
@@ -85,19 +87,34 @@ public class ProfileView implements Initializable{
 		usrModifyBtn.getStyleClass().add("src-btn");
 		prefSearchBtn.getStyleClass().add("src-btn");
 		
-		ArrayList<String> preferences =(ArrayList<String>) Navbar.getUser().getPreferences();
-	
-		for(int i=0;i<preferences.size();i++) {
-			Text prefListElement = new Text(preferences.get(i));
-			
-			prefListElement.getStyleClass().add("textEventName");
-			
-			prefList.getItems().add(prefListElement);
+		Preferences preferences = ((User)Navbar.getUser()).getPreferences();
+		
+		/*Mi faccio restituire un array di tutti i nomi delle preferenze.
+		 * In seguito un array di tutte le preferenze che l'utente ha settato 
+		 * (false o true che siano)*/
+		String[] allPrefsName = preferences.getPreferencesName();
+		boolean[] allPrefsSet = preferences.getSetPreferences();
+		
+		
+		for(int i=0;i<allPrefsSet.length;i++) {
+			//Se trovo una preferenza che è stata settata dall'utente mi fermo,
+			//Costruisco un element di Testo e lo aggiungo alla View.
+			if(allPrefsSet[i]==true) {
+				
+				Text prefListElement = new Text(allPrefsName[i]);
+				
+				prefListElement.getStyleClass().add("textEventName");
+				
+				prefList.getItems().add(prefListElement);
+			}
 		}
 		
 	}
 
 	public void addNewPref() {
+		
+		//IN QUESTO CASO LA VIEW VA MODIFICATA IN MODO DA INDICARE 
+		//CON DEI BOTTONI DA SETTARE ON o OFF L'AGGIUNTA O RIMOZIONE DI PREFERENZE.
 		if(prefSearch.getText().isEmpty()) {
 			final Stage dialog = new Stage();
 	        dialog.initModality(Modality.NONE);
@@ -112,23 +129,23 @@ public class ProfileView implements Initializable{
 		
 		String pref = prefSearch.getText();
 		
-		if(daoPr.preferenceIsInJSON(pref)) {
-			HBox prefBox = new HBox();
-			Text prefName = new Text (pref.toUpperCase());
-			prefBox.getChildren().add(prefName);
-			
-			prefName.getStyleClass().add("textEventName");
-			
-			ArrayList<String> newPref =(ArrayList<String>) Navbar.getUser().getPreferences();
-			newPref.add(pref.toUpperCase());
-			
-			Navbar.getUser().setPreferences((List<String>)newPref);
-			DAOSuperUser.getInstance().updateUserPreferences(Navbar.getUser());
-			prefList.getItems().add(prefBox);
-			
-			return;
-		}
-		
+//		if(daoPr.(pref)) {
+//			HBox prefBox = new HBox();
+//			Text prefName = new Text (pref.toUpperCase());
+//			prefBox.getChildren().add(prefName);
+//			
+//			prefName.getStyleClass().add("textEventName");
+//			
+//			ArrayList<String> newPref =(ArrayList<String>) Navbar.getUser().getPreferences();
+//			newPref.add(pref.toUpperCase());
+//			
+//			Navbar.getUser().setPreferences((List<String>)newPref);
+//			DAOSuperUser.getInstance().updateUserPreferences(Navbar.getUser());
+//			prefList.getItems().add(prefBox);
+//			
+//			return;
+//		}
+//		
 		final Stage dialog = new Stage();
         dialog.initModality(Modality.NONE);
         dialog.initOwner(curr);

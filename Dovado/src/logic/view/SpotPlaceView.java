@@ -306,8 +306,13 @@ public void selectedPlace() {
 		
 		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
 		lastPlaceBoxSelected = placeBox;
-		Long pID = Long.parseLong(((Text)placeBox.getChildren().get(0)).getId());
-		placeSelected = daoPl.findPlaceById(pID);
+		int pID = Integer.parseInt(((Text)placeBox.getChildren().get(0)).getId());
+		try {
+			placeSelected = daoPl.getPlace(pID);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	
 		ImageView placeImage = (ImageView) placeBox.getChildren().get(1);
 
@@ -370,7 +375,9 @@ public void selectedPlace() {
 		
 		//Se lo "spottatore" del posto è un partner
 		//Si crea il nuovo posto già con un owner.		
-		if(daoPl.addPlaceToJSON(address, placeName, city, region, civico, owner)==-1) {
+		
+		//TODO:: DA CONTROLLARE SPOT PLACE!
+		if(daoPl.spotPlace(address, placeName, city, region, civico, city, 0, 0)<0) {
 		
 			final Stage dialog = new Stage();
             dialog.initModality(Modality.NONE);

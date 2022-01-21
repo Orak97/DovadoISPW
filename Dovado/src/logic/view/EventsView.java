@@ -38,6 +38,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import logic.model.Activity;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
 import logic.model.DAOPlace;
@@ -54,7 +55,7 @@ import logic.model.User;
 public class EventsView implements Initializable{
 	
 	private static ArrayList<ScheduledActivity> schedActivities;
-	private static ArrayList<SuperActivity> activities;
+	private static ArrayList<Activity> activities;
 	private static DAOPreferences daoPref;
     private static DAOActivity daoAct;
     private static DAOSuperUser daoSU;
@@ -124,10 +125,10 @@ public class EventsView implements Initializable{
 			try{
 				//Apro di default la lista di attività schedulate.
 				
-				schedActivities = (ArrayList) (daoSch.findSchedule(user.getUserID())).getScheduledActivities();
+				schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
 	
 				for(int j=0;j<schedActivities.size();j++) {
-					activities.add(daoAct.findActivityByID(daoSU,schedActivities.get(j).getReferencedActivity().getId()));
+					activities.add((Activity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
 				}
 	
 				for(int j=0;j<activities.size();j++)
@@ -195,10 +196,13 @@ public class EventsView implements Initializable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				Log.getInstance().getLogger().info(e.getMessage());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 	    }else{
 	    	try {
-	    		activities = (ArrayList<SuperActivity>)daoAct.findActivitiesByPartner(daoSU, (Partner)user);
+	    		activities = daoAct.getPartnerActivities(user.getUserID());
 		    	for(int j=0;j<activities.size();j++)
 					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
 				Thread newThread = new Thread(() -> {
@@ -264,6 +268,9 @@ public class EventsView implements Initializable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				Log.getInstance().getLogger().info(e.getMessage());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 	    }
 	}
@@ -313,7 +320,12 @@ public class EventsView implements Initializable{
 
 		Button modifyEvent = new Button();
 		if(user instanceof Partner) {
-			activitySelected = daoAct.findActivityByID(daoSU, activities.get(itemNumber).getId());
+			try {
+				activitySelected = (SuperActivity) daoAct.getActivityById(activities.get(itemNumber).getId());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			modifyEvent.setText("Modify event info.");
 			
@@ -452,6 +464,8 @@ public class EventsView implements Initializable{
 							
 							activitySelected.getFrequency().setClosingTime(LocalTime.parse(closingTimeChosen));
 
+							//AGGIUNGERE UN METODO CHE AGGIORNI L'ATTIVITA' NEL DATABASE.
+							
 							if(daoAct.updateActivityJSON(activitySelected)) {
 								final Stage dialog = new Stage();
 				                dialog.initModality(Modality.NONE);
@@ -614,9 +628,17 @@ public class EventsView implements Initializable{
 		eventImage.setScaleY(1);
 	}
 	
-	public boolean deleteScheduledEvent(int idSched) {
+	public boolean deleteScheduledEvent(long idSched) {
 		
-		return daoSch.deleteSchedule(Navbar.getUser().getUserID(),idSched);
+		boolean result = false;
+		try {
+			result = daoSch.removeActFromSchedule(idSched,Navbar.getUser().getUserID());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return result;
+		}
+		return result;
 
 	}
 	
@@ -625,8 +647,6 @@ public class EventsView implements Initializable{
 		String searchItem = null;
 		
 		if((searchItem = searchBar.getText())==null) return;
-		
-		if(!daoPref.preferenceIsInJSON(searchItem.toUpperCase())) return;
 		
 		eventsList.getItems().clear();
 		
@@ -637,9 +657,9 @@ public class EventsView implements Initializable{
 			daoPref = DAOPreferences.getInstance();
 			//TODO Qui siamo sicuri sia corrretto?? nel for non dovremmo usare una diversa variabile?
 			for(i=0;i<activities.size();i++) {
-				SuperActivity act = activities.get(i);
-				for(int j=0;j<act.getPreferences().size();j++) {
-					if(searchBar.getText().toUpperCase().equals(act.getPreferences().get(j))) {
+				SuperActivity act = (SuperActivity) activities.get(i);
+				for(int j=0;j<act.getIntrestedCategories().getPreferencesName().length;j++) {
+					if(searchBar.getText().toUpperCase().equals((act.getIntrestedCategories().getPreferencesName())[j].toUpperCase())) {
 					 	
 					ImageView eventImage = new ImageView();
 					Text eventName = new Text(activities.get(i).getName()+"\n");

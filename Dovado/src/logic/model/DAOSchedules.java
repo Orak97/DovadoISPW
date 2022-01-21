@@ -207,7 +207,7 @@ public class DAOSchedules {
 		}
 	}
 
-	public void removeActFromSchedule(Long scheduleToRemove,Long user) throws Exception {
+	public boolean removeActFromSchedule(Long scheduleToRemove,Long user) throws Exception {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -245,9 +245,10 @@ public class DAOSchedules {
 
 		    } catch (SQLException se) {
 		        se.printStackTrace();
+		        return false;
 		    }
 		}
-		
+		return true;
 	}
 
 }

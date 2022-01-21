@@ -37,7 +37,7 @@ public class PlaceBean {
 	
 	public Place getPlace(String name, String city, String region) {
 		createPlaceController = new CreatePlaceController();
-		return createPlaceController.getPlaceFromJSON(name, city, region);
+		return createPlaceController.getPlaceFromDB(name, city, region);
 	}
 
 }

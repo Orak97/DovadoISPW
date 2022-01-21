@@ -4,6 +4,7 @@ import logic.model.DAOPlace;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
+import logic.model.PlaceBean;
 
 public class CreatePlaceController {
 	
@@ -16,30 +17,29 @@ public class CreatePlaceController {
 	}
 	
 	public Place createPlace(String name,String address,String city,String region, String civico,Partner owner){
-		Place place = new Place(name, address,city,region,civico,owner);
-		int id = this.addPlaceToDB(address, name, city, region, civico, owner); 
-		if(id < 0)
-			Log.getInstance().getLogger().info("\n\nPosto gia creato precedentemente\n\n");
-		place.setId(id);
+		PlaceBean placeB = PlaceBean.getInstance();
+		Place place = placeB.addPlace(address, name, city, region, civico, owner);
 		return place;
 	}
 
 	
-	public Place getPlaceFromJSON(String name, String city, String region) {
+	public Place getPlaceFromDB(String name, String city, String region) {
 		Place placeFound;
-		placeFound = DAOPlace.getInstance().findPlaceInJSON(name, city, region);
+		PlaceBean placeB = PlaceBean.getInstance();
+		placeFound = placeB.getPlace(name, city, region);
+		
 		if(placeFound!=null)
 			return placeFound;
 		return null;
 	
 	}
 	
-	private int addPlaceToDB(String address, String name, String city, String region,String civico, Partner owner) {
-		int resultId = DAOPlace.getInstance().addPlaceToJSON(address, name, city, region, civico, owner);
-		if(resultId>0)
-			return resultId;
-		return -1;
-	
-	}
+//	private int addPlaceToDB(String address, String name, String city, String region,String civico, Partner owner) {
+//		int resultId = DAOPlace.getInstance().addPlaceToJSON(address, name, city, region, civico, owner);
+//		if(resultId>0)
+//			return resultId;
+//		return -1;
+//	
+//	}
 	
 }

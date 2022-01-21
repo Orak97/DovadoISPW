@@ -31,7 +31,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import logic.controller.ActivityType;
+import logic.controller.CreateActivityController;
 import logic.model.Cadence;
+import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
@@ -79,7 +82,7 @@ public class CreateActivityView implements Initializable{
 	@FXML
 	private ChoiceBox<String> cadenceBox;
 	
-	private static final  String[] CADENCEKEY = {"Non-stop","Weekly","Monthly","Annually"};
+	private static final  String[] CADENCEKEY = {"Weekly","Monthly","Annually"};
 	
 	private static ListView<Object> pList;
 	private static ChoiceBox<String> cadBox;
@@ -144,7 +147,7 @@ public class CreateActivityView implements Initializable{
 		rt=root;
 		tField=tagField;
 		
-		cadBox.getItems().addAll(CADENCEKEY[0],CADENCEKEY[1],CADENCEKEY[2],CADENCEKEY[3]);
+		cadBox.getItems().addAll(CADENCEKEY[0],CADENCEKEY[1],CADENCEKEY[2]);
 		
 		createActBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
@@ -177,40 +180,45 @@ public class CreateActivityView implements Initializable{
 				placeAttr = searchBar.getText().split(",");
 				
 				if(placeAttr.length==1) {
-					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByNameOrCity(placeAttr[0],0))==null){
-						final Stage dialog = new Stage();
-		                dialog.initModality(Modality.NONE);
-		                dialog.initOwner(curr);
-		                VBox dialogVbox = new VBox(20);
-		                dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
-		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-		                dialog.setScene(dialogScene);
-		                dialog.show();
-					}
-					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByNameOrCity(placeAttr[0],1))==null){
-						final Stage dialog = new Stage();
-		                dialog.initModality(Modality.NONE);
-		                dialog.initOwner(curr);
-		                VBox dialogVbox = new VBox(20);
-		                dialogVbox.getChildren().add(new Text("No place found named "+placeAttr[0]));
-		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-		                dialog.setScene(dialogScene);
-		                dialog.show();
-					}
-				}
-				else if(placeAttr.length==3) {
-						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
-						if(placesFound.contains(null)){
+					try {
+						if( (placesFound =  (ArrayList<Place>) daoPl.searchPlaces(placeAttr[0]))==null){
 							final Stage dialog = new Stage();
-			                dialog.initModality(Modality.NONE);
-			                dialog.initOwner(curr);
-			                VBox dialogVbox = new VBox(20);
-			                dialogVbox.getChildren().add(new Text("No place found in: "+placeAttr[0]+'\n'+"in region: "+placeAttr[2]+'\n'+"named: "+ placeAttr[1]));
-			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-			                dialog.setScene(dialogScene);
-			                dialog.show();
+						    dialog.initModality(Modality.NONE);
+						    dialog.initOwner(curr);
+						    VBox dialogVbox = new VBox(20);
+						    dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
+						    Scene dialogScene = new Scene(dialogVbox, 300, 200);
+						    dialog.setScene(dialogScene);
+						    dialog.show();
 						}
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+//					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByNameOrCity(placeAttr[0],1))==null){
+//						final Stage dialog = new Stage();
+//		                dialog.initModality(Modality.NONE);
+//		                dialog.initOwner(curr);
+//		                VBox dialogVbox = new VBox(20);
+//		                dialogVbox.getChildren().add(new Text("No place found named "+placeAttr[0]));
+//		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+//		                dialog.setScene(dialogScene);
+//		                dialog.show();
+//					}
 				}
+//				else if(placeAttr.length==3) {
+//						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
+//						if(placesFound.contains(null)){
+//							final Stage dialog = new Stage();
+//			                dialog.initModality(Modality.NONE);
+//			                dialog.initOwner(curr);
+//			                VBox dialogVbox = new VBox(20);
+//			                dialogVbox.getChildren().add(new Text("No place found in: "+placeAttr[0]+'\n'+"in region: "+placeAttr[2]+'\n'+"named: "+ placeAttr[1]));
+//			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
+//			                dialog.setScene(dialogScene);
+//			                dialog.show();
+//						}
+//				}
 				else {
 					updatePlaces();
 				}
@@ -319,8 +327,13 @@ public class CreateActivityView implements Initializable{
 		
 		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
 		lastPlaceBoxSelected = placeBox;
-		Long pID = Long.parseLong(((Text)placeBox.getChildren().get(0)).getId());
-		placeSelected = daoPl.findPlaceById(pID);
+		int pID = Integer.valueOf(((Text)placeBox.getChildren().get(0)).getId());
+		try {
+			placeSelected = daoPl.getPlace(pID);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	
 		ImageView placeImage = (ImageView) placeBox.getChildren().get(1);
 
@@ -342,8 +355,8 @@ public class CreateActivityView implements Initializable{
 	public static boolean createActivity() {
 		
 		String activityName;
-		LocalTime openingTime;
-		LocalTime closingTime = null;
+		String openingTime;
+		String closingTime = null;
 		LocalDate openingDate;
 		LocalDate closingDate;
 		
@@ -352,61 +365,86 @@ public class CreateActivityView implements Initializable{
 		}
 		
 		activityName = actNameField.getText();
-		openingTime = LocalTime.parse(opTime.getText());
-		closingTime = LocalTime.parse(clTime.getText());
+		openingTime = (opTime.getText());
+		closingTime = (clTime.getText());
 		openingDate = sDate.getValue();
-			
+		String openingDateString = openingDate.toString();
+		
 		if(eDate.getValue().isBefore(openingDate) || eDate.getValue().isBefore(LocalDate.now()))
 			return false;
 		closingDate = eDate.getValue();
+		String closingDateString = closingDate.toString();
 		
-		SuperActivity act = null;
-		if(cadBox.getValue().equals(CADENCEKEY[0]) && (sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
-			 act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime);
-		} 
-		else if(cadBox.getValue().equals(CADENCEKEY[0]) && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
-			act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime,openingDate,closingDate);
+		CreateActivityBean caBean = new CreateActivityBean();
+		caBean.setActivityName(activityName);
+		caBean.setOpeningTime(openingTime);
+		caBean.setOpeningDate(openingDateString);
+		caBean.setEndDate(closingDateString);
+		caBean.setCadence(Cadence.valueOf(cadBox.getValue()));
+		caBean.setType(ActivityType.valueOf("Continua"));
+
+		
+		CreateActivityController caCont = new CreateActivityController(caBean);
+		try {
+			SuperActivity act = (SuperActivity)caCont.createActivity();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		else if(!cadBox.getValue().equals(CADENCEKEY[0]) && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
-			act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime,openingDate,closingDate);
-		}
-		else {
-			return false;
-		}
+		
+//		SuperActivity act = null;
+//		if(cadBox.getValue().equals(CADENCEKEY[0]) && (sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
+//			 act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime);
+//		} 
+//		else if(cadBox.getValue().equals(CADENCEKEY[0]) && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
+//			act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime,openingDate,closingDate);
+//		}
+//		else if(!cadBox.getValue().equals(CADENCEKEY[0]) && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
+//			act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime,openingDate,closingDate);
+//		}
+//		else {
+//			return false;
+//		}
+		
+
+		//--------------------------------------------------------------------------------------------
+				//DA AGGIUNGERE UNA LISTA DI BOTTONI DA CUI SCEGLIERE LA PREFERENZA DELL'ATTIVITA'
+		//--------------------------------------------------------------------------------------------
+		
 		String[] prefs = tField.getText().toString().split(",");
 		ArrayList<String> prefsList = new ArrayList<>();
 		//TODO questo dovrebbe funzionare ma va controllato
 		Collections.addAll(prefsList, prefs);
 		
-		Log.getInstance().getLogger().info(act.toString());
-		act.setId(daoAc.addActivityToJSON(placeSelected,(SuperActivity)act,"no"));
-		int result = Long.compare(act.getId(),0L);
-		if(result>0) {
-			act.setPreferences((List<String>)prefsList);
-			return true;
-		} 
-		else if(result<0) {
-			final Stage dialog = new Stage();
-            dialog.initModality(Modality.NONE);
-            dialog.initOwner(curr);
-            VBox dialogVbox = new VBox(20);
-            dialogVbox.getChildren().add(new Text("Activity already created!"));
-            Scene dialogScene = new Scene(dialogVbox, 300, 200);
-            dialog.setScene(dialogScene);
-            dialog.show();
-			return false;
-		}
-		else if(result==0) {
-			final Stage dialog = new Stage();
-            dialog.initModality(Modality.NONE);
-            dialog.initOwner(curr);
-            VBox dialogVbox = new VBox(20);
-            dialogVbox.getChildren().add(new Text("Activity creation error!"));
-            Scene dialogScene = new Scene(dialogVbox, 300, 200);
-            dialog.setScene(dialogScene);
-            dialog.show();
-			return false;
-		}
+//		Log.getInstance().getLogger().info(act.toString());
+//		act.setId(daoAc.addActivityToJSON(placeSelected,(SuperActivity)act,"no"));
+//		int result = Long.compare(act.getId(),0L);
+//		if(result>0) {
+//			act.setPreferences((List<String>)prefsList);
+//			return true;
+//		} 
+//		else if(result<0) {
+//			final Stage dialog = new Stage();
+//            dialog.initModality(Modality.NONE);
+//            dialog.initOwner(curr);
+//            VBox dialogVbox = new VBox(20);
+//            dialogVbox.getChildren().add(new Text("Activity already created!"));
+//            Scene dialogScene = new Scene(dialogVbox, 300, 200);
+//            dialog.setScene(dialogScene);
+//            dialog.show();
+//			return false;
+//		}
+//		else if(result==0) {
+//			final Stage dialog = new Stage();
+//            dialog.initModality(Modality.NONE);
+//            dialog.initOwner(curr);
+//            VBox dialogVbox = new VBox(20);
+//            dialogVbox.getChildren().add(new Text("Activity creation error!"));
+//            Scene dialogScene = new Scene(dialogVbox, 300, 200);
+//            dialog.setScene(dialogScene);
+//            dialog.show();
+//			return false;
+//		}
 		return false;
 	}
 
