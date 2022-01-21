@@ -372,11 +372,11 @@
   	const regione = document.querySelector('#inputState');
   	const cap = document.querySelector('#cap');
   	
-  	indirizzo.addEventListener('change',disableSubmit)
-  	civico.addEventListener('change',disableSubmit)
-  	citta.addEventListener('change',disableSubmit)
-  	regione.addEventListener('change',disableSubmit)
-  	cap.addEventListener('change',disableSubmit)
+  	indirizzo.addEventListener('keyup',disableSubmit)
+  	civico.addEventListener('keyup',disableSubmit)
+  	citta.addEventListener('keyup',disableSubmit)
+  	regione.addEventListener('keyup',disableSubmit)
+  	cap.addEventListener('keyup',disableSubmit)
   	
   	var lastMarker;
   	

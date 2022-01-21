@@ -305,3 +305,19 @@ body{
 .savePref-btn{
 	border-radius:30px;
 }
+
+/********************************Find activities********************************************/
+
+.search-input{
+	border-radius: 15px;
+}
+
+.btn-find-activities{
+	border-radius: 99px;
+	margin-left:1vw;
+	margin-right: 1vw;
+}
+
+#select-all-pref{
+	margin-right: 0 !important;
+}

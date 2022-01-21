@@ -47,10 +47,12 @@
 		
 		try{
 			maxDistance = Float.parseFloat(request.getParameter("max-distance"));
+			if(maxDistance<0) throw new NumberFormatException();
 		}catch(NumberFormatException e){
 			%>
 				<script>alert('Inserisci un valore corretto per la distanza!')</script>
 			<%
+			maxDistance = 20f;
 		}catch(NullPointerException e){
 			//non faccio nulla perché non mi interessa
 		}

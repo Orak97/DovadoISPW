@@ -25,7 +25,7 @@ public class ExpiringActivity extends FrequencyOfRepeat {
 		
 		LocalDate myDate = timestamp.toLocalDate();
 	
-		return (startDate.isAfter(myDate) && endDate.isBefore(myDate)) || (startDate.isEqual(myDate) && endDate.isEqual(myDate));
+		return checkDate(myDate);
 
 	} 
 
@@ -35,6 +35,13 @@ public class ExpiringActivity extends FrequencyOfRepeat {
 	
 	public LocalDate getEndDate() {
 		return this.endDate;
+	}
+
+
+	@Override
+	public boolean checkDate(LocalDate date) {
+		// TODO Auto-generated method stub
+		return (startDate.isBefore(date) && endDate.isAfter(date)) || (startDate.isEqual(date) || endDate.isEqual(date));
 	}
 	
 	

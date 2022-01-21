@@ -39,53 +39,126 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 		
 		if(!this.isOnTime(timestamp)) return false;
 		
+		LocalDate myDate = timestamp.toLocalDate();
+		
+		return checkDate(myDate);
+	}
+
+	@Override
+	public boolean checkDate(LocalDate date) {
 		switch(cadence) {
 		case WEEKLY:
 			{	
 				// reference for DayOfWeek = https://docs.oracle.com/javase/8/docs/api/java/time/DayOfWeek.html#getValue--
-				DayOfWeek myDay = timestamp.getDayOfWeek();
+				DayOfWeek myDay = date.getDayOfWeek();
 				
 				DayOfWeek startingDay = startDate.getDayOfWeek();
 				DayOfWeek endDay = endDate.getDayOfWeek();
 				
-				
-				
-				return ( myDay.getValue() >= startingDay.getValue() && myDay.getValue() <= endDay.getValue());
+				if( startingDay.getValue() < endDay.getValue() )
+					//l'evento si verifica durante la settimana
+					return ( myDay.getValue() >= startingDay.getValue() && myDay.getValue() <= endDay.getValue());
+				if( startingDay.getValue() > endDay.getValue() )
+					//l'evento si verifica a cavallo di due settimane
+					return ( myDay.getValue() >= startingDay.getValue() || myDay.getValue() <= endDay.getValue());
+				if ( startingDay.getValue() == endDay.getValue() )
+					//l'evento si verifica sempre, anche se non dovremmo arrivare qui
+					return true;
 				
 			}
 		case MONTHLY:
 			{	
 				//getDayOfMonth restutisce un int che va da 1 a 31 in base al giorno!
-				int myDate = timestamp.getDayOfMonth();
+				int myDate = date.getDayOfMonth();
 				
 				int startDay = startDate.getDayOfMonth();
 				int endDay = endDate.getDayOfMonth();
 				
-				return (myDate >= startDay && myDate <= endDay);
-				
+				if(startDay < endDay)
+					//l'evento si verifica all'interno di uno stesso mese
+					return (myDate >= startDay && myDate <= endDay);
+				if(startDay > endDay)
+					//l'evento si verifica a cavallo di due mesi diversi
+					return (myDate >= startDay || myDate <= endDay);
+				if(startDay == endDay)
+					//l'evento si verifica sempre;
+					return true;
 			}
 		case ANNUALLY: 
 			{	
 				
-				int myMonth = timestamp.getMonthValue();
+				int myMonth = date.getMonthValue();
 				
 				int startMonth = startDate.getMonthValue();
 				int endMonth = endDate.getMonthValue();
 				
-				if(!(myMonth >= startMonth && myMonth <= endMonth)) return false;
 				
+				if(startMonth == endMonth) {
+					if(myMonth != startMonth) return false;
+					
+					int myDate = date.getDayOfMonth();
+					
+					int startDay = startDate.getDayOfMonth();
+					int endDay = endDate.getDayOfMonth();
+					
+					return checkDays(startDay,endDay,myDate);
+				}
+				if(startMonth < endMonth) {
+					//se mese inizio < mese fine sono nello stesso anno, controllo che il mese in cui voglio fare l'attività sia mese inizio<= mio mese<= mese fine
+					if(!(myMonth >= startMonth && myMonth <= endMonth)) return false;
+					
+					int myDate = date.getDayOfMonth();
+					
+					int startDay = startDate.getDayOfMonth();
+					int endDay = endDate.getDayOfMonth();
+					
+					
+					if(myMonth == startMonth) {
+						return (startDay <= myDate);
+					}
+					
+					if(myMonth == endMonth) {
+						return (endDay >= myDate);
+					}
+					
+					if(myMonth != endMonth && myMonth != startMonth) return true;
+					
+				}
 				
-				//serious spaghetti code here:
-				
-				int myDate = timestamp.getDayOfMonth();
-				
-				int startDay = startDate.getDayOfMonth();
-				int endDay = endDate.getDayOfMonth();
-				
-				return (myDate >= startDay && myDate <= endDay);
-				
+				if(startMonth > endMonth) {
+					//se mese inizio > mese fine sono a cavallo di due anni, controllo che il mese in cui voglio fare l'attività sia mese inizio<= mio mese oppure mio mese<= mese fine
+					if(!(myMonth >= startMonth || myMonth <= endMonth)) return false;
+					
+					int myDate = date.getDayOfMonth();
+					
+					int startDay = startDate.getDayOfMonth();
+					int endDay = endDate.getDayOfMonth();
+					
+					if(myMonth == startMonth) {
+						return (startDay <= myDate);
+					}
+					
+					if(myMonth == endMonth) {
+						return (endDay >= myDate);
+					}
+					
+					if(myMonth != endMonth && myMonth != startMonth) return true;
+				}
 			}
 		}
+		return true;
+	}
+	
+	private boolean checkDays(int startDay, int endDay, int myDate) {
+		if(startDay < endDay)
+			//l'evento si verifica all'interno di uno stesso mese
+			return (myDate >= startDay && myDate <= endDay);
+		if(startDay > endDay)
+			//l'evento si verifica a cavallo di due mesi diversi
+			return (myDate >= startDay || myDate <= endDay);
+		if(startDay == endDay)
+			//l'evento si verifica sempre;
+			return true;
 		return true;
 	}
 }

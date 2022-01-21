@@ -1,6 +1,7 @@
 package logic.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class CertifiedActivity extends SuperActivity implements Activity {

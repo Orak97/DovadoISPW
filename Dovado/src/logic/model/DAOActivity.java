@@ -449,4 +449,115 @@ public class DAOActivity {
         
         return nearbyActivities;
 	}
+
+	public ArrayList<Activity> findActivitiesByZone(String zone) throws Exception {
+		//metodo per ottenere TUTTE le attività partendo da una zona (CAP, Città, Regione)
+		
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+        
+        ArrayList<Activity> searchedActivities = new ArrayList<Activity>();
+        
+        try {
+        	
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+            
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+            
+            //STEP4.1: preparo la stored procedure
+            String call = "{call get_activities_by_zone(?)}";
+            
+            stmt = conn.prepareCall(call);
+            
+            stmt.setString(1, zone);
+            
+            if(!stmt.execute()) {
+            	Exception e = new Exception("Sembra che non esistano attività in questa zona!");
+            	throw e;
+            }
+            
+            //ottengo il resultSet
+            ResultSet rs = stmt.getResultSet();
+            
+            while(rs.next()) {
+            	Activity curr;
+            	
+            	int idActivity = rs.getInt("id");
+            	String nome = rs.getString("nome");
+            	String descrizione = rs.getString("descrizione");
+            	int place = rs.getInt("luogo");
+            	
+            	
+            	
+            	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
+            	CreateActivityBean bean = new CreateActivityBean();
+            	
+            	bean.setIdActivity(idActivity);
+            	
+            	bean.setActivityName(nome);
+            	bean.setActivityDescription(descrizione);
+            	bean.setPlace(place);
+            	
+            	
+            	bean.setOpeningTime(rs.getString("orario_apertura"));
+            	bean.setClosingTime(rs.getString("orario_chiusura"));
+            	
+            	bean.setOpeningDate(rs.getString("data_inizio"));
+            	bean.setEndDate(rs.getString("data_fine"));
+            	
+            	//serve per convertire da string -> enum ActivityType
+            	bean.setType(ActivityType.valueOf(rs.getString("tipo")));
+            	if(rs.getString("cadenza") != null)
+            	bean.setCadence(Cadence.valueOf(rs.getString("cadenza")));
+            	
+            	bean.setArte(rs.getBoolean("arte"));
+            	bean.setCibo(rs.getBoolean("cibo"));
+            	bean.setMusica(rs.getBoolean("musica"));
+            	bean.setSport(rs.getBoolean("sport"));
+            	bean.setSocial(rs.getBoolean("social"));
+            	bean.setNatura(rs.getBoolean("natura"));
+            	bean.setEsplorazione(rs.getBoolean("esplorazione"));
+            	bean.setRicorrenze(rs.getBoolean("ricorrenze"));
+            	bean.setModa(rs.getBoolean("moda"));
+            	bean.setShopping(rs.getBoolean("shopping"));
+            	bean.setAdrenalina(rs.getBoolean("adrenalina"));
+            	bean.setRelax(rs.getBoolean("relax"));
+            	bean.setIstruzione(rs.getBoolean("istruzione"));
+            	bean.setIstruzione(rs.getBoolean("monumenti"));
+            	
+            	bean.setOwner(rs.getInt("proprietario"));
+            	//------ fine copia incolla -----------------------------------------------------
+            	
+            	CreateActivityController createActivity = new CreateActivityController(bean);
+            	curr = createActivity.createActivity();
+            	
+            	searchedActivities.add(curr);
+            }
+            
+            rs.close();
+        	
+        }finally {
+            // STEP 5.2: Clean-up dell'ambiente
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            	throw(se2);
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+                	System.out.println("Disconnetted database successfully...");
+                	
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+        
+        return searchedActivities;
+	}
 }

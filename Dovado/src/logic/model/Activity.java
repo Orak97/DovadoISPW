@@ -1,11 +1,12 @@
 package logic.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface Activity {
 	void playActivity(User u);
 	
-	boolean playableOnThisDate(LocalDateTime timestamp);
+	boolean playableOnThisDateTime(LocalDateTime timestamp);
 	
 	Channel getChannel();
 	
@@ -19,7 +20,11 @@ public interface Activity {
 
 	void setIntrestedCategories(Preferences intrestedCategories);
 
+	Preferences getIntrestedCategories();
+	
 	void setChannel(Channel channel);
 	
 	String getDescription();
+	
+	boolean isPlayableOnThisDate(LocalDate date);
 }
