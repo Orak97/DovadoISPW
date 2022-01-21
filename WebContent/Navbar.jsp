@@ -1,12 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity,logic.model.Log" %>
 
-    <!doctype html>
-	<html lang="en">
-	<head>
-		<%
-				
+<!doctype html>
+<html lang="en">
+<head>
+
+	<%				
 		boolean logged = true;
 		
 		String titolo = (String) application.getAttribute("titolo");
@@ -89,7 +88,8 @@
 		<!-- fine delle robe di andre -->
 
   	</head>
-	  <body>
+  	
+	<body>
 	    <!-- inizio navbar -->
 
 	    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
@@ -158,3 +158,4 @@
 	    
 	    <!-- including icons of bootstrap: -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css">
+		

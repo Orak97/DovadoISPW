@@ -12,8 +12,8 @@ public class DAOExplorer {
 	
 	//----------database--------------------------------------
 	
-		private static String USER = "login";
-		private static String PASSWORD = "login";
+		private static String USER = "dovado";
+		private static String PASSWORD = "dovadogang";
 	    private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
 	    private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 		
@@ -94,6 +94,8 @@ public class DAOExplorer {
             rs.close();
             
             
+        }catch(Exception e){
+        	e.printStackTrace();
         }
         finally {
             // STEP 5.2: Clean-up dell'ambiente

@@ -22,6 +22,10 @@ private DAOSuperUser dao;
 	
 	public User loginExplorer(String email, String password) throws Exception {
 		User u = DAOExplorer.getInstance().login(email, password);
+		if (u == null) {
+			System.out.println("lo user è vuoto");
+			return u;
+		}
 		u.setSchedule(DAOSchedules.getInstance().getSchedule(u.getUserID()));
 		return u;
 	}
