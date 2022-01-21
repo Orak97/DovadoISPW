@@ -1,5 +1,6 @@
 package logic.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -21,6 +22,16 @@ public abstract class FrequencyOfRepeat {
 		*/
 		
 		LocalTime myTime = myLocalTime.toLocalTime();
+		
+		return isOnTime(myTime);
+	}
+	
+	public boolean isOnTime(LocalTime myTime) {
+		/*compareTo è un metodo di LocalTime che restituisce:
+			int > 0 se LocalTime > myTime
+			int = 0 se LocalTime = myTime
+			int < 0 se LocalTime < mytime
+		*/
 		
 		if(openingTime == null || closingTime == null) return true;
 		
@@ -47,5 +58,7 @@ public abstract class FrequencyOfRepeat {
 	}
 	
 	public abstract boolean checkPlayability(LocalDateTime timestamp);
+	
+	public abstract boolean checkDate(LocalDate date);
 
 }

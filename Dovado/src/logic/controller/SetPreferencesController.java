@@ -47,7 +47,13 @@ public class SetPreferencesController {
 				bean.isMonumenti()
 				);
 		
-		Preferences p = new Preferences(bean.isArte(),
+		Preferences p = getPreferencesFromBean(bean);
+		
+		session.setPreferences(p);
+	}
+	
+	public static Preferences getPreferencesFromBean(PreferenceBean bean) {
+		return new Preferences(bean.isArte(),
 				bean.isCibo(),
 				bean.isMusica(),
 				bean.isSport(),
@@ -61,8 +67,6 @@ public class SetPreferencesController {
 				bean.isRelax(),
 				bean.isIstruzione(),
 				bean.isMonumenti());
-		
-		session.setPreferences(p);
 	}
 	
 	public void updatePreferencesUser() {

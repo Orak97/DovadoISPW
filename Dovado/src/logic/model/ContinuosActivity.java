@@ -1,5 +1,6 @@
 package logic.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -12,6 +13,11 @@ public class ContinuosActivity extends FrequencyOfRepeat {
 	@Override
 	public boolean checkPlayability(LocalDateTime timestamp) {
 		return this.isOnTime(timestamp);
+	}
+
+	@Override
+	public boolean checkDate(LocalDate date) {
+		return true;
 	}
 
 }

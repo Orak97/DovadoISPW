@@ -85,13 +85,21 @@ public abstract class SuperActivity {
 		this.channel = channel;
 	}
 	
-	public boolean playableOnThisDate(LocalDateTime timestamp) {
+	public boolean playableOnThisDateTime(LocalDateTime timestamp) {
 		/*
 		 * Metodo usato per capire se questa attività è fattibile in un dato giorno
 		 * 
 		 * 
 		 */
 		return (frequencyOfRepeat.checkPlayability(timestamp));
+	}
+	
+	public boolean isOpenOnThisTime(LocalTime time) {
+		return frequencyOfRepeat.isOnTime(time);
+	}
+	
+	public boolean isPlayableOnThisDate(LocalDate date) {
+		return frequencyOfRepeat.checkDate(date);
 	}
 
 	public String getDescription() {
