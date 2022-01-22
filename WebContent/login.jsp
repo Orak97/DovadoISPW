@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
  
-<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity,logic.model.Log" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.User, logic.model.DAOActivity, logic.controller.LogExplorerController, logic.model.SuperActivity,logic.model.Log" %>
    
 <jsp:useBean id ="logBean" scope="request" class="logic.model.LogBean" />
 <jsp:setProperty name="logBean" property="*" />
@@ -18,17 +18,18 @@
 	<div class="container pt-6">
 <%
 	    
-   
+	LogExplorerController controller = new LogExplorerController();
+	User u= controller.loginExplorer(logBean);
 	if(request.getParameter("logForm")!= null){ //controllo la richiesta ricevuta, se all'interno e presente un parametro login vuol dire che arrivo a questa pagina tramite la pressione del bottone login, quindi ne consegue che i dati username e password sono pieni e quindi posso andare avanti
-		if(logBean.validate()){ 
-			session.setAttribute("user", logBean.getUser());
+		if(u != null){ 
+			session.setAttribute("user", u);
 			session.setMaxInactiveInterval(10);
 			
 			response.sendRedirect("Home.jsp");
 		} else{
 %>
 
-		<p style="color:red;"> ${logBean.getError()}</p>  
+		<p style="color:red;"> Mail o password errate </p>  
 		
 <%		
 		};
