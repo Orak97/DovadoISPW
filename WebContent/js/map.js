@@ -95,4 +95,8 @@ function moveView(latitude,longitude,id){
 	mymap.setView([latitude,longitude],zoom+15);
 	console.log(activity);
 	activity.marker.openPopup();
+}
+
+function removeAllMark(){
+	markersOnMap.forEach( elem => elem.marker.remove());  
 } 
