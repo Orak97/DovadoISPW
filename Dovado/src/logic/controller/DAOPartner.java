@@ -6,12 +6,13 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import logic.model.DAOExplorer;
 import logic.model.Partner;
 import logic.model.Preferences;
 import logic.model.User;
 
 public class DAOPartner {
-	
+	private static DAOPartner INSTANCE;
 	//----------database--------------------------------------
 	
 	private static String USER = "dovado"; //DA CAMBIARE
@@ -21,6 +22,13 @@ public class DAOPartner {
 				
 	//------------------------------------------------------------
 
+	private DAOPartner() {}
+	
+	public static DAOPartner getInstance() {
+		if(INSTANCE == null)
+			INSTANCE = new DAOPartner();
+		return INSTANCE;
+	}
 	public static Partner getPartnerInfo(int owner) throws Exception {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;

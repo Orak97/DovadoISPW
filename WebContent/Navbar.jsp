@@ -12,7 +12,8 @@
 		System.out.println(System.getProperty("user.dir"));
 		Log.getInstance().getLogger().info(titolo);
 		
-		if (titolo.equals("login")) {
+		//TODO Modificare qui dopo aver creato una nuova Navbar
+		if (titolo.equals("login") || titolo.equals("loginPartner")) {
 			if( session.getAttribute("user") != null) {				
 				response.sendRedirect("Home.jsp");
 			}
