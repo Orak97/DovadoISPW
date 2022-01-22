@@ -50,10 +50,12 @@
 		
 		float maxDistance = 20.0f; //in km
 		
+		boolean areFiltersOn = false;
 		
 		try{
 			maxDistance = Float.parseFloat(request.getParameter("max-distance"));
 			if(maxDistance<0) throw new NumberFormatException();
+			areFiltersOn = true;
 		}catch(NumberFormatException e){
 			%>
 				<script>alert('Inserisci un valore corretto per la distanza!')</script>
@@ -74,6 +76,7 @@
 		Preferences p = utente.getPreferences();
 		if(request.getParameter("searchedForPreferences")!= null){
 			p = SetPreferencesController.getPreferencesFromBean(preferenceBean);
+			areFiltersOn = true;
 		}
 		activities = FindActivityController.filterActivitiesByPreferences(activities, p);
 		
@@ -84,6 +87,7 @@
 				searchedDate = LocalDate.parse(date);
 				LocalDate today = LocalDate.now();
 				if(searchedDate.isBefore(today)) throw new IllegalArgumentException("La data in cui vuoi fare l'attività deve almeno successiva ad oggi!");
+				areFiltersOn = true;
 			}catch(Exception e){
 				%>
 					<script>alert('Inserisci un valore corretto per la data, non può essere prima di oggi, mica viaggi nel tempo!')</script>
@@ -135,7 +139,8 @@
 					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#distanceModal">Distanza</button>
 					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#preferencesModal">Categorie</button>
 					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#dateModal">Data</button>
-					<button type="button" class="btn btn-filters">Ricerca avanzata <i class="bi bi-search"></i></button>									
+					<% if(areFiltersOn) { %><a href="Home.jsp" class="btn btn-filters" role="button">Pulisci filtri</a> <% } %>
+					<a href="FindActivities.jsp" class="btn btn-filters" role="button">Ricerca avanzata <i class="bi bi-search"></i></a>									
 				</div>
 				<div id="Map" class="homeMap"></div>
 			</div>
@@ -243,6 +248,8 @@
 		
 		<!-- modal per la distanza -->
 		
+		<form method="GET" action="Home.jsp">
+		
 		<div class="modal fade" id="distanceModal" tabindex="-1" aria-labelledby="distanceModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
@@ -250,7 +257,7 @@
 		        <h5 class="modal-title" id="distanceModalLabel">Di quanto ti vuoi spostare?</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
-		      <form method="GET" action="Home.jsp">
+		      
 		      <div class="modal-body">
 		      	<p>Dovado trova le attività che ti potrebbero piacere nel raggio che decidi tu!</p>
 		        <label for="max-distance" class="form-label">Voglio spostarmi di massimo:</label>
@@ -263,7 +270,7 @@
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 		        <button type="submit" class="btn btn-primary">Trova attività</button>
 		      </div>
-		      </form>
+		      
 		    </div>
 		  </div>
 		</div>
@@ -277,11 +284,11 @@
 		        <h5 class="modal-title" id="preferencesModalLabel">A cosa sei interessato?</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
-		      <form method="GET" action="Home.jsp">
+		      
 		      <div class="modal-body">
 		      	<p>Dovado trova le attività che ti potrebbero piacere in base a cosa sei interessato!</p>
 		        <p class="form-label">Sono interessato a:</p>
-		        <% Preferences pref = utente.getPreferences(); %>
+		        <% Preferences pref = p; %>
 		      	<div class="row px-2 info shadow-sm">
 		      	<input class="visually-hidden" type="checkbox" name="searchedForPreferences" id="searchedForPreferences" checked>
 				<div class="col">
@@ -362,7 +369,7 @@
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 		        <button type="submit" class="btn btn-primary">Trova attività</button>
 		      </div>
-		      </form>
+		      
 		    </div>
 		  </div>
 		</div>
@@ -376,24 +383,24 @@
 		        <h5 class="modal-title" id="dateModalLabel">Quando vuoi fare le attività?</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
-		      <form method="GET" action="Home.jsp">
+		      
 		      <div class="modal-body">
 		      	<p>Dovado trova le attività che ti potrebbero piacere nel giorno che decidi tu!</p>
 		        <label for="datePicker" class="form-label">Voglio fare le attività il giorno:</label>
 		        <div class="input-group mb-3">
-				  <input type="date"  class="form-control" id="datePicker" name="date" aria-label="kilometriDaPercorrere"  value="<%= LocalDate.now() %>" min="<%= LocalDate.now() %>">
+				  <input type="date"  class="form-control" id="datePicker" name="date" aria-label="kilometriDaPercorrere"  value="<%= searchedDate %>" min="<%= LocalDate.now() %>">
 				</div>
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 		        <button type="submit" class="btn btn-primary">Trova attività</button>
 		      </div>
-		      </form>
+		      
 		    </div>
 		  </div>
 		</div>
 				
-		
+		</form>
 		
 		
 		<!-- fine modal per la distanza -->
