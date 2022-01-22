@@ -29,5 +29,12 @@ public class CertifiedActivity extends SuperActivity implements Activity {
 		u.getReward(100);
 	}
 
-
+	public void setOwner(Partner owner) {
+		this.owner = owner;
+	}
+	
+	public Partner getOwner() {
+		return this.owner;
+	}
+	
 }

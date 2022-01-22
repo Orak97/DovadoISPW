@@ -71,7 +71,7 @@ import logic.view.Navbar;
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
 	private static final  String BGUCOLORKEY = "BC9416";
-	private static final  String MAPPATHKEY = "file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/map.html";
+	private static final  String MAPPATHKEY = "file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/MapView.html";
 	//botton KEYS
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
@@ -187,7 +187,7 @@ public class HomeView implements Initializable{
     			
     			// Setting permissions to interact with Js
     	        eng.setJavaScriptEnabled(true);
-    	        
+    	        eng.executeScript("spotPlace('curr.getPlace().getLatitudine()','curr.getPlace().getLongitudine()','curr.getPlace().getName()','curr.getPlace().getId()')");
     	        searchButton.setText("SEARCH");
     			searchButton.getStyleClass().add(BTNSRCKEY);
     			
@@ -440,7 +440,10 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-					eng.executeScript("spotPlace('"+activitySelected.getPlace().getCivico()+"','"+activitySelected.getPlace().getAddress()+"','"+activitySelected.getPlace().getCity()+"','"+activitySelected.getPlace().getRegion()+"')");
+					eng.executeScript("spotPlace('"+activitySelected.getPlace().getLatitudine()+"','"+activitySelected.getPlace().getLongitudine()+"','"+activitySelected.getPlace().getName()+"','"+activitySelected.getPlace().getId()+"')");
+					
+					eng.executeScript("moveView('"+activitySelected.getPlace().getLatitudine()+"','"+activitySelected.getPlace().getLongitudine()+"','"+activitySelected.getId()+"')");
+					
 				}
 		});
 		
