@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController" %>
+    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController, logic.model.Preferences, logic.controller.SetPreferencesController, logic.controller.FindActivityController " %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
@@ -11,6 +11,12 @@
 	<jsp:useBean id="scheduleBean" scope="request" class="logic.model.ScheduleBean" />
 
 	<jsp:setProperty name="scheduleBean" property="*" />
+	
+	
+	<jsp:useBean id="preferenceBean" scope="request" class="logic.model.PreferenceBean" />
+
+	<jsp:setProperty name="preferenceBean" property="*" />
+	
 	
 
 	<div class="container-fluid home">
@@ -64,6 +70,12 @@
 			//TODO: Fixare ASAP facendo comparire un messaggio di errore!!!!
 			e.printStackTrace();
 		}
+		
+		if(request.getParameter("searchedForPreferences")!= null){
+			Preferences p = SetPreferencesController.getPreferencesFromBean(preferenceBean);
+			activities = FindActivityController.filterActivitiesByPreferences(activities, p);
+			
+		}
 	%>
 	
 		<div class="row pt-6 home-body" id="home-body">
@@ -104,7 +116,7 @@
 			<div class="col-8" id="mapContainer">
 				<div class="d-flex flex-row position-absolute filters gx-5"> 
 					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#distanceModal">Distanza</button>
-					<button type="button" class="btn btn-filters">Categorie</button>
+					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#preferencesModal">Categorie</button>
 					<button type="button" class="btn btn-filters">Data</button>
 					<button type="button" class="btn btn-filters">Ricerca avanzata <i class="bi bi-search"></i></button>									
 				</div>
@@ -229,6 +241,105 @@
 				  <input type=number step=0.5 min=1 class="form-control" placeholder="Inserisci la distanza" aria-label="kilometriDaPercorrere" aria-describedby="kilometri" value="<%= maxDistance %>" name="max-distance" id="max-distance">
 				  <span class="input-group-text" id="kilometri">km</span>
 				</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Trova attività</button>
+		      </div>
+		      </form>
+		    </div>
+		  </div>
+		</div>
+		
+		
+		<!-- modal per la distanza -->
+		<div class="modal fade" id="preferencesModal" tabindex="-1" aria-labelledby="preferencesModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="preferencesModalLabel">A cosa sei interessato?</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <form method="GET" action="Home.jsp">
+		      <div class="modal-body">
+		      	<p>Dovado trova le attività che ti potrebbero piacere in base a cosa sei interessato!</p>
+		        <p class="form-label">Sono interessato a:</p>
+		        <% Preferences pref = utente.getPreferences(); %>
+		      	<div class="row px-2 info shadow-sm">
+		      	<input class="visually-hidden" type="checkbox" name="searchedForPreferences" id="searchedForPreferences" checked>
+				<div class="col">
+					<div class="form-check form-switch">
+					  	 <input class="form-check-input" type="checkbox" id="Arte" name="arte" <% if(pref.isArte()) out.println("checked"); %>>
+				  		 <label class="form-check-label" for="Arte">Arte</label>
+					  </div>
+					  
+					  <div class="form-check form-switch">
+					  	 <input class="form-check-input" type="checkbox" id="Cibo" name="cibo" <% if(pref.isCibo()) out.println("checked"); %>>
+				  		 <label class="form-check-label" for="Cibo">Cibo</label>
+					  </div>
+					  
+					  <div class="form-check form-switch">		
+					  	 <input class="form-check-input" type="checkbox" id="Musica" name="musica" <% if(pref.isMusica()) out.println("checked"); %>>
+				  		 <label class="form-check-label" for="Musica">Musica</label>
+					  </div>
+					  
+					  <div class="form-check form-switch">	 
+					  	 <input class="form-check-input" type="checkbox" id="Sport" name="sport" <% if(pref.isSport()) out.println("checked"); %>>
+				  		 <label class="form-check-label" for="Sport">Sport</label>
+					  </div>
+					  
+					  <div class="form-check form-switch">	 
+					  	 <input class="form-check-input" type="checkbox" id="Social" name="social" <% if(pref.isSocial()) out.println("checked"); %>>
+				  		 <label class="form-check-label" for="Social">Social</label>
+					  </div>
+					  
+					  <div class="form-check form-switch">	 
+					  	 <input class="form-check-input" type="checkbox" id="Natura" name="natura" <% if(pref.isNatura()) out.println("checked"); %>>
+				  		 <label class="form-check-label" for="Natura">Natura</label>
+					  </div>
+					  
+					  <div class="form-check form-switch">	 
+					  	 <input class="form-check-input" type="checkbox" id="Esplorazione" name="esplorazione" <% if(pref.isEsplorazione()) out.println("checked"); %>>
+				  		 <label class="form-check-label" for="Esplorazione">Esplorazione</label>
+					  </div>
+				</div>
+				<div class="col">
+					<div class="form-check form-switch">
+						<input class="form-check-input" type="checkbox" id="Ricorrenze" name="ricorrenze" <% if(pref.isRicorrenzeLocali()) out.println("checked"); %>>
+						<label class="form-check-label" for="Ricorrenze">Ricorrenze Locali</label>
+				  	</div>
+				  	
+				  	<div class="form-check form-switch">
+				  		<input class="form-check-input" type="checkbox" id="Moda" name="moda" <% if(pref.isModa()) out.println("checked"); %>>
+			  			<label class="form-check-label" for="Mode">Moda</label>
+				  	</div>
+				  	
+				  	<div class="form-check form-switch">		
+				  		<input class="form-check-input" type="checkbox" id="Shopping" name="shopping" <% if(pref.isShopping()) out.println("checked"); %>>
+			  		 	<label class="form-check-label" for="Shopping">Shopping</label>
+				  	</div>
+				  	
+				  	<div class="form-check form-switch">	 
+				  	 	<input class="form-check-input" type="checkbox" id="Adrenalina" name="adrenalina" <% if(pref.isAdrenalina()) out.println("checked"); %>>
+			  		 	<label class="form-check-label" for="Adrenalina">Adrenalina</label>
+				  	</div>
+				  	
+				   	<div class="form-check form-switch">	 
+				  	 	<input class="form-check-input" type="checkbox" id="Relax" name="relax" <% if(pref.isRelax()) out.println("checked"); %>>
+			  			<label class="form-check-label" for="Relax">Relax</label>
+				  	</div>
+				  	
+				  	<div class="form-check form-switch">	 
+				  	 	<input class="form-check-input" type="checkbox" id="Istruzione" name="istruzione" <% if(pref.isIstruzione()) out.println("checked"); %>>
+			  		 	<label class="form-check-label" for="Istruzione">Istruzione</label>
+				  	</div>
+				  	
+				  	<div class="form-check form-switch">	 
+				  	 	<input class="form-check-input" type="checkbox" id="Monumenti" name="monumenti" <% if(pref.isMonumenti()) out.println("checked"); %>>
+			  		 	<label class="form-check-label" for="Monumenti">Monumenti</label>
+				  	</div>
+			</div>
+		</div>
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
