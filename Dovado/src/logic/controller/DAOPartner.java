@@ -76,5 +76,49 @@ public class DAOPartner {
         }
 		return partner;
 	}
+	
+	public void createPartner(String username, String email, String password, String partitaIva, String nomeAzienda) throws Exception{
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+        
+        try {
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+            
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+            
+            //STEP4.1: preparo la stored procedure
+            String call =  "{call create_partner(?,?,?,?,?)}";
+            
+            stmt = conn.prepareCall(call);
+            
+            stmt.setString(1,username);
+            stmt.setString(2,email);
+            stmt.setString(3,password);
+            stmt.setString(4,partitaIva);
+            stmt.setString(5,nomeAzienda);
+            
+            stmt.execute();
+        }finally {
+            // STEP 5.2: Clean-up dell'ambiente
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            	throw(se2);
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+                	System.out.println("Disconnetted database successfully...");
+                	
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+	}
 
 }
