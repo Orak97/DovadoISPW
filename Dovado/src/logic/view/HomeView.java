@@ -187,7 +187,8 @@ public class HomeView implements Initializable{
     			
     			// Setting permissions to interact with Js
     	        eng.setJavaScriptEnabled(true);
-    	        eng.executeScript("spotPlace('curr.getPlace().getLatitudine()','curr.getPlace().getLongitudine()','curr.getPlace().getName()','curr.getPlace().getId()')");
+    	        for(Activity curr : activitiesPartn)
+    	        	eng.executeScript("spotPlace("+curr.getPlace().getLatitudine()+","+curr.getPlace().getLongitudine()+", '"+curr.getPlace().getName()+"',"+curr.getPlace().getId()+")");
     	        searchButton.setText("SEARCH");
     			searchButton.getStyleClass().add(BTNSRCKEY);
     			
