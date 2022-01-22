@@ -103,12 +103,12 @@
 		
 			<div class="col-4 events-list">
 			<div class="d-flex sticky-top search-activity shadow">
-				<input type="text" class="form-control flex-grow-1 search-home" placeholder="Cerca Attività">
+				<input type="text" class="form-control flex-grow-1 search-home" placeholder="Cerca Attività" id="searchBetweenActivities">
 			</div>
 			<div class="row row-cols-1 row-cols-md-1 g-1">
 			  <% for(Activity curr:activities){ %>
 			  
-			  <div class="col" >
+			  <div class="col col-cards" >
 			    <div class="card card-dark text-white" data-bs-toggle="collapse" href="#collapse<%= curr.getId() %>" aria-expanded="false" aria-controls="collapse<%= curr.getId() %>">
 			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 			      <div class="card-body">
@@ -662,7 +662,21 @@
 				document.getElementById('msg-container').innerHTML='';
 		 	}
 		 	
+		 	document.querySelector('#searchBetweenActivities').addEventListener('keyup', filterActivities);
 		 	
+		 	const activitiesCards = document.querySelectorAll('.col-cards')
+		 	
+		 	function filterActivities(e){
+		 		let textfield = e.target.value;
+		 		textfield = textfield.toUpperCase();
+		 		activitiesCards.forEach(col => containsKeywords(col,textfield));
+		 	}
+		 	
+		 	function containsKeywords(col,src){
+		 		let txt = col.querySelector('.card-title').textContent.toUpperCase();
+		 		if(txt.includes(src)) col.classList.remove('visually-hidden');
+		 		else col.classList.add('visually-hidden');
+		 	}
 
 	</script>
 </body>
