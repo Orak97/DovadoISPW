@@ -311,7 +311,7 @@ public class HomeView implements Initializable{
 							Text eventInfo = new Text(activities.get(i).getPlace().getName()+
 									"\n"+activities.get(i).getFrequency().getOpeningTime()+
 									"-"+activities.get(i).getFrequency().getClosingTime());
-							eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
+							eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/290x120"));
 							eventImage.getStyleClass().add("event-image");
 							
 							eventInfo.setId("eventInfo");
@@ -324,6 +324,7 @@ public class HomeView implements Initializable{
 						*/	
 							eventName.setId("eventName");
 							eventName.getStyleClass().add("textEventName");
+							eventName.setWrappingWidth(280);
 							/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
 							eventName.setFill(Paint.valueOf("#BGCOLOR"));
 							eventName.setStrokeWidth(0.3);
