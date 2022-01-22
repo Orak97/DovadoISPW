@@ -79,7 +79,7 @@ public class DAOPartner {
 		return partner;
 	}
 	
-	public void createPartner(String username, String email, String password, String partitaIva, String nomeAzienda) throws Exception{
+	public void registerPartner(String username, String email, String password, String partitaIva, String nomeAzienda) throws Exception{
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
