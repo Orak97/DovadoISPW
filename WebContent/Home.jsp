@@ -71,11 +71,11 @@
 			e.printStackTrace();
 		}
 		
+		Preferences p = utente.getPreferences();
 		if(request.getParameter("searchedForPreferences")!= null){
-			Preferences p = SetPreferencesController.getPreferencesFromBean(preferenceBean);
-			activities = FindActivityController.filterActivitiesByPreferences(activities, p);
-			
+			p = SetPreferencesController.getPreferencesFromBean(preferenceBean);
 		}
+		activities = FindActivityController.filterActivitiesByPreferences(activities, p);
 	%>
 	
 		<div class="row pt-6 home-body" id="home-body">
