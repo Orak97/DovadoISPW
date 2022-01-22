@@ -121,7 +121,7 @@
 				    <div class="d-grid gap-2 activityButtonGroup">
 				        	<button type="button" class="btn btn-dark btnHome" onclick="loadChat(<%=curr.getId()%>)">Join Channel</button>
 				        
-				        	<button type="button" class="btn btn-dark btnHome" onclick="moveView(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, <%= curr.getId()%>)">View on map</button>
+				        	<button type="button" class="btn btn-dark btnHome viewOnMap" onclick="moveView(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, <%= curr.getId()%>)">View on map</button>
 				        
 				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>">Play Activity</button>
 				    </div>
@@ -475,7 +475,7 @@
  				
  				clearChat();
  				
- 				//rendo visibile la chat nel caso non lo sia già
+ 				//rendo invisibile la chat nel caso non lo sia già
 		 		document.getElementById('chat').classList.add('visually-hidden');
 		 		
 		 		//Faccio riapparire la mappa -DA RIVEDERE-
@@ -662,6 +662,9 @@
 				document.getElementById('msg-container').innerHTML='';
 		 	}
 		 	
+		 	//----------------------------------------------------------------
+		 	//							search activitities
+		 	//----------------------------------------------------------------
 		 	document.querySelector('#searchBetweenActivities').addEventListener('keyup', filterActivities);
 		 	
 		 	const activitiesCards = document.querySelectorAll('.col-cards')
@@ -677,7 +680,17 @@
 		 		if(txt.includes(src)) col.classList.remove('visually-hidden');
 		 		else col.classList.add('visually-hidden');
 		 	}
+			
+		 	//------------------------------------------------------------------
+		 	//							buttons on activity
+		 	//------------------------------------------------------------------
 
+		 	
+		 	document.querySelectorAll('.viewOnMap').forEach(
+		 		node => node.addEventListener('click',() => {
+		 			if(refreshInterval != undefined) document.querySelector('#closeChat').click();
+		 		})
+		 	);
 	</script>
 </body>
 </html>
