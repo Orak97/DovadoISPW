@@ -97,6 +97,6 @@ function moveView(latitude,longitude,id){
 	activity.marker.openPopup();
 }
 
-function removeAllMark(){
+function removeAllMarkers(){
 	markersOnMap.forEach( elem => elem.marker.remove());  
 } 
