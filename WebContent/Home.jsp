@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController, logic.model.Preferences, logic.controller.SetPreferencesController, logic.controller.FindActivityController " %>
+    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController, logic.model.Preferences, logic.controller.SetPreferencesController, logic.controller.FindActivityController, java.time.LocalDate" %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
@@ -76,6 +76,23 @@
 			p = SetPreferencesController.getPreferencesFromBean(preferenceBean);
 		}
 		activities = FindActivityController.filterActivitiesByPreferences(activities, p);
+		
+		LocalDate searchedDate = LocalDate.now();
+		if(request.getParameter("date")!= null){
+			String date = request.getParameter("date");
+			try{
+				searchedDate = LocalDate.parse(date);
+				LocalDate today = LocalDate.now();
+				if(searchedDate.isBefore(today)) throw new IllegalArgumentException("La data in cui vuoi fare l'attività deve almeno successiva ad oggi!");
+			}catch(Exception e){
+				%>
+					<script>alert('Inserisci un valore corretto per la data, non può essere prima di oggi, mica viaggi nel tempo!')</script>
+				<%
+			}
+		}
+		
+		activities = FindActivityController.filterActivitiesByDate(activities, searchedDate);
+		
 	%>
 	
 		<div class="row pt-6 home-body" id="home-body">
@@ -117,7 +134,7 @@
 				<div class="d-flex flex-row position-absolute filters gx-5"> 
 					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#distanceModal">Distanza</button>
 					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#preferencesModal">Categorie</button>
-					<button type="button" class="btn btn-filters">Data</button>
+					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#dateModal">Data</button>
 					<button type="button" class="btn btn-filters">Ricerca avanzata <i class="bi bi-search"></i></button>									
 				</div>
 				<div id="Map" class="homeMap"></div>
@@ -252,7 +269,7 @@
 		</div>
 		
 		
-		<!-- modal per la distanza -->
+		<!-- modal per le preferenze -->
 		<div class="modal fade" id="preferencesModal" tabindex="-1" aria-labelledby="preferencesModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
@@ -340,6 +357,32 @@
 				  	</div>
 			</div>
 		</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Trova attività</button>
+		      </div>
+		      </form>
+		    </div>
+		  </div>
+		</div>
+		
+		<!-- modal per la data -->
+		
+		<div class="modal fade" id="dateModal" tabindex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="dateModalLabel">Quando vuoi fare le attività?</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <form method="GET" action="Home.jsp">
+		      <div class="modal-body">
+		      	<p>Dovado trova le attività che ti potrebbero piacere nel giorno che decidi tu!</p>
+		        <label for="datePicker" class="form-label">Voglio fare le attività il giorno:</label>
+		        <div class="input-group mb-3">
+				  <input type="date"  class="form-control" id="datePicker" name="date" aria-label="kilometriDaPercorrere"  value="<%= LocalDate.now() %>" min="<%= LocalDate.now() %>">
+				</div>
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
