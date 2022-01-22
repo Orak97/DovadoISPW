@@ -2,6 +2,7 @@ package logic.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.AddActivityToScheduleController;
+import logic.controller.FindActivityController;
 import logic.model.Activity;
 import logic.model.Channel;
 import logic.model.DAOActivity;
@@ -57,6 +59,7 @@ import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
 import logic.model.DateBean;
+import logic.model.FindActivitiesBean;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
@@ -171,6 +174,12 @@ public class HomeView implements Initializable{
 //        usrLon = coords.getLon();
 //        
         System.out.println("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
+
+        preference1.getStyleClass().add(BTNPREFKEY);
+        preference2.getStyleClass().add(BTNPREFKEY);
+        preference3.getStyleClass().add(BTNPREFKEY);
+        
+        preference1.setText("By preferences");
         
         user = Navbar.getUser();
     	if(user instanceof Partner) {
@@ -207,7 +216,7 @@ public class HomeView implements Initializable{
     						Text eventInfo = new Text(((SuperActivity)activitiesPartn.get(i)).getPlace().getName()+
     								"\n"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getOpeningTime()+
     								"-"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getClosingTime());
-    						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
+    						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/290x120"));
     						eventImage.getStyleClass().add("event-image");
     						
     						eventInfo.setId("eventInfo");
@@ -220,7 +229,8 @@ public class HomeView implements Initializable{
     					*/	
     						eventName.setId("eventName");
     						eventName.getStyleClass().add("textEventName");
-    						/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+    						eventName.setWrappingWidth(280);
+							/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
     						eventName.setFill(Paint.valueOf("#BGCOLOR"));
     						eventName.setStrokeWidth(0.3);
     						eventName.setStroke(Paint.valueOf("#000000"));
@@ -648,12 +658,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									hourReminder = "0"+hourReminder;
 								}
 								
-								String dateChosen = dayStringed+' '+hourChosen+':'+minChosen;
+								String dateChosen = dayStringed;
 								String dateReminder = dayStringed+' '+hourReminder+':'+minChosen;
 								
-								DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-								LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
-								LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
+//								DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//								LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
+//								LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
 								
 								
 //								DateBean dateB = new DateBean();
@@ -829,11 +839,76 @@ public void filterActivities() {
 	
 	String searchItem = null;
 	
-	eng.executeScript("clearMarkers()");
+	eng.executeScript("removeAllMarkers()");
 	
 	if((searchItem = searchBar.getText())==null) return;
+
+	FindActivitiesBean findActBeanZone = new FindActivitiesBean();
+	findActBeanZone.setZone(searchItem);
+	findActBeanZone.setDate(LocalDate.now().toString());
 	
-	ArrayList<SuperActivity> activities = new ArrayList<>();
+	FindActivitiesBean findActBeanKeywords = new FindActivitiesBean();
+	findActBeanKeywords.setZone(searchItem);
+	findActBeanKeywords.setDate(LocalDate.now().toString());
+	
+	
+	FindActivityController findActCtrl = new FindActivityController(findActBeanZone, null);
+	ArrayList<Activity> activities = new ArrayList<>();
+	try {
+		//Eseguo un controllo sulla ricerca delle attività; se il risultato è un'arraylist vuoto, allora
+		//segnalo l'errore e esco dal metodo.
+		if( (activities = findActCtrl.FindActivities()).isEmpty() ) {
+			Log.getInstance().getLogger().info("The info used for the search is not enough!");
+			final Popup popup = new Popup(); popup.centerOnScreen();
+			 
+		    Text passwordNotEqualTxt = new Text("Not enough"+'\n'+"info"+'\n'+"provided");
+		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
+		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
+		    
+		    Circle c = new Circle(0, 0, 60, Color.valueOf("212121"));
+		    
+		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
+		    
+		    c.setStrokeType(StrokeType.OUTSIDE);
+		    c.setStrokeWidth(0.3);
+		    c.setStroke(Paint.valueOf(BGCOLORKEY));
+		    
+		    popup.getContent().add(popupContent);
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
+			return;
+		}
+	
+		findActCtrl = new FindActivityController(findActBeanKeywords, null);
+		
+		if((activities = findActCtrl.FindActivities()).isEmpty()) {
+			Log.getInstance().getLogger().info("The info used for the search is not enough!");
+			final Popup popup = new Popup(); popup.centerOnScreen();
+			 
+		    Text passwordNotEqualTxt = new Text("Not enough"+'\n'+"info"+'\n'+"provided");
+		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
+		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
+		    
+		    Circle c = new Circle(0, 0, 60, Color.valueOf("212121"));
+		    
+		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
+		    
+		    c.setStrokeType(StrokeType.OUTSIDE);
+		    c.setStrokeWidth(0.3);
+		    c.setStroke(Paint.valueOf(BGCOLORKEY));
+		    
+		    popup.getContent().add(popupContent);
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
+			return;
+		}
+	} catch (Exception e) {
+		Log.getInstance().getLogger().info("La ricerca delle attività non è andata a buon fine. \n per colpa di un errore nel metodo del DB.");
+		e.printStackTrace();
+		return;
+	}
 //  In base all'input dell'utente le righe sottostanti vedono se
 //	l'utente cercava tramite preferenza o tramite nome dell'attività
 //	
@@ -909,7 +984,7 @@ public void filterActivities() {
 		
 		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 		eventBox.setAlignment(Pos.CENTER);
-		eng.executeScript("searchPlaces('"+searchItem+"-"+searchMode+"')");
+		eng.executeScript("spotPlace("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", '"+activities.get(i).getPlace().getName()+"',"+activities.get(i).getPlace().getId()+"))");;
 		eventsList.getItems().add(eventBox);
 	}
 }

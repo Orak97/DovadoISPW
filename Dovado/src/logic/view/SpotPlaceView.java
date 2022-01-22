@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import de.saring.leafletmap.LatLong;
+import de.saring.leafletmap.MapConfig;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -33,6 +35,7 @@ import logic.model.Log;
 import logic.model.NormalActivity;
 import logic.model.Partner;
 import logic.model.Place;
+import logic.model.SpotPlaceBean;
 import logic.model.SuperActivity;
 
 public class SpotPlaceView implements Initializable{
@@ -369,12 +372,19 @@ public void selectedPlace() {
 			return false;
 		}
 		
-		Partner owner = null;
-		if(Navbar.getUser() instanceof Partner)
-			owner = (Partner)Navbar.getUser();
-		
-		//Se lo "spottatore" del posto è un partner
-		//Si crea il nuovo posto già con un owner.		
+		SpotPlaceBean spBean = new SpotPlaceBean();
+		spBean.setAddress(address);
+		spBean.setCity(city);
+		spBean.setPlaceName(placeName);
+		spBean.setRegion(region);
+		spBean.setStreetNumber(civico);
+//		Aggiungere qualcosa che prenda e trovi lat e long di quello che sto inserendo
+//		MapConfig mg = new MapConfig();
+//		mg.
+//		LatLong ll = new LatLong(0, 0);
+//		ll.
+//		
+//		spBean.set
 		
 		//TODO:: DA CONTROLLARE SPOT PLACE!
 		if(daoPl.spotPlace(address, placeName, city, region, civico, city, 0, 0)<0) {

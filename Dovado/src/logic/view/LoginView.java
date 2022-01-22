@@ -16,6 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import logic.controller.LogExplorerController;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.LogBean;
@@ -47,11 +48,13 @@ public class LoginView{
     	LogBean  logbean = new LogBean();
     	logbean.setEmail(username.getText());
     	logbean.setPassword(password.getText());
+    	
+    	LogExplorerController logExp = new LogExplorerController();
     	SuperUser user = null;
     	if(username.getText().contains("@")) {
     		Log.getInstance().getLogger().info(username.toString());
     		try {
-				if(!logbean.validate()) {
+				if( (user = logExp.loginExplorer(logbean)) ==null) {
 					Log.getInstance().getLogger().info("Email o password incorrette.");
 					return;
 				}
@@ -63,7 +66,7 @@ public class LoginView{
     	}
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	//HomeView hv = new HomeView();
-    	Navbar.setUser(logbean.getUser());
+    	Navbar.setUser(user);
     	HomeView.render(current);
     }
 
