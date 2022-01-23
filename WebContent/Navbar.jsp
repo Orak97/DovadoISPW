@@ -19,7 +19,7 @@
 			}
 			logged = false;
 			
-		} else if(titolo.equals("register")){
+		} else if(titolo.equals("register")  || titolo.equals("registerPartner")){
 			if( session.getAttribute("user") != null) {				
 				response.sendRedirect("Home.jsp");
 			}

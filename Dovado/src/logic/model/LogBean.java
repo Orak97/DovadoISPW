@@ -1,7 +1,5 @@
 package logic.model;
 
-import logic.controller.LogExplorerController;
-
 public class LogBean {
 	private String email;
 	private String password;

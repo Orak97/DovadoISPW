@@ -87,6 +87,7 @@ public class DAOPartner {
 		return partner;
 	}
 	
+	//Ha senso NON  ritornare un booleano?
 	public void registerPartner(String username, String email, String password, String partitaIva, String nomeAzienda) throws Exception{
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;

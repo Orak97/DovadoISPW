@@ -2,10 +2,8 @@ package logic.controller;
 
 import logic.model.DAOExplorer;
 import logic.model.DAOSchedules;
-import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.LogBean;
-import logic.model.SuperUser;
 import logic.model.User;
 
 
