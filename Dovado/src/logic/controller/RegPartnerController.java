@@ -67,6 +67,13 @@ public class RegPartnerController {
 			bean.setError(error);
 			return bean;
 		}
+		
+		//check sul nome della compagnia 
+		if(bean.getCompName().length() > 80 || bean.getCompName().length() < 4) {
+			error = "La compagnia ha tra i 4 e gli 80 caratteri";
+			bean.setError(error);
+			return bean;
+		}
 		bean.setError(error);
 		return bean;
 	}

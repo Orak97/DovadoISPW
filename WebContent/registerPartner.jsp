@@ -55,14 +55,6 @@ reg	<%@ include file="Navbar.jsp" %>
    <form action="registerPartner.jsp" method="POST">   
    		<img class="mb-4" src="logo/DovadoLogo(3).png" alt="" width="72" height="57">  
    		<h1 class="h3 mb-3 fw-normal">Partner please sign up</h1> 
-   			<div class="form-check form-check-inline">
-  				<input class="form-check-input" type="radio" name="radio" id="inlineRadio1" value="yes">
- 				<label class="form-check-label" for="inlineRadio1">Partner</label>
-			</div>
-			<div class="form-check form-check-inline">
- 				<input class="form-check-input" type="radio" name="radio" id="inlineRadio2" value="no">
- 				<label class="form-check-label" for="inlineRadio2">User</label>
-			</div>
       		<div class="form-floating">
       			<input type="email" class="form-control" id="emailID" name="email" placeholder="name@example.com" required>
       			<label for="emailID">Email address</label>
