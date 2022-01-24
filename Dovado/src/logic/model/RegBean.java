@@ -3,7 +3,7 @@ package logic.model;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import logic.controller.RegisterController;
+import logic.controller.RegExplorerController;
 
 public class RegBean {
 private String email;
@@ -18,7 +18,7 @@ private String pIVA;
 private String error;
 private Pattern patternPsw;
 private Pattern patternEmail;
-private RegisterController regController;
+private RegExplorerController regController;
 private String radio;
 
 public RegBean() {

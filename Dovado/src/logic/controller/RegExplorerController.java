@@ -4,11 +4,11 @@ import logic.model.DAOSuperUser;
 import logic.model.Log;
 
 
-public class RegisterController {
+public class RegExplorerController {
 	//Decidere se i pattern mantenerli qui o sul bean
 	DAOSuperUser dao;
 
-	public RegisterController() {
+	public RegExplorerController() {
 		dao = DAOSuperUser.getInstance();
 	}
 	
