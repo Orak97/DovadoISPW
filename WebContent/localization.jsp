@@ -90,7 +90,7 @@
 		const accuracy = position.coords.accuracy;
 		
 		//rimuovo il caricatore e il testo:
-		document.querySelector('#spinnerLocalization').classList.add('visually-hidden');
+		
 		document.querySelector('#explanationLoc').classList.add('visually-hidden');
 		document.querySelector('#headerLoc').classList.add('visually-hidden');
 		
@@ -105,8 +105,17 @@
 	}
 	
 	function error() {
-        status.textContent = 'Unable to retrieve your location';
-        document.querySelector('#spinnerLocalization').classList.add('visually-hidden');
+        status.textContent = 'Non è stato possibile trovare la tua posizione, premi sulla mappa per segnalarti';
+        
+       //rimuovo il caricatore e il testo:
+		document.querySelector('#spinnerLocalization').classList.add('visually-hidden');
+		document.querySelector('#explanationLoc').classList.add('visually-hidden');
+		document.querySelector('#headerLoc').classList.add('visually-hidden');
+		
+		//faccio comparire la mappa:
+		document.querySelector('#mapContainer').classList.remove('visually-hidden');
+		startup(41.9109,12.4818);
+		mymap.on('click', repositionMark);
 	}
 	
 	function retrieveAddress(latitude,longitude){
@@ -119,6 +128,9 @@
 			}
 			
 			console.log({result, response});
+			
+			//faccio scomparire lo spinner
+			document.querySelector('#spinnerLocalization').classList.add('visually-hidden');
 			
 			//faccio comparire il "ti trovi vicino a..."
 			document.querySelector('#retrievedAddress').classList.remove('visually-hidden');
