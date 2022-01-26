@@ -9,8 +9,9 @@
 
 
 <%
-	if(request.getParameter("latitude") != null && request.getParameter("longitude") != null){
-		User usr = (User)session.getAttribute("user");
+	User usr = (User)session.getAttribute("user");
+	if(usr != null && request.getParameter("latitude") != null && request.getParameter("longitude") != null){
+		
 		try{
 			String lat = request.getParameter("latitude");
 			String lng = request.getParameter("longitude");

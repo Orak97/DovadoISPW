@@ -22,10 +22,11 @@
 	<div class="container-fluid home">
 	<% //tentativo di fare una home decente:
 		User utente = (User) session.getAttribute("user");
-		if(utente == null) response.sendRedirect("login.jsp");
+		
 		
 		//controllo latiduine e longitudine, se sono 0 -> non è stata inizializzata -> porto l'utente alla pagina per attivare la geolocalizzazione
-		if(utente.getLatitude() == 0 || utente.getLongitude() == 0) response.sendRedirect("localization.jsp");
+		if(utente != null) {
+		if(utente.getLatitude() == 0 || utente.getLongitude() == 0) {response.sendRedirect("localization.jsp");}
 		
 		if(request.getParameter("idActivity")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
 			AddActivityToScheduleController controller = new AddActivityToScheduleController(utente,scheduleBean);
@@ -399,7 +400,7 @@
 		    </div>
 		  </div>
 		</div>
-				
+				<%} %>
 		</form>
 		
 		
