@@ -124,7 +124,7 @@
 				        
 				        	<button type="button" class="btn btn-dark btnHome viewOnMap" onclick="moveView(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, <%= curr.getId()%>)">View on map</button>
 				        
-				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>">Play Activity</button>
+				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>">Play Activity</button>
 				    </div>
 			    </div>
 			  </div>
@@ -192,26 +192,29 @@
 	</div>
 	
 	<!-- Modal -->
-		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog">
+		<div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel"></h5>
+		        <h5 class="modal-title" id="activityModalLabel"></h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
+		      <p id="activityDescription"><p>
 		      <form action="Home.jsp" name="myform" method="GET">
 		      	  <input type="number" id="idActivity" name="idActivity" class="visually-hidden">
 			      <div class="scheduled-time">
-				        <div class="mb-3">
+			      	<div class="row">
+				        <div class="mb-3 col">
 				        	<label for="scheduledDate" class="col-form-label">Data:</label>
 				            <input type="date" class="form-control" id="scheduledDate" name="scheduledDate">
 				        </div>
 		
-				        <div class="mb-3">
+				        <div class="mb-3 col">
 				        	<label for="scheduledTime" class="col-form-label">Orario:</label>
 				            <input type="time" class="form-control" id="scheduledTime" name="scheduledTime">
 				        </div>
+				    </div>
 				  </div>
 		
 				  <div class="reminder-time">
@@ -222,14 +225,16 @@
 		
 				        <div class="reminder-form visually-hidden" id="reminder-form">
 				        	<p>Dati del reminder:</p>
-					        <div class="mb-3">
+				        	<div class="row">
+					        <div class="mb-3 col">
 					        	<label for="scheduledDate" class="col-form-label">Data:</label>
 					            <input type="date" class="form-control" id="scheduledDate" name="reminderDate">
 					        </div>
 		
-					        <div class="mb-3">
+					        <div class="mb-3 col">
 					        	<label for="scheduledTime" class="col-form-label">Orario:</label>
 					            <input type="time" class="form-control" id="scheduledTime" name="reminderTime">
+					        </div>
 					        </div>
 				        </div>
 			      </div>
@@ -411,7 +416,7 @@
 		 	//|						 	modal								|
 		 	//---------------------------------------------------------------
 		 
-		 	var exampleModal = document.getElementById('exampleModal')
+		 	var exampleModal = document.getElementById('activityModal')
 		 	exampleModal.addEventListener('show.bs.modal', function (event) {
 			   // Button that triggered the modal
 			   var button = event.relatedTarget
@@ -419,6 +424,7 @@
 			   var titolo = button.getAttribute('data-bs-titolo')
 			   var id = button.getAttribute('data-bs-id')
 			   var luogo = button.getAttribute('data-bs-luogo')
+			   let descr = button.getAttribute('data-bs-description')
 			   
 			   var orarioReminder = button.getAttribute('data-bs-orarioReminder')
 			   var dataReminder = button.getAttribute('data-bs-dataReminder')
@@ -432,10 +438,12 @@
 			   // Update the modal's content.
 			   var modalTitle = exampleModal.querySelector('.modal-title')
 			   var modalID = exampleModal.querySelector('.modal-body #idActivity')
-		
+			   var modalDescription = exampleModal.querySelector('#activityDescription')
+			   
 			   console.log(id);
 			   modalID.value=id
 			   modalTitle.textContent = titolo
+			   modalDescription.textContent = descr
 			})
 		
 			function addPromemoria(){
