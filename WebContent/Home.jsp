@@ -250,8 +250,7 @@
 		
 				  <div class="reminder-time">
 				        <div class="mb-3" id="promemoria">
-				        	<p>Vuoi ricevere un promemoria per questo evento?</p>
-				        	<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#reminder-form" aria-expanded="false" aria-controls="reminder-form" id="mostraPromemoria">Imposta un promemoria</button>
+				        	<p>Vuoi ricevere un promemoria per questo evento? <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#reminder-form" aria-expanded="false" aria-controls="reminder-form" id="mostraPromemoria">Si, imposta un promemoria</button></p>
 				        </div>
 		
 				        <div class="reminder-form collapse" id="reminder-form">

@@ -96,6 +96,10 @@ nav {
 	font-size: 14.5px;
 	color: #6c757d;
 }
+
+#mostraPromemoria{
+	margin-left: 1vw;	
+}
 /********************body**********************************/
 body{
 	background-color: #9FB6CD;
