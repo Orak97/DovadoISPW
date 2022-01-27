@@ -87,6 +87,15 @@ nav {
 .btn-filters:hover{
 	background-color: #f4f4f4;
 }
+
+.carousel-activity{
+	max-height: 40vh;
+}
+
+.label-activity{
+	font-size: 14.5px;
+	color: #6c757d;
+}
 /********************body**********************************/
 body{
 	background-color: #9FB6CD;

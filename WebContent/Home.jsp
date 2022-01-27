@@ -200,18 +200,49 @@
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
+		      
+		      <%-- carosello --%>
+			      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+				  <div class="carousel-indicators">
+				    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+				    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+				    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+				  </div>
+				  <div class="carousel-inner carousel-activity">
+				    <div class="carousel-item active">
+				      <img src="https://source.unsplash.com/random" class="d-block w-100" alt="...">
+				    </div>
+				    <div class="carousel-item">
+				      <img src="https://source.unsplash.com/random" class="d-block w-100" alt="...">
+				    </div>
+				    <div class="carousel-item">
+				      <img src="https://source.unsplash.com/random" class="d-block w-100" alt="...">
+				    </div>
+				  </div>
+				  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+				    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				    <span class="visually-hidden">Previous</span>
+				  </button>
+				  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+				    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+				    <span class="visually-hidden">Next</span>
+				  </button>
+				</div>
+		      
+		      <%-- fine carosello --%>
+		      <label for="activityDescription" class="col-form-label label-activity">Descrizione:</label>
 		      <p id="activityDescription"><p>
 		      <form action="Home.jsp" name="myform" method="GET">
 		      	  <input type="number" id="idActivity" name="idActivity" class="visually-hidden">
 			      <div class="scheduled-time">
 			      	<div class="row">
 				        <div class="mb-3 col">
-				        	<label for="scheduledDate" class="col-form-label">Data:</label>
-				            <input type="date" class="form-control" id="scheduledDate" name="scheduledDate">
+				        	<label for="scheduledDate" class="col-form-label label-activity">Data:</label>
+				            <input type="date" class="form-control" id="scheduledDate" name="scheduledDate" min="<%= LocalDate.now()%>">
 				        </div>
 		
 				        <div class="mb-3 col">
-				        	<label for="scheduledTime" class="col-form-label">Orario:</label>
+				        	<label for="scheduledTime" class="col-form-label label-activity">Orario:</label>
 				            <input type="time" class="form-control" id="scheduledTime" name="scheduledTime">
 				        </div>
 				    </div>
@@ -220,20 +251,20 @@
 				  <div class="reminder-time">
 				        <div class="mb-3" id="promemoria">
 				        	<p>Vuoi ricevere un promemoria per questo evento?</p>
-				        	<button type="button" class="btn btn-primary btn-sm" onclick="addPromemoria()">Imposta un promemoria</button>
+				        	<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#reminder-form" aria-expanded="false" aria-controls="reminder-form" id="mostraPromemoria">Imposta un promemoria</button>
 				        </div>
 		
-				        <div class="reminder-form visually-hidden" id="reminder-form">
+				        <div class="reminder-form collapse" id="reminder-form">
 				        	<p>Dati del reminder:</p>
 				        	<div class="row">
 					        <div class="mb-3 col">
-					        	<label for="scheduledDate" class="col-form-label">Data:</label>
-					            <input type="date" class="form-control" id="scheduledDate" name="reminderDate">
+					        	<label for="scheduledDate" class="col-form-label label-activity">Data:</label>
+					            <input type="date" class="form-control" id="reminderDate" name="reminderDate" min="<%= LocalDate.now()%>">
 					        </div>
 		
 					        <div class="mb-3 col">
-					        	<label for="scheduledTime" class="col-form-label">Orario:</label>
-					            <input type="time" class="form-control" id="scheduledTime" name="reminderTime">
+					        	<label for="scheduledTime" class="col-form-label label-activity">Orario:</label>
+					            <input type="time" class="form-control" id="reminderTime" name="reminderTime">
 					        </div>
 					        </div>
 				        </div>
@@ -424,14 +455,11 @@
 			   var titolo = button.getAttribute('data-bs-titolo')
 			   var id = button.getAttribute('data-bs-id')
 			   var luogo = button.getAttribute('data-bs-luogo')
-			   let descr = button.getAttribute('data-bs-description')
+			   let descr = button.getAttribute('data-bs-description')	   
+				
+		       let isHidden = exampleModal.querySelector('#reminder-form.show')
+			   if(!(isHidden == null)) exampleModal.querySelector('#mostraPromemoria').click();
 			   
-			   var orarioReminder = button.getAttribute('data-bs-orarioReminder')
-			   var dataReminder = button.getAttribute('data-bs-dataReminder')
-			   if(orarioReminder == null || dataReminder == null){
-				   console.log('nessun promemoria')
-				   removePromemoria()
-			   }
 			   // If necessary, you could initiate an AJAX request here
 			   // and then do the updating in a callback.
 			   //
@@ -440,28 +468,21 @@
 			   var modalID = exampleModal.querySelector('.modal-body #idActivity')
 			   var modalDescription = exampleModal.querySelector('#activityDescription')
 			   
+			   exampleModal.querySelector('#scheduledDate').value='';
+			   exampleModal.querySelector('#scheduledTime').value='';
+			   exampleModal.querySelector('#reminderDate').value='';
+			   exampleModal.querySelector('#reminderTime').value='';
+			   
+			   
 			   console.log(id);
 			   modalID.value=id
 			   modalTitle.textContent = titolo
 			   modalDescription.textContent = descr
 			})
 		
-			function addPromemoria(){
-		 		let div = document.getElementById('promemoria')
-		 		div.classList.add("visually-hidden");
+			
 		
-		 		let form = document.getElementById('reminder-form');
-		 		form.classList.remove("visually-hidden");
-		 	}
-		
-		 	function removePromemoria(){
-		 		let div = document.getElementById('promemoria')
-		 		div.classList.remove("visually-hidden");
-		
-		
-		 		let form = document.getElementById('reminder-form');
-		 		form.classList.add("visually-hidden");
-		 	}
+		 	
 		 	
 		 	//---------------------------------------------------------------
 		 	//|							chat								|
@@ -700,6 +721,15 @@
 		 			if(refreshInterval != undefined) document.querySelector('#closeChat').click();
 		 		})
 		 	);
+		 	
+		 	//------------------------------------------------------------------------
+		 	//							form checks
+		 	//------------------------------------------------------------------------
+		 	
+		 	document.querySelector('#scheduledDate').addEventListener('change', (event)=>{
+		 		selectedDate = event.target.value;
+		 		document.querySelector('#reminderDate').max = selectedDate; 
+		 	})
 	</script>
 </body>
 </html>
