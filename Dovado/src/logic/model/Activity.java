@@ -27,4 +27,6 @@ public interface Activity {
 	String getDescription();
 	
 	boolean isPlayableOnThisDate(LocalDate date);
+	
+	String getPlayabilityInfo();
 }

@@ -85,4 +85,15 @@ public class Place {
 	public void setLongitudine(float longitudine) {
 		this.longitudine = longitudine;
 	}
+	
+	public String getFormattedAddr() {
+		String addr = "";
+		if(address != null) addr+= address+" ";
+		if(civico != null) addr+= civico;
+		if(addr != "") addr+=", ";
+		if(cap != null) addr += cap+", ";
+		if(city != null) addr+= city+", ";
+		if(region != null) addr+= region;
+		return addr;
+	}
 }

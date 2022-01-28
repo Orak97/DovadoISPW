@@ -124,7 +124,7 @@
 				        
 				        	<button type="button" class="btn btn-dark btnHome viewOnMap" onclick="moveView(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, <%= curr.getId()%>)">View on map</button>
 				        
-				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>">Play Activity</button>
+				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>" data-bs-playabilityInfo="<%= curr.getPlayabilityInfo()%>" data-bs-address="<%= curr.getPlace().getFormattedAddr()%>">Play Activity</button>
 				    </div>
 			    </div>
 			  </div>
@@ -231,9 +231,26 @@
 		      
 		      <%-- fine carosello --%>
 		      <label for="activityDescription" class="col-form-label label-activity">Descrizione:</label>
-		      <p id="activityDescription"><p>
+		      <p id="activityDescription" class="lead"><p>
+		      
+		      <div class="row">
+		      	<div class="col">
+		      		<label for="placename" class="col-form-label label-activity">Luogo:</label>
+		      		<p id="placename" class="lead"></p>
+		      	</div>
+		      	<div class="col">
+		      		<label for="activityaddress" class="col-form-label label-activity">Indirizzo:</label>
+		      		<p id="activityaddress" class="lead"></p>
+		      	</div>
+		      </div>
+		      <div class="row">
+			      <label for="playabilityInfo" class="col-form-label label-activity">Puoi fare questa attività:</label>
+			      <p id="playabilityInfo" class="lead"><p>
+		      </div>
+		      <hr>
 		      <form action="Home.jsp" name="myform" method="GET">
 		      	  <input type="number" id="idActivity" name="idActivity" class="visually-hidden">
+			      <p>Quando vorresti fare questa attività?</p>
 			      <div class="scheduled-time">
 			      	<div class="row">
 				        <div class="mb-3 col">
@@ -247,10 +264,10 @@
 				        </div>
 				    </div>
 				  </div>
-		
+				 <hr>
 				  <div class="reminder-time">
 				        <div class="mb-3" id="promemoria">
-				        	<p>Vuoi ricevere un promemoria per questo evento? <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#reminder-form" aria-expanded="false" aria-controls="reminder-form" id="mostraPromemoria">Si, imposta un promemoria</button></p>
+				        	<p>Vuoi ricevere un promemoria? <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse" href="#reminder-form" aria-expanded="false" aria-controls="reminder-form" id="mostraPromemoria">Si, imposta un promemoria</button></p>
 				        </div>
 		
 				        <div class="reminder-form collapse" id="reminder-form">
@@ -454,7 +471,9 @@
 			   var titolo = button.getAttribute('data-bs-titolo')
 			   var id = button.getAttribute('data-bs-id')
 			   var luogo = button.getAttribute('data-bs-luogo')
-			   let descr = button.getAttribute('data-bs-description')	   
+			   let descr = button.getAttribute('data-bs-description')	
+			   let playability =  button.getAttribute('data-bs-playabilityInfo')
+			   let addr = button.getAttribute('data-bs-address')
 				
 		       let isHidden = exampleModal.querySelector('#reminder-form.show')
 			   if(!(isHidden == null)) exampleModal.querySelector('#mostraPromemoria').click();
@@ -466,6 +485,9 @@
 			   var modalTitle = exampleModal.querySelector('.modal-title')
 			   var modalID = exampleModal.querySelector('.modal-body #idActivity')
 			   var modalDescription = exampleModal.querySelector('#activityDescription')
+			   let modalPlayabilityInfo = exampleModal.querySelector('#playabilityInfo')
+			   let modalPlace = exampleModal.querySelector('#placename')
+			   let modalAddress = exampleModal.querySelector('#activityaddress')
 			   
 			   exampleModal.querySelector('#scheduledDate').value='';
 			   exampleModal.querySelector('#scheduledTime').value='';
@@ -477,6 +499,9 @@
 			   modalID.value=id
 			   modalTitle.textContent = titolo
 			   modalDescription.textContent = descr
+			   modalPlayabilityInfo.textContent = playability 
+			   modalPlace.textContent = luogo
+			   modalAddress.textContent = addr
 			})
 		
 			

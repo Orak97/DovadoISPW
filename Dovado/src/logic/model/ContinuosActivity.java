@@ -20,4 +20,13 @@ public class ContinuosActivity extends FrequencyOfRepeat {
 		return true;
 	}
 
+	@Override
+	protected String getStringInfo() {
+		if(this.getOpeningTime() == null && this.getClosingTime() == null) return "Tutti i giorni, a qualsiasi ora.";
+		else {
+			
+			return "Ogni giorno, dalle ore "+this.getFormattedOpeningTime()+" alle ore "+this.getFormattedClosingTime()+".";
+		}
+	}
+
 }

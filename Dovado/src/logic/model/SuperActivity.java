@@ -117,6 +117,10 @@ public abstract class SuperActivity {
 	public void setIntrestedCategories(Preferences intrestedCategories) {
 		this.intrestedCategories = intrestedCategories;
 	}
+	
+	public String getPlayabilityInfo() {
+		return frequencyOfRepeat.getStringInfo();
+	}
 
 	
 }

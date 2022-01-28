@@ -3,6 +3,7 @@ package logic.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class ExpiringActivity extends FrequencyOfRepeat {
 	
@@ -36,12 +37,28 @@ public class ExpiringActivity extends FrequencyOfRepeat {
 	public LocalDate getEndDate() {
 		return this.endDate;
 	}
+	
+	public String getFormattedStartDate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+		return startDate.format(formatter);
+	}
+	
+	public String getFormattedEndDate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+		return endDate.format(formatter);
+	}
 
 
 	@Override
 	public boolean checkDate(LocalDate date) {
 		// TODO Auto-generated method stub
 		return (startDate.isBefore(date) && endDate.isAfter(date)) || (startDate.isEqual(date) || endDate.isEqual(date));
+	}
+
+
+	@Override
+	protected String getStringInfo() {			
+		return "Dal "+this.getFormattedStartDate()+" al "+this.getFormattedEndDate()+", dalle ore "+this.getFormattedOpeningTime()+" alle ore "+this.getFormattedClosingTime()+".";
 	}
 	
 	

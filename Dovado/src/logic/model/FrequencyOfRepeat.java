@@ -3,6 +3,7 @@ package logic.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public abstract class FrequencyOfRepeat {
 	private LocalTime openingTime;
@@ -45,10 +46,21 @@ public abstract class FrequencyOfRepeat {
 	public LocalTime getOpeningTime() {
 		return openingTime;
 	}
+	
+	public String getFormattedOpeningTime() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+		return openingTime.format(formatter);
+	}	
 
 	public LocalTime getClosingTime() {
 		return closingTime;
 	}
+	
+	public String getFormattedClosingTime() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+		return closingTime.format(formatter);
+	}
+	
 	public void setOpeningTime(LocalTime newOpeningTime) {
 		this.openingTime = newOpeningTime;
 	}
@@ -60,5 +72,8 @@ public abstract class FrequencyOfRepeat {
 	public abstract boolean checkPlayability(LocalDateTime timestamp);
 	
 	public abstract boolean checkDate(LocalDate date);
+
+
+	protected abstract String getStringInfo();
 
 }

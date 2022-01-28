@@ -4,6 +4,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class PeriodicActivity extends FrequencyOfRepeat{
 
@@ -161,4 +163,31 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 			return true;
 		return true;
 	}
+
+	@Override
+	protected String getStringInfo() {
+		String infos = "Ogni ";
+		switch(cadence) {
+		case WEEKLY:
+			infos+= "settimana da ";
+			infos+= getFormatDayOfWeek(startDate);
+			infos+= " a ";
+			infos+= getFormatDayOfWeek(endDate);
+			infos+= ".";
+			break;
+		case MONTHLY:
+			infos+= "mese dal "+startDate.getDayOfMonth()+" al "+endDate.getDayOfMonth()+".";
+			
+			break;
+		case ANNUALLY:
+			infos +="anno dal "+startDate.getDayOfMonth()+"/"+startDate.getMonthValue()+" al "+endDate.getDayOfMonth()+"/"+endDate.getMonthValue()+".";
+			break;
+		}
+		return infos;
+	}
+	
+	protected String getFormatDayOfWeek(LocalDate myDate) {
+		return myDate.getDayOfWeek().getDisplayName(TextStyle.FULL,Locale.ITALIAN);
+	}
+	
 }
