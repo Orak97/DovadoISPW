@@ -12,24 +12,24 @@
 		System.out.println(System.getProperty("user.dir"));
 		Log.getInstance().getLogger().info(titolo);
 		
-		//TODO Modificare qui dopo aver creato una nuova Navbar
-		if (titolo.equals("login")) {
-			if( session.getAttribute("user") != null) {				
-				response.sendRedirect("Home.jsp");
+		//TODO Modificare qui dopo aver creato una nuova Navbar		
+		if (titolo.equals("loginPartner")) {
+			if( session.getAttribute("partner") != null) {				
+				response.sendRedirect("HomePartner.jsp");
 			}
 			logged = false;
 			
-		} else if(titolo.equals("register")){
-			if( session.getAttribute("user") != null) {				
-				response.sendRedirect("Home.jsp");
+		} else if(titolo.equals("registerPartner")){
+			if( session.getAttribute("partner") != null) {				
+				response.sendRedirect("HomePartner.jsp");
 			}
 			logged = false;
 			
-		} else if(session.getAttribute("user") == null) {
-				response.sendRedirect("login.jsp");
+		} else if(session.getAttribute("partner") == null) {
+				response.sendRedirect("loginPartner.jsp");
 				
 		} else {
-			session.setMaxInactiveInterval(10);
+			session.setMaxInactiveInterval(25*60);
 		}
 
 	  		int active = 0;
@@ -40,18 +40,14 @@
 
 	  			case "Create Activity": active = 1;
 	  			break;
-
-	  			case "Schedule": active = 2;
+				
+	  			case "User Profile": active = 2;
 	  			break;
-
+	  			
 	  			case "HomeLogin": active = 3;
 	  			break;
 	  			
-	  			case "Find Activities": active = 4;
-	  			break;
 	  			
-	  			case "User Profile": active = 5;
-	  			break;
 	  		};
 	  	%>
 
@@ -117,16 +113,9 @@
 	            <li class="nav-item">
 	              <a class="nav-link <% if(active == 1) out.print("active"); %>" href="CreateActivity.jsp">Create Activity</a>
 	            </li>
-	            <li class="nav-item">
-	              <a class="nav-link <% if(active == 2) out.print("active"); %>" href="Schedule.jsp">Schedule</a>
-	            </li>
-	            
-	            <li class="nav-item">
-	              <a class="nav-link <% if(active == 4) out.print("active"); %>" href="FindActivities.jsp">Find Activities</a>
-	            </li>
 	            
 	            <li class="nav-item dropdown">
-		          <a class="nav-link dropdown-toggle <% if(active == 5) out.print("active"); %>"" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+		          <a class="nav-link dropdown-toggle <% if(active == 2) out.print("active"); %>"" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 		            My profile <i class="bi bi-person-circle"></i>
 		          </a>
 		          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -135,8 +124,7 @@
 		            <li><a class="dropdown-item" href="#">Log out</a></li>
 		          </ul>
 		        </li>
-	            
-	            
+	            	            
 	          </ul>
 	        </div>
 	        <% } %>
@@ -159,4 +147,3 @@
 	    
 	    <!-- including icons of bootstrap: -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css">
-		

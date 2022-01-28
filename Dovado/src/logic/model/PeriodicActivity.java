@@ -28,11 +28,16 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 	public LocalDate getStartDate() {
 		return this.startDate;
 	}
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
 	
 	public LocalDate getEndDate() {
 		return this.endDate;
 	}
-	
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
 	
 	@Override
 	public boolean checkPlayability(LocalDateTime timestamp) {

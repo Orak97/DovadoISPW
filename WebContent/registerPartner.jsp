@@ -8,7 +8,7 @@
 
  	<% application.setAttribute( "titolo" , "registerPartner"); %>
 
-reg	<%@ include file="Navbar.jsp" %>
+reg	<%@ include file="NavbarPartner.jsp" %>
 	
 
 <html>

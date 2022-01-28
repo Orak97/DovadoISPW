@@ -449,7 +449,110 @@ public class DAOActivity {
         
         return nearbyActivities;
 	}
+	
+	public void updateCertAcivity(CertifiedActivity activity) throws Exception{
+		
+			// STEP 1: dichiarazioni
+	        CallableStatement stmt = null;
+	        CallableStatement stmtPref = null;
+	        Connection conn = null;
+	        
+	        try {
+	        	// STEP 2: loading dinamico del driver mysql
+	            Class.forName(DRIVER_CLASS_NAME);
+	            
+	            // STEP 3: apertura connessione
+	            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+	            System.out.println("Connected database successfully...");
+	            
+	            //STEP4.1: preparo le stored procedure
+	            String call =  "{call update_cert_activity(?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+	            String callPref =  "{call update_pref_activity(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+	            
+	            //effettuo la prima Store procedure 
+	            stmt = conn.prepareCall(call);
+	            
+	            stmt.setInt(1, activity.getId() != null ? activity.getId().intValue() : null);
+	            stmt.setInt(2,activity.getOwner().getUserID() != null ? activity.getOwner().getUserID().intValue() : null);
+	            stmt.setString(3,activity.getName());
+	            stmt.setString(4,activity.getDescription());
+	            stmt.setString(5,activity.getSite());
+	            stmt.setString(6,activity.getPrice());
+	            stmt.setInt(7,activity.getPlace().getId().intValue());
+	            
+	            String type = null;
+	            String cadence = null;
+	            String startDate = null;
+	            String endDate = null;
+	            
+	            if (activity.getFrequency() instanceof ContinuosActivity) {
+	            	type = "CONTINUA";
+	            } else if(activity.getFrequency() instanceof PeriodicActivity) {
+	            	type = "PERIODICA";
+	            	cadence = ((PeriodicActivity)activity.getFrequency()).getCadence().name();
+	            	startDate = ((PeriodicActivity)activity.getFrequency()).getStartDate().toString();
+	            	endDate = ((PeriodicActivity)activity.getFrequency()).getEndDate().toString();
+	            	
+	            } else if(activity.getFrequency() instanceof ExpiringActivity) {
+	            	type = "SCADENZA";
+	            	startDate = ((ExpiringActivity)activity.getFrequency()).getStartDate().toString();
+	            	endDate = ((ExpiringActivity)activity.getFrequency()).getEndDate().toString();
+	            }
+	            
+	            stmt.setString(8,type);
+	            stmt.setString(9,activity.getFrequency().getOpeningTime().toString());
+	            stmt.setString(10,activity.getFrequency().getClosingTime().toString());
+	            stmt.setString(11,startDate);
+	            stmt.setString(12,endDate);
+	            stmt.setString(13,cadence);
+	            
+	            stmt.execute();
+	            
+	            //effettuo la seconda store procedure
+	            stmtPref = conn.prepareCall(callPref);
+	            
+	            stmtPref.setInt(1, activity.getId() != null ? activity.getId().intValue() : null);
+	            stmtPref.setInt(2,activity.getOwner().getUserID() != null ? activity.getOwner().getUserID().intValue() : null);
+	            stmtPref.setBoolean(3,activity.getIntrestedCategories().isArte());
+	            stmtPref.setBoolean(4,activity.getIntrestedCategories().isCibo());
+	            stmtPref.setBoolean(5,activity.getIntrestedCategories().isMusica());
+	            stmtPref.setBoolean(6,activity.getIntrestedCategories().isSport());
+	            stmtPref.setBoolean(7,activity.getIntrestedCategories().isSocial());
+	            stmtPref.setBoolean(8,activity.getIntrestedCategories().isNatura());
+	            stmtPref.setBoolean(9,activity.getIntrestedCategories().isEsplorazione());
+	            stmtPref.setBoolean(10,activity.getIntrestedCategories().isRicorrenzeLocali());
+	            stmtPref.setBoolean(11,activity.getIntrestedCategories().isModa());
+	            stmtPref.setBoolean(12,activity.getIntrestedCategories().isShopping());
+	            stmtPref.setBoolean(13,activity.getIntrestedCategories().isAdrenalina());
+	            stmtPref.setBoolean(14,activity.getIntrestedCategories().isMonumenti());
+	            stmtPref.setBoolean(15,activity.getIntrestedCategories().isRelax());
+	            stmtPref.setBoolean(16,activity.getIntrestedCategories().isIstruzione());
 
+	            
+	            
+	        }finally {
+	            // STEP 5.2: Clean-up dell'ambiente
+	            try {
+	                if (stmt != null)
+	                    stmt.close();
+	                if (stmtPref != null)
+	                    stmtPref.close();
+	            } catch (SQLException se2) {
+	            	throw(se2);
+	            }
+	            try {
+	                if (conn != null)
+	                    conn.close();
+	                	System.out.println("Disconnetted database successfully...");
+	                	
+	            } catch (SQLException se) {
+	                se.printStackTrace();
+	            }
+	        }
+		}
+		
+	
+	
 	public ArrayList<Activity> findActivitiesByZone(String zone) throws Exception {
 		//metodo per ottenere TUTTE le attività partendo da una zona (CAP, Città, Regione)
 		
