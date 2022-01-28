@@ -100,7 +100,9 @@
 	
 	<% 
 		User utente = (User) session.getAttribute("user");	
-		Preferences pref = utente.getPreferences();
+	if(utente !=null){
+		
+	Preferences pref = utente.getPreferences();
 	%>
 	<div class ="select-preferences visually-hidden">
 		<h4 class="text-center"><i class="bi bi-tags"></i> A quale categoria sei interessato? <i class="bi bi-tags"></i></h4>
@@ -209,7 +211,8 @@
 	
 	</div>
 	</form>
-	<% } %>
+	<% 	}
+	} %>
 </div>
 
 <script>
