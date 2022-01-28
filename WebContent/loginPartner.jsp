@@ -12,7 +12,7 @@
     
 	%>
 	
-	<%@ include file="Navbar.jsp" %>
+	<%@ include file="NavbarPartner.jsp" %>
 	<div class="container pt-6">
 <%
 	    
@@ -23,7 +23,7 @@
 		Partner p = controller.loginPartner(logBean);
 		if(p != null){ 
 			//TODO Una volta fatta la nuova Navbar qui cambiamo
-			session.setAttribute("user", p);
+			session.setAttribute("partner", p);
 			session.setMaxInactiveInterval(10);
 			
 			//TODO INSERIRE HOME DEL PARTNER
@@ -57,8 +57,8 @@
        
       <%--   Implementa Dimenticata  <a href="#">Password</a>   --%>    
     </form>   
-    <p class="mt-5 mb-3 text-muted">Se ancora non sei registrato clicca <a href="register.jsp"> qui </a></p>
-    <p class="mt-5 mb-3 text-muted">Hai un'attività commerciale e vuoi farla conoscere sulla piattaforma? clicca <a href="loginPartner.jsp"> qui </a></p>
+    <p class="mt-5 mb-3 text-muted">Se ancora non sei registrato clicca <a href="registerPartner.jsp"> qui </a></p>
+    <p class="mt-5 mb-3 text-muted">Non hai un'attività? clicca <a href="login.jsp"> qui </a></p>
   </div>
 </main>
   

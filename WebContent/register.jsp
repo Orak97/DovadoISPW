@@ -34,7 +34,7 @@ if(request.getParameter("regForm")!= null){
 		regExpBean = regController.addExplorer(regExpBean);
 			if(regExpBean.getError() == null){
 %>
-			<jsp:forward page="login.jsp"/>
+			<jsp:forward page="loginPartner.jsp"/>
 <%
 		} else{
 %>

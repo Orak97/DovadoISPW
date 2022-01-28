@@ -34,6 +34,10 @@ public class ExpiringActivity extends FrequencyOfRepeat {
 		return this.startDate;
 	}
 	
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+	
 	public LocalDate getEndDate() {
 		return this.endDate;
 	}
@@ -48,7 +52,10 @@ public class ExpiringActivity extends FrequencyOfRepeat {
 		return endDate.format(formatter);
 	}
 
-
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+	
 	@Override
 	public boolean checkDate(LocalDate date) {
 		// TODO Auto-generated method stub
