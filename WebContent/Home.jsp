@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController, logic.model.Preferences, logic.controller.SetPreferencesController, logic.controller.FindActivityController, java.time.LocalDate" %>
+    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController, logic.model.Preferences, logic.controller.SetPreferencesController, logic.controller.FindActivityController, java.time.LocalDate, logic.model.CertifiedActivity" %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
@@ -109,8 +109,13 @@
 			<div class="row row-cols-1 row-cols-md-1 g-1">
 			  <% for(Activity curr:activities){ %>
 			  
+			  <%
+			  	boolean isCertified = false;
+			 	if(curr instanceof CertifiedActivity) isCertified= true;
+			  %>
 			  <div class="col col-cards" >
 			    <div class="card card-dark text-white" data-bs-toggle="collapse" href="#collapse<%= curr.getId() %>" aria-expanded="false" aria-controls="collapse<%= curr.getId() %>">
+			      <% if(isCertified){ %><span class="badge bg-certified text-white position-absolute top-0 end-0">Certificata <i class="bi bi-patch-check-fill"></i></span> <%}%>
 			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 			      <div class="card-body">
 			        <h5 class="card-title"><% out.println(curr.getName()); %></h5>
@@ -124,7 +129,7 @@
 				        
 				        	<button type="button" class="btn btn-dark btnHome viewOnMap" onclick="moveView(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, <%= curr.getId()%>)">View on map</button>
 				        
-				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>" data-bs-playabilityInfo="<%= curr.getPlayabilityInfo()%>" data-bs-address="<%= curr.getPlace().getFormattedAddr()%>">Play Activity</button>
+				        	<button type="button" class="btn btn-success btnHome"data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>" data-bs-playabilityInfo="<%= curr.getPlayabilityInfo()%>" data-bs-address="<%= curr.getPlace().getFormattedAddr()%>" <%if(isCertified){%> data-bs-certified="true" <%}%>>Play Activity</button>
 				    </div>
 			    </div>
 			  </div>
@@ -289,7 +294,8 @@
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		        <button type="submit" class="btn btn-success"  name="date">Schedule Activity</button>
+		        <button type="button" class="btn btn-success"  id="generateCouponButton" data-bs-target="#couponModal" data-bs-toggle="modal" data-bs-dismiss="modal">Generate Coupon</button>
+		        <button type="submit" class="btn btn-success"  id="playActivityButton">Schedule Activity</button>
 		      </div>
 		      </form>
 		    </div>
@@ -297,6 +303,109 @@
 		</div>
 		
 		<!-- fine modal -->
+		
+		<!-- inizio modal per Coupon -->
+		<!-- Modal -->
+		<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="couponModalLabel">Vuoi generare un codice sconto per questa attività?</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body modal-coupon">
+		      
+		      <%-- roba che fa vedere il saldo disponibile --%>
+		      <div class="row text-center sticky-top saldo shadow-sm"><p class="lead">Soldi disponibili: <span id="saldo-disponibile"><%= utente.getBalance() %></span></p></div>
+		      
+		      <%-- come funziona --%>
+		      
+		      <div class="accordion" id="infoCoupon">
+				  <div class="accordion-item">
+				    <h2 class="accordion-header" id="come-funziona">
+				      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#spiegazione" aria-expanded="true" aria-controls="spiegazione">
+				        Come funzionano i coupon?
+				      </button>
+				    </h2>
+				    <div id="spiegazione" class="accordion-collapse collapse show" aria-labelledby="come-funziona" data-bs-parent="#infoCoupon">
+				      <div class="accordion-body">
+				        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+				      </div>
+				    </div>
+				  </div>
+				</div>
+		      
+		      
+		      <%--inizio righe dei coupon --%>
+		       <div class="row coupon shadow">
+		       	<div class="col percentage-info text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
+		       			<p id="percentage"><span class="percentage">40%</span></p>
+		       		</div>
+		       	</div>
+		       	<div class="col percentage-redeem text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<button type="button" class="btn btn-outline-success btn-lg btnHome">Genera Coupon per 10 soldi</button>
+		       		</div>
+		       	</div>
+		       </div>
+		       
+		       <div class="row coupon shadow">
+		       	<div class="col percentage-info text-center disabled">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
+		       			<p id="percentage"><strong>60%</strong></p>
+		       		</div>
+		       	</div>
+		       	<div class="col percentage-redeem text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<p class="lead insufficient-funds">Soldi insufficienti per generare questo coupon</p>
+		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 100 soldi</button>
+		       		</div>
+		       	</div>
+		       </div>
+		       
+		       <div class="row coupon shadow">
+		       	<div class="col percentage-info text-center disabled">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
+		       			<p id="percentage"><strong>80%</strong></p>
+		       		</div>
+		       	</div>
+		       	<div class="col percentage-redeem text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 300 soldi</button>
+		       		</div>
+		       	</div>
+		       </div>
+		       
+		       <div class="row coupon shadow">
+		       	<div class="col percentage-info text-center disabled">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
+		       			<p id="percentage"><strong>100%</strong></p>
+		       		</div>
+		       	</div>
+		       	<div class="col percentage-redeem text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 600 soldi</button>
+		       		</div>
+		       	</div>
+		       </div>
+		       
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-success">Non desidero generare nessun coupon</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+				
+		
+		
+		<!-- fine modal per coupon -->
 		
 		
 		<!-- modal per la distanza -->
@@ -502,6 +611,41 @@
 			   modalPlayabilityInfo.textContent = playability 
 			   modalPlace.textContent = luogo
 			   modalAddress.textContent = addr
+			   
+			   //---------------------sezione per controllare se l'attività è certificata---------------
+			   
+			   let isCertified = button.getAttribute('data-bs-certified');
+			   
+			   //bottone schedule activity
+			   let btnPlayActivity = exampleModal.querySelector('#playActivityButton');
+			   
+			   //bottone per generare coupon
+			   let btnGenerateCoupon = exampleModal.querySelector('#generateCouponButton');
+			   
+			   if(isCertified != null){
+				   //l'attività è certificata
+				   
+				   //disabilito il schedule activity e lo nascondo
+				   btnPlayActivity.disabled = true;
+				   btnPlayActivity.classList.add('visually-hidden');
+				   
+				   //attivo e faccio comparire il generate coupon
+				   btnGenerateCoupon.disabled = false;
+				   btnGenerateCoupon.classList.remove('visually-hidden');
+			   	   
+			   }else{
+				   //l'attività non è certificata
+				   
+				   //attivo il schdule activity e lo faccio comparire
+				   btnPlayActivity.disabled = false;
+				   btnPlayActivity.classList.remove('visually-hidden');
+			   	   
+				   //disattivo il generate coupon e lo nascondo
+				   btnGenerateCoupon.disabled = true;
+				   btnGenerateCoupon.classList.add('visually-hidden');
+			   
+			   
+			   }
 			})
 		
 			

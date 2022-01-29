@@ -100,6 +100,81 @@ nav {
 #mostraPromemoria{
 	margin-left: 1vw;	
 }
+
+.bg-certified{
+	background-color: #0caccc;
+	font-size: 0.9em;
+}
+
+.coupon{
+	margin-top: 2.5vh;
+	width: 100%;
+	min-height: 20vh;
+	border-radius: 10px;
+	margin-left:0 !important;
+}
+
+.percentage-info{
+	height: 20vh;
+	max-width: 22vw;
+	background-color: #198754;
+	border-top-left-radius:10px;
+	border-bottom-left-radius:10px;
+}
+
+.percentage-info.disabled{
+	background-color: #69b190;
+}
+
+.label-sale{
+	color: white;
+	font-size: 12px;
+}
+
+#percentage{
+	color:white;
+	font-size:50px;
+}
+
+.percentage-redeem{
+	height: 20vh;
+	width: 100%;
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;
+	background-color: #FFFFFF;
+}
+
+.modal-coupon{
+	padding-top:0;
+}
+
+.saldo{
+	padding-top:2vh;
+	padding-bottom:2vh;
+	background-color: white;
+}
+
+.saldo p{
+	margin-bottom:0;
+}
+
+#saldo-disponibile{
+	font-weight: 500;
+}
+
+.percentage{
+	font-weight: 600;
+}
+
+#infoCoupon{
+	margin-top:2vh;
+}
+
+.insufficient-funds{
+	margin-bottom: 0.4em;
+    font-size: 0.85em;
+    color: red;
+}
 /********************body**********************************/
 body{
 	background-color: #9FB6CD;

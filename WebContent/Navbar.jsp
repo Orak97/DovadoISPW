@@ -29,7 +29,7 @@
 				response.sendRedirect("login.jsp");
 				
 		} else {
-			session.setMaxInactiveInterval(10);
+			session.setMaxInactiveInterval(60*20);
 		}
 
 	  		int active = 0;
