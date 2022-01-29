@@ -663,4 +663,69 @@ public class DAOActivity {
         
         return searchedActivities;
 	}
+	
+	public ArrayList<Discount> viewDiscounts (Long idActivity) throws Exception{
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+        
+        ArrayList<Discount> scontiDisponibili = new ArrayList<Discount>();
+        
+
+        try {
+        	
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+            
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+            
+            //STEP4.1: preparo la stored procedure
+            String call = "{call view_discounts(?)}";
+            
+            stmt = conn.prepareCall(call);
+            
+            stmt.setLong(1, idActivity);
+            
+            if(!stmt.execute()) {
+            	Exception e = new Exception("Sembra che non esistono Coupon per questa attività");
+            	throw e;
+            }
+            
+            //ottengo il resultSet
+            ResultSet rs = stmt.getResultSet();
+            
+            while(rs.next()) {
+            	int percentuale = rs.getInt("percentuale");
+            	boolean abilitato = rs.getBoolean("abilitato");
+            	int prezzo = rs.getInt("prezzo");
+            	
+            	Discount sconto = new Discount(percentuale, abilitato, prezzo);
+            	
+            	scontiDisponibili.add(sconto);
+            }
+            
+            rs.close();
+            
+        
+        }finally {
+            // STEP 5.2: Clean-up dell'ambiente
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            	throw(se2);
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+                	System.out.println("Disconnetted database successfully...");
+                	
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+		return scontiDisponibili;
+	}
 }

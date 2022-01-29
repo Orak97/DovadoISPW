@@ -898,6 +898,89 @@
 		 		selectedDate = event.target.value;
 		 		document.querySelector('#reminderDate').max = selectedDate; 
 		 	})
+		 	
+		 	//------------------------------------------------------------------------
+		 	//						visualizzazione coupon
+		 	//------------------------------------------------------------------------
+		 	
+		 	const couponModal = document.getElementById('couponModal')
+		 	
+		 	couponModal.addEventListener('show.bs.modal', function(){
+		 		let activity = document.querySelector('#activityModal input#idActivity').value;
+		 		console.log("l'attività selezionata è:"+activity);
+		 		
+		 		let url = "discount.jsp?activity="+activity;
+		 		
+		 		//step 1: genero oggetto per richiesta al server
+		 		var req = new XMLHttpRequest();
+		 		
+		 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+		 		req.onload= function(){
+		 			console.log(this.response);
+		 			let usrSale = this.response.usrWallet;
+		 			let discounts = this.response.discounts;
+		 			
+		 			couponModal.querySelector('#saldo-disponibile').textContent = usrSale;
+		 			
+		 			populateDiscounts(discounts,usrSale);
+		 		}
+		 		
+		 		//step 3: dico quale richiesta fare al server
+				req.open("GET", url);
+		 		
+				//step 3.1 : imposto document come response type, perché sto per ricevere html html
+				req.responseType = "json";
+				
+				//step 4: invio la richiesta 
+				req.send();
+		 	});
+		 	
+		 	function clearDiscounts(){
+		 		couponModal.querySelectorAll('div.row.coupon.shadow').forEach(curr => curr.remove());
+		 	}
+		 	
+		 	function populateDiscounts(discounts, myAvaibility){
+		 		
+		 		clearDiscounts();
+		 		
+		 		discounts.forEach(curr => {
+		 			
+		 			
+			 		let htmlDiscount;
+			 		
+			 		let redeemable = (curr.price <= myAvaibility)
+			 		
+			 		htmlDiscount+='<div class="row coupon shadow">';
+			 			htmlDiscount+='<div class="col percentage-info text-center '+(redeemable == false ? 'disabled' : '')+'">';
+			 				htmlDiscount+='<div class="position-relative top-50 start-50 translate-middle">';
+			 					htmlDiscount+='<label for="percentage" class="col-form-label label-sale">Sconto del</label>';
+			 					htmlDiscount+='<p id="percentage"><span class="percentage">'+curr.percentage+'%</span></p>';
+			 				htmlDiscount+='</div>';
+		 				htmlDiscount+='</div>';
+			 			htmlDiscount+='<div class="col percentage-redeem text-center">';
+			 				htmlDiscount+='<div class="position-relative top-50 start-50 translate-middle">';
+			 					if(!redeemable) htmlDiscount+='<p class="lead insufficient-funds">Soldi insufficienti per generare questo coupon</p>';
+			 					htmlDiscount+='<button type="button" class="btn btn-outline-success btn-lg btnHome" '+(redeemable == false ? 'disabled' : '')+'>Genera Coupon per '+curr.price+' soldi</button>';
+			 				htmlDiscount+='</div>';
+			 			htmlDiscount+='</div>';
+					htmlDiscount+='</div>';
+					
+					//generaro un nodo html da stringhe per creare il box del messaggio 
+		 			let placeholder = document.createElement('div');
+			 		placeholder.insertAdjacentHTML('afterbegin', htmlDiscount);
+			 		
+			 		let discount = placeholder.firstElementChild;
+			 		couponModal.querySelector('.modal-body.modal-coupon').append(discount);
+		 		
+		 		});
+		 	}
+		 	
+		 	
+		 	
+		 	
+		 	
+		 	
+		 	
 	</script>
 </body>
 </html>
