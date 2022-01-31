@@ -122,6 +122,30 @@ public class AddActivityToScheduleController {
 		
 	}
 	
+	public void addCertifiedActivityToSchedule() throws Exception{
+		
+
+		DAOSchedules daoSc = DAOSchedules.getInstance();
+		Long idUser = session.getUserID();
+		Long idActivity = editBean.getIdActivity();
+		LocalDateTime scheduledDate = editBean.getScheduledDateTime();
+		LocalDateTime reminderDate;
+		int percentage = editBean.getSelectedCoupon();
+
+		//se non è disponibile il reminder Date dal bean, imposta come ora di reminder lo scheduledtime - 1h
+		try{
+			reminderDate = editBean.getReminderDateTime();
+		}catch(Exception e) {
+			reminderDate = scheduledDate.minusHours(1);
+		}
+		
+		daoSc.addCertifiedActivityToSchedule(idUser,idActivity, scheduledDate, reminderDate, percentage, scheduledDate.plusDays(1));
+		
+		session.setSchedule(daoSc.getSchedule(session.getUserID()));
+		
+		session.refershWallet();
+	}
+	
 	
 
 }

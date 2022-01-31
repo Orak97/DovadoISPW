@@ -57,6 +57,7 @@
 				     			<div class="card-body">
 				    				<h5 class="card-title"><%= curr.getReferencedActivity().getName() %></h5>
 				     				<p class="card-text">Luogo : <%=curr.getReferencedActivity().getPlace().getName()  %> </p>
+				   					<% if(curr.getCoupon()!= null) { %><p> <%= curr.getCoupon().getCouponCode() %></p> <% }%>
 				   				</div>
 				   	  			<div class="card-footer">
 				 	 				<small class="text-muted">Schedulato per: <%=curr.getScheduledFormattedTime() %></small>

@@ -1,42 +1,39 @@
 package logic.model;
 
-import java.util.Random;
+import java.time.LocalDateTime;
+
 
 public class Coupon {
-	private int uID;
-	private int pID;
+	private int userID;
+	private int activityID;
 	private int couponCode;
 	private int discount;
-	Random rand ;
-	public Coupon(int userID, int partnerID,int discount) {
-		this(userID,partnerID, false, discount);
+	private LocalDateTime scadenza;
+	
+	public Coupon(int user, int activity, int couponCode,int discount, LocalDateTime scadenza) {
+		this.userID = user;
+		this.activityID = activity;
+		this.couponCode = couponCode;
+		this.discount = discount;
+		this.scadenza = scadenza;
 	}
 	
-	public Coupon(int userID, int partnerID, boolean add, int discount){
-		
-		uID = userID;
-		pID = partnerID;
-		rand = new Random();
-		this.discount = discount;
-		if (add) {
-			genCode();
-		}
-	}
+
 	
 	public int getuID() {
-		return uID;
+		return userID;
 	}
 
 	public void setuID(int uID) {
-		this.uID = uID;
+		this.userID = uID;
 	}
 
 	public int getpID() {
-		return pID;
+		return activityID;
 	}
 
 	public void setpID(int pID) {
-		this.pID = pID;
+		this.activityID = pID;
 	}
 
 	public int getCouponCode() {
@@ -45,29 +42,6 @@ public class Coupon {
 
 	public void setCouponCode(int couponCode) {
 		this.couponCode = couponCode;
-	}
-
-	public void genCode() {
-		DAOCoupon dao = DAOCoupon.getInstance();
-		Coupon coupon;
-
-		int code = 0;
-		boolean check = true;
-		coupon = dao.findCoupon(this.uID, this.pID);	
-		if (coupon != null) {
-			this.couponCode = coupon.couponCode;
-			return;
-		}
-		
-		while(check) {
-			code = 100000 + (rand.nextInt(899900));
-			if(dao.findCoupon(code) == null) {
-				check = false;
-				}
-			}
-		
-		this.couponCode = code;
-		
 	}
 
 	public int getDiscount() {

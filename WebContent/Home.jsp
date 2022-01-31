@@ -31,7 +31,11 @@
 		if(request.getParameter("idActivity")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
 			AddActivityToScheduleController controller = new AddActivityToScheduleController(utente,scheduleBean);
 			try{
-				controller.addActivityToSchedule();
+				
+				if(request.getParameter("selectedCoupon") == null)
+					controller.addActivityToSchedule();
+				else
+					controller.addCertifiedActivityToSchedule();
 			}catch(Exception e){
 				%>
 					<script> alert('Sembra che ci sia un errore nell\' aggiungere l\'attività nello schedulo!') </script>
