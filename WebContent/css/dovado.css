@@ -175,6 +175,12 @@ nav {
     font-size: 0.85em;
     color: red;
 }
+
+@media (max-width: 1199.98px){
+	.percentage-redeem .btn{
+		font-size: 1rem;	
+	}
+}
 /********************body**********************************/
 body{
 	background-color: #9FB6CD;

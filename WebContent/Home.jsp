@@ -255,6 +255,7 @@
 		      <hr>
 		      <form action="Home.jsp" name="myform" method="GET">
 		      	  <input type="number" id="idActivity" name="idActivity" class="visually-hidden">
+		      	  <input type="number" id="selectedCoupon" name="selectedCoupon" class="visually-hidden">
 			      <p>Quando vorresti fare questa attività?</p>
 			      <div class="scheduled-time">
 			      	<div class="row">
@@ -397,7 +398,7 @@
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-success">Non desidero generare nessun coupon</button>
+		        <button type="button" class="btn btn-success" onclick="generateDiscount(0)">Non desidero generare nessun coupon</button>
 		      </div>
 		    </div>
 		  </div>
@@ -632,6 +633,9 @@
 				   //attivo e faccio comparire il generate coupon
 				   btnGenerateCoupon.disabled = false;
 				   btnGenerateCoupon.classList.remove('visually-hidden');
+				   
+				   //disabilito il campo di testo del coupon
+				   exampleModal.querySelector('#selectedCoupon').disabled=false;
 			   	   
 			   }else{
 				   //l'attività non è certificata
@@ -643,7 +647,8 @@
 				   //disattivo il generate coupon e lo nascondo
 				   btnGenerateCoupon.disabled = true;
 				   btnGenerateCoupon.classList.add('visually-hidden');
-			   
+			   		
+				   exampleModal.querySelector('#selectedCoupon').disabled=true;
 			   
 			   }
 			})
@@ -970,9 +975,17 @@
 			 		placeholder.insertAdjacentHTML('afterbegin', htmlDiscount);
 			 		
 			 		let discount = placeholder.firstElementChild;
+			 		if(redeemable) discount.querySelector('button').addEventListener('click', () => generateDiscount(curr.percentage))
 			 		couponModal.querySelector('.modal-body.modal-coupon').append(discount);
 		 		
 		 		});
+		 	}
+		 	
+		 	function generateDiscount(perc){
+		 		console.log("Selezionata la pecentuale di sconto del "+perc+"%");
+		 		exampleModal.querySelector('#selectedCoupon').value = perc;
+		 		exampleModal.querySelector('#playActivityButton').disabled = false;
+		 		exampleModal.querySelector('#playActivityButton').click();
 		 	}
 		 	
 		 	
