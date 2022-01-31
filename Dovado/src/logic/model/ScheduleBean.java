@@ -20,6 +20,8 @@ public class ScheduleBean {
 	private Long idSchedule;
 	private Long scheduleToRemove;
 	
+	private int selectedCoupon;
+	
 	public String getScheduledDate() {
 		return scheduledDate;
 	}
@@ -76,6 +78,12 @@ public class ScheduleBean {
 	}
 	public void setScheduleToRemove(Long scheduleToRemove) {
 		this.scheduleToRemove = scheduleToRemove;
+	}
+	public int getSelectedCoupon() {
+		return selectedCoupon;
+	}
+	public void setSelectedCoupon(int selectedCoupon) {
+		this.selectedCoupon = selectedCoupon;
 	}
 
 }

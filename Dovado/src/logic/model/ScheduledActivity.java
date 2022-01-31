@@ -31,6 +31,7 @@ public class ScheduledActivity {
 	private LocalDateTime scheduledTime;
 	private LocalDateTime reminderTime;
 	private Timer timer;
+	private Coupon coupon;
 	
 	//prob qua useremo un javabean per contenere tutte ste stronzate
 	public ScheduledActivity(Long idScheduledActivity,Activity a, LocalDateTime scheduledTime, LocalDateTime reminderTime) {
@@ -41,6 +42,19 @@ public class ScheduledActivity {
 		this.scheduledTime = scheduledTime;
 		if(reminderTime != null) this.reminderTime = reminderTime;
 		else this.reminderTime = scheduledTime;
+		
+		this.scheduleReminder();
+	}
+	
+	public ScheduledActivity(Long idScheduledActivity,Activity a, LocalDateTime scheduledTime, LocalDateTime reminderTime, Coupon coupon) {
+		
+		//se reminderTime è nulla allora il reminder viene messo come ora di schedulo!
+		this.id = idScheduledActivity;
+		this.referencedActivity = a;
+		this.scheduledTime = scheduledTime;
+		if(reminderTime != null) this.reminderTime = reminderTime;
+		else this.reminderTime = scheduledTime;
+		this.coupon = coupon;
 		
 		this.scheduleReminder();
 	}
@@ -85,6 +99,10 @@ public class ScheduledActivity {
 
 	public Long getId() {
 		return id;
+	}
+
+	public Coupon getCoupon() {
+		return coupon;
 	}
 
 }

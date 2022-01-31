@@ -164,5 +164,61 @@ public class DAOExplorer {
         }
 	}
 	
+	public int getUserWallet(Long userID) throws Exception{
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+        
+        int wallet = 0;
+        
+        try {
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+            
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+            
+            //STEP4.1: preparo la stored procedure
+            String call =  "{call get_wallet(?)}";
+            
+            stmt = conn.prepareCall(call);
+            
+            stmt.setLong(1,userID);
+            
+            if(!stmt.execute()) {
+            	Exception e = new Exception("Nessun portafogli per questo utente");
+            	throw e;
+            }
+            
+            //ottengo il resultSet
+            ResultSet rs = stmt.getResultSet();
+            
+            while(rs.next()) {
+            	wallet = rs.getInt("wallet");
+            }
+            
+            rs.close();
+        }finally{
+            // STEP 5.2: Clean-up dell'ambiente
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            	throw(se2);
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+                	System.out.println("Disconnetted database successfully...");
+                	
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+    
+        return wallet;
+	}
+	
 	
 }

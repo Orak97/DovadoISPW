@@ -79,8 +79,15 @@ public class DAOSchedules {
 	        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 	        		LocalDateTime scheduledTime = LocalDateTime.parse(scheduled_time,dtf);
 	        		LocalDateTime reminderTime = LocalDateTime.parse(reminder_time,dtf);
-
-	            	schedule.addActivityToSchedule(idSchedule,a, scheduledTime, reminderTime);
+	        		
+	        		if(rs.getInt("coupon") != 0) {
+	        			int couponCode = rs.getInt("coupon");
+	        			DAOCoupon daoCp = DAOCoupon.getInstance();
+	        			Coupon coupon = daoCp.findCoupon(couponCode);
+	        			schedule.addActivityToSchedule(idSchedule,a, scheduledTime, reminderTime,coupon);
+	        		}else
+	        		
+	        		schedule.addActivityToSchedule(idSchedule,a, scheduledTime, reminderTime);
 	            }
 
 	            rs.close();
@@ -249,6 +256,59 @@ public class DAOSchedules {
 		    }
 		}
 		return true;
+	}
+
+	public void addCertifiedActivityToSchedule(Long userID, Long activity, LocalDateTime scheduledTime,
+			LocalDateTime reminderTime, int percentage, LocalDateTime expiringDate) throws Exception{
+		
+		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
+
+				// STEP 1: dichiarazioni
+		        CallableStatement stmt = null;
+		        Connection conn = null;
+
+		        try {
+		        	// STEP 2: loading dinamico del driver mysql
+		            Class.forName(DRIVER_CLASS_NAME);
+
+		            // STEP 3: apertura connessione
+		            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+		            System.out.println("Connected database successfully...");
+
+		            //STEP4.1: preparo la stored procedure
+		            String call = "{call add_certified_activity_to_schedule(?,?,?,?,?,?)}";
+
+		            stmt = conn.prepareCall(call);
+
+		            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+		            stmt.setLong(1, userID);
+		            stmt.setLong(2, activity);
+		            stmt.setString(3, scheduledTime.format(formatter));
+		            stmt.setString(4, reminderTime.format(formatter));
+		            stmt.setInt(5, percentage);
+		            stmt.setString(6, expiringDate.format(formatter));
+
+		            stmt.execute();
+
+		        }finally {
+				    // STEP 5.2: Clean-up dell'ambiente
+				    try {
+				        if (stmt != null)
+				            stmt.close();
+				    } catch (SQLException se2) {
+				    	throw(se2);
+				    }
+				    try {
+				        if (conn != null)
+				            conn.close();
+				        	System.out.println("Disconnetted database successfully...");
+
+				    } catch (SQLException se) {
+				        se.printStackTrace();
+				    }
+				}
+		
 	}
 
 }

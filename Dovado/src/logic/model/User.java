@@ -99,6 +99,10 @@ public class User extends SuperUser{
 	public void setMaxDistance(float maxDistance) {
 		this.maxDistance = maxDistance;
 	}
+
+	public void refershWallet() throws Exception{
+		this.wallet = DAOExplorer.getInstance().getUserWallet(this.getUserID());
+	}
 	
 	
 	
