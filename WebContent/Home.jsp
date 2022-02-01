@@ -30,18 +30,47 @@
 		
 		if(request.getParameter("idActivity")!= null){ //controllo la richiesta ricevuta, se all'interno è presente un parametro date vuol dire che arrivo a questa pagina tramite la pressione del bottone save changes, quindi ne consegue che i dati sono pieni e quindi posso andare avanti
 			AddActivityToScheduleController controller = new AddActivityToScheduleController(utente,scheduleBean);
+			boolean success = true;
 			try{
-				
 				if(request.getParameter("selectedCoupon") == null)
 					controller.addActivityToSchedule();
 				else
 					controller.addCertifiedActivityToSchedule();
 			}catch(Exception e){
-				%>
-					<script> alert('Sembra che ci sia un errore nell\' aggiungere l\'attività nello schedulo!') </script>
-				<%
 				e.printStackTrace();
-			} 
+				success = false;
+			}
+			
+			%>
+			<%--inizio prova modal per fare conferma o errore nello schedulo di un'attività --%>
+			<!-- Modal elimina -->
+				<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+			  		<div class="modal-dialog">
+			    		<div class="modal-content">
+			      			<div class="modal-header">
+			        			<h5 class="modal-title" id="responseModalLabel"><%= success ? "Attività correttamente schedulata!" : "Errore nello schedulo dell'attività"  %></h5>
+			        			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      			</div>
+			      			<div class="modal-body">
+			        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><i class="bi bi-check-circle-fill"></i> <%}else{%> ><i class="bi bi-x-circle-fill"></i> <%} %></p>
+			        			<h5 class="text-center irreversible-process"><%= success ? "Visualizzala nello schedulo!" : "C'è stato un errore nell'aggiunta dell'attività nel tuo schedulo"%></h5>
+			      			</div>
+			      			<div class="modal-footer">
+			        			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continua a vedere le attività</button>
+			        			<% if(success){ %><a role="button" class="btn btn-primary" href="Schedule.jsp">Vediamo lo schedulo</a> <%}%>
+			      			</div>
+			    		</div>
+			  		</div>
+				</div>
+				
+				<script>
+					let responseModal = new bootstrap.Modal(document.getElementById('responseModal'))
+					responseModal.show();
+				</script>
+			
+			<%-- fine modal per fare conferma o errore nello schedulo di un'attività --%>
+			
+			<%
 		}
 		
 		
@@ -105,6 +134,7 @@
 	%>
 	
 		<div class="row pt-6 home-body" id="home-body">
+		
 		
 			<div class="col-4 events-list">
 			<div class="d-flex sticky-top search-activity shadow">
