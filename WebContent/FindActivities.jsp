@@ -54,7 +54,7 @@
 				 	if(curr instanceof CertifiedActivity) isCertified= true;
 				  %>
 				  <div class="col">
-				    <div class="card h-100 scheduledActivityCards shadow" data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>" data-bs-playabilityInfo="<%= curr.getPlayabilityInfo()%>" data-bs-address="<%= curr.getPlace().getFormattedAddr()%>" <%if(isCertified){%> data-bs-certified="true" <%}%>>
+				    <div class="card h-100 scheduledActivityCards shadow" data-bs-date="<%=findBean.getDate()%>" data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>" data-bs-playabilityInfo="<%= curr.getPlayabilityInfo()%>" data-bs-address="<%= curr.getPlace().getFormattedAddr()%>" <%if(isCertified){%> data-bs-certified="true" <%}%>>
 				      <% if(isCertified){ %><span class="badge bg-certified text-white position-absolute top-0 end-0 mt-4">Certificata <i class="bi bi-patch-check-fill"></i></span> <%}%>
 				      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 				      <div class="card-body">
@@ -535,6 +535,7 @@
 	   let descr = button.getAttribute('data-bs-description')	
 	   let playability =  button.getAttribute('data-bs-playabilityInfo')
 	   let addr = button.getAttribute('data-bs-address')
+	   let data = button.getAttribute('data-bs-date')
 		
        let isHidden = exampleModal.querySelector('#reminder-form.show')
 	   if(!(isHidden == null)) exampleModal.querySelector('#mostraPromemoria').click();
@@ -550,11 +551,10 @@
 	   let modalPlace = exampleModal.querySelector('#placename')
 	   let modalAddress = exampleModal.querySelector('#activityaddress')
 	   
-	   exampleModal.querySelector('#scheduledDate').value='';
+	   exampleModal.querySelector('#scheduledDate').value=data;
 	   exampleModal.querySelector('#scheduledTime').value='';
 	   exampleModal.querySelector('#reminderDate').value='';
 	   exampleModal.querySelector('#reminderTime').value='';
-	   
 	   
 	   console.log(id);
 	   modalID.value=id
