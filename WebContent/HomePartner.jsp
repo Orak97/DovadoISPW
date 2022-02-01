@@ -38,6 +38,16 @@
 			    </div>
 			  </div>
 		  <% } %>
+		  
+		  <div class="col">
+			  <div class="card h-100 border-dark scheduledActivityCards shadow">
+				  <div class="card-body text-dark">
+				    <h5 class="card-title text-center">Aggiungi Attività</h5>
+				    <p class="card-text text-center addActivity position-absolute top-50 start-50 translate-middle"><i class="bi bi-plus-circle"></i></p>
+				  </div>
+			  </div>
+		  </div>
+		
 		</div>
 	</div>
 
