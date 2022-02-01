@@ -82,14 +82,14 @@
 			</div>
 			<div class="col">
 				<div class="d-flex justify-content-center ">	
-					<button type="button" class="btn btn-danger btn-lg">Accedi come Esploratore</button>
+					<a class="btn btn-danger btn-lg" href="login.jsp" role="button">Accedi come Esploratore</button>
 				</div>
 			</div>
 		</div>
-		<div class="row h-50 align-items-center" style="background-color:red">
+		<div class="row h-50 align-items-center" style="background-color:#FF5C5C">
 			<div class="col">
 				<div class="d-flex justify-content-center">
- 					<a class="btn btn-primary btn-lg" href="Home.jsp" role="button">Accedi come Partner</a>
+ 					<a class="btn btn-primary btn-lg" href="loginPartner.jsp" role="button">Accedi come Partner</a>
 				</div>
 			</div>
 			<div class="col">
