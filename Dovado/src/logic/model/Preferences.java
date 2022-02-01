@@ -127,9 +127,21 @@ public class Preferences {
 		this.monumenti = monumenti;
 	}
 	public boolean[] getSetPreferences() {
-		boolean[] prefSet = {isArte(),isCibo(),isMusica(),isSport(),isSocial(),isNatura(),
-				isEsplorazione(),isRicorrenzeLocali(),isModa(),isShopping(),isAdrenalina(),
-				isRelax(),isIstruzione(),isMonumenti()};
+		boolean[] prefSet = {
+				isArte(),
+				isCibo(),
+				isMusica(),
+				isSport(),
+				isSocial(),
+				isNatura(),
+				isEsplorazione(),
+				isRicorrenzeLocali(),
+				isModa(),
+				isShopping(),
+				isAdrenalina(),
+				isRelax(),
+				isIstruzione(),
+				isMonumenti()};
 		return prefSet;
 	}
 	public String[] getPreferencesName() {
