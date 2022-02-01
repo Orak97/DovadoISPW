@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
@@ -34,6 +35,15 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 		this.startDate = startDate;
 	}
 	
+	public String getFormattedStartDate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+		return startDate.format(formatter);
+	}
+	
+	public String getFormattedEndDate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+		return endDate.format(formatter);
+	}
 	public LocalDate getEndDate() {
 		return this.endDate;
 	}
