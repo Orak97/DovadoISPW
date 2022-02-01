@@ -11,16 +11,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import logic.controller.LogExplorerController;
-import logic.model.DAOSuperUser;
+import logic.controller.LogPartnerController;
 import logic.model.Log;
 import logic.model.LogBean;
+import logic.model.Partner;
 import logic.model.SuperUser;
+import logic.model.User;
 
 public class LoginView{
 	
@@ -29,6 +32,12 @@ public class LoginView{
 
     @FXML
     private Button registerInput;
+    
+    @FXML
+    private RadioButton radioPartner;
+    
+    @FXML
+    private RadioButton radioExplorer;
 
     @FXML
     private TextField username;
@@ -45,36 +54,79 @@ public class LoginView{
     @FXML
     void login(ActionEvent event) {
     	Log.getInstance().getLogger().info("Clicked login");
-    	LogBean  logbean = new LogBean();
-    	logbean.setEmail(username.getText());
-    	logbean.setPassword(password.getText());
-    	
-    	LogExplorerController logExp = new LogExplorerController();
     	SuperUser user = null;
-    	if(username.getText().contains("@")) {
-    		Log.getInstance().getLogger().info(username.toString());
-    		try {
-				if( (user = logExp.loginExplorer(logbean)) ==null) {
-					Log.getInstance().getLogger().info("Email o password incorrette.");
-					return;
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return;
-			} 
+    	
+    	if(radioPartner.isSelected()) {
+    		user =logPartner(event);
+    		Log.getInstance().getLogger().info("voglio accedere come partner");
+    	} 
+    	else if(radioExplorer.isSelected()) {
+    		user = logExplorer(event);
+			Log.getInstance().getLogger().info("voglio accedere come explorer");
+    	} else {
+    		fail.setText("Selezionare una modalità \n di accesso");
+    		fail.setVisible(true);
     	}
+    	if (user != null) {
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	//HomeView hv = new HomeView();
     	Navbar.setUser(user);
     	HomeView.render(current);
+    	}
     }
-
+    
+    private User logExplorer(ActionEvent event) {
+    	User user = null;
+    	LogExplorerController logExp = new LogExplorerController();
+    	LogBean  logbean = new LogBean();
+    	logbean.setEmail(username.getText());
+    	logbean.setPassword(password.getText());
+    	Log.getInstance().getLogger().info("Lo username dell'esploratore è: " +username.toString());
+    	try {
+			if( (user = logExp.loginExplorer(logbean)) ==null) {
+				fail.setText("Mail o password non corrette");
+	    		fail.setVisible(true);
+	    		
+				Log.getInstance().getLogger().info("Email o password incorrette.");
+				return user;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return user;
+		}
+    	return user;
+    }
+    
+    private Partner logPartner(ActionEvent event) {
+    	Partner user = null;
+    	LogPartnerController logPartner = new LogPartnerController();
+    	LogBean  logbean = new LogBean();
+    	logbean.setEmail(username.getText());
+    	logbean.setPassword(password.getText());
+    	Log.getInstance().getLogger().info("Lo username del partner è: " +username.toString());
+    	try {
+			if( (user = logPartner.loginPartner(logbean)) ==null) {
+				fail.setText("Mail o password non corrette");
+	    		fail.setVisible(true);
+	    		
+				Log.getInstance().getLogger().info("Email o password incorrette.");
+				return user;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return user;
+		}
+    	return user;
+    }
+    
+    
     @FXML
     void register(ActionEvent event) {
     	Log.getInstance().getLogger().info("Clicked register");
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
-    	RegisterView.render(current);
+    	TotemView.render(current);
     }
     
     public static void render(Stage current) {
