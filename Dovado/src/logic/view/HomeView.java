@@ -64,6 +64,7 @@ import logic.model.FindActivitiesBean;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
+import logic.model.PreferenceBean;
 import logic.model.Preferences;
 import logic.model.ScheduleBean;
 import logic.model.SuperActivity;
@@ -852,42 +853,20 @@ public void filterActivities() {
 	findActBeanKeywords.setZone(searchItem);
 	findActBeanKeywords.setDate(LocalDate.now().toString());
 	
-	
-	FindActivityController findActCtrl = new FindActivityController(findActBeanZone, null);
+	PreferenceBean prefBean = new PreferenceBean();
+	prefBean.setPreferences(((User)user).getPreferences().getSetPreferences());
+	System.out.println("Preferenze settate: "+((User)user).getPreferences().getSetPreferences());
+	FindActivityController findActCtrl = new FindActivityController(findActBeanZone, prefBean);
 	ArrayList<Activity> activities = new ArrayList<>();
 	try {
 		//Eseguo un controllo sulla ricerca delle attività; se il risultato è un'arraylist vuoto, allora
 		//segnalo l'errore e esco dal metodo.
-		if( (activities = findActCtrl.FindActivities()).isEmpty() ) {
-			Log.getInstance().getLogger().info("The info used for the search is not enough!");
-			final Popup popup = new Popup(); popup.centerOnScreen();
-			 
-		    Text passwordNotEqualTxt = new Text("Not enough"+'\n'+"info"+'\n'+"provided");
-		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
-		    
-		    Circle c = new Circle(0, 0, 60, Color.valueOf("212121"));
-		    
-		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
-		    
-		    c.setStrokeType(StrokeType.OUTSIDE);
-		    c.setStrokeWidth(0.3);
-		    c.setStroke(Paint.valueOf(BGCOLORKEY));
-		    
-		    popup.getContent().add(popupContent);
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
-			return;
-		}
-	
-		findActCtrl = new FindActivityController(findActBeanKeywords, null);
 		
-		if((activities = findActCtrl.FindActivities()).isEmpty()) {
-			Log.getInstance().getLogger().info("The info used for the search is not enough!");
+		if( (activities = findActCtrl.FindActivities()).isEmpty() ) {
+			Log.getInstance().getLogger().info("Nothing was found!");
 			final Popup popup = new Popup(); popup.centerOnScreen();
 			 
-		    Text passwordNotEqualTxt = new Text("Not enough"+'\n'+"info"+'\n'+"provided");
+		    Text passwordNotEqualTxt = new Text("Nothing"+'\n'+"has been"+'\n'+"found");
 		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
 		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
 		    
@@ -905,6 +884,7 @@ public void filterActivities() {
 		    popup.setAutoHide(true);
 			return;
 		}
+		
 	} catch (Exception e) {
 		Log.getInstance().getLogger().info("La ricerca delle attività non è andata a buon fine. \n per colpa di un errore nel metodo del DB.");
 		e.printStackTrace();

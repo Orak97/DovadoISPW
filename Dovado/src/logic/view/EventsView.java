@@ -38,15 +38,22 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import logic.controller.ActivityType;
+import logic.controller.UpdateCertActController;
 import logic.model.Activity;
+import logic.model.CertifiedActivity;
+import logic.model.ContinuosActivity;
+import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSchedules;
 import logic.model.DAOSuperUser;
+import logic.model.ExpiringActivity;
 import logic.model.Log;
 import logic.model.Partner;
+import logic.model.PeriodicActivity;
 import logic.model.ScheduledActivity;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
@@ -465,25 +472,71 @@ public class EventsView implements Initializable{
 							activitySelected.getFrequency().setClosingTime(LocalTime.parse(closingTimeChosen));
 
 							//AGGIUNGERE UN METODO CHE AGGIORNI L'ATTIVITA' NEL DATABASE.
+							CreateActivityBean cab = new CreateActivityBean();
 							
-							if(daoAct.updateActivityJSON(activitySelected)) {
-								final Stage dialog = new Stage();
-				                dialog.initModality(Modality.NONE);
-				                dialog.initOwner(curr);
-				                VBox dialogVbox = new VBox(20);
-				                dialogVbox.getChildren().add(new Text("Activity successfully modified"));
-				                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-				                dialog.setScene(dialogScene);
-				                dialog.show();
-							} else {
-								final Stage dialog = new Stage();
-				                dialog.initModality(Modality.NONE);
-				                dialog.initOwner(curr);
-				                VBox dialogVbox = new VBox(20);
-				                dialogVbox.getChildren().add(new Text("Activity not modified"));
-				                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-				                dialog.setScene(dialogScene);
-				                dialog.show();
+							cab.setActivityDescription(activitySelected.getDescription());
+							cab.setActivityName(activitySelected.getName());
+							cab.setPlace(activitySelected.getPlace().getId().intValue());
+							cab.setOwner(((CertifiedActivity)(activitySelected)).getOwner().getUserID().intValue());
+							cab.setIdActivity(activitySelected.getId().intValue());
+							
+							cab.setInterestedCategories(activitySelected.getIntrestedCategories().getSetPreferences());
+							if(activitySelected.getFrequency() instanceof ExpiringActivity) {
+								cab.setType(ActivityType.SCADENZA);
+								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
+								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
+								//E DATA DI FINE; PERTANTO:
+								cab.setOpeningTime(activitySelected.getFrequency().getFormattedOpeningTime());
+								cab.setClosingTime(activitySelected.getFrequency().getFormattedClosingTime());
+								cab.setEndDate(((ExpiringActivity)(activitySelected.getFrequency())).getFormattedEndDate());
+								cab.setOpeningDate(((ExpiringActivity)(activitySelected.getFrequency())).getFormattedStartDate());
+							}
+							else if(activitySelected.getFrequency() instanceof ContinuosActivity) {
+								cab.setType(ActivityType.CONTINUA);
+								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
+								//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA; PERTANTO:
+								cab.setOpeningTime(activitySelected.getFrequency().getFormattedOpeningTime());
+								cab.setClosingTime(activitySelected.getFrequency().getFormattedClosingTime());
+								
+							}
+							else if(activitySelected.getFrequency() instanceof PeriodicActivity) {
+								cab.setType(ActivityType.PERIODICA);
+								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
+								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
+								//DATA DI FINE ED INFINE LA CADENZA; PERTANTO:
+								cab.setOpeningTime(activitySelected.getFrequency().getFormattedOpeningTime());
+								cab.setClosingTime(activitySelected.getFrequency().getFormattedClosingTime());
+								cab.setEndDate(((PeriodicActivity)(activitySelected.getFrequency())).getFormattedEndDate());
+								cab.setOpeningDate(((PeriodicActivity)(activitySelected.getFrequency())).getFormattedStartDate());
+								cab.setCadence(((PeriodicActivity)(activitySelected.getFrequency())).getCadence());
+							}
+
+							UpdateCertActController updateController = new UpdateCertActController(cab,(CertifiedActivity)activitySelected);
+							
+							try {
+								if(updateController.updateActivity()) {
+									final Stage dialog = new Stage();
+								    dialog.initModality(Modality.NONE);
+								    dialog.initOwner(curr);
+								    VBox dialogVbox = new VBox(20);
+								    dialogVbox.getChildren().add(new Text("Activity successfully modified"));
+								    Scene dialogScene = new Scene(dialogVbox, 300, 200);
+								    dialog.setScene(dialogScene);
+								    dialog.show();
+								} else {
+									final Stage dialog = new Stage();
+								    dialog.initModality(Modality.NONE);
+								    dialog.initOwner(curr);
+								    VBox dialogVbox = new VBox(20);
+								    dialogVbox.getChildren().add(new Text("Activity not modified"));
+								    Scene dialogScene = new Scene(dialogVbox, 300, 200);
+								    dialog.setScene(dialogScene);
+								    dialog.show();
+								}
+							} catch (Exception e1) {
+								e1.printStackTrace();
+								Log.getInstance().getLogger().info("Database access was not obtained");
+								return;
 							}
 							
 							
