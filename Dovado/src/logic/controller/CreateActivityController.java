@@ -14,6 +14,7 @@ import logic.model.Channel;
 import logic.model.ContinuosActivity;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
+import logic.model.DAOPartner;
 import logic.model.DAOPlace;
 import logic.model.DateBean;
 import logic.model.ExpiringActivity;

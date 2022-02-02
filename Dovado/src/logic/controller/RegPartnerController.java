@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import logic.model.DAOPartner;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.RegBean;

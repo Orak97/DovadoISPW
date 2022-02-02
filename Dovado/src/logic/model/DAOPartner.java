@@ -1,15 +1,10 @@
-package logic.controller;
+package logic.model;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import logic.model.DAOExplorer;
-import logic.model.Partner;
-import logic.model.Preferences;
-import logic.model.User;
 
 public class DAOPartner {
 	private static DAOPartner INSTANCE;

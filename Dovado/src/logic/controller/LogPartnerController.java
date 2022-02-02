@@ -1,5 +1,6 @@
 package logic.controller;
 
+import logic.model.DAOPartner;
 import logic.model.Log;
 import logic.model.LogBean;
 import logic.model.Partner;
