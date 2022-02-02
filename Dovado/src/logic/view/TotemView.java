@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import logic.controller.LogExplorerController;
 import logic.controller.LogPartnerController;
@@ -31,6 +32,11 @@ public class TotemView {
 	
 	@FXML
 	Button buttonExplorer;
+	
+	@FXML
+	GridPane totemGrid;
+	
+
 	
 	@FXML
 	public void goToRegExp(ActionEvent event) {
@@ -54,8 +60,9 @@ public class TotemView {
 			primaryStage.setTitle("Dovado - totem");
 			primaryStage.setScene(scene);
 			GridPane totem = new GridPane();
-			
+						
 			totem = FXMLLoader.load(Main.class.getResource("Totem.fxml"));
+			
 			
 			root.getChildren().addAll(navbar,totem);
 			primaryStage.show();

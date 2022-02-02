@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -24,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -31,11 +33,14 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import logic.controller.RegExplorerController;
+import logic.controller.RegPartnerController;
 import logic.model.DAOPlace;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
+import logic.model.RegExpBean;
 import logic.model.SuperUser;
 import logic.model.User;
 
@@ -61,11 +66,44 @@ public class RegisterView implements Initializable{
 
 	@FXML
 	private VBox root;
+	
+	@FXML
+	private Label errorLabel;
     
-	private DAOPlace daoPl;
+	//---------------- INIZIO PREFERENZE -------------------------------------------
+	
+	@FXML
+	private RadioButton btArte;
+	@FXML
+	private RadioButton btCibo;
+	@FXML
+	private RadioButton btMusica;
+	@FXML
+	private RadioButton btSport;
+	@FXML
+	private RadioButton btSocial;
+	@FXML
+	private RadioButton btNatura;
+	@FXML
+	private RadioButton btEsplorazione;
+	@FXML
+	private RadioButton btRicorr;
+	@FXML
+	private RadioButton btModa;
+	@FXML
+	private RadioButton btShopping;
+	@FXML
+	private RadioButton btAdrenalina;
+	@FXML
+	private RadioButton btMonumenti;
+	@FXML
+	private RadioButton btRelax;
+	@FXML
+	private RadioButton btIstruzione;
+	
+	//------------------------ FINE PREFERENZE -----------------------------------------------------
+	
 	private VBox rt;
-
-	private static DAOSuperUser daoSu;
 
 	private static String password;
 	private static String passwordCheck;
@@ -89,104 +127,69 @@ public class RegisterView implements Initializable{
 		
 		if(password.isEmpty() || passwordCheck.isEmpty() || username.isEmpty() || email.isEmpty()) {
 			Log.getInstance().getLogger().info("One of the four fields is empty!");
-			final Popup popup = new Popup(); popup.centerOnScreen();
-			 
-		    Text passwordNotEqualTxt = new Text("Not enough"+'\n'+"info"+'\n'+"provided");
-		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
-		    
-		    Circle c = new Circle(0, 0, 60, Color.valueOf("212121"));
-		    
-		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
-		    
-		    c.setStrokeType(StrokeType.OUTSIDE);
-		    c.setStrokeWidth(0.3);
-		    c.setStroke(Paint.valueOf(BGCOLORKEY));
-		    
-		    popup.getContent().add(popupContent);
+			final Popup popup = popupGen(500,50, "One of the four fields is empty!");
 		    
 		    popup.show(curr);
 		    popup.setAutoHide(true);
 			return;
 		}
-
-		if(!password.equals(passwordCheck)) {
-			Log.getInstance().getLogger().info("The passwords don't match!");
-			final Popup popup = new Popup(); popup.centerOnScreen();
-			 
-		    Text passwordNotEqualTxt = new Text("Passwords"+'\n'+"don't"+'\n'+"match");
-		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
-		    
-		    Circle c = new Circle(0, 0, 50, Color.valueOf("212121"));
-		    
-		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
-		    
-		    c.setStrokeType(StrokeType.OUTSIDE);
-		    c.setStrokeWidth(0.3);
-		    c.setStroke(Paint.valueOf(BGCOLORKEY));
-		    
-		    popup.getContent().add(popupContent);
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
-			return;
-    	}
 		
-		if(password.length()<8) {
-			
-			Log.getInstance().getLogger().info("The password isn't long enough!");
-			final Popup popup = new Popup(); popup.centerOnScreen();
-			 
-		    Text passwordNotEqualTxt = new Text("Password must"+'\n'+"at least be"+'\n'+"8 letters long");
-		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
-		    
-		    Circle c = new Circle(0, 0, 70, Color.valueOf("212121"));
-		    
-		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
-		    
-		    c.setStrokeType(StrokeType.OUTSIDE);
-		    c.setStrokeWidth(0.3);
-		    c.setStroke(Paint.valueOf(BGCOLORKEY));
-		    
-		    popup.getContent().add(popupContent);
+		RegExplorerController controller = new RegExplorerController();
+		RegExpBean regBean = new RegExpBean();
+		
+		regBean.setUsername(username);
+		regBean.setEmail(email);
+		regBean.setPassword(password);
+		regBean.setPassword2(passwordCheck);
+		
+		
+		//----AGGIORNO LE PREFERENZE AL BEAN DA DARE AL CONTROLLER--------
+		
+		regBean.setArte(btArte.isSelected());
+		regBean.setCibo(btCibo.isSelected());
+		regBean.setMusica(btMusica.isSelected());
+		regBean.setSport(btSport.isSelected());
+		regBean.setSocial(btSocial.isSelected());
+		regBean.setNatura(btNatura.isSelected());
+		regBean.setEsplorazione(btEsplorazione.isSelected());
+		regBean.setRicorrenze(btRicorr.isSelected());
+		regBean.setModa(btModa.isSelected());
+		regBean.setShopping(btShopping.isSelected());
+		regBean.setAdrenalina(btAdrenalina.isSelected());
+		regBean.setMonumenti(btMonumenti.isSelected());
+		regBean.setRelax(btRelax.isSelected());
+		regBean.setIstruzione(btIstruzione.isSelected());
+		
+		
+		
+		
+		regBean = controller.validateForm(regBean);
+		
+		if(regBean.getError() != null) {
+			Log.getInstance().getLogger().info(regBean.getError());
+			final Popup popup = popupGen(500,50, regBean.getError());
 		    
 		    popup.show(curr);
 		    popup.setAutoHide(true);
 			return;
-			
 		}
-		daoSu = DAOSuperUser.getInstance();
 		
-		if(daoSu.findSuperUserByEmail(email) != null) {
-			Log.getInstance().getLogger().info("The passwords don't match!");
-			final Popup popup = new Popup(); popup.centerOnScreen();
-			 
-		    Text passwordNotEqualTxt = new Text("The email is already"+'\n'+"linked to"+'\n'+"another account");
-		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
-		    
-		    Circle c = new Circle(0, 0, 85, Color.valueOf("212121"));
-		    
-		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
-		    
-		    c.setStrokeType(StrokeType.OUTSIDE);
-		    c.setStrokeWidth(0.3);
-		    c.setStroke(Paint.valueOf(BGCOLORKEY));
-		    
-		    popup.getContent().add(popupContent);
+		try {
+			regBean = controller.addExplorer(regBean);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(regBean.getError() != null) {
+			Log.getInstance().getLogger().info(regBean.getError());
+			final Popup popup = popupGen(500,50, regBean.getError());
 		    
 		    popup.show(curr);
 		    popup.setAutoHide(true);
 			return;
-    	}
-		
-		daoSu.addUserToJSON(email, username, 0, password);
-		SuperUser user = daoSu.findSuperUser(email, password, null);
-		
-		Navbar.setUser(user);
-    	PreferenceSelectView.render(curr);
+		}
+    	LoginView.render(curr);
 		
     	Log.getInstance().getLogger().info("User registered");
     	
@@ -226,5 +229,26 @@ public class RegisterView implements Initializable{
     
     public void switchToRegisterPartner() {
     	PartnerRegisterView.render(curr);
+    	
+    }
+    
+    public Popup popupGen(double width, double height, String error) {
+    	Popup popup = new Popup(); 
+    	popup.centerOnScreen();
+    	
+    	Text passwordNotEqualTxt = new Text(error);
+	    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
+	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
+	    
+	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
+	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
+	    StackPane popupContent = new StackPane(r,passwordNotEqualTxt); 
+	    
+	    r.setStrokeType(StrokeType.OUTSIDE);
+	    r.setStrokeWidth(0.3);
+	    r.setStroke(Paint.valueOf(BGCOLORKEY));
+	    
+	    popup.getContent().add(popupContent);
+	    return popup;
     }
 }

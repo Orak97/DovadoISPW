@@ -102,6 +102,22 @@ public class RegExplorerController {
 					bean.setError("Errore duplicazione di: "+excep);
 					break;
 				}
+				
+			}
+			else if (e.getErrorCode() == 1048) {
+				String excep = e.getMessage().split(" ")[2];
+				System.out.println(excep);
+				
+				switch (excep) {
+				case "'username'":
+					bean.setError("L'utente non può essere NULL");
+
+					break;
+
+				default:
+					bean.setError("Il campo "+excep+" non può essere vuoto");
+					break;
+				}
 			}
 			System.out.println(e.getErrorCode());	
 			System.out.println(e.getMessage());	
