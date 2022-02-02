@@ -78,6 +78,19 @@ public class FindActivityController {
 		return searchedActivities;
 	}
 	
+	public ArrayList<Activity> FindActivitiesByZone() throws Exception{
+		//controllo che i campi non siano nulli
+		if(beanFind.getZone() == null) throw new NullPointerException();
+		
+		ArrayList<Activity> searchedActivities = new ArrayList<Activity>();
+		
+		DAOActivity dao = DAOActivity.getInstance();
+		
+		searchedActivities = dao.findActivitiesByZone(beanFind.getZone());
+		
+		return searchedActivities;
+	}	
+	
 
 	public static ArrayList<Activity> filterActivitiesByKeyWords(ArrayList<Activity> activities,String[] keywords){
 		//metodo per filtrare una lista di attività in base alle parole chiave
