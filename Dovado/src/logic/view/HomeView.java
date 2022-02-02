@@ -52,6 +52,7 @@ import javafx.stage.Stage;
 import logic.controller.AddActivityToScheduleController;
 import logic.controller.FindActivityController;
 import logic.model.Activity;
+import logic.model.CertifiedActivity;
 import logic.model.Channel;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
@@ -189,7 +190,7 @@ public class HomeView implements Initializable{
 				//e mostrarne i risultati prendo le attività del partner e 
 				//in base a quello restituisco risultati appropriati.
 				
-	    		ArrayList<Activity> activitiesPartn = (ArrayList<Activity>) daoAct.getPartnerActivities(user.getUserID());
+	    		ArrayList<CertifiedActivity> activitiesPartn = (ArrayList<CertifiedActivity>) daoAct.getPartnerActivities(user.getUserID());
 				
     			eng = map.getEngine();
     			eng.load(MAPPATHKEY);
