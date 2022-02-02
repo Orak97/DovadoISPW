@@ -236,7 +236,7 @@ public class SpotPlaceView implements Initializable{
 				}*/		
 		});
 		
-		if(Navbar.getUser() instanceof Partner) {
+		if(NavbarExplorer.getUser() instanceof Partner) {
 			Button reclaimPlace = new Button("Reclaim the place");
 			reclaimPlace.getStyleClass().add("src-btn");
 			
@@ -262,7 +262,7 @@ public class SpotPlaceView implements Initializable{
 		                return;
 					}
 					
-					placeSelected.setOwner((Partner)Navbar.getUser());
+					placeSelected.setOwner((Partner)NavbarExplorer.getUser());
 					
 					if(daoPl.updatePlaceJSON(placeSelected)) {
 						final Stage dialog = new Stage();
@@ -492,14 +492,14 @@ public void selectedPlace() {
 	public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
+			BorderPane navbar = NavbarExplorer.getNavbar();
+			NavbarExplorer.authenticatedSetup();
 			
 			VBox spotPlace = new VBox();
 			
 			curr=current;
 			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - Spot a place");
 			current.setScene(scene);

@@ -10,7 +10,7 @@ import javafx.event.ActionEvent;
 
 public class NavbarController {
 	
-	private Navbar nav= new Navbar();
+	private NavbarExplorer nav= new NavbarExplorer();
 
     @FXML
     private MenuButton menuButton;
@@ -25,8 +25,8 @@ public class NavbarController {
     void Logout(ActionEvent event) {
     	Log.getInstance().getLogger().info("Clicked Logout");
     	nav.onHome();
-    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
-    	Navbar.loginSetup();
+    	Stage current = (Stage)((Node)NavbarExplorer.getNavbar()).getScene().getWindow();
+    	NavbarExplorer.loginSetup();
     	LoginView.render(current);
     }
 
@@ -40,8 +40,8 @@ public class NavbarController {
     void goHome(ActionEvent event) {
     	nav.onHome();
     	Log.getInstance().getLogger().info("Clicked home");
-    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
-    	Navbar.loginSetup();
+    	Stage current = (Stage)((Node)NavbarExplorer.getNavbar()).getScene().getWindow();
+    	NavbarExplorer.loginSetup();
     	//HomeView hv = new HomeView();
     	HomeView.render(current);
     }
@@ -50,8 +50,8 @@ public class NavbarController {
     void goCreateActivity(ActionEvent event) {
     	nav.onCreateActivity();
     	Log.getInstance().getLogger().info("Clicked create activity");
-    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
-    	Navbar.loginSetup();
+    	Stage current = (Stage)((Node)NavbarExplorer.getNavbar()).getScene().getWindow();
+    	NavbarExplorer.loginSetup();
     	//HomeView hv = new HomeView();
     	CreateActivityView.render(current);
     }
@@ -60,8 +60,8 @@ public class NavbarController {
     void goProfile(ActionEvent event) {
     	nav.onMyProfile();
     	Log.getInstance().getLogger().info("Clicked go profile");
-    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
-    	Navbar.loginSetup();
+    	Stage current = (Stage)((Node)NavbarExplorer.getNavbar()).getScene().getWindow();
+    	NavbarExplorer.loginSetup();
     	
     	ProfileView.render(current); }
 
@@ -74,8 +74,8 @@ public class NavbarController {
     @FXML
     void goEvents(ActionEvent event) {
     	nav.onEvents();
-    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
-    	Navbar.loginSetup();
+    	Stage current = (Stage)((Node)NavbarExplorer.getNavbar()).getScene().getWindow();
+    	NavbarExplorer.loginSetup();
     	//EventsView ev = new EventsView();
     	EventsView.render(current);
     	Log.getInstance().getLogger().info("Clicked events");
@@ -84,8 +84,8 @@ public class NavbarController {
     @FXML
     void goSpotPlace(ActionEvent event) {
     	nav.onSpotPlace();
-    	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
-    	Navbar.loginSetup();
+    	Stage current = (Stage)((Node)NavbarExplorer.getNavbar()).getScene().getWindow();
+    	NavbarExplorer.loginSetup();
     	SpotPlaceView sv = new SpotPlaceView();
     	SpotPlaceView.render(current);
     	Log.getInstance().getLogger().info("Clicked Spot place");

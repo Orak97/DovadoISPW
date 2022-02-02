@@ -104,13 +104,13 @@ public class CreateActivityView implements Initializable{
 	public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
+			BorderPane navbar = NavbarExplorer.getNavbar();
+			NavbarExplorer.authenticatedSetup();
 			
 			VBox createActivity = new VBox();
 			
 			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - events");
 			current.setScene(scene);

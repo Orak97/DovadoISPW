@@ -5,7 +5,7 @@ import logic.model.Partner;
 import logic.model.Place;
 import logic.model.SpotPlaceBean;
 import logic.model.SuperUser;
-import logic.view.Navbar;
+import logic.view.NavbarExplorer;
 
 public class SpotPlaceController {
 	/************************************************************

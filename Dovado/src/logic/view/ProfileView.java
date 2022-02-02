@@ -51,14 +51,14 @@ public class ProfileView implements Initializable{
 	public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
+			BorderPane navbar = NavbarExplorer.getNavbar();
+			NavbarExplorer.authenticatedSetup();
 			
 			HBox profileView = new HBox();
 			
 			curr=current;
 			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - events");
 			current.setScene(scene);
@@ -78,8 +78,8 @@ public class ProfileView implements Initializable{
 		setEmail.getStyleClass().add("textEventInfo");
 		setUsr.getStyleClass().add("textEventInfo");
 
-		setEmail.setText(Navbar.getUser().getEmail());
-		setUsr.setText(Navbar.getUser().getUsername());
+		setEmail.setText(NavbarExplorer.getUser().getEmail());
+		setUsr.setText(NavbarExplorer.getUser().getUsername());
 		
 		daoPr = DAOPreferences.getInstance();
 
@@ -87,7 +87,7 @@ public class ProfileView implements Initializable{
 		usrModifyBtn.getStyleClass().add("src-btn");
 		prefSearchBtn.getStyleClass().add("src-btn");
 		
-		Preferences preferences = ((User)Navbar.getUser()).getPreferences();
+		Preferences preferences = ((User)NavbarExplorer.getUser()).getPreferences();
 		
 		/*Mi faccio restituire un array di tutti i nomi delle preferenze.
 		 * In seguito un array di tutte le preferenze che l'utente ha settato 

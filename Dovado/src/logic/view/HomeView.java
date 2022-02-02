@@ -71,7 +71,7 @@ import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
 import logic.view.Main;
-import logic.view.Navbar;
+import logic.view.NavbarExplorer;
 
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
@@ -133,12 +133,12 @@ public class HomeView implements Initializable{
     public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
+			BorderPane navbar = NavbarExplorer.getNavbar();
+			NavbarExplorer.authenticatedSetup();
 			
 			VBox home = new VBox();
 			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - home");
 			current.setScene(scene);
@@ -147,7 +147,7 @@ public class HomeView implements Initializable{
 		
 			root.getChildren().addAll(navbar,home);
 			
-			user=Navbar.getUser();
+			user=NavbarExplorer.getUser();
 			curr=current;
 			
 			current.show();	
@@ -183,7 +183,7 @@ public class HomeView implements Initializable{
         
         preference1.setText("By preferences");
         
-        user = Navbar.getUser();
+        user = NavbarExplorer.getUser();
     	if(user instanceof Partner) {
     		
 	    	try{
@@ -305,7 +305,7 @@ public class HomeView implements Initializable{
 				//e mostrarne i risultati prendo le preferenze dell'utente e 
 				//in base a quello restituisco risultati appropriati.
 				
-				Preferences preferences = ((User)Navbar.getUser()).getPreferences();
+				Preferences preferences = ((User)NavbarExplorer.getUser()).getPreferences();
 				
 				if(preferences!=null){
 						
