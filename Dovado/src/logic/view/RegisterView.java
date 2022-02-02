@@ -228,8 +228,10 @@ public class RegisterView implements Initializable{
 	}
     
     public void switchToRegisterPartner() {
-    	PartnerRegisterView.render(curr);
-    	
+    	RegPartnerView.render(curr);
+    }
+    public void switchToLogin() {
+    	LoginView.render(curr);
     }
     
     public Popup popupGen(double width, double height, String error) {

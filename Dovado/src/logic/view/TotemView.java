@@ -47,7 +47,7 @@ public class TotemView {
 	@FXML
 	public void goToRegPartner(ActionEvent event) {
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
-    	PartnerRegisterView.render(current);
+    	RegPartnerView.render(current);
 	}
 	
 	public static void render(Stage current) {
