@@ -108,10 +108,10 @@
 	        <div class="collapse navbar-collapse" id="navbarNav">
 	          <ul class="navbar-nav">
 	            <li class="nav-item">
-	              <a class="nav-link <% if(active == 0) out.print("active"); %>" aria-current="page" href="Home.jsp">Home</a>
+	              <a class="nav-link <% if(active == 0) out.print("active"); %>" aria-current="page" href="HomePartner.jsp">Home</a>
 	            </li>
 	            <li class="nav-item">
-	              <a class="nav-link <% if(active == 1) out.print("active"); %>" href="CreateActivity.jsp">Create Activity</a>
+	              <a class="nav-link <% if(active == 1) out.print("active"); %>" href="CreateActivityPartner.jsp">Create Activity</a>
 	            </li>
 	            
 	            <li class="nav-item dropdown">

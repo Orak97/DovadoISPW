@@ -339,14 +339,14 @@ public class DAOActivity {
         return act;
 	}
 	
-	public ArrayList<Activity> getPartnerActivities(Long idPartner) throws Exception{
+	public ArrayList<CertifiedActivity> getPartnerActivities(Long idPartner) throws Exception{
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
 		
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
         
-        ArrayList<Activity> nearbyActivities = new ArrayList<Activity>();
+        ArrayList<CertifiedActivity> partnerActivities = new ArrayList<CertifiedActivity>();
         
         try {
         	
@@ -424,7 +424,7 @@ public class DAOActivity {
             	CreateActivityController createActivity = new CreateActivityController(bean);
             	curr = createActivity.createActivity();
             	
-            	nearbyActivities.add(curr);
+            	partnerActivities.add((CertifiedActivity) curr);
             }
             
             rs.close();
@@ -447,7 +447,7 @@ public class DAOActivity {
             }
         }
         
-        return nearbyActivities;
+        return partnerActivities;
 	}
 	
 	public void updateCertAcivity(CertifiedActivity activity) throws Exception{
