@@ -115,6 +115,75 @@ public class DAOCoupon {
         return myCoupon;
 	}
 	
+	public Coupon findCouponPartner(int code) throws Exception {
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+        
+        Coupon myCoupon = null;
+        
+        try {
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+
+            //STEP4.1: preparo la stored procedure
+            String call = "{call get_coupon(?)}";
+
+            stmt = conn.prepareCall(call);
+
+            stmt.setInt(1,code);
+            
+            if(!stmt.execute()) {
+            	Exception e = new Exception("nessun coupon esistente con questo codice");
+            	throw e;
+            }
+            
+            //ottengo il resultSet
+            ResultSet rs = stmt.getResultSet();
+            
+            while(rs.next()) {
+            	
+            	String  utente = rs.getString("username_utente");
+            	String attivita = rs.getString("nome_attivita");
+            	int codice = rs.getInt("idCoupon");
+            	int sconto = rs.getInt("sconto");
+            	String dataScadenzaStr = rs.getString("data_scadenza");
+            	String dataScheduloStr = rs.getString("data_schedulo");
+            	
+            	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+            	
+            	LocalDateTime scadenza = LocalDateTime.parse(dataScadenzaStr,formatter);
+            	LocalDateTime schedulo = LocalDateTime.parse(dataScheduloStr,formatter);
+            	
+            	myCoupon = new Coupon(codice,utente,attivita,sconto,scadenza,schedulo);
+            }
+            
+            rs.close();
+            }finally {
+                // STEP 5.2: Clean-up dell'ambiente
+                try {
+                    if (stmt != null)
+                        stmt.close();
+                } catch (SQLException se2) {
+                	throw(se2);
+                }
+                try {
+                    if (conn != null)
+                        conn.close();
+                    	System.out.println("Disconnetted database successfully...");
+                    	
+                } catch (SQLException se) {
+                    se.printStackTrace();
+                }
+            }
+        
+        return myCoupon;
+	}
+	
 
 	
 	

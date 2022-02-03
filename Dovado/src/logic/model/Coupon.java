@@ -1,6 +1,7 @@
 package logic.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class Coupon {
@@ -10,6 +11,10 @@ public class Coupon {
 	private int discount;
 	private LocalDateTime scadenza;
 	
+	private String usernameExplorer;
+	private String nomeAttivita;
+	private LocalDateTime scheduledDate;
+	
 	public Coupon(int user, int activity, int couponCode,int discount, LocalDateTime scadenza) {
 		this.userID = user;
 		this.activityID = activity;
@@ -18,6 +23,15 @@ public class Coupon {
 		this.scadenza = scadenza;
 	}
 	
+	//costruttore per il partner in modo che vede tutte le info necessarie
+	public Coupon(int couponCode,String usernameExplorer, String nomeAttivita,int sconto,LocalDateTime scadenza ,LocalDateTime scheduledDate) {
+		this.couponCode = couponCode;
+		this.usernameExplorer=usernameExplorer;
+		this.discount = sconto;
+		this.nomeAttivita = nomeAttivita;
+		this.scadenza= scadenza;
+		this.scheduledDate = scheduledDate;
+	}
 
 	
 	public int getuID() {
@@ -50,6 +64,35 @@ public class Coupon {
 
 	public void setDiscount(int discount) {
 		this.discount = discount;
+	}
+
+
+
+	public LocalDateTime getScadenza() {
+		return scadenza;
+	}
+
+
+
+	public String getUsernameExplorer() {
+		return usernameExplorer;
+	}
+
+
+
+	public String getNomeAttivita() {
+		return nomeAttivita;
+	}
+
+
+
+	public LocalDateTime getScheduledDate() {
+		return scheduledDate;
+	}
+	
+	public String getFormattedScheduledDate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		return scheduledDate.format(formatter);
 	}
 	
 }
