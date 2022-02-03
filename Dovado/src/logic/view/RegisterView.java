@@ -110,6 +110,8 @@ public class RegisterView implements Initializable{
 	private static String username;
 	private static String email;
 	private static String BGCOLORKEY = "ffffff";
+	private static long wErrPopup = 500;
+	private static long hErrPopup = 50;
 	private static Stage curr;
 
     @FXML
@@ -127,7 +129,7 @@ public class RegisterView implements Initializable{
 		
 		if(password.isEmpty() || passwordCheck.isEmpty() || username.isEmpty() || email.isEmpty()) {
 			Log.getInstance().getLogger().info("One of the four fields is empty!");
-			final Popup popup = popupGen(500,50, "One of the four fields is empty!");
+			final Popup popup = popupGen(wErrPopup,hErrPopup, "One of the four fields is empty!");
 		    
 		    popup.show(curr);
 		    popup.setAutoHide(true);
@@ -167,7 +169,7 @@ public class RegisterView implements Initializable{
 		
 		if(regBean.getError() != null) {
 			Log.getInstance().getLogger().info(regBean.getError());
-			final Popup popup = popupGen(500,50, regBean.getError());
+			final Popup popup = popupGen(wErrPopup,hErrPopup, regBean.getError());
 		    
 		    popup.show(curr);
 		    popup.setAutoHide(true);
@@ -183,7 +185,7 @@ public class RegisterView implements Initializable{
 		
 		if(regBean.getError() != null) {
 			Log.getInstance().getLogger().info(regBean.getError());
-			final Popup popup = popupGen(500,50, regBean.getError());
+			final Popup popup = popupGen(wErrPopup,hErrPopup, regBean.getError());
 		    
 		    popup.show(curr);
 		    popup.setAutoHide(true);

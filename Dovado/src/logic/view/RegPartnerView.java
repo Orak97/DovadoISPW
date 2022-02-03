@@ -137,7 +137,7 @@ public class RegPartnerView implements Initializable{
 		
 		if(regBean.getError() != null) {
 			Log.getInstance().getLogger().info(regBean.getError());
-			final Popup popup = popupGen(500,50, regBean.getError());
+			final Popup popup = popupGen(wErrPopup,hErrPopup, regBean.getError());
 		    
 		    popup.show(curr);
 		    popup.setAutoHide(true);

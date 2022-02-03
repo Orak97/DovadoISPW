@@ -15,7 +15,15 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.LogExplorerController;
 import logic.controller.LogPartnerController;
@@ -27,6 +35,13 @@ import logic.model.User;
 
 public class LoginView{
 	
+	private static String BGCOLORKEY = "ffffff";
+	private static long wErrPopup = 500;
+	private static long hErrPopup = 50;
+	private static Stage curr;
+	private String passw;
+	private String email;
+
     @FXML
     private Button loginInput;
 
@@ -55,7 +70,16 @@ public class LoginView{
     void login(ActionEvent event) {
     	Log.getInstance().getLogger().info("Clicked login");
     	SuperUser user = null;
-    	
+    	passw = password.getText();
+    	email = username.getText();
+    	if(passw.isEmpty() || email.isEmpty() ) {
+			Log.getInstance().getLogger().info("One of the fields is empty!");
+			final Popup popup = popupGen(wErrPopup,hErrPopup, "One of the fields is empty!");
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
+			return;
+		}
     	if(radioPartner.isSelected()) {
     		user =logPartner(event);
     		Log.getInstance().getLogger().info("voglio accedere come partner");
@@ -64,13 +88,14 @@ public class LoginView{
     		user = logExplorer(event);
 			Log.getInstance().getLogger().info("voglio accedere come explorer");
     	} else {
-    		fail.setText("Selezionare una modalità \n di accesso");
-    		fail.setVisible(true);
+    		final Popup popup = popupGen(wErrPopup,hErrPopup, "Select Partner or Explorer");
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
     	}
     	if (user != null) {
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	//HomeView hv = new HomeView();
-    	Navbar.setUser(user);
     	HomeView.render(current);
     	}
     }
@@ -84,8 +109,10 @@ public class LoginView{
     	Log.getInstance().getLogger().info("Lo username dell'esploratore è: " +username.toString());
     	try {
 			if( (user = logExp.loginExplorer(logbean)) ==null) {
-				fail.setText("Mail o password non corrette");
-	    		fail.setVisible(true);
+				final Popup popup = popupGen(wErrPopup,hErrPopup, "Wrong email or password");
+			    
+			    popup.show(curr);
+			    popup.setAutoHide(true);
 	    		
 				Log.getInstance().getLogger().info("Email o password incorrette.");
 				return user;
@@ -95,6 +122,8 @@ public class LoginView{
 			e.printStackTrace();
 			return user;
 		}
+    	NavbarExplorer.setUser(user);
+    	
     	return user;
     }
     
@@ -107,8 +136,10 @@ public class LoginView{
     	Log.getInstance().getLogger().info("Lo username del partner è: " +username.toString());
     	try {
 			if( (user = logPartner.loginPartner(logbean)) ==null) {
-				fail.setText("Mail o password non corrette");
-	    		fail.setVisible(true);
+				final Popup popup = popupGen(wErrPopup,hErrPopup, "Wrong email or password");
+			    
+			    popup.show(curr);
+			    popup.setAutoHide(true);
 	    		
 				Log.getInstance().getLogger().info("Email o password incorrette.");
 				return user;
@@ -118,6 +149,7 @@ public class LoginView{
 			e.printStackTrace();
 			return user;
 		}
+    	NavbarPartner.setUser(user);
     	return user;
     }
     
@@ -131,10 +163,13 @@ public class LoginView{
     
     public static void render(Stage current) {
 		Stage primaryStage = current;
+		
+		curr = current;
+		
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			BorderPane navbar = NavbarExplorer.getNavbar();
+			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - login");
 			primaryStage.setScene(scene);
@@ -149,5 +184,24 @@ public class LoginView{
 			e.printStackTrace();
 		} 
 	}
-
+    
+    public Popup popupGen(double width, double height, String error) {
+    	Popup popup = new Popup(); 
+    	popup.centerOnScreen();
+    	
+    	Text passwordNotEqualTxt = new Text(error);
+	    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
+	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
+	    
+	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
+	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
+	    StackPane popupContent = new StackPane(r,passwordNotEqualTxt); 
+	    
+	    r.setStrokeType(StrokeType.OUTSIDE);
+	    r.setStrokeWidth(0.3);
+	    r.setStroke(Paint.valueOf(BGCOLORKEY));
+	    
+	    popup.getContent().add(popupContent);
+	    return popup;
+    }
 }

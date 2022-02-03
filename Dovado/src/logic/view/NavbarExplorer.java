@@ -15,7 +15,7 @@ import logic.model.SuperUser;
  * 1- i need to use navbar from almost every page and there is no point on instance a different navbar for every page
  * 2- i didn't used The multithread safe navbar since i can't use more than one active program on the same computer
  */
-public class Navbar {
+public class NavbarExplorer {
 	private static final  String NAVITEMKEY = ".navbar-item";
 	private static final  String ACTSTYLEKEY = "active";
 	private static final  String EVNTPARTNER = "My events";
@@ -24,10 +24,10 @@ public class Navbar {
 	private static SuperUser user;
 	
 	public static BorderPane getNavbar() {
-		if(Navbar.bPNavbar == null) 
+		if(NavbarExplorer.bPNavbar == null) 
 			try {
-				Navbar.bPNavbar = FXMLLoader.load(Main.class.getResource("navbar.fxml"));
-				Navbar.loginSetup();
+				NavbarExplorer.bPNavbar = FXMLLoader.load(Main.class.getResource("navbar.fxml"));
+				NavbarExplorer.loginSetup();
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
@@ -36,7 +36,7 @@ public class Navbar {
 	
 	public static double getHeight() {
 		try {
-		return Navbar.getNavbar().getScene().getHeight();
+		return NavbarExplorer.getNavbar().getScene().getHeight();
 		} catch(Exception e) {
 			return 480;
 		}
@@ -45,7 +45,7 @@ public class Navbar {
 	
 	public static double getWidth() {
 		try{
-		return Navbar.getNavbar().getScene().getWidth();
+		return NavbarExplorer.getNavbar().getScene().getWidth();
 		} catch(Exception e) {
 			return 640;
 		}
@@ -108,11 +108,7 @@ public class Navbar {
 
 	public static void setUser(SuperUser usr) {
 		user = usr;
-		if(user instanceof Partner) {
-			HBox selections = (HBox)Navbar.getNavbar().getChildren().get(2);
-			Button activity = (Button)selections.getChildren().get(2);
-			activity.setText(EVNTPARTNER);
-		}
+		
 	}
 
 	public static SuperUser getUser() {

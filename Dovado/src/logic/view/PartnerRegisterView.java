@@ -27,7 +27,7 @@ import javafx.stage.Stage;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.SuperUser;
-
+//TODO CANCELLARE QUESTA CLASSE
 public class PartnerRegisterView implements Initializable{
 	@FXML
     private TextField usrnameTField;
@@ -233,7 +233,7 @@ public class PartnerRegisterView implements Initializable{
 		daoSu.addUserToJSON(email, username, 1, password);
 		SuperUser user = daoSu.findSuperUser(email, password, null);
 		
-		Navbar.setUser(user);
+		NavbarExplorer.setUser(user);
     	HomeView.render(curr);
 		
     	Log.getInstance().getLogger().info("User registered");
@@ -247,8 +247,8 @@ public class PartnerRegisterView implements Initializable{
 		
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			BorderPane navbar = NavbarExplorer.getNavbar();
+			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - Register as a Partner");
 			primaryStage.setScene(scene);
