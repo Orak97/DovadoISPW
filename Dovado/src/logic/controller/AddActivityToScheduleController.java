@@ -5,8 +5,10 @@ import java.time.format.DateTimeFormatter;
 
 import logic.model.Activity;
 import logic.model.DAOActivity;
+import logic.model.DAOCoupon;
 import logic.model.DAOSchedules;
 import logic.model.DateBean;
+import logic.model.Partner;
 import logic.model.Schedule;
 import logic.model.ScheduleBean;
 import logic.model.SuperActivity;
@@ -52,6 +54,9 @@ public class AddActivityToScheduleController {
 	
 	private Schedule schedule = new Schedule();
 	
+	private Partner sessionPartner;
+	private Object couponToRedeem;
+	
 	public AddActivityToScheduleController(User session, ScheduleBean editBean) {
 		this.session = session;
 		this.editBean = editBean;
@@ -64,6 +69,13 @@ public class AddActivityToScheduleController {
 	public AddActivityToScheduleController(User usr, DateBean timestamp) {
 		session = usr;
 		this.timestamp= timestamp;
+	}
+	
+	
+	public AddActivityToScheduleController(Partner partner,Object couponToRedeem) {
+		//usare questo costruttore solo se si è partner e si vuole riscattare un coupon
+		this.sessionPartner = partner;
+		this.couponToRedeem = couponToRedeem;
 	}
 	
 	//questo metodo andrebbe chiamato dal controller di playActivity
@@ -146,6 +158,21 @@ public class AddActivityToScheduleController {
 		session.refershWallet();
 	}
 	
-	
+	public void redeemCoupon() throws Exception{
+		//usare questo metodo solo se si è partner e si vuole riscattare un coupon
+		if(sessionPartner == null || couponToRedeem == null) throw new NullPointerException();
+		int coupon;
+		try {
+			coupon = Integer.parseInt((String) couponToRedeem);
+		}catch(NumberFormatException e) {
+			throw e;
+		}
+		
+		DAOCoupon dao = DAOCoupon.getInstance();
+		Long myId = sessionPartner.getUserID();
+		
+		dao.redeemCoupon(coupon,myId);
+		
+	}
 
 }

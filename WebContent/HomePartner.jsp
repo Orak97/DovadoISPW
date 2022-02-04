@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<%@ page import = "java.io.*,java.util.*, logic.model.Partner, logic.model.CertifiedActivity, logic.model.DAOActivity" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.Partner, logic.model.CertifiedActivity, logic.model.DAOActivity, logic.controller.AddActivityToScheduleController" %>
 
 <% application.setAttribute( "titolo" , "Home"); %>
 
@@ -9,10 +9,55 @@
 <div class="container pt-6">
 
 <%
-	Partner partner = (Partner) session.getAttribute("partner");
+Partner partner = (Partner) session.getAttribute("partner");
 
 
-	if(partner != null){
+if(partner != null){
+		
+	if(request.getParameter("couponToRedeem")!=null){
+		AddActivityToScheduleController controller = new AddActivityToScheduleController(partner,request.getParameter("couponToRedeem"));
+		boolean success = true;
+		try{
+			controller.redeemCoupon();
+		}catch(Exception e){
+			e.printStackTrace();
+			success = false;
+		}
+	
+	
+		%>
+		<%--inizio prova modal per fare conferma o errore nello schedulo di un'attività --%>
+		<!-- Modal elimina -->
+			<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+		  		<div class="modal-dialog">
+		    		<div class="modal-content">
+		      			<div class="modal-header">
+		        			<h5 class="modal-title" id="responseModalLabel"><%= success ? "Coupon correttamente riscattato!" : "Errore nella riscossione del coupon"  %></h5>
+		        			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      			</div>
+		      			<div class="modal-body">
+		        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><i class="bi bi-check-circle-fill"></i> <%}else{%> ><i class="bi bi-x-circle-fill"></i> <%} %></p>
+		        			<h5 class="text-center irreversible-process"><%= success ? "Un'altro cliente che vi raggiunge tramite Dovado!" : "C'è stato un errore nella riscossione dello schedulo"%></h5>
+		      			</div>
+		      			<div class="modal-footer">
+		        			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Torna indietro</button>
+		      			</div>
+		    		</div>
+		  		</div>
+			</div>
+			
+			<script>
+				let responseModal = new bootstrap.Modal(document.getElementById('responseModal'))
+				responseModal.show();
+			</script>
+		
+		<%-- fine modal per fare conferma o errore nello schedulo di un'attività --%>
+		
+		<%
+	
+	
+	
+	}		
 	
 	ArrayList<CertifiedActivity> foundActivities = new ArrayList<CertifiedActivity>();
 	try{	  		
@@ -110,8 +155,11 @@
 	     </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+      	<form action="HomePartner.jsp" method="GET">
+      	<input type="number" class="visually-hidden" id="coupon-to-redeem" name="couponToRedeem">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Indietro</button>
+        <button type="submit" class="btn btn-primary">Riscatta Coupon</button>
+      	</form>
       </div>
     </div>
   </div>
@@ -181,24 +229,39 @@
 		req.onload = function(){
 			let res = this.response
 			if(res.response == 'ok'){
+				//faccio scomparire il modal d'errore
 				modalDetails.querySelector('.coupon-error').classList.add('visually-hidden')
+				
+				//faccio comparire il modal con i dati
 				modalDetails.querySelector('.coupon-ok').classList.remove('visually-hidden')
 				
+				//riempio il content del modal
 				modalDetails.querySelector('#couponcode').textContent= res.code;
 				modalDetails.querySelector('#usr').textContent = res.username;
 				modalDetails.querySelector('#act').textContent = res.nomeAttivita;
 				modalDetails.querySelector('#dataAct').textContent = res.dataSchedulo;
+				modalDetails.querySelector('#coupon-to-redeem').value = res.code;
+				
+				//faccio comparire il pulsante per fare sumbit
+				modalDetails.querySelector('[type=submit]').disabled = false;
+				modalDetails.querySelector('[type=submit]').classList.remove('visually-hidden');
+				
 				
 				if(res.discount > 0){
-					modalDetails.querySelector('.card-discount').classList.remove('visuaylly-hidden');
+					modalDetails.querySelector('.card-discount').classList.remove('visually-hidden');
 					modalDetails.querySelector('.percentage').textContent = res.discount+'%'
 				}else{
-					modalDetails.querySelector('.card-discount').classList.add('visuaylly-hidden');
+					modalDetails.querySelector('.card-discount').classList.add('visually-hidden');
 				}
 			}
 			if(res.response == 'input error'){
 				modalDetails.querySelector('.coupon-error').classList.remove('visually-hidden')
 				modalDetails.querySelector('.coupon-ok').classList.add('visually-hidden')
+				
+				//faccio comparire il pulsante per fare sumbit
+				modalDetails.querySelector('[type=submit]').disabled = true;
+				modalDetails.querySelector('[type=submit]').classList.add('visually-hidden');
+				
 			}
 		}
 		
