@@ -230,12 +230,12 @@ public class CreateActivityController {
 		
 	}
 	
-	private void retrievePlace() throws Exception{
+	private void retrievePlace() throws ClassNotFoundException, SQLException {
 		// Usare questo metodo per ottenere una classe Place prima di creare un oggetto attività
 		place = DAOPlace.getPlace(bean.getPlace());
 	}
 	
-	private void retrievePartner() throws Exception{
+	private void retrievePartner() throws SQLException, ClassNotFoundException{
 		//NOTA: questo deve venir chiamato solo da dentro isCertified!!!
 		// Usare questo metodo per ottenere una classe Partner prima di creare un oggetto attività certificata
 		owner = DAOPartner.getPartnerInfo(bean.getOwner());

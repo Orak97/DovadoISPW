@@ -199,7 +199,7 @@ public class DAOChannel {
 	
 	//aggiunta metodi db
 	
-	public Channel getChannel(Long idActivity) throws Exception {
+	public Channel getChannel(Long idActivity) throws ClassNotFoundException, SQLException  {
 		//metodo per ottenere un channel partendo dall'id dell'attività
 		
 		// STEP 1: dichiarazioni

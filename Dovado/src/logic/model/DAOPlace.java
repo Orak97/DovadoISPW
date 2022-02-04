@@ -156,7 +156,7 @@ public class DAOPlace {
 		return 1;
 	}
 
-	public static Place getPlace(int id) throws Exception{
+	public static Place getPlace(int id) throws ClassNotFoundException, SQLException  {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -180,7 +180,7 @@ public class DAOPlace {
             
             if(!stmt.execute()) {
             	//NOTA: restituisce true solo è un result set, quindi non usare per le operazioni CURD!!!
-            	Exception e = new Exception("Sembra che non esista nessun luogo per l'id: "+id);
+            	SQLException e = new SQLException("Sembra che non esista nessun luogo per l'id: "+id);
             	throw e;
             };
             

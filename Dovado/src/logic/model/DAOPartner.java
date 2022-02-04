@@ -24,7 +24,7 @@ public class DAOPartner {
 			INSTANCE = new DAOPartner();
 		return INSTANCE;
 	}
-	public static Partner getPartnerInfo(int owner) throws Exception {
+	public static Partner getPartnerInfo(int owner) throws SQLException, ClassNotFoundException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -47,7 +47,7 @@ public class DAOPartner {
             stmt.setInt(1, owner);
             
             if(!stmt.execute()) {
-            	Exception e = new Exception("Sembra che questo partner non esista");
+            	SQLException e = new SQLException("Sembra che questo partner non esista");
             	throw e;
             }
             
