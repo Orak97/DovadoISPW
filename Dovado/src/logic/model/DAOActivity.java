@@ -729,7 +729,7 @@ public class DAOActivity {
 		return scontiDisponibili;
 	}
 	
-	public void reclaimActivity(Long activity, Long partner) throws Exception{
+	public void claimActivity(Long activity, Long partner) throws Exception{
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -743,7 +743,7 @@ public class DAOActivity {
             System.out.println("Connected database successfully...");
             
             //STEP4.1: preparo la stored procedure
-            String call = "{call reclaim_activity(?,?)}";
+            String call = "{call claim_activity(?,?)}";
             
             stmt = conn.prepareCall(call);
             

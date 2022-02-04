@@ -5,12 +5,16 @@ import logic.model.ContinuosActivity;
 import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
 import logic.model.ExpiringActivity;
+import logic.model.Partner;
 import logic.model.PeriodicActivity;
 
 public class UpdateCertActController {
 	private CertifiedActivity activity;
 	private DAOActivity daoAc;
 	private CreateActivityBean bean;
+	
+	/*Rimuovere in caso si sposti il metodo `claimActivity`in un altra classe*/
+	private Partner session; 
 	
 	public UpdateCertActController(CreateActivityBean bean, CertifiedActivity activity) {
 		this.activity = activity;
@@ -93,5 +97,20 @@ public class UpdateCertActController {
 		//Ora che ho aggiornato l'attività chiamo il dao e faccio l'update
 		daoAc.updateCertAcivity(activity);
 		return true;
+	}
+	
+	/*Rimuovere in caso si sposti il metodo `claimActivity`in un altra classe*/
+	public void claimActivity() throws Exception{
+		if(session == null || bean.getIdActivity() == 0) throw new NullPointerException();
+		
+		Long partnerID = session.getUserID();
+		Long activityId;
+		try {
+			activityId = Long.valueOf(bean.getIdActivity());
+		}catch(Exception e) {
+			throw e;
+		}
+		
+		daoAc.claimActivity(activityId, partnerID);
 	}
 }
