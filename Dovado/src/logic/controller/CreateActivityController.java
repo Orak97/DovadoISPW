@@ -62,7 +62,7 @@ public class CreateActivityController {
 
 	}
 	
-	public Activity createActivity() throws Exception {
+	public Activity createActivity() throws SQLException, ClassNotFoundException {
 		
 		/******************************************************************************************
 		 * IMPORTANTISSIMO:																		
@@ -111,7 +111,7 @@ public class CreateActivityController {
 	}
 
 
-	private void createContinuousActivity() throws Exception {
+	private void createContinuousActivity() throws SQLException, ClassNotFoundException {
 		/*CHIAMARE QUESTO METODO SOLO DA DENTRO CreateActivity()*/		
 		if(!this.isCertified()) {
 			
@@ -142,7 +142,7 @@ public class CreateActivityController {
 		}
 	}
 
-	private void createPeriodicActivity() throws Exception {
+	private void createPeriodicActivity() throws SQLException, ClassNotFoundException{
 		/*CHIAMARE QUESTO METODO SOLO DA DENTRO CreateActivity()*/		
 		
 		if(!this.isCertified()) {
@@ -178,7 +178,7 @@ public class CreateActivityController {
 		}
 	}
 	
-	private void createExpiredActivity() throws Exception {
+	private void createExpiredActivity() throws SQLException, ClassNotFoundException {
 		/*CHIAMARE QUESTO METODO SOLO DA DENTRO CreateActivity()*/		
 		if(!this.isCertified()) {
 			
@@ -212,7 +212,7 @@ public class CreateActivityController {
 		}
 	}
 	
-	private void createChannel() throws Exception {
+	private void createChannel() throws SQLException, ClassNotFoundException {
 		DAOChannel daoc = DAOChannel.getInstance();
 		channel = daoc.getChannel(idActivity);
 		
@@ -241,7 +241,7 @@ public class CreateActivityController {
 		owner = DAOPartner.getPartnerInfo(bean.getOwner());
 	}
 	
-	private boolean isCertified() throws Exception {
+	private boolean isCertified() throws SQLException, ClassNotFoundException {
 		/*
 		 * Metodo che controlla se un'attività è certificata, e lo è se ha un partner, che in caso reperisce subito dopo.
 		 * */
