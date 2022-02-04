@@ -728,4 +728,47 @@ public class DAOActivity {
         }
 		return scontiDisponibili;
 	}
+	
+	public void reclaimActivity(Long activity, Long partner) throws Exception{
+		// STEP 1: dichiarazioni
+        CallableStatement stmt = null;
+        Connection conn = null;
+        
+        try {
+        	// STEP 2: loading dinamico del driver mysql
+            Class.forName(DRIVER_CLASS_NAME);
+            
+            // STEP 3: apertura connessione
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            System.out.println("Connected database successfully...");
+            
+            //STEP4.1: preparo la stored procedure
+            String call = "{call reclaim_activity(?,?)}";
+            
+            stmt = conn.prepareCall(call);
+            
+            stmt.setLong(1, activity);
+            stmt.setLong(2, partner);
+            
+            stmt.execute();
+        	
+        }finally {
+            // STEP 5.2: Clean-up dell'ambiente
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            	throw(se2);
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+                	System.out.println("Disconnetted database successfully...");
+                	
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+        
+	}
 }
