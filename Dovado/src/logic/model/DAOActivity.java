@@ -45,7 +45,7 @@ public class DAOActivity {
 		return INSTANCE;
 	}
 	
-	public void createNormalActivity(String activityName, String description, String sito, String prezzo, int place, String proprietario, boolean arte, boolean cibo, boolean musica, boolean sport, boolean social, boolean natura, boolean esplorazione, boolean ricorrenza, boolean moda, boolean shopping, boolean adrenalina, boolean monumenti, boolean relax, boolean istruzione, String tipo, String orApertura, String orChiusura, String dataInizio, String dataFine, String cadenza) throws Exception {
+	public void createNormalActivity(String activityName, String description, String sito, String prezzo, int place, String proprietario, boolean arte, boolean cibo, boolean musica, boolean sport, boolean social, boolean natura, boolean esplorazione, boolean ricorrenza, boolean moda, boolean shopping, boolean adrenalina, boolean monumenti, boolean relax, boolean istruzione, String tipo, String orApertura, String orChiusura, String dataInizio, String dataFine, String cadenza) throws SQLException, ClassNotFoundException {
 		//metodo per creare nel db una classe Activity
 		
 		// STEP 1: dichiarazioni

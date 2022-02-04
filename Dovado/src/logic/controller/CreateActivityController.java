@@ -2,6 +2,7 @@ package logic.controller;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -76,9 +77,7 @@ public class CreateActivityController {
 		 * 
 		 * 3)chiamare createActivity() e fa TUTTO lui.
 		 *******************************************************************************************/
-		
-		//TODO: mancnao le recensioni e il channel da infilare qui!!!
-		
+				
 		//prima creo le preferenze, poi il posto e poi l'id in long siccome usiamo quelli per l'id for some reason
 		this.fillPreferences();
 		this.retrievePlace();
@@ -255,7 +254,7 @@ public class CreateActivityController {
 		}
 	}
 	
-	public void saveActivity() throws Exception {
+	public void saveActivity() throws SQLException, ClassNotFoundException {
 		/*
 		 * Medoto per chiamare il DAO, quello che controllo è che qua il tipo sia continua, periodica o a scadenza
 		 * 
@@ -272,8 +271,7 @@ public class CreateActivityController {
 				daoAc.createNormalActivity(bean.getActivityName(),bean.getActivityDescription(),null,null,bean.getPlace(),null,bean.isArte(),bean.isCibo(),bean.isMusica(),bean.isSport(),bean.isSocial(),bean.isNatura(),bean.isEsplorazione(),bean.isRicorrenze(),bean.isModa(),bean.isShopping(),bean.isAdrenalina(),bean.isMonumenti(),bean.isRelax(),bean.isIstruzione(),bean.getType().name(),bean.getOpeningLocalTime().toString(), bean.getClosingLocalTime().toString(), bean.getOpeningLocalDate().toString(), bean.getEndLocalDate().toString(),null);
 			break;
 			default:
-				//TODO: handle the error;
-			break;
+				throw new NullPointerException("La tipologia di attività per qualche motivo non è specificata!!");
 			
 		}
 	}
