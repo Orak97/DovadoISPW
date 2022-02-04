@@ -22,6 +22,14 @@ public class UpdateCertActController {
 		daoAc = DAOActivity.getInstance();
 	}
 	
+	/*Rimuovere in caso si sposti il metodo `claimActivity`in un altra classe*/
+	public UpdateCertActController(Partner session,CreateActivityBean bean) {
+		this.session = session;
+		this.bean = bean;
+		daoAc = DAOActivity.getInstance();
+	}
+	/*-----------------------------------------------------------------------*/
+	
 	public UpdateCertActController(CreateActivityBean bean) {
 		this(bean,null);
 	}
