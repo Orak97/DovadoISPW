@@ -82,7 +82,7 @@
 			</div>
 			<div class="col">
 				<div class="d-flex justify-content-center ">	
-					<a class="btn btn-danger btn-lg" href="login.jsp" role="button">Accedi come Esploratore</button>
+					<a class="btn btn-danger btn-lg" href="login.jsp" role="button">Accedi come Esploratore</a>
 				</div>
 			</div>
 		</div>
