@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<%@ page import = "java.io.*,java.util.*, logic.model.Partner, logic.model.CertifiedActivity, logic.model.DAOActivity, logic.controller.FindActivityController, logic.model.Activity" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.Partner, logic.model.CertifiedActivity, logic.model.DAOActivity, logic.controller.FindActivityController, logic.model.Activity, logic.controller.UpdateCertActController" %>
 
 <% application.setAttribute( "titolo" , "Create Activity"); %>
 
@@ -9,6 +9,9 @@
 
 <jsp:useBean id="findBean" scope="request" class="logic.model.FindActivitiesBean" />
 <jsp:setProperty name="findBean" property="*" />
+
+<jsp:useBean id="createBean" scope="request" class="logic.model.CreateActivityBean" />
+<jsp:setProperty name="createBean" property="*" />
 
 <%	
 	ArrayList<Activity> foundActivities = new ArrayList<Activity>();
@@ -24,6 +27,18 @@
 		}catch(Exception e){
 			%> <script> alert('qualcosa è andato storto, riprova più tardi') </script> <%
 			e.printStackTrace();
+		}
+	}
+	
+	if((request.getParameter("idActivity")!= null && request.getParameter("activityName")== null) && session.getAttribute("partner")!=null){
+		try{
+			Partner partner = (Partner) session.getAttribute("partner");
+			UpdateCertActController controller = new UpdateCertActController(partner,createBean);
+			controller.claimActivity();
+			%> <script> alert('Attività correttamente reclamata') </script><%
+		}catch(Exception e){
+			e.printStackTrace();
+			%> <script> alert('qualcosa è andato storto, riprova più tardi') </script> <%
 		}
 	}
 	
