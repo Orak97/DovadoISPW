@@ -122,7 +122,7 @@ public class LoginView{
 			e.printStackTrace();
 			return user;
 		}
-    	NavbarExplorer.setUser(user);
+    	Navbar.setUser(user);
     	
     	return user;
     }
@@ -149,7 +149,8 @@ public class LoginView{
 			e.printStackTrace();
 			return user;
 		}
-    	NavbarPartner.setUser(user);
+    	
+    	Navbar.setUser(user);
     	return user;
     }
     
@@ -168,8 +169,8 @@ public class LoginView{
 		
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = NavbarExplorer.getNavbar();
-			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
+			BorderPane navbar = Navbar.getNavbar();
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - login");
 			primaryStage.setScene(scene);

@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
@@ -28,8 +29,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.ActivityType;
 import logic.controller.CreateActivityController;
@@ -41,7 +48,9 @@ import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.NormalActivity;
+import logic.model.Partner;
 import logic.model.Place;
+import logic.model.Preferences;
 import logic.model.SuperActivity;
 
 public class CreateActivityView implements Initializable{
@@ -77,14 +86,22 @@ public class CreateActivityView implements Initializable{
 	private TextField searchBar;
 	
 	@FXML
+	private Text cadenceDescription;
+	
+	@FXML
 	private Button searchBtn;
 
 	@FXML
 	private ChoiceBox<String> cadenceBox;
+	@FXML
+	private ChoiceBox<String> tBox;
+	@FXML
+	private HBox prefHBox;
 	
 	private static final  String[] CADENCEKEY = {"Weekly","Monthly","Annually"};
 	
 	private static ListView<Object> pList;
+	private static ChoiceBox<String> typeBox;
 	private static ChoiceBox<String> cadBox;
 	private static TextField clTime;
 	private static TextField opTime;
@@ -100,17 +117,21 @@ public class CreateActivityView implements Initializable{
 	private static Place placeSelected;
 	private static ArrayList<Place> placesFound;
 	private static StackPane lastPlaceBoxSelected;
+	private static Text cadenceDescText;
+	private static HBox pHBox;
+
+	private static String BGCOLORKEY = "ffffff";
 		
 	public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = NavbarExplorer.getNavbar();
-			NavbarExplorer.authenticatedSetup();
+			BorderPane navbar = Navbar.getNavbar();
+			Navbar.authenticatedSetup();
 			
 			VBox createActivity = new VBox();
 			
 			
-			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - events");
 			current.setScene(scene);
@@ -145,7 +166,10 @@ public class CreateActivityView implements Initializable{
 		cadBox=cadenceBox;
 		pList=placesList;
 		rt=root;
+		typeBox = tBox;
 		tField=tagField;
+		cadenceDescText = cadenceDescription;
+		prefHBox=pHBox;
 		
 		cadBox.getItems().addAll(CADENCEKEY[0],CADENCEKEY[1],CADENCEKEY[2]);
 		
@@ -237,6 +261,29 @@ public class CreateActivityView implements Initializable{
 				
 			}
 		});
+		
+	}
+	
+	public void updateDescription() {
+		String chosenType = typeBox.getValue();
+		
+		if(ActivityType.valueOf(chosenType)==ActivityType.CONTINUA) 
+		{
+			cadenceDescText.setText("Activities open every day of the week, eg: a walk in villa Borghese ");
+			cadenceDescText.setWrappingWidth(280);
+		}
+		else if(ActivityType.valueOf(chosenType)==ActivityType.PERIODICA) 
+		{
+			cadenceDescText.setText("Activities repeated with a certain frequency, for a period of time.");
+			cadenceDescText.setWrappingWidth(280);
+		}
+		else if(ActivityType.valueOf(chosenType)==ActivityType.SCADENZA) {
+			cadenceDescText.setText("Activities that take place just once.");
+			cadenceDescText.setWrappingWidth(280);
+		}
+		else {
+			cadenceDescText.setText("Select a type and I'll describe it.");
+		}
 		
 	}
 	
@@ -367,30 +414,83 @@ public class CreateActivityView implements Initializable{
 		activityName = actNameField.getText();
 		openingTime = (opTime.getText());
 		closingTime = (clTime.getText());
-		openingDate = sDate.getValue();
-		String openingDateString = openingDate.toString();
-		
-		if(eDate.getValue().isBefore(openingDate) || eDate.getValue().isBefore(LocalDate.now()))
-			return false;
-		closingDate = eDate.getValue();
-		String closingDateString = closingDate.toString();
 		
 		CreateActivityBean caBean = new CreateActivityBean();
 		caBean.setActivityName(activityName);
-		caBean.setOpeningTime(openingTime);
-		caBean.setOpeningDate(openingDateString);
-		caBean.setEndDate(closingDateString);
-		caBean.setCadence(Cadence.valueOf(cadBox.getValue()));
-		caBean.setType(ActivityType.valueOf("Continua"));
+		caBean.setType(ActivityType.valueOf(typeBox.getValue()));
 
-		
-		CreateActivityController caCont = new CreateActivityController(caBean);
-		try {
-			SuperActivity act = (SuperActivity)caCont.createActivity();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//-----------------------QUI SI FA DISTINZIONE TRA I VARI TIPI DI ATTIVIT¿---------------------------------------------------//
+//---------IN BASE A QUESTA DISTINZIONE AVREMO L'ATTIVIT¿ COSTRUITA SECONDO PROCEDIMENTI DIVERSI---------------------------------------------------//
+				
+		if(ActivityType.valueOf(typeBox.getValue()).equals(ActivityType.CONTINUA)) 
+		{
+			caBean.setOpeningTime(openingTime);
+			caBean.setClosingTime(closingTime);
 		}
+		
+		else if(ActivityType.valueOf(typeBox.getValue()).equals(ActivityType.SCADENZA)) {
+			openingDate = sDate.getValue();
+			String openingDateString = openingDate.toString();
+			
+			if(eDate.getValue().isBefore(openingDate) || eDate.getValue().isBefore(LocalDate.now()))
+				return false;
+			closingDate = eDate.getValue();
+			
+			String closingDateString = closingDate.toString();
+			
+			caBean.setOpeningTime(openingTime);
+			caBean.setClosingTime(closingTime);
+			caBean.setOpeningDate(openingDateString);
+			caBean.setEndDate(closingDateString);
+			
+		}
+		
+		else if(ActivityType.valueOf(typeBox.getValue()).equals(ActivityType.PERIODICA)) {
+			openingDate = sDate.getValue();
+			String openingDateString = openingDate.toString();
+			
+			if(eDate.getValue().isBefore(openingDate) || eDate.getValue().isBefore(LocalDate.now()))
+				return false;
+			closingDate = eDate.getValue();
+			
+			String closingDateString = closingDate.toString();
+			caBean.setOpeningTime(openingTime);
+			caBean.setClosingTime(closingTime);
+			caBean.setOpeningDate(openingDateString);
+			caBean.setEndDate(closingDateString);
+			caBean.setCadence(Cadence.valueOf(cadBox.getValue()));
+		}
+		
+		else {
+			final Popup popup = new Popup(); popup.centerOnScreen();
+			 
+		    Text popupText = new Text("Activity"+'\n'+"type not"+'\n'+"selected yet");
+		    popupText.getStyleClass().add("textEventInfo");
+		    popupText.setTextAlignment(TextAlignment.CENTER);;
+		    
+		    Circle c = new Circle(0, 0, 50, Color.valueOf("212121"));
+		    
+		    StackPane popupContent = new StackPane(c,popupText); 
+		    
+		    c.setStrokeType(StrokeType.OUTSIDE);
+		    c.setStrokeWidth(0.3);
+		    c.setStroke(Paint.valueOf(BGCOLORKEY));
+		    
+		    popup.getContent().add(popupContent);
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
+		    
+		Log.getInstance().getLogger().info("Attivit√ non aggiunta alla persistenza");
+		}
+		
+		//SE L'UTENTE CHE CREA L'ATTIVITA' E' UN PARTNER LA SUA ATTIVITA' SARA' CERTIFICATA DALLA 
+		//NASCITA.
+		
+		if(Navbar.getUser() instanceof Partner) {
+			caBean.setOwner(Navbar.getUser().getUserID().intValue());
+		}
+		
 		
 //		SuperActivity act = null;
 //		if(cadBox.getValue().equals(CADENCEKEY[0]) && (sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
@@ -410,11 +510,24 @@ public class CreateActivityView implements Initializable{
 		//--------------------------------------------------------------------------------------------
 				//DA AGGIUNGERE UNA LISTA DI BOTTONI DA CUI SCEGLIERE LA PREFERENZA DELL'ATTIVITA'
 		//--------------------------------------------------------------------------------------------
+		Preferences newActivityPref = new Preferences(false, false, false, false, false, false, false, false, false, false, false, false, false, false);
 		
-		String[] prefs = tField.getText().toString().split(",");
-		ArrayList<String> prefsList = new ArrayList<>();
-		//TODO questo dovrebbe funzionare ma va controllato
-		Collections.addAll(prefsList, prefs);
+		//GRAZIE AL METODO SOTTOSTANTE MI PRENDO UN ARRAY DI BOOLEANI DA CUI POI 
+		//POSSO MODIFICARE UNO AD UNO LE PREFERENZE.
+		boolean[] activityPrefSet = newActivityPref.getSetPreferences();
+		
+		for(int j=0;j<pHBox.getChildren().size();j++) {
+			VBox prefVBox = (VBox) pHBox.getChildren().get(j);
+			int vboxPrefContained = prefVBox.getChildren().size();
+			for(int i=0;i<vboxPrefContained;i++) {
+				//SE IL CHECKBOX DELLA PREFERENZA E' SETTATO ALLORA QUESTA VERR¿ AGGIUNTA ALLA
+				//LISTA DI PREFERENZE.
+				activityPrefSet[i] = ((CheckBox)(prefVBox.getChildren().get(i))).isSelected();
+			}
+		}
+		//FINITE TUTTE LE PREFERENZE SI SETTA LA LISTA DI BOOLEANI RAPPRESENTANTE LE PREFERENZE A
+		//TRUE SONO STATE SELEZIONATE COME TRUE.
+		caBean.setInterestedCategories(activityPrefSet);
 		
 //		Log.getInstance().getLogger().info(act.toString());
 //		act.setId(daoAc.addActivityToJSON(placeSelected,(SuperActivity)act,"no"));
@@ -445,7 +558,15 @@ public class CreateActivityView implements Initializable{
 //            dialog.show();
 //			return false;
 //		}
-		return false;
+
+		CreateActivityController caCont = new CreateActivityController(caBean);
+		try {
+			SuperActivity act = (SuperActivity)caCont.createActivity();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 

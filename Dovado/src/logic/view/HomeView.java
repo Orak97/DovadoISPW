@@ -71,7 +71,7 @@ import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
 import logic.view.Main;
-import logic.view.NavbarExplorer;
+import logic.view.Navbar;
 
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
@@ -113,10 +113,10 @@ public class HomeView implements Initializable{
     
     @FXML
     private WebView map;
-
+	
     @FXML
     private static WebEngine eng;
-	 
+	
     private static int lastActivitySelected = -1;
 
     private static DAOPreferences daoPref;
@@ -128,17 +128,19 @@ public class HomeView implements Initializable{
     private static SuperUser user;
     private static double usrLat;
     private static double usrLon;
-    
+    private static ArrayList<Activity> activitiesToSpotUsr;
+    private ArrayList<CertifiedActivity> activitiesToSpotPart;
+
     
     public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = NavbarExplorer.getNavbar();
-			NavbarExplorer.authenticatedSetup();
+			BorderPane navbar = Navbar.getNavbar();
+			Navbar.authenticatedSetup();
 			
 			VBox home = new VBox();
 			
-			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - home");
 			current.setScene(scene);
@@ -147,11 +149,10 @@ public class HomeView implements Initializable{
 		
 			root.getChildren().addAll(navbar,home);
 			
-			user=NavbarExplorer.getUser();
+			user=Navbar.getUser();
 			curr=current;
 			
 			current.show();	
-			//eng.executeScript("addMarker('"+usrLat+"','"+usrLon+"','your position')");
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -175,6 +176,8 @@ public class HomeView implements Initializable{
 //        usrLat = coords.getLat();
 //        usrLon = coords.getLon();
 //        
+		usrLat = 41.952928;
+		usrLon = 12.518342;
         System.out.println("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
 
         preference1.getStyleClass().add(BTNPREFKEY);
@@ -183,7 +186,9 @@ public class HomeView implements Initializable{
         
         preference1.setText("By preferences");
         
-        user = NavbarExplorer.getUser();
+        ArrayList<Activity> activitiesUsr = new ArrayList<Activity>();
+        ArrayList<CertifiedActivity> activitiesP = new ArrayList<CertifiedActivity>();
+        user = Navbar.getUser();
     	if(user instanceof Partner) {
     		
 	    	try{
@@ -192,14 +197,12 @@ public class HomeView implements Initializable{
 				//in base a quello restituisco risultati appropriati.
 				
 	    		ArrayList<CertifiedActivity> activitiesPartn = (ArrayList<CertifiedActivity>) daoAct.getPartnerActivities(user.getUserID());
-				
+	    		activitiesToSpotPart = activitiesPartn;
     			eng = map.getEngine();
-    			eng.load(MAPPATHKEY);
+    			eng.setJavaScriptEnabled(true);
+    	        eng.load(MAPPATHKEY);
     			
     			// Setting permissions to interact with Js
-    	        eng.setJavaScriptEnabled(true);
-    	        for(Activity curr : activitiesPartn)
-    	        	eng.executeScript("spotPlace("+curr.getPlace().getLatitudine()+","+curr.getPlace().getLongitudine()+", '"+curr.getPlace().getName()+"',"+curr.getPlace().getId()+")");
     	        searchButton.setText("SEARCH");
     			searchButton.getStyleClass().add(BTNSRCKEY);
     			
@@ -291,13 +294,13 @@ public class HomeView implements Initializable{
 	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 			try{
 				ArrayList<Activity> activities = new ArrayList<>();
-				
+				activitiesToSpotUsr = activities;
 				eng = map.getEngine();
 				
 				// Setting permissions to interact with Js
 		        eng.setJavaScriptEnabled(true);
 		        eng.load(MAPPATHKEY);
-				
+		        
 		        searchButton.setText("SEARCH");
 				searchButton.getStyleClass().add(BTNSRCKEY);
 		   
@@ -305,8 +308,8 @@ public class HomeView implements Initializable{
 				//e mostrarne i risultati prendo le preferenze dell'utente e 
 				//in base a quello restituisco risultati appropriati.
 				
-				Preferences preferences = ((User)NavbarExplorer.getUser()).getPreferences();
-				
+				Preferences preferences = ((User)Navbar.getUser()).getPreferences();
+			
 				if(preferences!=null){
 						
 					activities.addAll(daoAct.getNearbyActivities(41.952928,12.518342,50));
@@ -391,7 +394,7 @@ public class HomeView implements Initializable{
 					e.printStackTrace();
 				}
     	}
-	}
+    }
 
 public void activitySelected() {
 		
@@ -404,6 +407,17 @@ public void activitySelected() {
 			eventBox = (StackPane) eventsList.getSelectionModel().getSelectedItem();
 		} catch(ClassCastException ce) {
 			return;
+		}
+
+		if(user instanceof User) {	
+			for(Activity curr:activitiesToSpotUsr) {
+				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', '"+curr.getPlace().getName()+"','"+curr.getPlace().getId()+"')");;
+			}
+		}
+		else {
+			for(CertifiedActivity curr:activitiesToSpotPart) {
+				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', '"+curr.getPlace().getName()+"','"+curr.getPlace().getId()+"')");;
+			}	
 		}
 		
 Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));

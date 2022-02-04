@@ -146,7 +146,7 @@ public class PreferenceSelectView implements Initializable{
 
 		preferences = new Preferences(preferencesChosen[0], preferencesChosen[1], preferencesChosen[2], preferencesChosen[3], preferencesChosen[4], preferencesChosen[5], preferencesChosen[6], preferencesChosen[7], preferencesChosen[8], preferencesChosen[9], preferencesChosen[10], preferencesChosen[11], preferencesChosen[12],preferencesChosen[13]);
 		
-		((User)NavbarExplorer.getUser()).setPreferences(preferences);
+		((User)Navbar.getUser()).setPreferences(preferences);
 		
     	HomeView.render(curr);
 		
@@ -159,8 +159,8 @@ public class PreferenceSelectView implements Initializable{
 		
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = NavbarExplorer.getNavbar();
-			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
+			BorderPane navbar = Navbar.getNavbar();
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - Select preferences");
 			primaryStage.setScene(scene);

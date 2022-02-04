@@ -15,7 +15,7 @@ import logic.model.SuperUser;
  * 1- i need to use navbar from almost every page and there is no point on instance a different navbar for every page
  * 2- i didn't used The multithread safe navbar since i can't use more than one active program on the same computer
  */
-public class NavbarExplorer {
+public class Navbar {
 	private static final  String NAVITEMKEY = ".navbar-item";
 	private static final  String ACTSTYLEKEY = "active";
 	private static final  String EVNTPARTNER = "My events";
@@ -24,10 +24,10 @@ public class NavbarExplorer {
 	private static SuperUser user;
 	
 	public static BorderPane getNavbar() {
-		if(NavbarExplorer.bPNavbar == null) 
+		if(Navbar.bPNavbar == null) 
 			try {
-				NavbarExplorer.bPNavbar = FXMLLoader.load(Main.class.getResource("navbar.fxml"));
-				NavbarExplorer.loginSetup();
+				Navbar.bPNavbar = FXMLLoader.load(Main.class.getResource("navbar.fxml"));
+				Navbar.loginSetup();
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
@@ -36,7 +36,7 @@ public class NavbarExplorer {
 	
 	public static double getHeight() {
 		try {
-		return NavbarExplorer.getNavbar().getScene().getHeight();
+		return Navbar.getNavbar().getScene().getHeight();
 		} catch(Exception e) {
 			return 480;
 		}
@@ -45,7 +45,7 @@ public class NavbarExplorer {
 	
 	public static double getWidth() {
 		try{
-		return NavbarExplorer.getNavbar().getScene().getWidth();
+		return Navbar.getNavbar().getScene().getWidth();
 		} catch(Exception e) {
 			return 640;
 		}

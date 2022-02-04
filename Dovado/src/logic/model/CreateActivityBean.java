@@ -42,7 +42,7 @@ public class CreateActivityBean {
 	private boolean monumenti = false;
 	
 	private int idActivity;
-	private int owner;
+	private int owner = 0;
 	
 	public LocalDate getOpeningLocalDate() {
 		return stringToLocalDate(openingDate);
@@ -291,6 +291,54 @@ public class CreateActivityBean {
 		this.setRelax(interestedCategories[11]);
 		this.setIstruzione(interestedCategories[12]);
 		this.setMonumenti(interestedCategories[13]);
+	}
+	
+	public CreateActivityBean fillBean(CreateActivityBean cab, SuperActivity a, Partner owner) {
+		cab.setActivityDescription(a.getDescription());
+		cab.setActivityName(a.getName());
+		cab.setPlace(a.getPlace().getId().intValue());
+		if(owner!=null) {
+			cab.setOwner(owner.getUserID().intValue());
+		}else {
+			cab.setOwner(0);
+		}
+		cab.setIdActivity(a.getId().intValue());
+		
+		cab.setInterestedCategories(a.getIntrestedCategories().getSetPreferences());
+		if(a.getFrequency() instanceof ExpiringActivity) {
+			cab.setType(ActivityType.SCADENZA);
+			//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
+			//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
+			//E DATA DI FINE; PERTANTO:
+			cab.setOpeningTime(a.getFrequency().getFormattedOpeningTime());
+			cab.setClosingTime(a.getFrequency().getFormattedClosingTime());
+			cab.setEndDate(((ExpiringActivity)(a.getFrequency())).getFormattedEndDate());
+			cab.setOpeningDate(((ExpiringActivity)(a.getFrequency())).getFormattedStartDate());
+		}
+		else if(a.getFrequency() instanceof ContinuosActivity) {
+			cab.setType(ActivityType.CONTINUA);
+			//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
+			//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA; PERTANTO:
+			cab.setOpeningTime(a.getFrequency().getFormattedOpeningTime());
+			cab.setClosingTime(a.getFrequency().getFormattedClosingTime());
+			
+		}
+		else if(a.getFrequency() instanceof PeriodicActivity) {
+			cab.setType(ActivityType.PERIODICA);
+			//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
+			//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
+			//DATA DI FINE ED INFINE LA CADENZA; PERTANTO:
+			cab.setOpeningTime(a.getFrequency().getFormattedOpeningTime());
+			cab.setClosingTime(a.getFrequency().getFormattedClosingTime());
+			cab.setEndDate(((PeriodicActivity)(a.getFrequency())).getFormattedEndDate());
+			cab.setOpeningDate(((PeriodicActivity)(a.getFrequency())).getFormattedStartDate());
+			cab.setCadence(((PeriodicActivity)(a.getFrequency())).getCadence());
+		}
+		else {
+			Log.getInstance().getLogger().info("L'attività non ha un tipo!");
+			return null;
+		}
+		return cab;
 	}
 	
 }

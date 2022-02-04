@@ -62,7 +62,7 @@ import logic.model.User;
 public class EventsView implements Initializable{
 	
 	private static ArrayList<ScheduledActivity> schedActivities;
-	private static ArrayList<Activity> activities;
+	private static ArrayList<CertifiedActivity> activities;
 	private static DAOPreferences daoPref;
     private static DAOActivity daoAct;
     private static DAOSuperUser daoSU;
@@ -92,13 +92,13 @@ public class EventsView implements Initializable{
     public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = NavbarExplorer.getNavbar();
-			NavbarExplorer.authenticatedSetup();
+			BorderPane navbar = Navbar.getNavbar();
+			Navbar.authenticatedSetup();
 			
 			VBox eventSchedule = new VBox();
 			
 			
-			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - events");
 			current.setScene(scene);
@@ -125,7 +125,7 @@ public class EventsView implements Initializable{
 		
     	searchBtn.getStyleClass().add("src-btn");    	
     	
-    	user = NavbarExplorer.getUser();
+    	user = Navbar.getUser();
     	
     	if (user instanceof User) {
 	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
@@ -135,7 +135,7 @@ public class EventsView implements Initializable{
 				schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
 	
 				for(int j=0;j<schedActivities.size();j++) {
-					activities.add((Activity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
+					activities.add((CertifiedActivity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
 				}
 	
 				for(int j=0;j<activities.size();j++)
@@ -685,7 +685,7 @@ public class EventsView implements Initializable{
 		
 		boolean result = false;
 		try {
-			result = daoSch.removeActFromSchedule(idSched,NavbarExplorer.getUser().getUserID());
+			result = daoSch.removeActFromSchedule(idSched,Navbar.getUser().getUserID());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -54,8 +54,8 @@ public class TotemView {
 		Stage primaryStage = current;
 		try {
 			VBox root = new VBox();
-			BorderPane navbar = NavbarExplorer.getNavbar();
-			Scene scene = new Scene(root,NavbarExplorer.getWidth(),NavbarExplorer.getHeight());
+			BorderPane navbar = Navbar.getNavbar();
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - totem");
 			primaryStage.setScene(scene);
