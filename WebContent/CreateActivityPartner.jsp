@@ -30,16 +30,51 @@
 		}
 	}
 	
+	boolean useCaseClaimActivity = false;
 	if((request.getParameter("idActivity")!= null && request.getParameter("activityName")== null) && session.getAttribute("partner")!=null){
+		useCaseClaimActivity = true;
+		boolean success = true;
 		try{
 			Partner partner = (Partner) session.getAttribute("partner");
 			UpdateCertActController controller = new UpdateCertActController(partner,createBean);
 			controller.claimActivity();
-			%> <script> alert('Attività correttamente reclamata') </script><%
 		}catch(Exception e){
 			e.printStackTrace();
-			%> <script> alert('qualcosa è andato storto, riprova più tardi') </script> <%
+			success = false;
 		}
+		
+		%>
+		<%--inizio prova modal per fare conferma o errore nello schedulo di un'attività --%>
+		<!-- Modal elimina -->
+			<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+		  		<div class="modal-dialog">
+		    		<div class="modal-content">
+		      			<div class="modal-header">
+		        			<h5 class="modal-title" id="responseModalLabel"><%= success ? "Attività correttamente reclamata!" : "Errore nella reclamazione dell'attività"  %></h5>
+		        			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      			</div>
+		      			<div class="modal-body">
+		        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><i class="bi bi-check-circle-fill"></i> <%}else{%> ><i class="bi bi-x-circle-fill"></i> <%} %></p>
+		        			<h5 class="text-center irreversible-process"><%= success ? "Visualizzala nella tua home!" : "C'è stato un errore nella reclamazione dell'attività"%></h5>
+		      			</div>
+		      			<div class="modal-footer">
+		        			<% if(!success){ %><a role="button" class="btn btn-secondary" href="CreateActivityPartner.jsp">Torna indietro</a> <%}%>
+		        			<% if(success){ %><a role="button" class="btn btn-primary" href="HomePartner.jsp">Torna a Home</a> <%}%>
+		      			</div>
+		    		</div>
+		  		</div>
+			</div>
+			
+			<script>
+				let responseModal = new bootstrap.Modal(document.getElementById('responseModal'))
+				responseModal.show();
+			</script>
+		
+		<%-- fine modal per fare conferma o errore nello schedulo di un'attività --%>
+		
+		<%
+		
+		
 	}
 	
 %>
@@ -134,7 +169,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="findActivitiesModalLabel">Dove si trova la tua attività?</h5>
-        <%-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --%>
+        <a role="button" class="btn-close" href="HomePartner.jsp" aria-label="Close"></a>
       </div>
       
       <div class="modal-body modal-coupon">
@@ -255,11 +290,9 @@
 
 	let findActModal = document.getElementById('findActivitiesModal')
 	let searchActivityModal = new bootstrap.Modal(findActModal)
-	try{
-		searchActivityModal.show();
-	}catch(e){
-		console.log('Reloaded page')
-	}
+	
+	<% if(!useCaseClaimActivity){ %> searchActivityModal.show(); <%}%>
+	
 	let searchFieldAct = findActModal.querySelector('#SearchActivities')
 	searchFieldAct.addEventListener('keyup', (event)=>{
 		if(event.target.value == '') findActModal.querySelector('#findActivities').disabled =true;
