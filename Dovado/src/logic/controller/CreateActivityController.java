@@ -259,7 +259,8 @@ public class CreateActivityController {
 		 * Medoto per chiamare il DAO, quello che controllo è che qua il tipo sia continua, periodica o a scadenza
 		 * 
 		 * */
-		
+		daoAc.createNormalActivity(bean);
+		/** TODO eliminare questo codice se funziona
 		switch(bean.getType()) {
 			case CONTINUA:  
 				daoAc.createNormalActivity(bean.getActivityName(),bean.getActivityDescription(),null,null,bean.getPlace(),null,bean.isArte(),bean.isCibo(),bean.isMusica(),bean.isSport(),bean.isSocial(),bean.isNatura(),bean.isEsplorazione(),bean.isRicorrenze(),bean.isModa(),bean.isShopping(),bean.isAdrenalina(),bean.isMonumenti(),bean.isRelax(),bean.isIstruzione(),bean.getType().name(),bean.getOpeningLocalTime().toString(), bean.getClosingLocalTime().toString(), null, null,null);
@@ -273,7 +274,7 @@ public class CreateActivityController {
 			default:
 				throw new NullPointerException("La tipologia di attività per qualche motivo non è specificata!!");
 			
-		}
+		}**/
 	}
 	
 }

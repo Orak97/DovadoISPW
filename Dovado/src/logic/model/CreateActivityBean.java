@@ -17,6 +17,8 @@ public class CreateActivityBean {
 	
 	private String activityName;
 	private String activityDescription;
+	private String site;
+	private String price;
 	private int place;
 	private String openingDate;
 	private String endDate;
@@ -140,6 +142,24 @@ public class CreateActivityBean {
 		this.activityDescription = activityDescription;
 	}
 
+	public String getSite() {
+		return site;
+	}
+
+	public void setSite(String site) {
+		this.site = site;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	
+	//-------inizio getter e setter delle preferenze----------------
+	
 	public boolean isArte() {
 		return arte;
 	}
@@ -340,5 +360,6 @@ public class CreateActivityBean {
 		}
 		return cab;
 	}
-	
+
+
 }

@@ -28,14 +28,16 @@ public class DAOActivity {
 	
 	//----------database--------------------------------------
 	
-	private static String USER = "dovado"; //DA CAMBIARE
-	private static String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+	private static final String USER = "dovado"; //DA CAMBIARE
+	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
+	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
+	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 			
-	//------------------------------------------------------------
+	//----------log message-----------------------------------------------
+	private static final String LOGDBCONN = "Connected database successfully...";
+	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
 	
-	
+	//--------------------------------------------------------------
 	private DAOActivity() {
 	}
 	
@@ -45,7 +47,7 @@ public class DAOActivity {
 		return INSTANCE;
 	}
 	
-	public void createNormalActivity(String activityName, String description, String sito, String prezzo, int place, String proprietario, boolean arte, boolean cibo, boolean musica, boolean sport, boolean social, boolean natura, boolean esplorazione, boolean ricorrenza, boolean moda, boolean shopping, boolean adrenalina, boolean monumenti, boolean relax, boolean istruzione, String tipo, String orApertura, String orChiusura, String dataInizio, String dataFine, String cadenza) throws SQLException, ClassNotFoundException {
+	public void createNormalActivity(CreateActivityBean bean) throws SQLException, ClassNotFoundException {
 		//metodo per creare nel db una classe Activity
 		
 		// STEP 1: dichiarazioni
@@ -58,41 +60,41 @@ public class DAOActivity {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call create_activity(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
             
-            
+            //TODO proprietario == null da modificare
             
             stmt = conn.prepareCall(call);
             
-            stmt.setString(1,activityName);
-            stmt.setString(2,description);
-            stmt.setString(3,sito);
-            stmt.setString(4,prezzo);
-            stmt.setInt(5,place);
-            stmt.setString(6,proprietario);
-            stmt.setBoolean(7,arte);
-            stmt.setBoolean(8,cibo);
-            stmt.setBoolean(9,musica);
-            stmt.setBoolean(10,sport);
-            stmt.setBoolean(11,social);
-            stmt.setBoolean(12,natura);
-            stmt.setBoolean(13,esplorazione);
-            stmt.setBoolean(14,ricorrenza);
-            stmt.setBoolean(15,moda);
-            stmt.setBoolean(16,shopping);
-            stmt.setBoolean(17,adrenalina);
-            stmt.setBoolean(18,monumenti);
-            stmt.setBoolean(19,relax);
-            stmt.setBoolean(20,istruzione);
-            stmt.setString(21,tipo);
-            stmt.setString(22,orApertura);
-            stmt.setString(23,orChiusura);
-            stmt.setString(24,dataInizio);
-            stmt.setString(25,dataFine);
-            stmt.setString(26,cadenza);
+            stmt.setString(1,bean.getActivityName());
+            stmt.setString(2,bean.getActivityDescription());
+            stmt.setString(3,bean.getSite());
+            stmt.setString(4,bean.getPrice());
+            stmt.setInt(5,bean.getPlace());
+            stmt.setString(6,null);
+            stmt.setBoolean(7,bean.isArte());
+            stmt.setBoolean(8,bean.isCibo());
+            stmt.setBoolean(9,bean.isMusica());
+            stmt.setBoolean(10,bean.isSport());
+            stmt.setBoolean(11,bean.isSocial());
+            stmt.setBoolean(12,bean.isNatura());
+            stmt.setBoolean(13,bean.isEsplorazione());
+            stmt.setBoolean(14,bean.isRicorrenze());
+            stmt.setBoolean(15,bean.isModa());
+            stmt.setBoolean(16,bean.isShopping());
+            stmt.setBoolean(17,bean.isAdrenalina());
+            stmt.setBoolean(18,bean.isMonumenti());
+            stmt.setBoolean(19,bean.isRelax());
+            stmt.setBoolean(20,bean.isIstruzione());
+            stmt.setString(21,bean.getType().name());
+            stmt.setString(22,bean.getOpeningLocalTime().toString());
+            stmt.setString(23,bean.getClosingLocalTime().toString());
+            stmt.setString(24,bean.getOpeningLocalDate() != null ? bean.getOpeningLocalDate().toString() : null);
+            stmt.setString(25,bean.getEndLocalDate() != null ? bean.getEndLocalDate().toString() : null);
+            stmt.setString(26,bean.getCadence()!=null ? bean.getCadence().name() : null);
             
             stmt.execute();
             
@@ -107,7 +109,7 @@ public class DAOActivity {
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
+                	System.out.println(LOGDBDISCONN);
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -133,7 +135,7 @@ public class DAOActivity {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_nearby_activities(?,?,?)}";
@@ -155,51 +157,8 @@ public class DAOActivity {
             while(rs.next()) {
             	Activity curr;
             	
-            	int idActivity = rs.getInt("id");
-            	String nome = rs.getString("nome");
-            	String descrizione = rs.getString("descrizione");
-            	int place = rs.getInt("luogo");
-            	
-            	
-            	
             	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
-            	CreateActivityBean bean = new CreateActivityBean();
-            	
-            	bean.setIdActivity(idActivity);
-            	
-            	bean.setActivityName(nome);
-            	bean.setActivityDescription(descrizione);
-            	bean.setPlace(place);
-            	
-            	
-            	bean.setOpeningTime(rs.getString("orario_apertura"));
-            	bean.setClosingTime(rs.getString("orario_chiusura"));
-            	
-            	bean.setOpeningDate(rs.getString("data_inizio"));
-            	bean.setEndDate(rs.getString("data_fine"));
-            	
-            	//serve per convertire da string -> enum ActivityType
-            	bean.setType(ActivityType.valueOf(rs.getString("tipo")));
-            	if(rs.getString("cadenza") != null)
-            	bean.setCadence(Cadence.valueOf(rs.getString("cadenza")));
-            	
-            	bean.setArte(rs.getBoolean("arte"));
-            	bean.setCibo(rs.getBoolean("cibo"));
-            	bean.setMusica(rs.getBoolean("musica"));
-            	bean.setSport(rs.getBoolean("sport"));
-            	bean.setSocial(rs.getBoolean("social"));
-            	bean.setNatura(rs.getBoolean("natura"));
-            	bean.setEsplorazione(rs.getBoolean("esplorazione"));
-            	bean.setRicorrenze(rs.getBoolean("ricorrenze"));
-            	bean.setModa(rs.getBoolean("moda"));
-            	bean.setShopping(rs.getBoolean("shopping"));
-            	bean.setAdrenalina(rs.getBoolean("adrenalina"));
-            	bean.setRelax(rs.getBoolean("relax"));
-            	bean.setIstruzione(rs.getBoolean("istruzione"));
-            	bean.setIstruzione(rs.getBoolean("monumenti"));
-            	
-            	bean.setOwner(rs.getInt("proprietario"));
-            	//------ fine copia incolla -----------------------------------------------------
+            	CreateActivityBean bean = fillBean(rs);
             	
             	CreateActivityController createActivity = new CreateActivityController(bean);
             	curr = createActivity.createActivity();
@@ -220,7 +179,7 @@ public class DAOActivity {
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
+                	System.out.println(LOGDBDISCONN);
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -246,7 +205,7 @@ public class DAOActivity {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_activity_by_id(?)}";
@@ -256,7 +215,7 @@ public class DAOActivity {
             stmt.setLong(1, id);
             
             if(!stmt.execute()) {
-            	Exception e = new Exception("Sembra che non esistano attività vicine a te");
+            	Exception e = new Exception("Sembra che non esistano attività con questo ID");
             	throw e;
             }
             
@@ -266,51 +225,9 @@ public class DAOActivity {
             while(rs.next()) {
             	Activity curr;
             	
-            	int idActivity = rs.getInt("id");
-            	String nome = rs.getString("nome");
-            	String descrizione = rs.getString("descrizione");
-            	int place = rs.getInt("luogo");
-            	
-            	
-            	
             	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
-            	CreateActivityBean bean = new CreateActivityBean();
+            	CreateActivityBean bean = fillBean(rs);
             	
-            	bean.setIdActivity(idActivity);
-            	
-            	bean.setActivityName(nome);
-            	bean.setActivityDescription(descrizione);
-            	bean.setPlace(place);
-            	
-            	
-            	bean.setOpeningTime(rs.getString("orario_apertura"));
-            	bean.setClosingTime(rs.getString("orario_chiusura"));
-            	
-            	bean.setOpeningDate(rs.getString("data_inizio"));
-            	bean.setEndDate(rs.getString("data_fine"));
-            	
-            	//serve per convertire da string -> enum ActivityType
-            	bean.setType(ActivityType.valueOf(rs.getString("tipo")));
-            	if(rs.getString("cadenza") != null)
-            	bean.setCadence(Cadence.valueOf(rs.getString("cadenza")));
-            	
-            	bean.setArte(rs.getBoolean("arte"));
-            	bean.setCibo(rs.getBoolean("cibo"));
-            	bean.setMusica(rs.getBoolean("musica"));
-            	bean.setSport(rs.getBoolean("sport"));
-            	bean.setSocial(rs.getBoolean("social"));
-            	bean.setNatura(rs.getBoolean("natura"));
-            	bean.setEsplorazione(rs.getBoolean("esplorazione"));
-            	bean.setRicorrenze(rs.getBoolean("ricorrenze"));
-            	bean.setModa(rs.getBoolean("moda"));
-            	bean.setShopping(rs.getBoolean("shopping"));
-            	bean.setAdrenalina(rs.getBoolean("adrenalina"));
-            	bean.setRelax(rs.getBoolean("relax"));
-            	bean.setIstruzione(rs.getBoolean("istruzione"));
-            	bean.setIstruzione(rs.getBoolean("monumenti"));
-            	
-            	bean.setOwner(rs.getInt("proprietario"));
-            	//------ fine copia incolla -----------------------------------------------------
             	
             	CreateActivityController createActivity = new CreateActivityController(bean);
             	act = createActivity.createActivity();
@@ -329,7 +246,7 @@ public class DAOActivity {
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
+                	System.out.println(LOGDBDISCONN);
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -355,7 +272,7 @@ public class DAOActivity {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_partner_activities(?)}";
@@ -365,7 +282,7 @@ public class DAOActivity {
             stmt.setLong(1, idPartner);
             
             if(!stmt.execute()) {
-            	Exception e = new Exception("Sembra che non esistano attività vicine a te");
+            	Exception e = new Exception("Sembra che non esistano attività per questo partner");
             	throw e;
             }
             
@@ -375,51 +292,8 @@ public class DAOActivity {
             while(rs.next()) {
             	Activity curr;
             	
-            	int idActivity = rs.getInt("id");
-            	String nome = rs.getString("nome");
-            	String descrizione = rs.getString("descrizione");
-            	int place = rs.getInt("luogo");
-            	
-            	
-            	
             	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
-            	CreateActivityBean bean = new CreateActivityBean();
-            	
-            	bean.setIdActivity(idActivity);
-            	
-            	bean.setActivityName(nome);
-            	bean.setActivityDescription(descrizione);
-            	bean.setPlace(place);
-            	
-            	
-            	bean.setOpeningTime(rs.getString("orario_apertura"));
-            	bean.setClosingTime(rs.getString("orario_chiusura"));
-            	
-            	bean.setOpeningDate(rs.getString("data_inizio"));
-            	bean.setEndDate(rs.getString("data_fine"));
-            	
-            	//serve per convertire da string -> enum ActivityType
-            	bean.setType(ActivityType.valueOf(rs.getString("tipo")));
-            	if(rs.getString("cadenza") != null)
-            	bean.setCadence(Cadence.valueOf(rs.getString("cadenza")));
-            	
-            	bean.setArte(rs.getBoolean("arte"));
-            	bean.setCibo(rs.getBoolean("cibo"));
-            	bean.setMusica(rs.getBoolean("musica"));
-            	bean.setSport(rs.getBoolean("sport"));
-            	bean.setSocial(rs.getBoolean("social"));
-            	bean.setNatura(rs.getBoolean("natura"));
-            	bean.setEsplorazione(rs.getBoolean("esplorazione"));
-            	bean.setRicorrenze(rs.getBoolean("ricorrenze"));
-            	bean.setModa(rs.getBoolean("moda"));
-            	bean.setShopping(rs.getBoolean("shopping"));
-            	bean.setAdrenalina(rs.getBoolean("adrenalina"));
-            	bean.setRelax(rs.getBoolean("relax"));
-            	bean.setIstruzione(rs.getBoolean("istruzione"));
-            	bean.setIstruzione(rs.getBoolean("monumenti"));
-            	
-            	bean.setOwner(rs.getInt("proprietario"));
-            	//------ fine copia incolla -----------------------------------------------------
+            	CreateActivityBean bean = fillBean(rs);
             	
             	CreateActivityController createActivity = new CreateActivityController(bean);
             	curr = createActivity.createActivity();
@@ -440,7 +314,7 @@ public class DAOActivity {
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
+                	System.out.println(LOGDBDISCONN);
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -463,7 +337,7 @@ public class DAOActivity {
 	            
 	            // STEP 3: apertura connessione
 	            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-	            System.out.println("Connected database successfully...");
+	            System.out.println(LOGDBCONN);
 	            
 	            //STEP4.1: preparo le stored procedure
 	            String call =  "{call update_cert_activity(?,?,?,?,?,?,?,?,?,?,?,?,?)}";
@@ -543,7 +417,7 @@ public class DAOActivity {
 	            try {
 	                if (conn != null)
 	                    conn.close();
-	                	System.out.println("Disconnetted database successfully...");
+	                	System.out.println(LOGDBDISCONN);
 	                	
 	            } catch (SQLException se) {
 	                se.printStackTrace();
@@ -569,7 +443,7 @@ public class DAOActivity {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_activities_by_zone(?)}";
@@ -589,51 +463,8 @@ public class DAOActivity {
             while(rs.next()) {
             	Activity curr;
             	
-            	int idActivity = rs.getInt("id");
-            	String nome = rs.getString("nome");
-            	String descrizione = rs.getString("descrizione");
-            	int place = rs.getInt("luogo");
-            	
-            	
-            	
             	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
-            	CreateActivityBean bean = new CreateActivityBean();
-            	
-            	bean.setIdActivity(idActivity);
-            	
-            	bean.setActivityName(nome);
-            	bean.setActivityDescription(descrizione);
-            	bean.setPlace(place);
-            	
-            	
-            	bean.setOpeningTime(rs.getString("orario_apertura"));
-            	bean.setClosingTime(rs.getString("orario_chiusura"));
-            	
-            	bean.setOpeningDate(rs.getString("data_inizio"));
-            	bean.setEndDate(rs.getString("data_fine"));
-            	
-            	//serve per convertire da string -> enum ActivityType
-            	bean.setType(ActivityType.valueOf(rs.getString("tipo")));
-            	if(rs.getString("cadenza") != null)
-            	bean.setCadence(Cadence.valueOf(rs.getString("cadenza")));
-            	
-            	bean.setArte(rs.getBoolean("arte"));
-            	bean.setCibo(rs.getBoolean("cibo"));
-            	bean.setMusica(rs.getBoolean("musica"));
-            	bean.setSport(rs.getBoolean("sport"));
-            	bean.setSocial(rs.getBoolean("social"));
-            	bean.setNatura(rs.getBoolean("natura"));
-            	bean.setEsplorazione(rs.getBoolean("esplorazione"));
-            	bean.setRicorrenze(rs.getBoolean("ricorrenze"));
-            	bean.setModa(rs.getBoolean("moda"));
-            	bean.setShopping(rs.getBoolean("shopping"));
-            	bean.setAdrenalina(rs.getBoolean("adrenalina"));
-            	bean.setRelax(rs.getBoolean("relax"));
-            	bean.setIstruzione(rs.getBoolean("istruzione"));
-            	bean.setIstruzione(rs.getBoolean("monumenti"));
-            	
-            	bean.setOwner(rs.getInt("proprietario"));
-            	//------ fine copia incolla -----------------------------------------------------
+            	CreateActivityBean bean = fillBean(rs);
             	
             	CreateActivityController createActivity = new CreateActivityController(bean);
             	curr = createActivity.createActivity();
@@ -654,7 +485,7 @@ public class DAOActivity {
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
+                	System.out.println(LOGDBDISCONN);
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -679,7 +510,7 @@ public class DAOActivity {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
             
             //STEP4.1: preparo la stored procedure
             String call = "{call view_discounts(?)}";
@@ -720,7 +551,7 @@ public class DAOActivity {
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
+                	System.out.println(LOGDBDISCONN);
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -740,7 +571,7 @@ public class DAOActivity {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
             
             //STEP4.1: preparo la stored procedure
             String call = "{call claim_activity(?,?)}";
@@ -763,12 +594,56 @@ public class DAOActivity {
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
+                	System.out.println(LOGDBDISCONN);
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
             }
         }
         
+	}
+	
+	public CreateActivityBean fillBean(ResultSet rs) throws SQLException {
+	        	
+           	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
+        	CreateActivityBean bean = new CreateActivityBean();
+        	
+        	bean.setIdActivity(rs.getInt("id"));
+        	
+        	bean.setActivityName(rs.getString("nome"));
+        	bean.setActivityDescription(rs.getString("descrizione"));
+        	bean.setPlace(rs.getInt("luogo"));
+        	
+        	
+        	bean.setOpeningTime(rs.getString("orario_apertura"));
+        	bean.setClosingTime(rs.getString("orario_chiusura"));
+        	
+        	bean.setOpeningDate(rs.getString("data_inizio"));
+        	bean.setEndDate(rs.getString("data_fine"));
+        	
+        	//serve per convertire da string -> enum ActivityType
+        	bean.setType(ActivityType.valueOf(rs.getString("tipo")));
+        	if(rs.getString("cadenza") != null)
+        	bean.setCadence(Cadence.valueOf(rs.getString("cadenza")));
+        	
+        	bean.setArte(rs.getBoolean("arte"));
+        	bean.setCibo(rs.getBoolean("cibo"));
+        	bean.setMusica(rs.getBoolean("musica"));
+        	bean.setSport(rs.getBoolean("sport"));
+        	bean.setSocial(rs.getBoolean("social"));
+        	bean.setNatura(rs.getBoolean("natura"));
+        	bean.setEsplorazione(rs.getBoolean("esplorazione"));
+        	bean.setRicorrenze(rs.getBoolean("ricorrenze"));
+        	bean.setModa(rs.getBoolean("moda"));
+        	bean.setShopping(rs.getBoolean("shopping"));
+        	bean.setAdrenalina(rs.getBoolean("adrenalina"));
+        	bean.setRelax(rs.getBoolean("relax"));
+        	bean.setIstruzione(rs.getBoolean("istruzione"));
+        	bean.setIstruzione(rs.getBoolean("monumenti"));
+        	
+        	bean.setOwner(rs.getInt("proprietario"));
+        	
+        	return bean;
+
 	}
 }
