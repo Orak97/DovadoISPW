@@ -39,6 +39,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -60,6 +61,7 @@ import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
 import logic.model.DateBean;
+import logic.model.Discount;
 import logic.model.ExpiringActivity;
 import logic.model.FindActivitiesBean;
 import logic.model.Log;
@@ -83,6 +85,8 @@ public class HomeView implements Initializable{
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
 	private static final  String BTNEVNKEY = "evn-btn";
+	private static long wPopup = 500;
+	private static long hPopup = 50;
 	
 	private static StackPane lastEventBoxSelected;
 
@@ -400,7 +404,6 @@ public class HomeView implements Initializable{
 							eventBox.getChildren().add(eventImage);
 							eventBox.getChildren().add(eventText);
 							if(activities.get(i) instanceof CertifiedActivity) {
-
 								eventName.getStyleClass().clear();
 								eventName.getStyleClass().add("certEventName");
 								eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
@@ -742,9 +745,35 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 						pickTimeBox.getChildren().addAll(hourBox,minBox);
 						
 						dateBox.setBackground(b);
-						dateBox.getChildren().addAll(txt,pickDate,txtTime,pickTimeBox,txtReminder,pickDateReminder,pickReminderBox,buttonBox);
+						dateBox.getChildren().addAll(txt,pickDate,txtTime,pickTimeBox,txtReminder,pickDateReminder,pickReminderBox);
 						dateBox.setId("dateBox");
 						
+						ChoiceBox<String> percDiscount = new ChoiceBox<String>();
+						
+						if(activitySelected instanceof CertifiedActivity) {
+							Text activityPrice = new Text(((CertifiedActivity)activitySelected).getPrice());
+							Text discountDescription;
+							try {
+								
+								ArrayList<Discount> discList = daoAct.viewDiscounts(activityId);
+								if (discList==null || discList.isEmpty()) {
+									discountDescription = new Text("No discount available"+'\n'+" for this activity.");
+								}else {
+									discountDescription = new Text("Pick a discount if you want.");
+								}
+								percDiscount.getItems().add("0% - 0£");
+								for(int i=0;i<discList.size();i++) {
+									percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"£");
+								}
+								dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);								
+							
+							}
+							catch(Exception e2) {
+								Log.getInstance().getLogger().info("Database error, discounts not found.");
+								e2.printStackTrace();
+							}
+						}
+						dateBox.getChildren().add(buttonBox);
 						selectedBox.getChildren().add(dateBox);
 						
 						close.setText("Close");
@@ -758,32 +787,74 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 						
 						ok.setOnAction(new EventHandler<ActionEvent>(){
 							@Override public void handle(ActionEvent e) {
-								DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
+									Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche.");
+									final Popup popup = popupGen(wPopup,hPopup,"You haven't specified enough info."); 
+									popup.centerOnScreen(); 
+								    
+								    popup.show(curr);
+								    popup.setAutoHide(true);
+								}
+							    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 								String dayStringed = day.format(pickDate.getValue());
-								
+																								
 								String[] date = dayStringed.split("-");
-
+								
 								String hourChosen = hourBox.getValue();
 								String minChosen = minBox.getValue();
-								
-								String hourReminder = hourBox2.getValue();
-								String minReminder = minBox2.getValue();
-								String dateReminderChosen = day.format(pickDateReminder.getValue());
-								if (hourReminder.isEmpty() || minReminder.isEmpty()) {
+								String dateReminderChosen;
+								String hourReminder;
+								String minReminder;
+								if (hourBox2.getValue()==null || minBox2.getValue()==null) {
 									int hourReminderInt = Integer.parseInt(hourChosen);
 									hourReminder = Integer.toString(hourReminderInt-1);
 							
-									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");;
+									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");
+									final Popup popup = popupGen(wPopup,hPopup,"You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
+									popup.centerOnScreen(); 
+								    
+								    popup.show(curr);
+								    popup.setAutoHide(true);
 									
 									if(hourReminderInt-1<10) {
 										hourReminder = "0"+hourReminder;
 									}
+								} else {
+									hourReminder = hourBox2.getValue();
+									minReminder = minBox2.getValue();
 								}
-								if(dateReminderChosen.isEmpty()) {
-									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");;
+								if(pickDateReminder.getValue().toString().isBlank()) {
+									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
 									dateReminderChosen=dayStringed;
-								}
+									final Popup popup = popupGen(wPopup,hPopup,"You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
+									popup.centerOnScreen(); 
+								    
+								    popup.show(curr);
+								    popup.setAutoHide(true);
+								} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
 								String dateChosen = dayStringed;
+
+								ScheduleBean sb = new ScheduleBean();
+								
+								if(dateBox.getChildren().contains(percDiscount)) {
+									String[] percPrice = percDiscount.getValue().split("% - ");
+									int percRequested = Integer.valueOf(percPrice[0]);
+									
+									String priceString = (percPrice[1].split("£"))[0];
+									int pricePayed = Integer.valueOf(priceString);
+									
+									if(pricePayed > ((User)user).getBalance()) {
+										Log.getInstance().getLogger().info("Not enough dovado $ for payment");
+										final Popup popup = popupGen(wPopup,hPopup,"Not enough Dovado $ for payment"); 
+										popup.centerOnScreen(); 
+									    
+									    popup.show(curr);
+									    popup.setAutoHide(true);
+										return;
+									} else {
+										sb.setSelectedCoupon(percRequested);
+									}
+								}
 								
 //								DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 //								LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
@@ -797,7 +868,6 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 //								dateB.setMonth(Integer.parseInt(date[1]));
 //								dateB.setYear(Integer.parseInt(date[0]));
 								
-								ScheduleBean sb = new ScheduleBean();
 								sb.setIdActivity(activityId);
 								sb.setScheduledDate(dateChosen);
 								sb.setScheduledTime(hourChosen+':'+minChosen);
@@ -806,21 +876,26 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								
 								AddActivityToScheduleController sc = new AddActivityToScheduleController((User) user, sb);
 								
-								try {
-									sc.addActivityToSchedule();
-								} catch (Exception e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
+								if(activitySelected instanceof CertifiedActivity) {
+									try {
+										sc.addCertifiedActivityToSchedule();
+									} catch (Exception e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+								}else {
+									try {
+										sc.addActivityToSchedule();
+									} catch (Exception e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
 								}
-								
-								final Stage dialog = new Stage();
-				                dialog.initModality(Modality.NONE);
-				                dialog.initOwner(curr);
-				                VBox dialogVbox = new VBox(20);
-				                dialogVbox.getChildren().add(new Text("Activity successfully scheduled"));
-				                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-				                dialog.setScene(dialogScene);
-				                dialog.show();
+								final Popup popup = popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
+								popup.centerOnScreen(); 
+							    
+							    popup.show(curr);
+							    popup.setAutoHide(true);
 				                
 							}
 						});
@@ -838,24 +913,11 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			deleteActivity.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					 final Popup popup = new Popup(); popup.centerOnScreen();
-					 
-					    Text deletionText = new Text("Activity"+'\n'+"deleted"+'\n'+"correctly");
-					    deletionText.getStyleClass().add("textEventInfo");
-					    deletionText.setTextAlignment(TextAlignment.CENTER);;
-					    
-					    Circle c = new Circle(0, 0, 50, Color.valueOf("212121"));
-					    
-					    StackPane popupContent = new StackPane(c,deletionText); 
-					    
-					    c.setStrokeType(StrokeType.OUTSIDE);
-					    c.setStrokeWidth(0.3);
-					    c.setStroke(Paint.valueOf(BGCOLORKEY));
-					    
-					    popup.getContent().add(popupContent);
-					    
-					    popup.show(curr);
-					    popup.setAutoHide(true);
+					final Popup popup = popupGen(wPopup,hPopup,"Activity deleted correctly!"); 
+					popup.centerOnScreen();
+						 
+				    popup.show(curr);
+				    popup.setAutoHide(true);
 					    
 					Log.getInstance().getLogger().info("Attivit√† cancellata dalla persistenza");
 					activityDeselected(lastEventBoxSelected,true);
@@ -863,263 +925,271 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			});
 			
 		}
-}
+	}
 
-private void updateChat(ListView chat, Channel ch) {
-	int i;
-	chat.getItems().clear();
-	for(i=0;i<ch.getChat().size();i++) {
-		//TODO qui posso nominarla in altro modo la VBOX?
-		VBox chatContainer = new VBox();
-		VBox chatMss = new VBox();
-		Text msstxt = new Text();
-		Text username = new Text();
-		Text dateSent = new Text();
-		String usernameMss = ch.getChat().get(i).getUsr();
-		
-		//Mi trovo lo username da mettere sopra il messaggio:
-		username.setText(usernameMss);
-		//Mi trovo il testo da mettere al centro del messaggio:
-		msstxt.setText(ch.getChat().get(i).getMsgText());
-		//Mi trovo il tempo di invio da mettere in basso a destra del messaggio:
-		dateSent.setText(ch.getChat().get(i).getMsgSentDate());
-		
-		username.setTextAlignment(TextAlignment.LEFT);
-		msstxt.setTextAlignment(TextAlignment.LEFT);
-		dateSent.setTextAlignment(TextAlignment.RIGHT);
-		
-		username.getStyleClass().add("mssusr");
-		msstxt.getStyleClass().add("msstxt");
-		dateSent.getStyleClass().add("msssent");
-		
-		chatContainer.getChildren().addAll(username,msstxt,dateSent);
-		chatContainer.setMaxWidth(root.getWidth()/2);
-		
-		chatMss.getChildren().add(chatContainer);
-		chatMss.autosize();
-		
-		
-		if(user.getUsername().equals(usernameMss)) {
-			CornerRadii cr = new CornerRadii(8);
-		
-			BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGUCOLORKEY ), cr, null);
-			Background b = new Background(bf);
+	private void updateChat(ListView chat, Channel ch) {
+		int i;
+		chat.getItems().clear();
+		for(i=0;i<ch.getChat().size();i++) {
+			//TODO qui posso nominarla in altro modo la VBOX?
+			VBox chatContainer = new VBox();
+			VBox chatMss = new VBox();
+			Text msstxt = new Text();
+			Text username = new Text();
+			Text dateSent = new Text();
+			String usernameMss = ch.getChat().get(i).getUsr();
 			
-			chatContainer.setBackground(b);
-			chatContainer.setAlignment(Pos.CENTER_RIGHT);
+			//Mi trovo lo username da mettere sopra il messaggio:
+			username.setText(usernameMss);
+			//Mi trovo il testo da mettere al centro del messaggio:
+			msstxt.setText(ch.getChat().get(i).getMsgText());
+			//Mi trovo il tempo di invio da mettere in basso a destra del messaggio:
+			dateSent.setText(ch.getChat().get(i).getMsgSentDate());
 			
-			chatMss.setAlignment(Pos.CENTER_RIGHT);
+			username.setTextAlignment(TextAlignment.LEFT);
+			msstxt.setTextAlignment(TextAlignment.LEFT);
+			dateSent.setTextAlignment(TextAlignment.RIGHT);
+			
+			username.getStyleClass().add("mssusr");
+			msstxt.getStyleClass().add("msstxt");
+			dateSent.getStyleClass().add("msssent");
+			
+			chatContainer.getChildren().addAll(username,msstxt,dateSent);
+			chatContainer.setMaxWidth(root.getWidth()/2);
+			
+			chatMss.getChildren().add(chatContainer);
+			chatMss.autosize();
+			
+			
+			if(user.getUsername().equals(usernameMss)) {
+				CornerRadii cr = new CornerRadii(8);
+			
+				BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGUCOLORKEY ), cr, null);
+				Background b = new Background(bf);
+				
+				chatContainer.setBackground(b);
+				chatContainer.setAlignment(Pos.CENTER_RIGHT);
+				
+				chatMss.setAlignment(Pos.CENTER_RIGHT);
+			}
+			else {
+				CornerRadii cr = new CornerRadii(8);
+				BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
+				Background b = new Background(bf);
+				
+				chatContainer.setBackground(b);
+				chatMss.setAlignment(Pos.CENTER_LEFT);
+			}
+			chat.getItems().add(chatMss);
 		}
-		else {
-			CornerRadii cr = new CornerRadii(8);
-			BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
-			Background b = new Background(bf);
-			
-			chatContainer.setBackground(b);
-			chatMss.setAlignment(Pos.CENTER_LEFT);
+		if(i>0) {
+			chat.scrollTo(i-1);
 		}
-		chat.getItems().add(chatMss);
 	}
-	if(i>0) {
-		chat.scrollTo(i-1);
-	}
-}
 
-//Penso che questo metodo come anche activity selected etc... vadano spostati in un'apposita classe
-//HomeController.
-
-public void activityDeselected(StackPane lastBox,boolean delete) {
+	//Penso che questo metodo come anche activity selected etc... vadano spostati in un'apposita classe
+	//HomeController.
 	
-	if(lastActivitySelected>=0)
-		eventsList.getItems().remove(lastActivitySelected+1);
-	
-	if(delete==true) {
-		eventsList.getItems().remove(lastEventBoxSelected);
-	
-	//	Metodo da aggiungere al DAO
-	//		
-	//	daoAct.DELETEACTIVITYFROMDB(activitySelected);
-	
-		lastEventBoxSelected=null;
-		return;
-	}
-	
-	ImageView eventImage = (ImageView) lastBox.getChildren().get(2);
-/**CANCEL	VBox eventInfo = (VBox) lastBox.getChildren().get(3);
-	
-	Text eventName = (Text) eventInfo.getChildren().get(0);
-	Text eventDetails = (Text) eventInfo.getChildren().get(1);**/
-
-	eventImage.setScaleX(1);
-	eventImage.setScaleY(1);
-	
-	root.getChildren().remove(chatContainer);
-}
-
-public void filterActivities() {
-	daoAct = DAOActivity.getInstance();
-	daoSU = DAOSuperUser.getInstance();
-	daoPlc = DAOPlace.getInstance();
-	daoPref = DAOPreferences.getInstance();
-	int searchMode = -1;
-	
-	String searchItem = null;
-	
-	eng.executeScript("removeAllMarkers()");
-	
-	if((searchItem = searchBar.getText())==null) return;
-
-	FindActivitiesBean findActBeanZone = new FindActivitiesBean();
-	findActBeanZone.setZone(searchItem);
-	findActBeanZone.setDate(LocalDate.now().toString());
-	
-	FindActivitiesBean findActBeanKeywords = new FindActivitiesBean();
-	findActBeanKeywords.setZone(searchItem);
-	findActBeanKeywords.setDate(LocalDate.now().toString());
-	
-	PreferenceBean prefBean = new PreferenceBean();
-	prefBean.setPreferences(((User)user).getPreferences().getSetPreferences());
-	System.out.println("Preferenze settate: "+((User)user).getPreferences().getSetPreferences());
-	FindActivityController findActCtrl = new FindActivityController(findActBeanZone, prefBean);
-	ArrayList<Activity> activities = new ArrayList<>();
-	try {
-		//Eseguo un controllo sulla ricerca delle attivit√†; se il risultato √® un'arraylist vuoto, allora
-		//segnalo l'errore e esco dal metodo.
+	public void activityDeselected(StackPane lastBox,boolean delete) {
 		
-		if( (activities = findActCtrl.FindActivities()).isEmpty() ) {
-			Log.getInstance().getLogger().info("Nothing was found!");
-			final Popup popup = new Popup(); popup.centerOnScreen();
-			 
-		    Text passwordNotEqualTxt = new Text("Nothing"+'\n'+"has been"+'\n'+"found");
-		    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-		    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
-		    
-		    Circle c = new Circle(0, 0, 60, Color.valueOf("212121"));
-		    
-		    StackPane popupContent = new StackPane(c,passwordNotEqualTxt); 
-		    
-		    c.setStrokeType(StrokeType.OUTSIDE);
-		    c.setStrokeWidth(0.3);
-		    c.setStroke(Paint.valueOf(BGCOLORKEY));
-		    
-		    popup.getContent().add(popupContent);
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
+		if(lastActivitySelected>=0)
+			eventsList.getItems().remove(lastActivitySelected+1);
+		
+		if(delete==true) {
+			eventsList.getItems().remove(lastEventBoxSelected);
+		
+		//	Metodo da aggiungere al DAO
+		//		
+		//	daoAct.DELETEACTIVITYFROMDB(activitySelected);
+		
+			lastEventBoxSelected=null;
 			return;
 		}
 		
-	} catch (Exception e) {
-		Log.getInstance().getLogger().info("La ricerca delle attivit√† non √® andata a buon fine. \n per colpa di un errore nel metodo del DB.");
-		e.printStackTrace();
-		return;
-	}
-//  In base all'input dell'utente le righe sottostanti vedono se
-//	l'utente cercava tramite preferenza o tramite nome dell'attivit√†
-//	
-//	if(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase())!=null) {
-//		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
-//		searchMode = 1;
-//	}
-//	
-//	else if(daoAct.findActivityByName(daoSU, searchItem.toUpperCase())!=null) {
-//		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByName(daoSU, searchItem.toUpperCase()));
-//		searchMode = 0;
-//	}
-	
-	//else if() {
+		ImageView eventImage = (ImageView) lastBox.getChildren().get(2);
+	/**CANCEL	VBox eventInfo = (VBox) lastBox.getChildren().get(3);
 		
-	//}
+		Text eventName = (Text) eventInfo.getChildren().get(0);
+		Text eventDetails = (Text) eventInfo.getChildren().get(1);**/
 	
-	if(searchMode == -1) return;
+		eventImage.setScaleX(1);
+		eventImage.setScaleY(1);
+		
+		root.getChildren().remove(chatContainer);
+	}
 	
-//	if(user instanceof Partner) {
-//		ArrayList<SuperActivity> partnerAct = new ArrayList<SuperActivity>();
-//		for(int i=0;i<activities.size();i++) {
-//			if((activities.get(i).getCreator().getUserID()).equals(user.getUserID()))
-//				partnerAct.add(activities.get(i));
-//		}
-//		activities=partnerAct;
-//	}
-	eventsList.getItems().clear();
+	public void filterActivities() {
+		daoAct = DAOActivity.getInstance();
+		daoSU = DAOSuperUser.getInstance();
+		daoPlc = DAOPlace.getInstance();
+		daoPref = DAOPreferences.getInstance();
+		int searchMode = -1;
+		
+		String searchItem = null;
+		
+		eng.executeScript("removeAllMarkers()");
+		
+		if((searchItem = searchBar.getText())==null) return;
 	
-	int i;
-	for(i=0;i<activities.size();i++) {
-		ImageView eventImage = new ImageView();
-		Text eventName = new Text(activities.get(i).getName()+"\n");
-		Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-		Text eventInfo;
-
-		if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
-			eventInfo = new Text(activities.get(i).getPlace().getName()+
-					"\nExpiring activity"+
-					"- From: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
-					"- To: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+		FindActivitiesBean findActBeanZone = new FindActivitiesBean();
+		findActBeanZone.setZone(searchItem);
+		findActBeanZone.setDate(LocalDate.now().toString());
+		
+		FindActivitiesBean findActBeanKeywords = new FindActivitiesBean();
+		findActBeanKeywords.setZone(searchItem);
+		findActBeanKeywords.setDate(LocalDate.now().toString());
+		
+		PreferenceBean prefBean = new PreferenceBean();
+		prefBean.setPreferences(((User)user).getPreferences().getSetPreferences());
+		System.out.println("Preferenze settate: "+((User)user).getPreferences().getSetPreferences());
+		FindActivityController findActCtrl = new FindActivityController(findActBeanZone, prefBean);
+		ArrayList<Activity> activities = new ArrayList<>();
+		try {
+			//Eseguo un controllo sulla ricerca delle attivit√†; se il risultato √® un'arraylist vuoto, allora
+			//segnalo l'errore e esco dal metodo.
+			
+			if( (activities = findActCtrl.FindActivities()).isEmpty() ) {
+				Log.getInstance().getLogger().info("Nothing was found!");
+				final Popup popup = popupGen(wPopup,hPopup,"Nothing has been found"); 
+				popup.centerOnScreen(); 
+			    
+			    popup.show(curr);
+			    popup.setAutoHide(true);
+				return;
+			}
+			
+		} catch (Exception e) {
+			Log.getInstance().getLogger().info("La ricerca delle attivit√† non √® andata a buon fine. \n per colpa di un errore nel metodo del DB.");
+			e.printStackTrace();
+			return;
+		}
+	//  In base all'input dell'utente le righe sottostanti vedono se
+	//	l'utente cercava tramite preferenza o tramite nome dell'attivit√†
+	//	
+	//	if(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase())!=null) {
+	//		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
+	//		searchMode = 1;
+	//	}
+	//	
+	//	else if(daoAct.findActivityByName(daoSU, searchItem.toUpperCase())!=null) {
+	//		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByName(daoSU, searchItem.toUpperCase()));
+	//		searchMode = 0;
+	//	}
+		
+		//else if() {
+			
+		//}
+		
+		if(searchMode == -1) return;
+		
+	//	if(user instanceof Partner) {
+	//		ArrayList<SuperActivity> partnerAct = new ArrayList<SuperActivity>();
+	//		for(int i=0;i<activities.size();i++) {
+	//			if((activities.get(i).getCreator().getUserID()).equals(user.getUserID()))
+	//				partnerAct.add(activities.get(i));
+	//		}
+	//		activities=partnerAct;
+	//	}
+		eventsList.getItems().clear();
+		
+		int i;
+		for(i=0;i<activities.size();i++) {
+			ImageView eventImage = new ImageView();
+			Text eventName = new Text(activities.get(i).getName()+"\n");
+			Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+			Text eventInfo;
+	
+			if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+						"\nExpiring activity"+
+						"- From: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+						"- To: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+
+						"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+			else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+						"\nPeriodic activity"+
+						"-"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
+						"- From: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+						"- To: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+
+						"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+			else{
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+					"\n Continuos activity"+
 					"\n"+activities.get(i).getFrequency().getOpeningTime()+
 					"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+			eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
+	
+			eventInfo.setId("eventInfo");
+			eventInfo.getStyleClass().add("textEventInfo");
+		/*	eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.MEDIUM, 12));
+			eventInfo.setTextAlignment(TextAlignment.LEFT);
+			eventInfo.setFill(Paint.valueOf("#ffffff"));
+			eventInfo.setStroke(Paint.valueOf("#000000"));
+	*/
+			eventName.setId("eventName");
+			eventName.getStyleClass().add("textEventName");
+		/*	eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+			eventName.setFill(Paint.valueOf("#ffffff"));
+			eventName.setStroke(Paint.valueOf("#000000"));
+	*/
+			
+			
+			VBox eventText = new VBox(eventName,eventInfo);
+			eventText.setAlignment(Pos.CENTER);
+			
+			//Preparo un box in cui contenere il nome dell'attivitÔøΩ e altre sue
+			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+			StackPane eventBox = new StackPane();
+			Text eventId = new Text();
+			Text placeId = new Text();
+			
+			eventId.setId(activities.get(i).getId().toString());
+			placeId.setId(activities.get(i).getPlace().getId().toString());
+			
+			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+			//dell'evento ed infine il testo dell'evento.
+			eventBox.getChildren().add(eventId);
+			eventBox.getChildren().add(placeId);
+			eventBox.getChildren().add(eventImage);		
+			eventBox.getChildren().add(eventText);
+			//Se l'attivit‡ Ë certificata aggiungo un logo in alto a
+			//destra per indicarlo.
+			if(activities.get(i) instanceof CertifiedActivity) {
+	
+				eventName.getStyleClass().clear();
+				eventName.getStyleClass().add("certEventName");
+				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+			}	
+			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+			eventBox.setAlignment(Pos.CENTER);
+			eng.executeScript("spotPlace("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", '"+activities.get(i).getPlace().getName()+"',"+activities.get(i).getPlace().getId()+"))");;
+			eventsList.getItems().add(eventBox);
 		}
-		else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
-			eventInfo = new Text(activities.get(i).getPlace().getName()+
-					"\nPeriodic activity"+
-					"-"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
-					"- From: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
-					"- To: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
-					"\n"+activities.get(i).getFrequency().getOpeningTime()+
-					"-"+activities.get(i).getFrequency().getClosingTime());
-		}
-		else{
-			eventInfo = new Text(activities.get(i).getPlace().getName()+
-				"\n Continuos activity"+
-				"\n"+activities.get(i).getFrequency().getOpeningTime()+
-				"-"+activities.get(i).getFrequency().getClosingTime());
-		}
-		eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
-
-		eventInfo.setId("eventInfo");
-		eventInfo.getStyleClass().add("textEventInfo");
-	/*	eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.MEDIUM, 12));
-		eventInfo.setTextAlignment(TextAlignment.LEFT);
-		eventInfo.setFill(Paint.valueOf("#ffffff"));
-		eventInfo.setStroke(Paint.valueOf("#000000"));
-*/
-		eventName.setId("eventName");
-		eventName.getStyleClass().add("textEventName");
-	/*	eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-		eventName.setFill(Paint.valueOf("#ffffff"));
-		eventName.setStroke(Paint.valueOf("#000000"));
-*/
-		
-		
-		VBox eventText = new VBox(eventName,eventInfo);
-		eventText.setAlignment(Pos.CENTER);
-		
-		//Preparo un box in cui contenere il nome dell'attivitÔøΩ e altre sue
-		//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-		StackPane eventBox = new StackPane();
-		Text eventId = new Text();
-		Text placeId = new Text();
-		
-		eventId.setId(activities.get(i).getId().toString());
-		placeId.setId(activities.get(i).getPlace().getId().toString());
-		
-		//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-		//dell'evento ed infine il testo dell'evento.
-		eventBox.getChildren().add(eventId);
-		eventBox.getChildren().add(placeId);
-		eventBox.getChildren().add(eventImage);		
-		eventBox.getChildren().add(eventText);
-		//Se l'attivit‡ Ë certificata aggiungo un logo in alto a
-		//destra per indicarlo.
-		if(activities.get(i) instanceof CertifiedActivity) {
-
-			eventName.getStyleClass().clear();
-			eventName.getStyleClass().add("certEventName");
-			eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
-		}	
-		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-		eventBox.setAlignment(Pos.CENTER);
-		eng.executeScript("spotPlace("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", '"+activities.get(i).getPlace().getName()+"',"+activities.get(i).getPlace().getId()+"))");;
-		eventsList.getItems().add(eventBox);
 	}
-}
+	
+	public Popup popupGen(double width, double height, String error) {
+		Popup popup = new Popup(); 
+		popup.centerOnScreen();
+		
+		Text errorTxt = new Text(error);
+		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.setTextAlignment(TextAlignment.CENTER);
+		errorTxt.setWrappingWidth(480);
+	    
+	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
+	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
+	    StackPane popupContent = new StackPane(r,errorTxt); 
+	    
+	    r.setStrokeType(StrokeType.OUTSIDE);
+	    r.setStrokeWidth(0.3);
+	    r.setStroke(Paint.valueOf(BGCOLORKEY));
+	    
+	    popup.getContent().add(popupContent);
+	    return popup;
+	}
 }

@@ -31,12 +31,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.ActivityType;
 import logic.controller.UpdateCertActController;
@@ -79,6 +83,8 @@ public class EventsView implements Initializable{
 	private static Text txtCadence = null;
 	private static Text txtDateOp = null;
 	private static Text txtDateCl = null;
+	private static long wPopup = 500;
+	private static long hPopup = 50;
     
     private static Stage curr;
     
@@ -271,6 +277,12 @@ public class EventsView implements Initializable{
 				eventName.getStyleClass().clear();
 				eventName.getStyleClass().add("certEventName");
 				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+				
+				eventInfo.setText(eventInfo.getText()+
+						"\nPrice set is: "+((CertifiedActivity)activities.get(i)).getPrice()+
+						"\nYour Coupon ID: "+schedActivities.get(i).getCoupon().getCouponCode()+
+						"\nYour Discount: "+schedActivities.get(i).getCoupon().getDiscount());
+				
 			}	
 			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 			eventBox.setAlignment(Pos.CENTER_LEFT);
@@ -345,6 +357,7 @@ public class EventsView implements Initializable{
 				eventName.getStyleClass().clear();
 				eventName.getStyleClass().add("certEventName");
 				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+
 			}	
 			
 			
@@ -623,23 +636,20 @@ public class EventsView implements Initializable{
 							
 							try {
 								if(updateController.updateActivity()) {
-									final Stage dialog = new Stage();
-								    dialog.initModality(Modality.NONE);
-								    dialog.initOwner(curr);
-								    VBox dialogVbox = new VBox(20);
-								    dialogVbox.getChildren().add(new Text("Activity successfully modified"));
-								    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-								    dialog.setScene(dialogScene);
-								    dialog.show();
+									
+									final Popup popup = popupGen(wPopup,hPopup,"Activity successfully modified"); 
+									popup.centerOnScreen(); 
+								    
+								    popup.show(curr);
+								    popup.setAutoHide(true);
+									
 								} else {
-									final Stage dialog = new Stage();
-								    dialog.initModality(Modality.NONE);
-								    dialog.initOwner(curr);
-								    VBox dialogVbox = new VBox(20);
-								    dialogVbox.getChildren().add(new Text("Activity not modified"));
-								    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-								    dialog.setScene(dialogScene);
-								    dialog.show();
+									final Popup popup = popupGen(wPopup,hPopup,"Activity not modified"); 
+									popup.centerOnScreen(); 
+								    
+								    popup.show(curr);
+								    popup.setAutoHide(true);
+						
 								}
 							} catch (Exception e1) {
 								e1.printStackTrace();
@@ -723,39 +733,27 @@ public class EventsView implements Initializable{
 		deleteSched.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 													
-					final Stage dialog = new Stage();
-					
+					final Popup popup; 
+				
 					if(deleteScheduledEvent(schedEventID)) {
 						eventsList.getItems().remove(itemNumber+1);
 						eventsList.getItems().remove(itemNumber);
 						lastActivitySelected= -1;
 						lastEventBoxSelected= null;
 						//Messaggio per il dialog box
-						dialog.initModality(Modality.NONE);
-				        dialog.initOwner(curr);
-				        VBox dialogVbox = new VBox(20);
-				                
-				        Text success = (new Text("Scheduled activity successfully deleted"));
-				        success.setTextAlignment(TextAlignment.CENTER);
-				               
-				        dialogVbox.getChildren().add(success);
-				        Scene dialogScene = new Scene(dialogVbox, 100, 50);
-				        dialog.setScene(dialogScene);
-				        dialog.show();
+						popup = popupGen(wPopup,hPopup,"Scheduled activity successfully deleted"); 
+						popup.centerOnScreen(); 
+					    
+					    popup.show(curr);
+					    popup.setAutoHide(true);
 			        }
 			        else {
-				        dialog.initModality(Modality.NONE);
-				        dialog.initOwner(curr);
-				        VBox dialogVboxFail = new VBox(20);
-				                
-				        Text fail = (new Text("Scheduled activity unsuccessfully deleted"));
-				        fail.setTextAlignment(TextAlignment.CENTER);
-				                
-				        dialogVboxFail.getChildren().add(fail);
-				        Scene dialogSceneFail = new Scene(dialogVboxFail, 100, 50);
-				        dialog.setScene(dialogSceneFail);
-				        dialog.show();    
-			         }
+			        	popup = popupGen(wPopup,hPopup,"Scheduled activity unsuccessfully deleted"); 
+						popup.centerOnScreen(); 
+					    
+					    popup.show(curr);
+					    popup.setAutoHide(true);
+				      }
 				}
 			});
 			/*viewSchedInfo.setOnAction(new EventHandler<ActionEvent>(){
@@ -854,4 +852,24 @@ public class EventsView implements Initializable{
 		
 		}
 
+	public Popup popupGen(double width, double height, String error) {
+		Popup popup = new Popup(); 
+		popup.centerOnScreen();
+		
+		Text errorTxt = new Text(error);
+		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.setTextAlignment(TextAlignment.CENTER);
+		errorTxt.setWrappingWidth(480);
+	    
+	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
+	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
+	    StackPane popupContent = new StackPane(r,errorTxt); 
+	    
+	    r.setStrokeType(StrokeType.OUTSIDE);
+	    r.setStrokeWidth(0.3);
+	    r.setStroke(Paint.valueOf("ffffff"));
+	    
+	    popup.getContent().add(popupContent);
+	    return popup;
+	}
 }
