@@ -512,6 +512,8 @@
   		document.querySelector('.select-place').classList.add('visually-hidden')
   		document.querySelector('.form-create-activity').classList.remove('visually-hidden')
   		document.querySelector('button.create-activity').disabled=false;
+  		
+  		window.scrollTo(0, 0)
   	}
   	
   	function changedKind(value){
