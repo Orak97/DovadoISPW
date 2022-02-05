@@ -372,7 +372,7 @@ public class DAOActivity {
 	            	startDate = ((ExpiringActivity)activity.getFrequency()).getStartDate().toString();
 	            	endDate = ((ExpiringActivity)activity.getFrequency()).getEndDate().toString();
 	            }
-	            
+
 	            stmt.setString(8,type);
 	            stmt.setString(9,activity.getFrequency().getOpeningTime().toString());
 	            stmt.setString(10,activity.getFrequency().getClosingTime().toString());

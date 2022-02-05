@@ -41,6 +41,7 @@ import javafx.stage.Stage;
 import logic.controller.ActivityType;
 import logic.controller.UpdateCertActController;
 import logic.model.Activity;
+import logic.model.Cadence;
 import logic.model.CertifiedActivity;
 import logic.model.ContinuosActivity;
 import logic.model.CreateActivityBean;
@@ -69,9 +70,15 @@ public class EventsView implements Initializable{
     private static DAOChannel daoCH;
     private static DAOPlace daoPlc;
     private static DAOSchedules daoSch;
-    private static SuperActivity activitySelected;
-    private static StackPane lastEventBoxSelected;
+    private static SuperActivity activitySelected = null;
+    private static StackPane lastEventBoxSelected = null;
     private static SuperUser user;
+    private static DatePicker pickDateOp = null;
+    private static DatePicker pickDateCl = null;
+	private static ChoiceBox<String> pickCadence = null;
+	private static Text txtCadence = null;
+	private static Text txtDateOp = null;
+	private static Text txtDateCl = null;
     
     private static Stage curr;
     
@@ -140,65 +147,11 @@ public class EventsView implements Initializable{
 	
 				for(int j=0;j<activities.size();j++)
 					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+				
 				Thread newThread = new Thread(() -> {
-					int i;
-					for(i=0;i<activities.size();i++) {
-						ImageView eventImage = new ImageView();
-						Text eventName = new Text(activities.get(i).getName()+"\n");
-						Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-						Text eventInfo = new Text(activities.get(i).getPlace().getName()+
-								"\n"+activities.get(i).getFrequency().getOpeningTime()+
-								"-"+activities.get(i).getFrequency().getClosingTime());
-						
-	
-						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
-						eventImage.getStyleClass().add("event-image");
-						
-						eventInfo.setId("eventInfo");
-						eventInfo.getStyleClass().add("textEventInfo");
-						eventInfo.setTextAlignment(TextAlignment.LEFT);
-						eventInfo.setWrappingWidth(480);
-				/*		eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-						eventInfo.setFill(Paint.valueOf("#ffffff"));
-						eventInfo.setStrokeWidth(0.3);
-						eventInfo.setStroke(Paint.valueOf("#000000"));
-				*/		
-						eventName.setId("eventName");
-						eventName.getStyleClass().add("textEventName");
-						eventName.setTextAlignment(TextAlignment.LEFT);
-						eventName.setWrappingWidth(480);
-				/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-						eventName.setFill(Paint.valueOf("#ffffff"));
-						eventName.setStrokeWidth(0.3);
-						eventName.setStroke(Paint.valueOf("#000000"));
-					*/	
-						VBox eventText = new VBox(eventName,eventInfo);
-						eventText.setAlignment(Pos.CENTER_LEFT);
-						eventText.getStyleClass().add("eventTextVbox");
-						//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-						//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-						StackPane eventBox = new StackPane();
-						eventBox.getStyleClass().add("eventBox");
-						
-						
-						Text eventId = new Text();
-						Text schedId = new Text();
-						
-						eventId.setId(activities.get(i).getId().toString());
-						schedId.setId(schedActivities.get(i).getId().toString());
-						
-						//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-						//dell'evento ed infine il testo dell'evento.
-						eventBox.getChildren().add(eventId);
-						eventBox.getChildren().add(schedId);
-						eventBox.getChildren().add(eventImage);
-						eventBox.getChildren().add(eventText);
-						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-						eventBox.setAlignment(Pos.CENTER_LEFT);
-						
-						eventsList.getItems().add(eventBox);
-					}
+					fillEventsListUser();
 				});
+				
 				newThread.start();
 				eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 				newThread.join();
@@ -220,66 +173,11 @@ public class EventsView implements Initializable{
 	    		
 	    		for(int j=0;j<activities.size();j++)
 					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
-				Thread newThread = new Thread(() -> {
-						int i;
-					for(i=0;i<activities.size();i++) {
-						ImageView eventImage = new ImageView();
-						Text eventName = new Text(activities.get(i).getName()+"\n");
-						Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-						Text eventInfo = new Text(activities.get(i).getPlace().getName()+
-								"\n"+activities.get(i).getFrequency().getOpeningTime()+
-								"-"+activities.get(i).getFrequency().getClosingTime());
-						
-	
-						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
-						eventImage.getStyleClass().add("event-image");
-						
-						eventInfo.setId("eventInfo");
-						eventInfo.getStyleClass().add("textEventInfo");
-						eventInfo.setTextAlignment(TextAlignment.LEFT);
-						eventInfo.setWrappingWidth(480);
-				/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-						eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-						eventInfo.setFill(Paint.valueOf("#ffffff"));
-						eventInfo.setStrokeWidth(0.3);
-						eventInfo.setStroke(Paint.valueOf("#000000"));
-				*/		
-						eventName.setId("eventName");
-						eventName.getStyleClass().add("textEventName");
-						eventName.setTextAlignment(TextAlignment.LEFT);
-						eventName.setWrappingWidth(480);
-				/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-						eventName.setFill(Paint.valueOf("#ffffff"));
-						eventName.setStrokeWidth(0.3);
-						eventName.setStroke(Paint.valueOf("#000000"));
-					*/	
-						VBox eventText = new VBox(eventName,eventInfo);
-						eventText.setAlignment(Pos.CENTER);
-						eventText.getStyleClass().add("eventTextVbox");
-						//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-						//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-						StackPane eventBox = new StackPane();
-						eventBox.getStyleClass().add("eventBox");
-						
-						
-						Text eventId = new Text();
-						Text schedId = new Text();
-						
-						eventId.setId(activities.get(i).getId().toString());
-						schedId.setId(Integer.toString(i));
-						
-						//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-						//dell'evento ed infine il testo dell'evento.
-						eventBox.getChildren().add(eventId);
-						eventBox.getChildren().add(schedId);
-						eventBox.getChildren().add(eventImage);
-						eventBox.getChildren().add(eventText);
-						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-						eventBox.setAlignment(Pos.CENTER_LEFT);
-						
-						eventsList.getItems().add(eventBox);
-					}
+				
+	    		Thread newThread = new Thread(() -> {
+						fillEventsListPartner();
 				});
+				
 				newThread.start();
 				eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 				newThread.join();
@@ -294,6 +192,169 @@ public class EventsView implements Initializable{
 	    }
 	}
 
+	private void fillEventsListUser() {
+		int i;
+		for(i=0;i<activities.size();i++) {
+			ImageView eventImage = new ImageView();
+			Text eventName = new Text(activities.get(i).getName()+"\n");
+			Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+			Text eventInfo;
+			
+			if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+						"\n Expiring activity"+
+						"\n"+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+						"\n"+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+
+						"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+			else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+						"\n Periodic activity"+
+						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
+						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+
+						"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+			else{
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+					"\n Continuos activity"+
+					"\n"+activities.get(i).getFrequency().getOpeningTime()+
+					"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+
+			eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
+			eventImage.getStyleClass().add("event-image");
+			
+			eventInfo.setId("eventInfo");
+			eventInfo.getStyleClass().add("textEventInfo");
+			eventInfo.setTextAlignment(TextAlignment.LEFT);
+			eventInfo.setWrappingWidth(480);
+	/*		eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
+			eventInfo.setFill(Paint.valueOf("#ffffff"));
+			eventInfo.setStrokeWidth(0.3);
+			eventInfo.setStroke(Paint.valueOf("#000000"));
+	*/		
+			eventName.setId("eventName");
+			eventName.getStyleClass().add("textEventName");
+			eventName.setTextAlignment(TextAlignment.LEFT);
+			eventName.setWrappingWidth(480);
+	/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+			eventName.setFill(Paint.valueOf("#ffffff"));
+			eventName.setStrokeWidth(0.3);
+			eventName.setStroke(Paint.valueOf("#000000"));
+		*/	
+			VBox eventText = new VBox(eventName,eventInfo);
+			eventText.setAlignment(Pos.CENTER_LEFT);
+			eventText.getStyleClass().add("eventTextVbox");
+			//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+			StackPane eventBox = new StackPane();
+			eventBox.getStyleClass().add("eventBox");
+			
+			
+			Text eventId = new Text();
+			Text schedId = new Text();
+			
+			eventId.setId(activities.get(i).getId().toString());
+			schedId.setId(schedActivities.get(i).getId().toString());
+			
+			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+			//dell'evento ed infine il testo dell'evento.
+			eventBox.getChildren().add(eventId);
+			eventBox.getChildren().add(schedId);
+			eventBox.getChildren().add(eventImage);
+			eventBox.getChildren().add(eventText);
+			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+			eventBox.setAlignment(Pos.CENTER_LEFT);
+			
+			eventsList.getItems().add(eventBox);
+		}
+	}
+
+	private void fillEventsListPartner() {
+		int i;
+		for(i=0;i<activities.size();i++) {
+			ImageView eventImage = new ImageView();
+			Text eventName = new Text(activities.get(i).getName()+"\n");
+			Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+			Text eventInfo;
+			
+			if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+						"\n Expiring activity"+
+						"\n"+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+						"\n"+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+
+						"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+			else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+						"\n Periodic activity"+
+						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
+						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+
+						"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+			else{
+				eventInfo = new Text(activities.get(i).getPlace().getName()+
+					"\n Continuos activity"+
+					"\n"+activities.get(i).getFrequency().getOpeningTime()+
+					"-"+activities.get(i).getFrequency().getClosingTime());
+			}
+
+			eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
+			eventImage.getStyleClass().add("event-image");
+			
+			eventInfo.setId("eventInfo");
+			eventInfo.getStyleClass().add("textEventInfo");
+			eventInfo.setTextAlignment(TextAlignment.LEFT);
+			eventInfo.setWrappingWidth(480);
+	/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
+			eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
+			eventInfo.setFill(Paint.valueOf("#ffffff"));
+			eventInfo.setStrokeWidth(0.3);
+			eventInfo.setStroke(Paint.valueOf("#000000"));
+	*/		
+			eventName.setId("eventName");
+			eventName.getStyleClass().add("textEventName");
+			eventName.setTextAlignment(TextAlignment.LEFT);
+			eventName.setWrappingWidth(480);
+	/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
+			eventName.setFill(Paint.valueOf("#ffffff"));
+			eventName.setStrokeWidth(0.3);
+			eventName.setStroke(Paint.valueOf("#000000"));
+		*/	
+			VBox eventText = new VBox(eventName,eventInfo);
+			eventText.setAlignment(Pos.CENTER_LEFT);
+			eventText.getStyleClass().add("eventTextVbox");
+			//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+			StackPane eventBox = new StackPane();
+			eventBox.getStyleClass().add("eventBox");
+			
+			
+			Text eventId = new Text();
+			Text schedId = new Text();
+			
+			eventId.setId(activities.get(i).getId().toString());
+			schedId.setId(Integer.toString(i));
+			
+			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+			//dell'evento ed infine il testo dell'evento.
+			eventBox.getChildren().add(eventId);
+			eventBox.getChildren().add(schedId);
+			eventBox.getChildren().add(eventImage);
+			eventBox.getChildren().add(eventText);
+			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+			eventBox.setAlignment(Pos.CENTER_LEFT);
+			
+			eventsList.getItems().add(eventBox);
+		}
+	}
+	
 	public void scheduledActSelected() {
 
 		daoAct = DAOActivity.getInstance();
@@ -369,7 +430,6 @@ public class EventsView implements Initializable{
 					}
 					//Apro un pop up in cui si può scegliere una
 					//Data in cui svolgere l'attività
-					DatePicker pickDate = new DatePicker();
 					
 					ChoiceBox<String> hourBox = new ChoiceBox<>();
 					Text columnsOp = new Text(":");
@@ -426,7 +486,6 @@ public class EventsView implements Initializable{
 						minBox.getItems().add(Integer.toString(j));
 					}*/
 
-					Text txt = new Text("Select date");
 					Text txtOp = new Text("Select opening time");
 					Text txtCl = new Text("Select closing time");
 					Button ok = new Button();
@@ -446,13 +505,33 @@ public class EventsView implements Initializable{
 					BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
 					Background b = new Background(bf);
 					
-					txt.getStyleClass().add("msstxt");
-					
 					pickTimeOpBox.getChildren().addAll(hourBox,columnsOp,minBox);
 					pickTimeClBox.getChildren().addAll(clhourBox,columnsCl,clminBox);
 					
+					if(activitySelected.getFrequency() instanceof PeriodicActivity) {
+						pickCadence = new ChoiceBox<String>();
+						pickCadence.getItems().addAll(Cadence.WEEKLY.toString(),Cadence.MONTHLY.toString(),Cadence.ANNUALLY.toString());
+						
+						txtCadence = new Text("Select new cadence");
+						txtCadence.getStyleClass().add("msstxt");
+						
+						dateBox.getChildren().addAll(txtCadence,pickCadence);			
+						
+					}
+					if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
+						pickDateOp = new DatePicker();
+						pickDateCl = new DatePicker();
+						
+						txtDateOp = new Text("Select opening date");
+						txtDateCl = new Text("Select closing date");
+						
+						txtDateOp.getStyleClass().add("msstxt");
+						txtDateCl.getStyleClass().add("msstxt");
+						
+						dateBox.getChildren().addAll(txtDateOp,pickDateOp,txtDateCl,pickDateCl);						
+					}
 					dateBox.setBackground(b);
-					dateBox.getChildren().addAll(txt,pickDate,txtOp,pickTimeOpBox,txtCl,pickTimeClBox,buttonBox);
+					dateBox.getChildren().addAll(txtOp,pickTimeOpBox,txtCl,pickTimeClBox,buttonBox);
 					dateBox.setId("dateBox");
 					
 					selectedBox.getChildren().add(dateBox);
@@ -468,8 +547,6 @@ public class EventsView implements Initializable{
 					
 					ok.setOnAction(new EventHandler<ActionEvent>(){
 						@Override public void handle(ActionEvent e) {
-							DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-							String dayStringed = day.format(pickDate.getValue());
 							
 							String ophourChosen = hourBox.getValue();
 							String opminChosen = minBox.getValue();
@@ -479,17 +556,10 @@ public class EventsView implements Initializable{
 							
 							String openingTimeChosen = ophourChosen+':'+opminChosen;
 							String closingTimeChosen = clhourChosen+':'+clminChosen;
-							
-							String dateChosen = dayStringed+' '+ophourChosen+':'+opminChosen;
-							
-							DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-							LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
-											
-							activitySelected.getFrequency().setOpeningTime(LocalTime.parse(openingTimeChosen));
-							
-							activitySelected.getFrequency().setClosingTime(LocalTime.parse(closingTimeChosen));
-
 							//AGGIUNGERE UN METODO CHE AGGIORNI L'ATTIVITA' NEL DATABASE.
+							
+							//TODO:: CAPIRE SE SERVE MODIFICARE ANCHE LA DESCRIZIONE
+							// O IL NOME DELL'ATTIVITA' O IL POSTO.
 							CreateActivityBean cab = new CreateActivityBean();
 							
 							cab.setActivityDescription(activitySelected.getDescription());
@@ -499,36 +569,44 @@ public class EventsView implements Initializable{
 							cab.setIdActivity(activitySelected.getId().intValue());
 							
 							cab.setInterestedCategories(activitySelected.getIntrestedCategories().getSetPreferences());
-							if(activitySelected.getFrequency() instanceof ExpiringActivity) {
+							if(activitySelected.getFrequency() instanceof PeriodicActivity) {
+								cab.setType(ActivityType.PERIODICA);
+
+								DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								String dayStringed = day.format(pickDateOp.getValue());
+
+								DateTimeFormatter dayCl = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								String dayStringedCl = dayCl.format(pickDateCl.getValue());
+								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
+								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
+								//DATA DI FINE ED INFINE LA CADENZA; PERTANTO:
+								cab.setEndDate(dayStringedCl);
+								cab.setOpeningDate(dayStringed);
+								cab.setCadence(((PeriodicActivity)(activitySelected.getFrequency())).getCadence());
+							}
+							if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
 								cab.setType(ActivityType.SCADENZA);
+
+								DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								String dayStringed = day.format(pickDateOp.getValue());
+
+								DateTimeFormatter dayCl = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								String dayStringedCl = dayCl.format(pickDateCl.getValue());
 								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
 								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
 								//E DATA DI FINE; PERTANTO:
-								cab.setOpeningTime(activitySelected.getFrequency().getFormattedOpeningTime());
-								cab.setClosingTime(activitySelected.getFrequency().getFormattedClosingTime());
-								cab.setEndDate(((ExpiringActivity)(activitySelected.getFrequency())).getFormattedEndDate());
-								cab.setOpeningDate(((ExpiringActivity)(activitySelected.getFrequency())).getFormattedStartDate());
+								cab.setEndDate(dayStringedCl);
+								cab.setOpeningDate(dayStringed);
 							}
 							else if(activitySelected.getFrequency() instanceof ContinuosActivity) {
 								cab.setType(ActivityType.CONTINUA);
 								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
-								//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA; PERTANTO:
-								cab.setOpeningTime(activitySelected.getFrequency().getFormattedOpeningTime());
-								cab.setClosingTime(activitySelected.getFrequency().getFormattedClosingTime());
-								
+								//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA; PERTANTO:	
 							}
-							else if(activitySelected.getFrequency() instanceof PeriodicActivity) {
-								cab.setType(ActivityType.PERIODICA);
-								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
-								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
-								//DATA DI FINE ED INFINE LA CADENZA; PERTANTO:
-								cab.setOpeningTime(activitySelected.getFrequency().getFormattedOpeningTime());
-								cab.setClosingTime(activitySelected.getFrequency().getFormattedClosingTime());
-								cab.setEndDate(((PeriodicActivity)(activitySelected.getFrequency())).getFormattedEndDate());
-								cab.setOpeningDate(((PeriodicActivity)(activitySelected.getFrequency())).getFormattedStartDate());
-								cab.setCadence(((PeriodicActivity)(activitySelected.getFrequency())).getCadence());
-							}
-
+							cab.setOpeningTime(openingTimeChosen);
+							cab.setClosingTime(closingTimeChosen);
+							
+							
 							UpdateCertActController updateController = new UpdateCertActController(cab,(CertifiedActivity)activitySelected);
 							
 							try {
@@ -557,8 +635,7 @@ public class EventsView implements Initializable{
 								return;
 							}
 							
-							
-			                
+
 						}
 					});
 				}
@@ -580,33 +657,54 @@ public class EventsView implements Initializable{
 			
 			schedInfo.setAlignment(Pos.CENTER_RIGHT);
 			schedInfo.getChildren().addAll(scheduledTime,reminderTime);
-			
+			if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
+				Text startDate = new Text("Activity will start from: "+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+				Text endDate = new Text("Activity will end: "+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
+				schedInfo.getChildren().addAll(startDate,endDate);
+			}
+			else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
+				Text startDate = new Text("Activity will start from: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+				Text endDate = new Text("Activity will end: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
+				Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
+				schedInfo.getChildren().addAll(cadence,startDate,endDate);
+			}
 
 			selection.getChildren().addAll(deleteSched,schedInfo);
 				
 		} else {
 			String remind = activities.get(itemNumber).getFrequency().getOpeningTime().toString().replace('T', ' ');
 			String sched = activities.get(itemNumber).getFrequency().getClosingTime().toString().replace('T', ' ');
-
+			
 			Text reminderTime = new Text("Activity opening at: "+remind);
 			Text scheduledTime = new Text("Activity closing at: "+sched);
 			
 			reminderTime.getStyleClass().add("textEventInfo");
-			scheduledTime.getStyleClass().add("textEventName");
+			scheduledTime.getStyleClass().add("textEventInfo");
 			
 			VBox eventsInfo = new VBox();
 			
-			eventsInfo.setAlignment(Pos.CENTER_RIGHT);
+			eventsInfo.setAlignment(Pos.TOP_LEFT);
 			eventsInfo.getChildren().addAll(scheduledTime,reminderTime);
-
+			if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
+				Text startDate = new Text("Activity will start from: "+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+				Text endDate = new Text("Activity will end: "+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
+				eventsInfo.getChildren().addAll(startDate,endDate);
+			}
+			else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
+				Text startDate = new Text("Activity will start from: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+				Text endDate = new Text("Activity will end: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
+				Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
+				eventsInfo.getChildren().addAll(cadence,startDate,endDate);
+			}
 			selection.getChildren().addAll(eventsInfo,modifyEvent,deleteSched);
+			
 			
 		}
 		
 		eventsList.getItems().add(itemNumber+1, selection);
 		lastActivitySelected = itemNumber;
 		eventImage.setScaleX(1.2);
-		eventImage.setScaleY(1.25);
+		eventImage.setScaleY(1.2);
 
 		Log.getInstance().getLogger().info("Attivit� trovata: "+activitySelected);
 
@@ -718,8 +816,8 @@ public class EventsView implements Initializable{
 		String searchItem = null;
 		
 		if((searchItem = searchBar.getText())==null) return;
-		if(lastEventBoxSelected!=null) activityDeselected(lastEventBoxSelected);
-		
+		lastEventBoxSelected=null;
+		lastActivitySelected=-1;
 		eventsList.getItems().clear();
 		activities.clear();
 		try { 
@@ -727,11 +825,13 @@ public class EventsView implements Initializable{
 				ArrayList<CertifiedActivity> activitiesP = daoAct.getPartnerActivities(user.getUserID());
 				for(CertifiedActivity curr:activitiesP)
 					activities.add((Activity)curr);
+				fillEventsListPartner();
 			} else {
 				schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
 				for(int j=0;j<schedActivities.size();j++) {
 					activities.add((Activity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
 				}
+				fillEventsListUser();
 			}
 		}
 		catch (Exception e) {
@@ -739,90 +839,6 @@ public class EventsView implements Initializable{
 			e.printStackTrace();
 			return;
 		}		
-		for(int i=0;i<activities.size();i++) {
-			daoAct = DAOActivity.getInstance();
-			daoSU = DAOSuperUser.getInstance();
-			daoPlc = DAOPlace.getInstance();
-			daoPref = DAOPreferences.getInstance();
-			
-			//TODO Qui siamo sicuri sia corrretto?? nel for non dovremmo usare una diversa variabile?
-			for(i=0;i<activities.size();i++) {
-				SuperActivity act = (SuperActivity) activities.get(i);
-				ImageView eventImage = new ImageView();
-				Text eventName = new Text(activities.get(i).getName()+"\n");
-				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-				Text eventInfo = new Text(activities.get(i).getPlace().getName()+
-						"\n"+activities.get(i).getFrequency().getOpeningTime()+
-						"-"+activities.get(i).getFrequency().getClosingTime());
-				HBox eventLine = new HBox();
-				eventLine.setAlignment(Pos.CENTER);
-				VBox eventButtons = new VBox();
-				
-				Button deleteSched = new Button();
-				
-				eventButtons.getChildren().add(deleteSched);
-				eventButtons.setAlignment(Pos.CENTER_RIGHT);
-				
-				deleteSched.setText("Delete from schedule");
-				deleteSched.getStyleClass().add("src-btn");
-				deleteSched.setAlignment(Pos.CENTER);
-					
-/**CANCEL		String width = Double.toString(root.getWidth()/2)
-				String height = Double.toString(root.getHeight()/2)**/
-					
-				eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
-				eventImage.getStyleClass().add("event-image");
-					
-				eventInfo.setId("eventInfo");
-				eventInfo.getStyleClass().add("textEventInfo");
-				eventInfo.setTextAlignment(TextAlignment.LEFT);
-				eventInfo.setWrappingWidth(480);
-			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-					eventInfo.setFill(Paint.valueOf("#ffffff"));
-					eventInfo.setStrokeWidth(0.3);
-					eventInfo.setStroke(Paint.valueOf("#000000"));
-			*/		
-					eventName.setId("eventName");
-					eventName.getStyleClass().add("textEventName");
-					eventName.setTextAlignment(TextAlignment.LEFT);
-					eventName.setWrappingWidth(480);
-			/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-					eventName.setFill(Paint.valueOf("#ffffff"));
-					eventName.setStrokeWidth(0.3);
-					eventName.setStroke(Paint.valueOf("#000000"));
-				*/	
-					VBox eventText = new VBox(eventName,eventInfo);
-					eventText.setAlignment(Pos.CENTER);
-					eventText.getStyleClass().add("eventTextVbox");
-					//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-					//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-					StackPane eventBox = new StackPane();
-					eventBox.getStyleClass().add("eventBox");
-					
-					
-					Text eventId = new Text();
-					Text schedId = new Text();
-					
-					eventId.setId(activities.get(i).getId().toString());
-					if(user instanceof User)
-						schedId.setId(schedActivities.get(i).getId().toString());
-					
-					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-					//dell'evento ed infine il testo dell'evento.
-					eventBox.getChildren().add(eventId);
-					if(user instanceof User) 
-						eventBox.getChildren().add(schedId);
-					eventBox.getChildren().add(eventImage);
-					eventBox.getChildren().add(eventText);
-					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-					eventBox.setAlignment(Pos.CENTER_LEFT);
-					
-					eventLine.getChildren().addAll(eventBox,eventButtons);
-					eventLine.setMinWidth(root.getWidth());
-					eventsList.getItems().add(eventLine);
-					}
-				}
 		
 		}
 
