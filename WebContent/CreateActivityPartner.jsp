@@ -43,6 +43,8 @@
 			success = false;
 		}
 		
+		
+		
 		%>
 		<%--inizio prova modal per fare conferma o errore nello schedulo di un'attività --%>
 		<!-- Modal elimina -->
@@ -77,12 +79,12 @@
 		
 	}
 	
+	
+	if(request.getParameter("src") != null) useCaseClaimActivity = true;
+	if(request.getParameter("editActivity") != null) useCaseClaimActivity = true; 
 %>
 
-<div class="container pt-6">
-
-
-</div>
+<%@include file="formCreateActivity.jsp" %>
 
 <!-- Modal -->
 		<div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
