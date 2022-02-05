@@ -21,6 +21,6 @@
                </HBox.margin></Button>
          </children>
       </HBox>
-      <ListView fx:id="eventsList" onMouseClicked="#scheduledActSelected" style="-fx-background-color: #212121;" VBox.vgrow="ALWAYS" />
+      <ListView fx:id="eventsList" onMouseClicked="#scheduledActSelected" prefHeight="210.0" prefWidth="520.0" style="-fx-background-color: #212121;" VBox.vgrow="ALWAYS" />
    </children>
 </VBox>

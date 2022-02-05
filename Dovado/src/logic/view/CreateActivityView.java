@@ -69,13 +69,16 @@ public class CreateActivityView implements Initializable{
 
 	@FXML
 	private TextField tagField;
-	
-	@FXML
-	private DatePicker startDate;
-	
-	@FXML
-	private DatePicker endDate;
+//	
+//	@FXML
+//	private DatePicker startDate;
+//	
+//	@FXML
+//	private DatePicker endDate;
 
+	@FXML
+	private VBox elementsVBox;
+	
 	@FXML
 	private VBox root;
 
@@ -92,7 +95,7 @@ public class CreateActivityView implements Initializable{
 	private Button searchBtn;
 
 	@FXML
-	private ChoiceBox<String> cadenceBox;
+	private TextField activityDescriptionText;
 	@FXML
 	private ChoiceBox<String> tBox;
 	@FXML
@@ -107,6 +110,8 @@ public class CreateActivityView implements Initializable{
 	private static TextField opTime;
 	private static DatePicker sDate;
 	private static DatePicker eDate;
+	private static DatePicker sDate2;
+	private static DatePicker eDate2;
 	private static TextField searchField;
 	private static TextField actNameField;
 	private static TextField tField;
@@ -117,8 +122,16 @@ public class CreateActivityView implements Initializable{
 	private static Place placeSelected;
 	private static ArrayList<Place> placesFound;
 	private static StackPane lastPlaceBoxSelected;
-	private static Text cadenceDescText;
+	private static Text cadenceSelText;
 	private static HBox pHBox;
+	private static VBox periodicBox;
+	private static VBox expiringBox;
+	private static Text cadenceText;
+	private static Text sDateText;
+	private static Text eDateText;
+	private static Text sDate2Text;
+	private static Text eDate2Text;
+	private static TextField actDescriptionText;
 
 	private static String BGCOLORKEY = "ffffff";
 		
@@ -158,20 +171,52 @@ public class CreateActivityView implements Initializable{
 		placesFound = new ArrayList<>();
 		
 		actNameField=actNameTF;
-		sDate=startDate;
-		eDate=endDate;
 		searchField=searchBar;
 		clTime=closingTime;
 		opTime=openingTime;
-		cadBox=cadenceBox;
 		pList=placesList;
 		rt=root;
 		typeBox = tBox;
 		tField=tagField;
-		cadenceDescText = cadenceDescription;
-		prefHBox=pHBox;
+		actDescriptionText = activityDescriptionText;
+		pHBox=prefHBox;
+
+		expiringBox = new VBox();
+		periodicBox = new VBox();
+		cadBox = new ChoiceBox<String>(); 
+		eDate = new DatePicker();
+		sDate = new DatePicker(); 
+		eDate2 = new DatePicker();
+		sDate2 = new DatePicker();
+		sDateText = new Text("When does the activity begin?");
+		eDateText= new Text("When does it end?");
+		sDate2Text = new Text("When does the activity begin?");
+		eDate2Text= new Text("When does it end?");
+		cadenceText= new Text("How often does the event repeat?");
+		cadenceSelText = new Text();
+
+		sDateText.setFill(Paint.valueOf(BGCOLORKEY));		
+		eDateText.setFill(Paint.valueOf(BGCOLORKEY));	
+		sDate2Text.setFill(Paint.valueOf(BGCOLORKEY));		
+		eDate2Text.setFill(Paint.valueOf(BGCOLORKEY));		
+		cadenceText.setFill(Paint.valueOf(BGCOLORKEY));		
+		cadenceSelText.setFill(Paint.valueOf(BGCOLORKEY));		
+		
+		cadenceText.setTextAlignment(TextAlignment.CENTER);
+		sDateText.setTextAlignment(TextAlignment.CENTER);
+		eDateText.setTextAlignment(TextAlignment.CENTER);
+		
+		expiringBox.setAlignment(Pos.CENTER);
+		periodicBox.setAlignment(Pos.CENTER);
+		
+		//TODO:: GUARDARE CON ATTENZIONE QUESTA PARTE DI CODICE
+		//DUE ELEMENTI NON POSSO CONDIVIDERE STESSI FIGLI.
+		
+		periodicBox.getChildren().addAll(cadenceText,cadBox,sDate2Text,sDate2,eDate2Text,eDate2);
+		expiringBox.getChildren().addAll(sDateText,sDate,eDateText,eDate);
 		
 		cadBox.getItems().addAll(CADENCEKEY[0],CADENCEKEY[1],CADENCEKEY[2]);
+		typeBox.getItems().addAll("Continua","Periodica","Scadenza");
 		
 		createActBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
@@ -200,25 +245,25 @@ public class CreateActivityView implements Initializable{
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				
-				String[] placeAttr;
-				placeAttr = searchBar.getText().split(",");
+				String searchTerm = searchBar.getText();
+				try {
+					placesFound  =  (ArrayList<Place>) daoPl.searchPlaces(searchTerm);
 				
-				if(placeAttr.length==1) {
-					try {
-						if( (placesFound =  (ArrayList<Place>) daoPl.searchPlaces(placeAttr[0]))==null){
+					if( (placesFound)==null){
 							final Stage dialog = new Stage();
 						    dialog.initModality(Modality.NONE);
 						    dialog.initOwner(curr);
 						    VBox dialogVbox = new VBox(20);
-						    dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
+						    dialogVbox.getChildren().add(new Text("No place found in "+searchTerm));
 						    Scene dialogScene = new Scene(dialogVbox, 300, 200);
 						    dialog.setScene(dialogScene);
 						    dialog.show();
 						}
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
+						Log.getInstance().getLogger().info("Due to DB errors places were not fetched.");
 						e1.printStackTrace();
-					}
+						return;
+				}
 //					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByNameOrCity(placeAttr[0],1))==null){
 //						final Stage dialog = new Stage();
 //		                dialog.initModality(Modality.NONE);
@@ -229,7 +274,7 @@ public class CreateActivityView implements Initializable{
 //		                dialog.setScene(dialogScene);
 //		                dialog.show();
 //					}
-				}
+				
 //				else if(placeAttr.length==3) {
 //						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
 //						if(placesFound.contains(null)){
@@ -243,9 +288,8 @@ public class CreateActivityView implements Initializable{
 //			                dialog.show();
 //						}
 //				}
-				else {
-					updatePlaces();
-				}
+				updatePlaces();
+				
 				
 				/*if(placeAttr.length<3) {
 					final Stage dialog = new Stage();
@@ -267,46 +311,70 @@ public class CreateActivityView implements Initializable{
 	public void updateDescription() {
 		String chosenType = typeBox.getValue();
 		
-		if(ActivityType.valueOf(chosenType)==ActivityType.CONTINUA) 
-		{
-			cadenceDescText.setText("Activities open every day of the week, eg: a walk in villa Borghese ");
-			cadenceDescText.setWrappingWidth(280);
+		if(chosenType == null) {
+			return;
 		}
-		else if(ActivityType.valueOf(chosenType)==ActivityType.PERIODICA) 
+		
+		if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.CONTINUA) 
 		{
-			cadenceDescText.setText("Activities repeated with a certain frequency, for a period of time.");
-			cadenceDescText.setWrappingWidth(280);
+			cadenceDescription.setText("Activities open every day of the week, eg: a walk in villa Borghese ");
+			cadenceDescription.setWrappingWidth(280);
+
+			if(elementsVBox.getChildren().contains(expiringBox))
+				elementsVBox.getChildren().remove(expiringBox);
+
+			if(elementsVBox.getChildren().contains(periodicBox))
+				elementsVBox.getChildren().remove(periodicBox);
 		}
-		else if(ActivityType.valueOf(chosenType)==ActivityType.SCADENZA) {
-			cadenceDescText.setText("Activities that take place just once.");
-			cadenceDescText.setWrappingWidth(280);
+		else if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.PERIODICA) 
+		{
+			cadenceDescription.setText("Activities repeated with a certain frequency, for a period of time.");
+			cadenceDescription.setWrappingWidth(280);
+			
+			if(elementsVBox.getChildren().contains(expiringBox))
+				elementsVBox.getChildren().remove(expiringBox);
+			
+			if(!elementsVBox.getChildren().contains(periodicBox)) {
+				elementsVBox.getChildren().add(3, periodicBox);
+			}			
+		}
+		else if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.SCADENZA) {
+			cadenceDescription.setText("Activities that take place just once.");
+			cadenceDescription.setWrappingWidth(280);
+
+			if(elementsVBox.getChildren().contains(periodicBox))
+				elementsVBox.getChildren().remove(periodicBox);
+			
+			if(!elementsVBox.getChildren().contains(expiringBox)) {
+				elementsVBox.getChildren().add(3, expiringBox);
+			}			
 		}
 		else {
-			cadenceDescText.setText("Select a type and I'll describe it.");
+			cadenceSelText.setText("Select a type and I'll describe it.");
 		}
 		
 	}
 	
 	public void updatePlaces() {
-			pList.getItems().clear();
+		pList.getItems().clear();
 		
-		for(int i=0;i<placesFound.size();i++) {
-			//TODO guardare qui con Andre
-			for(int j=0;j<placesFound.size();j++) {
+		for(int j=0;j<placesFound.size();j++) {
 					 	
 					ImageView plImage = new ImageView();
-					Text plName = new Text(placesFound.get(i).getName()+"\n");
-					Log.getInstance().getLogger().info("\n\n"+placesFound.get(i).getName()+"\n\n");
-					Text plInfo = new Text(placesFound.get(i).getCity()+
-							"\n"+placesFound.get(i).getRegion()+
-							"\n"+placesFound.get(i).getAddress()+
-							"-"+placesFound.get(i).getCivico());
-					
-					plImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
+					Text plName = new Text(placesFound.get(j).getName()+"\n");
+					Log.getInstance().getLogger().info("\n\n"+placesFound.get(j).getName()+"\n\n");
+					Text plInfo = new Text(placesFound.get(j).getCity()+
+							"\n"+placesFound.get(j).getRegion()+
+							"\n"+placesFound.get(j).getAddress()+
+							"-"+placesFound.get(j).getCivico());
+
+					plImage.setImage(new Image("https://source.unsplash.com/user/erondu/310x180"));
 					plImage.getStyleClass().add("place-image");
 					
 					plInfo.setId("placeInfo");
 					plInfo.getStyleClass().add("placeInfo");
+					plInfo.setStrokeWidth(1);
+					plInfo.setStroke(Paint.valueOf("000000"));
 			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
 					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
 					eventInfo.setFill(Paint.valueOf("#ffffff"));
@@ -315,6 +383,8 @@ public class CreateActivityView implements Initializable{
 			*/		
 					plName.setId("placeName");
 					plName.getStyleClass().add("placeName");
+					plName.setStrokeWidth(1);
+					plName.setStroke(Paint.valueOf("000000"));
 			/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
 					eventName.setFill(Paint.valueOf("#ffffff"));
 					eventName.setStrokeWidth(0.3);
@@ -331,7 +401,7 @@ public class CreateActivityView implements Initializable{
 					
 					Text placeId = new Text();
 					
-					Long pID = placesFound.get(i).getId();
+					Long pID = placesFound.get(j).getId();
 					Log.getInstance().getLogger().info("ID POSTO: "+pID);
 					placeId.setId(pID.toString());
 					
@@ -347,8 +417,8 @@ public class CreateActivityView implements Initializable{
 					eventBox.setMinWidth(rt.getWidth()/2);
 					eventBox.setMaxWidth(rt.getWidth()/2);
 					pList.getItems().add(eventBox);
-					}
-				}
+			}
+		
 	}
 	
 	public void selectedPlace() {
@@ -417,18 +487,19 @@ public class CreateActivityView implements Initializable{
 		
 		CreateActivityBean caBean = new CreateActivityBean();
 		caBean.setActivityName(activityName);
-		caBean.setType(ActivityType.valueOf(typeBox.getValue()));
+		caBean.setType(ActivityType.valueOf(typeBox.getValue().toUpperCase()));
 
 //-----------------------QUI SI FA DISTINZIONE TRA I VARI TIPI DI ATTIVITÀ---------------------------------------------------//
 //---------IN BASE A QUESTA DISTINZIONE AVREMO L'ATTIVITÀ COSTRUITA SECONDO PROCEDIMENTI DIVERSI---------------------------------------------------//
 				
-		if(ActivityType.valueOf(typeBox.getValue()).equals(ActivityType.CONTINUA)) 
+		if(ActivityType.valueOf(typeBox.getValue().toUpperCase()).equals(ActivityType.CONTINUA)) 
 		{
 			caBean.setOpeningTime(openingTime);
 			caBean.setClosingTime(closingTime);
 		}
 		
-		else if(ActivityType.valueOf(typeBox.getValue()).equals(ActivityType.SCADENZA)) {
+		else if(ActivityType.valueOf(typeBox.getValue().toUpperCase()).equals(ActivityType.SCADENZA)) {
+			
 			openingDate = sDate.getValue();
 			String openingDateString = openingDate.toString();
 			
@@ -445,20 +516,20 @@ public class CreateActivityView implements Initializable{
 			
 		}
 		
-		else if(ActivityType.valueOf(typeBox.getValue()).equals(ActivityType.PERIODICA)) {
-			openingDate = sDate.getValue();
+		else if(ActivityType.valueOf(typeBox.getValue().toUpperCase()).equals(ActivityType.PERIODICA)) {
+			openingDate = sDate2.getValue();
 			String openingDateString = openingDate.toString();
 			
-			if(eDate.getValue().isBefore(openingDate) || eDate.getValue().isBefore(LocalDate.now()))
+			if(eDate2.getValue().isBefore(openingDate) || eDate2.getValue().isBefore(LocalDate.now()))
 				return false;
-			closingDate = eDate.getValue();
+			closingDate = eDate2.getValue();
 			
 			String closingDateString = closingDate.toString();
 			caBean.setOpeningTime(openingTime);
 			caBean.setClosingTime(closingTime);
 			caBean.setOpeningDate(openingDateString);
 			caBean.setEndDate(closingDateString);
-			caBean.setCadence(Cadence.valueOf(cadBox.getValue()));
+			caBean.setCadence(Cadence.valueOf(cadBox.getValue().toUpperCase()));
 		}
 		
 		else {
@@ -528,7 +599,8 @@ public class CreateActivityView implements Initializable{
 		//FINITE TUTTE LE PREFERENZE SI SETTA LA LISTA DI BOOLEANI RAPPRESENTANTE LE PREFERENZE A
 		//TRUE SONO STATE SELEZIONATE COME TRUE.
 		caBean.setInterestedCategories(activityPrefSet);
-		
+		caBean.setActivityDescription(actDescriptionText.getText());
+		caBean.setPlace(placeSelected.getId().intValue());
 //		Log.getInstance().getLogger().info(act.toString());
 //		act.setId(daoAc.addActivityToJSON(placeSelected,(SuperActivity)act,"no"));
 //		int result = Long.compare(act.getId(),0L);
@@ -558,13 +630,15 @@ public class CreateActivityView implements Initializable{
 //            dialog.show();
 //			return false;
 //		}
-
+		SuperActivity act = null;
 		CreateActivityController caCont = new CreateActivityController(caBean);
 		try {
-			SuperActivity act = (SuperActivity)caCont.createActivity();
+			act = (SuperActivity)caCont.createActivity();
+			caCont.saveActivity();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			Log.getInstance().getLogger().info("Error in DB");
 			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
@@ -586,7 +660,12 @@ public class CreateActivityView implements Initializable{
 		
 		if(clTime.getText().isEmpty() || !clTime.getText().contains(":") || clTime.getText().length()>5)
 			return false;
-				
-		return !sDate.getValue().isBefore(LocalDate.now());
+		if(ActivityType.valueOf(typeBox.getValue().toUpperCase()).equals(ActivityType.SCADENZA)) {
+			return !sDate.getValue().isBefore(LocalDate.now());
+		}
+		if(ActivityType.valueOf(typeBox.getValue().toUpperCase()).equals(ActivityType.PERIODICA)) {
+			return !sDate2.getValue().isBefore(LocalDate.now());
+		}
+		return true;
 	}
 }

@@ -62,7 +62,7 @@ import logic.model.User;
 public class EventsView implements Initializable{
 	
 	private static ArrayList<ScheduledActivity> schedActivities;
-	private static ArrayList<CertifiedActivity> activities;
+	private static ArrayList<Activity> activities;
 	private static DAOPreferences daoPref;
     private static DAOActivity daoAct;
     private static DAOSuperUser daoSU;
@@ -135,7 +135,7 @@ public class EventsView implements Initializable{
 				schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
 	
 				for(int j=0;j<schedActivities.size();j++) {
-					activities.add((CertifiedActivity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
+					activities.add((Activity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
 				}
 	
 				for(int j=0;j<activities.size();j++)
@@ -151,26 +151,29 @@ public class EventsView implements Initializable{
 								"-"+activities.get(i).getFrequency().getClosingTime());
 						
 	
-						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
+						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
 						eventImage.getStyleClass().add("event-image");
 						
 						eventInfo.setId("eventInfo");
 						eventInfo.getStyleClass().add("textEventInfo");
-				/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-						eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
+						eventInfo.setTextAlignment(TextAlignment.LEFT);
+						eventInfo.setWrappingWidth(480);
+				/*		eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
 						eventInfo.setFill(Paint.valueOf("#ffffff"));
 						eventInfo.setStrokeWidth(0.3);
 						eventInfo.setStroke(Paint.valueOf("#000000"));
 				*/		
 						eventName.setId("eventName");
 						eventName.getStyleClass().add("textEventName");
+						eventName.setTextAlignment(TextAlignment.LEFT);
+						eventName.setWrappingWidth(480);
 				/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
 						eventName.setFill(Paint.valueOf("#ffffff"));
 						eventName.setStrokeWidth(0.3);
 						eventName.setStroke(Paint.valueOf("#000000"));
 					*/	
 						VBox eventText = new VBox(eventName,eventInfo);
-						eventText.setAlignment(Pos.CENTER);
+						eventText.setAlignment(Pos.CENTER_LEFT);
 						eventText.getStyleClass().add("eventTextVbox");
 						//Preparo un box in cui contenere il nome dell'attivit� e altre sue
 						//informazioni; uso uno StackPane per poter mettere scritte su immagini.
@@ -182,7 +185,7 @@ public class EventsView implements Initializable{
 						Text schedId = new Text();
 						
 						eventId.setId(activities.get(i).getId().toString());
-						schedId.setId(schedActivities.get(i).toString());
+						schedId.setId(schedActivities.get(i).getId().toString());
 						
 						//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 						//dell'evento ed infine il testo dell'evento.
@@ -209,8 +212,13 @@ public class EventsView implements Initializable{
 			}
 	    }else{
 	    	try {
-	    		activities = daoAct.getPartnerActivities(user.getUserID());
-		    	for(int j=0;j<activities.size();j++)
+	    		ArrayList<CertifiedActivity> activitiesPart = daoAct.getPartnerActivities(user.getUserID());
+		    	
+	    		for(int i=0;i<activitiesPart.size();i++) {
+	    			activities.add((Activity)activitiesPart.get(i));
+	    		}
+	    		
+	    		for(int j=0;j<activities.size();j++)
 					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
 				Thread newThread = new Thread(() -> {
 						int i;
@@ -223,11 +231,13 @@ public class EventsView implements Initializable{
 								"-"+activities.get(i).getFrequency().getClosingTime());
 						
 	
-						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
+						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
 						eventImage.getStyleClass().add("event-image");
 						
 						eventInfo.setId("eventInfo");
 						eventInfo.getStyleClass().add("textEventInfo");
+						eventInfo.setTextAlignment(TextAlignment.LEFT);
+						eventInfo.setWrappingWidth(480);
 				/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
 						eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
 						eventInfo.setFill(Paint.valueOf("#ffffff"));
@@ -236,6 +246,8 @@ public class EventsView implements Initializable{
 				*/		
 						eventName.setId("eventName");
 						eventName.getStyleClass().add("textEventName");
+						eventName.setTextAlignment(TextAlignment.LEFT);
+						eventName.setWrappingWidth(480);
 				/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
 						eventName.setFill(Paint.valueOf("#ffffff"));
 						eventName.setStrokeWidth(0.3);
@@ -305,7 +317,13 @@ public class EventsView implements Initializable{
 		
 		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
 		lastEventBoxSelected = eventBox;
-		int schedEventID = itemNumber; 
+		int schedEventID;
+		
+		if(user instanceof User)
+			schedEventID = Integer.parseInt(((Text)(eventBox.getChildren().get(1))).getId()); 
+		else
+			schedEventID = Integer.parseInt(((Text)(eventBox.getChildren().get(0))).getId());
+			
 		ImageView eventImage = (ImageView) eventBox.getChildren().get(2);
 		VBox eventInfo = (VBox) eventBox.getChildren().get(3);
 		
@@ -319,7 +337,7 @@ public class EventsView implements Initializable{
 		if(user instanceof User)
 			deleteSched.setText("Delete from schedule");
 		else
-			deleteSched.setText("Delete event");
+			deleteSched.setText("Delete activity");
 		
 		deleteSched.getStyleClass().add("evn-btn");
 		
@@ -328,13 +346,13 @@ public class EventsView implements Initializable{
 		Button modifyEvent = new Button();
 		if(user instanceof Partner) {
 			try {
-				activitySelected = (SuperActivity) daoAct.getActivityById(activities.get(itemNumber).getId());
+				activitySelected = (CertifiedActivity) daoAct.getActivityById(activities.get(itemNumber).getId());
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			
-			modifyEvent.setText("Modify event info.");
+			modifyEvent.setText("Modify activity info.");
 			
 			modifyEvent.getStyleClass().add("evn-btn");
 			
@@ -620,7 +638,7 @@ public class EventsView implements Initializable{
 				        dialog.initOwner(curr);
 				        VBox dialogVboxFail = new VBox(20);
 				                
-				        Text fail = (new Text("Scheduled activity successfully deleted"));
+				        Text fail = (new Text("Scheduled activity unsuccessfully deleted"));
 				        fail.setTextAlignment(TextAlignment.CENTER);
 				                
 				        dialogVboxFail.getChildren().add(fail);
@@ -700,47 +718,65 @@ public class EventsView implements Initializable{
 		String searchItem = null;
 		
 		if((searchItem = searchBar.getText())==null) return;
+		if(lastEventBoxSelected!=null) activityDeselected(lastEventBoxSelected);
 		
 		eventsList.getItems().clear();
-		
+		activities.clear();
+		try { 
+			if(user instanceof Partner) {
+				ArrayList<CertifiedActivity> activitiesP = daoAct.getPartnerActivities(user.getUserID());
+				for(CertifiedActivity curr:activitiesP)
+					activities.add((Activity)curr);
+			} else {
+				schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
+				for(int j=0;j<schedActivities.size();j++) {
+					activities.add((Activity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
+				}
+			}
+		}
+		catch (Exception e) {
+			Log.getInstance().getLogger().info("Error in DB prevented activities from being fetched.");
+			e.printStackTrace();
+			return;
+		}		
 		for(int i=0;i<activities.size();i++) {
 			daoAct = DAOActivity.getInstance();
 			daoSU = DAOSuperUser.getInstance();
 			daoPlc = DAOPlace.getInstance();
 			daoPref = DAOPreferences.getInstance();
+			
 			//TODO Qui siamo sicuri sia corrretto?? nel for non dovremmo usare una diversa variabile?
 			for(i=0;i<activities.size();i++) {
 				SuperActivity act = (SuperActivity) activities.get(i);
-				for(int j=0;j<act.getIntrestedCategories().getPreferencesName().length;j++) {
-					if(searchBar.getText().toUpperCase().equals((act.getIntrestedCategories().getPreferencesName())[j].toUpperCase())) {
-					 	
-					ImageView eventImage = new ImageView();
-					Text eventName = new Text(activities.get(i).getName()+"\n");
-					Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-					Text eventInfo = new Text(activities.get(i).getPlace().getName()+
-							"\n"+activities.get(i).getFrequency().getOpeningTime()+
-							"-"+activities.get(i).getFrequency().getClosingTime());
-					HBox eventLine = new HBox();
-					eventLine.setAlignment(Pos.CENTER);
-					VBox eventButtons = new VBox();
+				ImageView eventImage = new ImageView();
+				Text eventName = new Text(activities.get(i).getName()+"\n");
+				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+				Text eventInfo = new Text(activities.get(i).getPlace().getName()+
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+
+						"-"+activities.get(i).getFrequency().getClosingTime());
+				HBox eventLine = new HBox();
+				eventLine.setAlignment(Pos.CENTER);
+				VBox eventButtons = new VBox();
+				
+				Button deleteSched = new Button();
+				
+				eventButtons.getChildren().add(deleteSched);
+				eventButtons.setAlignment(Pos.CENTER_RIGHT);
+				
+				deleteSched.setText("Delete from schedule");
+				deleteSched.getStyleClass().add("src-btn");
+				deleteSched.setAlignment(Pos.CENTER);
 					
-					Button deleteSched = new Button();
+/**CANCEL		String width = Double.toString(root.getWidth()/2)
+				String height = Double.toString(root.getHeight()/2)**/
 					
-					eventButtons.getChildren().add(deleteSched);
-					eventButtons.setAlignment(Pos.CENTER_RIGHT);
+				eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
+				eventImage.getStyleClass().add("event-image");
 					
-					deleteSched.setText("Delete from schedule");
-					deleteSched.getStyleClass().add("src-btn");
-					deleteSched.setAlignment(Pos.CENTER);
-					
-/**CANCEL					String width = Double.toString(root.getWidth()/2)
-					String height = Double.toString(root.getHeight()/2)**/
-					
-					eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/400x100"));
-					eventImage.getStyleClass().add("event-image");
-					
-					eventInfo.setId("eventInfo");
-					eventInfo.getStyleClass().add("textEventInfo");
+				eventInfo.setId("eventInfo");
+				eventInfo.getStyleClass().add("textEventInfo");
+				eventInfo.setTextAlignment(TextAlignment.LEFT);
+				eventInfo.setWrappingWidth(480);
 			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
 					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
 					eventInfo.setFill(Paint.valueOf("#ffffff"));
@@ -749,6 +785,8 @@ public class EventsView implements Initializable{
 			*/		
 					eventName.setId("eventName");
 					eventName.getStyleClass().add("textEventName");
+					eventName.setTextAlignment(TextAlignment.LEFT);
+					eventName.setWrappingWidth(480);
 			/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
 					eventName.setFill(Paint.valueOf("#ffffff"));
 					eventName.setStrokeWidth(0.3);
@@ -764,15 +802,17 @@ public class EventsView implements Initializable{
 					
 					
 					Text eventId = new Text();
-					Text placeId = new Text();
+					Text schedId = new Text();
 					
 					eventId.setId(activities.get(i).getId().toString());
-					placeId.setId(activities.get(i).getPlace().getId().toString());
+					if(user instanceof User)
+						schedId.setId(schedActivities.get(i).getId().toString());
 					
 					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 					//dell'evento ed infine il testo dell'evento.
 					eventBox.getChildren().add(eventId);
-					eventBox.getChildren().add(placeId);
+					if(user instanceof User) 
+						eventBox.getChildren().add(schedId);
 					eventBox.getChildren().add(eventImage);
 					eventBox.getChildren().add(eventText);
 					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
@@ -783,8 +823,7 @@ public class EventsView implements Initializable{
 					eventsList.getItems().add(eventLine);
 					}
 				}
-			}
+		
 		}
-	}
 
 }

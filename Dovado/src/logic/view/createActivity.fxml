@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
@@ -12,250 +11,233 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="root" alignment="CENTER" style="-fx-background-color: #212121;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.CreateActivityView">
+
+<VBox fx:id="root" alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-background-color: #212121;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="logic.view.CreateActivityView">
    <children>
-      <ScrollPane VBox.vgrow="ALWAYS">
+      <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
          <content>
-            <VBox alignment="CENTER" style="-fx-background-color: #212121;">
+            <HBox maxWidth="1.7976931348623157E308">
                <children>
-                  <VBox>
+                  <VBox fx:id="elementsVBox" alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-background-color: #212121;" HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox alignment="CENTER" style="-fx-background-color: #212121;">
+                        <VBox>
                            <children>
-                              <HBox VBox.vgrow="ALWAYS">
+                              <VBox alignment="CENTER" style="-fx-background-color: #212121;">
+                                 <children>
+                                    <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <TextField fx:id="searchBar" promptText="Place city, place region, place name">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Button fx:id="searchBtn" mnemonicParsing="false" text="Button">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <ListView fx:id="placesList" minHeight="-Infinity" onMouseClicked="#selectedPlace" orientation="HORIZONTAL" prefHeight="210.0" prefWidth="320.0" style="-fx-background-color: #212121;" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="10.0" />
+                           </VBox.margin>
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to name your new activity?" textAlignment="CENTER" />
+                              <TextField fx:id="actNameTF" maxWidth="340.0" promptText="Activity name">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="typeHBox" alignment="CENTER">
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="What type of activity is it?" textAlignment="CENTER" />
+                              <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </VBox.margin>
                                  <children>
-                                    <TextField fx:id="searchBar" promptText="Place city, place region, place name">
-                                       <HBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </HBox.margin>
-                                    </TextField>
-                                    <Button fx:id="searchBtn" mnemonicParsing="false" text="Button">
-                                       <HBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </HBox.margin>
-                                    </Button>
+                                    <VBox alignment="CENTER">
+                                       <children>
+                                          <ChoiceBox fx:id="tBox" onMouseClicked="#updateDescription" prefWidth="150.0" />
+                                          <Text fx:id="cadenceDescription" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a type and I'll describe it" textAlignment="CENTER">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </Text>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </HBox>
-                              <ListView fx:id="placesList" onMouseClicked="#selectedPlace" orientation="HORIZONTAL" style="-fx-background-color: #212121;" VBox.vgrow="ALWAYS" />
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="10.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <VBox alignment="CENTER">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="10.0" />
+                           </VBox.margin>
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="When do we meet?" textAlignment="CENTER">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Text>
+                              <TextField fx:id="openingTime" maxWidth="340.0" promptText="hh:mm">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </TextField>
                            </children>
                         </VBox>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to name your new activity?" textAlignment="CENTER" />
-                        <TextField fx:id="actNameTF" promptText="Activity name">
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="typeHBox" alignment="CENTER">
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="What type of activity is it?" textAlignment="CENTER" />
-                        <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
+                        <VBox alignment="CENTER">
                            <children>
-                              <VBox alignment="CENTER">
-                                 <children>
-                                    <ChoiceBox fx:id="tBox" onMouseClicked="#updateDescription" prefWidth="150.0" />
-                                    <Text fx:id="cadenceDescription" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a type and I'll describe it" textAlignment="CENTER">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </Text>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </HBox>
-                     </children>
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
-                  </VBox>
-                  <VBox alignment="CENTER">
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="On which day does it start?" textAlignment="CENTER" />
-                        <DatePicker fx:id="startDate1" promptText="Start date" VBox.vgrow="ALWAYS">
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </DatePicker>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="On which day does it start?" textAlignment="CENTER" />
-                        <DatePicker fx:id="startDate" promptText="Start date" VBox.vgrow="ALWAYS">
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </DatePicker>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="On which day does it end?" textAlignment="CENTER" />
-                        <DatePicker fx:id="endDate" promptText="End date" VBox.vgrow="ALWAYS">
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </DatePicker>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER">
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="When do we meet?" textAlignment="CENTER">
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </Text>
-                        <TextField fx:id="openingTime" promptText="hh:mm">
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER">
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="When does it end?" textAlignment="CENTER" />
-                        <TextField fx:id="closingTime" promptText="hh:mm" VBox.vgrow="ALWAYS">
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </TextField>
-                     </children>
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
-                  </VBox>
-                  <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Who is this activity made for?" textAlignment="CENTER">
-                           <VBox.margin>
-                              <Insets bottom="10.0" top="10.0" />
-                           </VBox.margin>
-                        </Text>
-                        <HBox fx:id="prefHBox" alignment="CENTER" VBox.vgrow="ALWAYS">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <CheckBox fx:id="pref1" alignment="CENTER" mnemonicParsing="false" text="Arte" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref2" alignment="CENTER" mnemonicParsing="false" text="Cibo" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref3" alignment="CENTER" mnemonicParsing="false" text="Musica" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref4" alignment="CENTER" mnemonicParsing="false" text="Sport" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref5" alignment="CENTER" mnemonicParsing="false" text="Social" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                 </children>
-                              </VBox>
-                              <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <CheckBox fx:id="pref6" alignment="CENTER" mnemonicParsing="false" text="Natura" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref7" alignment="CENTER" mnemonicParsing="false" text="Esplorazione" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref8" alignment="CENTER" mnemonicParsing="false" text="Ricorrenze Locali" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref9" alignment="CENTER" mnemonicParsing="false" text="Moda" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref10" alignment="CENTER" mnemonicParsing="false" text="Shopping" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                 </children>
-                              </VBox>
-                              <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <CheckBox fx:id="pref11" alignment="CENTER" mnemonicParsing="false" text="Adrenalina" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref12" alignment="CENTER" mnemonicParsing="false" text="Relax" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref13" alignment="CENTER" mnemonicParsing="false" text="Istruzione" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pref14" alignment="CENTER" mnemonicParsing="false" text="Monumenti" textAlignment="CENTER" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                 </children>
-                              </VBox>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="When does it end?" textAlignment="CENTER" />
+                              <TextField fx:id="closingTime" maxWidth="340.0" promptText="hh:mm" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </TextField>
                            </children>
                            <VBox.margin>
-                              <Insets bottom="10.0" top="10.0" />
+                              <Insets left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
-                        </HBox>
+                        </VBox>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="What do you think describes your activity well?" textAlignment="CENTER">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </Text>
+                              <TextField fx:id="activityDescriptionText" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Who is this activity made for?" textAlignment="CENTER">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </Text>
+                              <HBox fx:id="prefHBox" alignment="CENTER" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <CheckBox fx:id="pref1" alignment="CENTER" mnemonicParsing="false" text="Arte" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref2" alignment="CENTER" mnemonicParsing="false" text="Cibo" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref3" alignment="CENTER" mnemonicParsing="false" text="Musica" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref4" alignment="CENTER" mnemonicParsing="false" text="Sport" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref5" alignment="CENTER" mnemonicParsing="false" text="Social" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <CheckBox fx:id="pref6" alignment="CENTER" mnemonicParsing="false" text="Natura" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref7" alignment="CENTER" mnemonicParsing="false" text="Esplorazione" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref8" alignment="CENTER" mnemonicParsing="false" text="Ricorrenze Locali" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref9" alignment="CENTER" mnemonicParsing="false" text="Moda" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref10" alignment="CENTER" mnemonicParsing="false" text="Shopping" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <CheckBox fx:id="pref11" alignment="CENTER" mnemonicParsing="false" text="Adrenalina" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref12" alignment="CENTER" mnemonicParsing="false" text="Relax" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref13" alignment="CENTER" mnemonicParsing="false" text="Istruzione" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pref14" alignment="CENTER" mnemonicParsing="false" text="Monumenti" textAlignment="CENTER" textFill="WHITE">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" top="10.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <Button fx:id="createActBtn" alignment="CENTER" mnemonicParsing="false" text="Create Activity">
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </Button>
                      </children>
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
                   </VBox>
-                  <Button fx:id="createActBtn" alignment="CENTER" mnemonicParsing="false" text="Create Activity">
-                     <VBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" />
-                     </VBox.margin>
-                  </Button>
                </children>
-            </VBox>
+            </HBox>
          </content>
       </ScrollPane>
    </children>
