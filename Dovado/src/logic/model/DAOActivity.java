@@ -68,13 +68,13 @@ public class DAOActivity {
             //TODO proprietario == null da modificare
             
             stmt = conn.prepareCall(call);
-            
+           
             stmt.setString(1,bean.getActivityName());
             stmt.setString(2,bean.getActivityDescription());
             stmt.setString(3,bean.getSite());
             stmt.setString(4,bean.getPrice());
             stmt.setInt(5,bean.getPlace());
-            stmt.setInt(6,bean.getOwner());
+            stmt.setString(6,bean.getOwner() > 0 ? String.valueOf(bean.getOwner()) : null );
             stmt.setBoolean(7,bean.isArte());
             stmt.setBoolean(8,bean.isCibo());
             stmt.setBoolean(9,bean.isMusica());
@@ -92,8 +92,8 @@ public class DAOActivity {
             stmt.setString(21,bean.getType().name());
             stmt.setString(22,bean.getOpeningLocalTime().toString());
             stmt.setString(23,bean.getClosingLocalTime().toString());
-            stmt.setString(24,bean.getOpeningLocalDate() != null ? bean.getOpeningLocalDate().toString() : null);
-            stmt.setString(25,bean.getEndLocalDate() != null ? bean.getEndLocalDate().toString() : null);
+            stmt.setString(24,bean.getOpeningDate() != null ? bean.getOpeningLocalDate().toString() : null);
+            stmt.setString(25,bean.getEndDate() != null ? bean.getEndLocalDate().toString() : null);
             stmt.setString(26,bean.getCadence()!=null ? bean.getCadence().name() : null);
             
             stmt.execute();

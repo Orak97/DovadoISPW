@@ -29,7 +29,7 @@ public class DAOSchedules {
 
 	private static final String LOGDBCONN = "Connected database successfully...";
 	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
-	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private static final DateTimeFormatter formatterDB = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
 	//------------------------------------------------------------
 	
@@ -44,24 +44,23 @@ public class DAOSchedules {
 		return INSTANCE;
 	}
 
-	private void resetConnection() {
+	private void resetConnection() throws ClassNotFoundException, SQLException {
 		conn = null;
 		stmt = null;
+		Class.forName(DRIVER_CLASS_NAME);
+
+        // STEP 3: apertura connessione
+        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        System.out.println(LOGDBCONN);
 	}
 	public Schedule getSchedule(Long idUser) throws Exception {
 		//metodo per prendere dal db lo schedulo di un utente
-		resetConnection();
+		
 		// STEP 1: dichiarazioni
         Schedule schedule = new Schedule();
 
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
-
+        	resetConnection();
             //STEP4.1: preparo la stored procedure
             String call = "{call get_user_schedule(?)}";
 
@@ -79,7 +78,7 @@ public class DAOSchedules {
 	            	Long activity = rs.getLong("idActivity");
 	            	String schedTime = rs.getString("data_schedulo");
 	            	String remindTime = rs.getString("data_reminder");
-
+	            	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 	            	Activity a = DAOActivity.getInstance().getActivityById(activity);
 	        		LocalDateTime scheduledTime = LocalDateTime.parse(schedTime,formatter);
 	        		LocalDateTime reminderTime = LocalDateTime.parse(remindTime,formatter);
@@ -109,16 +108,10 @@ public class DAOSchedules {
 			LocalDateTime reminderTime) throws Exception {
 
 		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
-		resetConnection();
+		
 
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
-
+        	resetConnection();
             //STEP4.1: preparo la stored procedure
             String call = "{call add_activity_to_schedule(?,?,?,?)}";
 
@@ -126,8 +119,8 @@ public class DAOSchedules {
 
             stmt.setLong(1, userID);
             stmt.setLong(2, activity);
-            stmt.setString(3, scheduledTime.format(formatter));
-            stmt.setString(4, reminderTime.format(formatter));
+            stmt.setString(3, scheduledTime.format(formatterDB));
+            stmt.setString(4, reminderTime.format(formatterDB));
 
             stmt.execute();
 
@@ -141,15 +134,10 @@ public class DAOSchedules {
 	public void changeSchedule(Long idScheduleActivity, LocalDateTime scheduledTime,
 			LocalDateTime reminderTime) throws Exception {
 		//metodo per salvare sul db il fatto che un utente abbia modificato lo schedulo di un'attività
-		resetConnection();
+		
 
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
 
             //STEP4.1: preparo la stored procedure
             String call = "{call change_scheduled_activity(?,?,?)}";
@@ -159,8 +147,8 @@ public class DAOSchedules {
             
 
             stmt.setLong(1, idScheduleActivity);
-            stmt.setString(2, scheduledTime.format(formatter));
-            stmt.setString(3, reminderTime.format(formatter));
+            stmt.setString(2, scheduledTime.format(formatterDB));
+            stmt.setString(3, reminderTime.format(formatterDB));
 
             stmt.execute();
             
@@ -171,15 +159,10 @@ public class DAOSchedules {
 	}
 
 	public boolean removeActFromSchedule(Long scheduleToRemove,Long user) throws Exception {
-		resetConnection();
+		
 
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
+        	resetConnection();
 
             //STEP4.1: preparo la stored procedure
             String call = "{call remove_activity_from_schedule(?,?)}";
@@ -202,15 +185,10 @@ public class DAOSchedules {
 			LocalDateTime reminderTime, int percentage, LocalDateTime expiringDate) throws Exception{
 		
 		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
-		resetConnection();
+		
 
 		        try {
-		        	// STEP 2: loading dinamico del driver mysql
-		            Class.forName(DRIVER_CLASS_NAME);
-
-		            // STEP 3: apertura connessione
-		            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-		            System.out.println(LOGDBCONN);
+		        	resetConnection();
 
 		            //STEP4.1: preparo la stored procedure
 		            String call = "{call add_certified_activity_to_schedule(?,?,?,?,?,?)}";
@@ -219,10 +197,10 @@ public class DAOSchedules {
 
 		            stmt.setLong(1, userID);
 		            stmt.setLong(2, activity);
-		            stmt.setString(3, scheduledTime.format(formatter));
-		            stmt.setString(4, reminderTime.format(formatter));
+		            stmt.setString(3, scheduledTime.format(formatterDB));
+		            stmt.setString(4, reminderTime.format(formatterDB));
 		            stmt.setInt(5, percentage);
-		            stmt.setString(6, expiringDate.format(formatter));
+		            stmt.setString(6, expiringDate.format(formatterDB));
 
 		            stmt.execute();
 
