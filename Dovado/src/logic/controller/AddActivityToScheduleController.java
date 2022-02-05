@@ -2,6 +2,7 @@ package logic.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import logic.model.Activity;
 import logic.model.DAOActivity;
@@ -42,17 +43,14 @@ import logic.model.User;
  * 
  * se non viene specificato il timer di reminder viene impostato come timer la data di schedulo!
  * 
- * TODO : pensare a un notification system!
+ * 
  * ----------------------------------------------------------------------------------------------------------------------------------------------
  * 
  * */
 
 public class AddActivityToScheduleController {
 	private User session;
-	private DateBean timestamp;
 	private ScheduleBean editBean;
-	
-	private Schedule schedule = new Schedule();
 	
 	private Partner sessionPartner;
 	private Object couponToRedeem;
@@ -61,16 +59,6 @@ public class AddActivityToScheduleController {
 		this.session = session;
 		this.editBean = editBean;
 	}
-	
-	public AddActivityToScheduleController(Schedule schedule) {
-		this.schedule = schedule;
-	}
-	
-	public AddActivityToScheduleController(User usr, DateBean timestamp) {
-		session = usr;
-		this.timestamp= timestamp;
-	}
-	
 	
 	public AddActivityToScheduleController(Partner partner,Object couponToRedeem) {
 		//usare questo costruttore solo se si è partner e si vuole riscattare un coupon
@@ -91,7 +79,7 @@ public class AddActivityToScheduleController {
 		//se non è disponibile il reminder Date dal bean, imposta come ora di reminder lo scheduledtime - 1h
 		try{
 			reminderDate = editBean.getReminderDateTime();
-		}catch(Exception e) {
+		}catch(DateTimeParseException e) {
 			reminderDate = scheduledDate.minusHours(1);
 		}
 		

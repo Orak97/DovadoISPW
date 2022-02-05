@@ -22,19 +22,26 @@ public class DAOSchedules {
 
 	//----------database--------------------------------------
 
-	private static String USER = "dovado"; //DA CAMBIARE
-	private static String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+	private static final String USER = "dovado"; //DA CAMBIARE
+	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
+	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
+	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 
+	private static final String LOGDBCONN = "Connected database successfully...";
+	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
+	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	
 	//------------------------------------------------------------
-
-
+	
+	private static Connection conn;
+	private static CallableStatement stmt;
 
 	private DAOSchedules() {
 	}
 
 	public static DAOSchedules getInstance() {
+		conn = null;
+		stmt = null;
 		if(INSTANCE == null) INSTANCE = new DAOSchedules();
 		return INSTANCE;
 	}
@@ -44,9 +51,6 @@ public class DAOSchedules {
 		//metodo per prendere dal db lo schedulo di un utente
 
 		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
-
         Schedule schedule = new Schedule();
 
         try {
@@ -55,7 +59,7 @@ public class DAOSchedules {
 
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
 
             //STEP4.1: preparo la stored procedure
             String call = "{call get_user_schedule(?)}";
@@ -72,13 +76,12 @@ public class DAOSchedules {
 	            while(rs.next()) {
 	            	Long idSchedule = rs.getLong("id");
 	            	Long activity = rs.getLong("idActivity");
-	            	String scheduled_time = rs.getString("data_schedulo");
-	            	String reminder_time = rs.getString("data_reminder");
+	            	String schedTime = rs.getString("data_schedulo");
+	            	String remindTime = rs.getString("data_reminder");
 
 	            	Activity a = DAOActivity.getInstance().getActivityById(activity);
-	        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
-	        		LocalDateTime scheduledTime = LocalDateTime.parse(scheduled_time,dtf);
-	        		LocalDateTime reminderTime = LocalDateTime.parse(reminder_time,dtf);
+	        		LocalDateTime scheduledTime = LocalDateTime.parse(schedTime,formatter);
+	        		LocalDateTime reminderTime = LocalDateTime.parse(remindTime,formatter);
 	        		
 	        		if(rs.getInt("coupon") != 0) {
 	        			int couponCode = rs.getInt("coupon");
@@ -86,8 +89,7 @@ public class DAOSchedules {
 	        			Coupon coupon = daoCp.findCoupon(couponCode);
 	        			schedule.addActivityToSchedule(idSchedule,a, scheduledTime, reminderTime,coupon);
 	        		}else
-	        		
-	        		schedule.addActivityToSchedule(idSchedule,a, scheduledTime, reminderTime);
+	        			schedule.addActivityToSchedule(idSchedule,a, scheduledTime, reminderTime);
 	            }
 
 	            rs.close();
@@ -95,20 +97,7 @@ public class DAOSchedules {
 
 		}finally {
 		    // STEP 5.2: Clean-up dell'ambiente
-		    try {
-		        if (stmt != null)
-		            stmt.close();
-		    } catch (SQLException se2) {
-		    	throw(se2);
-		    }
-		    try {
-		        if (conn != null)
-		            conn.close();
-		        	System.out.println("Disconnetted database successfully...");
-
-		    } catch (SQLException se) {
-		        se.printStackTrace();
-		    }
+		    catchRoutine();
 		}
 
         return schedule;
@@ -120,9 +109,6 @@ public class DAOSchedules {
 
 		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
 
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
 
         try {
         	// STEP 2: loading dinamico del driver mysql
@@ -130,14 +116,12 @@ public class DAOSchedules {
 
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
 
             //STEP4.1: preparo la stored procedure
             String call = "{call add_activity_to_schedule(?,?,?,?)}";
 
             stmt = conn.prepareCall(call);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
             stmt.setLong(1, userID);
             stmt.setLong(2, activity);
@@ -148,20 +132,7 @@ public class DAOSchedules {
 
         }finally {
 		    // STEP 5.2: Clean-up dell'ambiente
-		    try {
-		        if (stmt != null)
-		            stmt.close();
-		    } catch (SQLException se2) {
-		    	throw(se2);
-		    }
-		    try {
-		        if (conn != null)
-		            conn.close();
-		        	System.out.println("Disconnetted database successfully...");
-
-		    } catch (SQLException se) {
-		        se.printStackTrace();
-		    }
+        	catchRoutine();
 		}
 
 	}
@@ -170,9 +141,6 @@ public class DAOSchedules {
 			LocalDateTime reminderTime) throws Exception {
 		//metodo per salvare sul db il fatto che un utente abbia modificato lo schedulo di un'attività
 
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
 
         try {
         	// STEP 2: loading dinamico del driver mysql
@@ -187,37 +155,22 @@ public class DAOSchedules {
 
             stmt = conn.prepareCall(call);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            
 
             stmt.setLong(1, idScheduleActivity);
             stmt.setString(2, scheduledTime.format(formatter));
             stmt.setString(3, reminderTime.format(formatter));
 
             stmt.execute();
-
+            
         }finally {
 		    // STEP 5.2: Clean-up dell'ambiente
-		    try {
-		        if (stmt != null)
-		            stmt.close();
-		    } catch (SQLException se2) {
-		    	throw(se2);
-		    }
-		    try {
-		        if (conn != null)
-		            conn.close();
-		        	System.out.println("Disconnetted database successfully...");
-
-		    } catch (SQLException se) {
-		        se.printStackTrace();
-		    }
+		    catchRoutine();
 		}
 	}
 
 	public boolean removeActFromSchedule(Long scheduleToRemove,Long user) throws Exception {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
+
 
         try {
         	// STEP 2: loading dinamico del driver mysql
@@ -225,7 +178,7 @@ public class DAOSchedules {
 
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            System.out.println(LOGDBCONN);
 
             //STEP4.1: preparo la stored procedure
             String call = "{call remove_activity_from_schedule(?,?)}";
@@ -239,21 +192,7 @@ public class DAOSchedules {
 
         }finally {
 		    // STEP 5.2: Clean-up dell'ambiente
-		    try {
-		        if (stmt != null)
-		            stmt.close();
-		    } catch (SQLException se2) {
-		    	throw(se2);
-		    }
-		    try {
-		        if (conn != null)
-		            conn.close();
-		        	System.out.println("Disconnetted database successfully...");
-
-		    } catch (SQLException se) {
-		        se.printStackTrace();
-		        return false;
-		    }
+		    catchRoutine();
 		}
 		return true;
 	}
@@ -263,9 +202,6 @@ public class DAOSchedules {
 		
 		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
 
-				// STEP 1: dichiarazioni
-		        CallableStatement stmt = null;
-		        Connection conn = null;
 
 		        try {
 		        	// STEP 2: loading dinamico del driver mysql
@@ -273,14 +209,12 @@ public class DAOSchedules {
 
 		            // STEP 3: apertura connessione
 		            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-		            System.out.println("Connected database successfully...");
+		            System.out.println(LOGDBCONN);
 
 		            //STEP4.1: preparo la stored procedure
 		            String call = "{call add_certified_activity_to_schedule(?,?,?,?,?,?)}";
 
 		            stmt = conn.prepareCall(call);
-
-		            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 		            stmt.setLong(1, userID);
 		            stmt.setLong(2, activity);
@@ -293,22 +227,27 @@ public class DAOSchedules {
 
 		        }finally {
 				    // STEP 5.2: Clean-up dell'ambiente
-				    try {
-				        if (stmt != null)
-				            stmt.close();
-				    } catch (SQLException se2) {
-				    	throw(se2);
-				    }
-				    try {
-				        if (conn != null)
-				            conn.close();
-				        	System.out.println("Disconnetted database successfully...");
-
-				    } catch (SQLException se) {
-				        se.printStackTrace();
-				    }
+				    catchRoutine();
 				}
 		
 	}
+	
+	private void catchRoutine() throws SQLException {
+		try {
+	        if (stmt != null)
+	            stmt.close();
+	    } catch (SQLException se2) {
+	    	System.out.println( se2.getErrorCode());
+	    	se2.printStackTrace();
+	    }
+	    try {
+	        if (conn != null)
+	            conn.close();
+	        	System.out.println(LOGDBDISCONN);
 
+	    } catch (SQLException se) {
+	        System.out.println( se.getErrorCode());
+	    	se.printStackTrace();
+	    }
+	}
 }
