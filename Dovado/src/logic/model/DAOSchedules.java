@@ -33,23 +33,24 @@ public class DAOSchedules {
 	
 	//------------------------------------------------------------
 	
-	private static Connection conn;
-	private static CallableStatement stmt;
+	private  Connection conn ;
+	private  CallableStatement stmt;
 
 	private DAOSchedules() {
 	}
 
 	public static DAOSchedules getInstance() {
-		conn = null;
-		stmt = null;
 		if(INSTANCE == null) INSTANCE = new DAOSchedules();
 		return INSTANCE;
 	}
 
-
+	private void resetConnection() {
+		conn = null;
+		stmt = null;
+	}
 	public Schedule getSchedule(Long idUser) throws Exception {
 		//metodo per prendere dal db lo schedulo di un utente
-
+		resetConnection();
 		// STEP 1: dichiarazioni
         Schedule schedule = new Schedule();
 
@@ -108,7 +109,7 @@ public class DAOSchedules {
 			LocalDateTime reminderTime) throws Exception {
 
 		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
-
+		resetConnection();
 
         try {
         	// STEP 2: loading dinamico del driver mysql
@@ -140,7 +141,7 @@ public class DAOSchedules {
 	public void changeSchedule(Long idScheduleActivity, LocalDateTime scheduledTime,
 			LocalDateTime reminderTime) throws Exception {
 		//metodo per salvare sul db il fatto che un utente abbia modificato lo schedulo di un'attività
-
+		resetConnection();
 
         try {
         	// STEP 2: loading dinamico del driver mysql
@@ -170,7 +171,7 @@ public class DAOSchedules {
 	}
 
 	public boolean removeActFromSchedule(Long scheduleToRemove,Long user) throws Exception {
-
+		resetConnection();
 
         try {
         	// STEP 2: loading dinamico del driver mysql
@@ -201,7 +202,7 @@ public class DAOSchedules {
 			LocalDateTime reminderTime, int percentage, LocalDateTime expiringDate) throws Exception{
 		
 		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
-
+		resetConnection();
 
 		        try {
 		        	// STEP 2: loading dinamico del driver mysql
