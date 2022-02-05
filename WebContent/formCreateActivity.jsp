@@ -36,7 +36,7 @@
 		
 		//controllo se 'openingDate' è null, se non lo è ho fatto una request per creare un' attività, istanzio il createActivityController etc etc
 		if(request.getParameter("activityName")!= null){
-			CreateActivityController c = new CreateActivityController(createActivityBean);
+			CreateActivityController c = new CreateActivityController(createActivityBean,u);
 			try{c.saveActivity();}
 			catch(Exception e){
 				e.printStackTrace();

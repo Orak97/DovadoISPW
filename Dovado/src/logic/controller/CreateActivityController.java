@@ -62,6 +62,16 @@ public class CreateActivityController {
 
 	}
 	
+	public CreateActivityController(CreateActivityBean bean, SuperUser session){
+		this.bean = bean;
+		if(session instanceof Partner) {
+			this.owner = (Partner) session;
+			this.bean.setOwner(this.owner.getUserID().intValue());
+		}
+		daoAc = DAOActivity.getInstance();
+
+	}
+	
 	public Activity createActivity() throws SQLException, ClassNotFoundException {
 		
 		/******************************************************************************************

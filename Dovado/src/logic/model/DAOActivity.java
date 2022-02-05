@@ -74,7 +74,7 @@ public class DAOActivity {
             stmt.setString(3,bean.getSite());
             stmt.setString(4,bean.getPrice());
             stmt.setInt(5,bean.getPlace());
-            stmt.setString(6,null);
+            stmt.setInt(6,bean.getOwner());
             stmt.setBoolean(7,bean.isArte());
             stmt.setBoolean(8,bean.isCibo());
             stmt.setBoolean(9,bean.isMusica());
@@ -639,7 +639,7 @@ public class DAOActivity {
         	bean.setAdrenalina(rs.getBoolean("adrenalina"));
         	bean.setRelax(rs.getBoolean("relax"));
         	bean.setIstruzione(rs.getBoolean("istruzione"));
-        	bean.setIstruzione(rs.getBoolean("monumenti"));
+        	bean.setMonumenti(rs.getBoolean("monumenti"));
         	
         	bean.setOwner(rs.getInt("proprietario"));
         	
