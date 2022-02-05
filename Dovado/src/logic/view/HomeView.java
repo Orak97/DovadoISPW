@@ -78,7 +78,7 @@ import logic.view.Navbar;
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
 	private static final  String BGUCOLORKEY = "BC9416";
-	private static final  String MAPPATHKEY = "file:/home/pgs/Documents/GitHub/DovadoISPW/WebContent/MapView.html";
+	private static final  String MAPPATHKEY = "http://localhost:8614/Dovado/MapView.html";
 	//botton KEYS
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
@@ -262,6 +262,13 @@ public class HomeView implements Initializable{
     						eventBox.getChildren().add(placeId);
     						eventBox.getChildren().add(eventImage);
     						eventBox.getChildren().add(eventText);
+    						//Se l'attività è certificata aggiungo un logo in alto a
+    						//destra per indicarlo.
+    						if(activitiesPartn.get(i) instanceof CertifiedActivity) {
+    							eventName.getStyleClass().clear();
+    							eventName.getStyleClass().add("certEventName");
+    							eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+    						}	
     						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
     						eventBox.setAlignment(Pos.CENTER);
     						
@@ -392,6 +399,12 @@ public class HomeView implements Initializable{
 							eventBox.getChildren().add(placeId);
 							eventBox.getChildren().add(eventImage);
 							eventBox.getChildren().add(eventText);
+							if(activities.get(i) instanceof CertifiedActivity) {
+
+								eventName.getStyleClass().clear();
+								eventName.getStyleClass().add("certEventName");
+								eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+							}	
 							//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 							eventBox.setAlignment(Pos.CENTER);
 							
@@ -1093,9 +1106,16 @@ public void filterActivities() {
 		//dell'evento ed infine il testo dell'evento.
 		eventBox.getChildren().add(eventId);
 		eventBox.getChildren().add(placeId);
-		eventBox.getChildren().add(eventImage);
+		eventBox.getChildren().add(eventImage);		
 		eventBox.getChildren().add(eventText);
-		
+		//Se l'attività è certificata aggiungo un logo in alto a
+		//destra per indicarlo.
+		if(activities.get(i) instanceof CertifiedActivity) {
+
+			eventName.getStyleClass().clear();
+			eventName.getStyleClass().add("certEventName");
+			eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+		}	
 		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 		eventBox.setAlignment(Pos.CENTER);
 		eng.executeScript("spotPlace("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", '"+activities.get(i).getPlace().getName()+"',"+activities.get(i).getPlace().getId()+"))");;

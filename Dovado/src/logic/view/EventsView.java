@@ -266,6 +266,12 @@ public class EventsView implements Initializable{
 			eventBox.getChildren().add(schedId);
 			eventBox.getChildren().add(eventImage);
 			eventBox.getChildren().add(eventText);
+			if(activities.get(i) instanceof CertifiedActivity) {
+
+				eventName.getStyleClass().clear();
+				eventName.getStyleClass().add("certEventName");
+				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+			}	
 			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 			eventBox.setAlignment(Pos.CENTER_LEFT);
 			
@@ -334,6 +340,12 @@ public class EventsView implements Initializable{
 			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
 			StackPane eventBox = new StackPane();
 			eventBox.getStyleClass().add("eventBox");
+			if(activities.get(i) instanceof CertifiedActivity) {
+
+				eventName.getStyleClass().clear();
+				eventName.getStyleClass().add("certEventName");
+				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+			}	
 			
 			
 			Text eventId = new Text();
