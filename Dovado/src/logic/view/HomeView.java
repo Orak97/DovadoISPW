@@ -60,9 +60,11 @@ import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
 import logic.model.DateBean;
+import logic.model.ExpiringActivity;
 import logic.model.FindActivitiesBean;
 import logic.model.Log;
 import logic.model.Partner;
+import logic.model.PeriodicActivity;
 import logic.model.Place;
 import logic.model.PreferenceBean;
 import logic.model.Preferences;
@@ -324,14 +326,38 @@ public class HomeView implements Initializable{
 							ImageView eventImage = new ImageView();
 							Text eventName = new Text(activities.get(i).getName()+"\n");
 							Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-							Text eventInfo = new Text(activities.get(i).getPlace().getName()+
+							Text eventInfo;
+
+							if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
+								eventInfo = new Text(activities.get(i).getPlace().getName()+
+										"\n Expiring activity"+
+										"- From: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+										"- To: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+										"\n"+activities.get(i).getFrequency().getOpeningTime()+
+										"-"+activities.get(i).getFrequency().getClosingTime());
+							}
+							else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
+								eventInfo = new Text(activities.get(i).getPlace().getName()+
+										"\n Periodic activity"+
+										"-"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
+										"- From: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+										"- To: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+										"\n"+activities.get(i).getFrequency().getOpeningTime()+
+										"-"+activities.get(i).getFrequency().getClosingTime());
+							}
+							else{
+								eventInfo = new Text(activities.get(i).getPlace().getName()+
+									"\n Continuos activity"+
 									"\n"+activities.get(i).getFrequency().getOpeningTime()+
 									"-"+activities.get(i).getFrequency().getClosingTime());
+							}
+							
 							eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/290x120"));
 							eventImage.getStyleClass().add("event-image");
 							
 							eventInfo.setId("eventInfo");
 							eventInfo.getStyleClass().add("textEventInfo");
+							eventInfo.setWrappingWidth(280);
 					/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
 							eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
 							eventInfo.setFill(Paint.valueOf("#BGCOLOR"));
@@ -401,7 +427,7 @@ public void activitySelected() {
 		daoAct = DAOActivity.getInstance();
 		daoSU = DAOSuperUser.getInstance();
 		daoPlc = DAOPlace.getInstance();
-
+		
 		StackPane eventBox = null;
 		try {
 			eventBox = (StackPane) eventsList.getSelectionModel().getSelectedItem();
@@ -440,7 +466,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		Text eventDetails = (Text) eventInfo.getChildren().get(1);
 		
 		Log.getInstance().getLogger().info(eventName+" "+eventDetails);
-
+		
+		Text activityDescription= new Text();
 		VBox selection = new VBox();
 		Button viewOnMap = new Button();
 		Button joinActivityChannel = new Button();
@@ -466,6 +493,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		} 
 		Log.getInstance().getLogger().info("Attivit� trovata: "+activitySelected);
 
+		activityDescription.setText(activitySelected.getDescription());
+		activityDescription.setWrappingWidth(280);
+		activityDescription.getStyleClass().add("textEventInfo");
+		
+		selection.getChildren().add(0,activityDescription);
+		
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 					eng.executeScript("spotPlace('"+activitySelected.getPlace().getLatitudine()+"','"+activitySelected.getPlace().getLongitudine()+"','"+activitySelected.getPlace().getName()+"','"+activitySelected.getPlace().getId()+"')");
@@ -553,8 +586,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 						//Apro un pop up in cui si può scegliere una
 						//Data in cui svolgere l'attività
 						DatePicker pickDate = new DatePicker();
+						DatePicker pickDateReminder = new DatePicker();
 						ChoiceBox<String> hourBox = new ChoiceBox<>();
 						ChoiceBox<String> minBox = new ChoiceBox<>();
+						
+						ChoiceBox<String> hourBox2 = new ChoiceBox<>();
+						ChoiceBox<String> minBox2 = new ChoiceBox<>();
 	
 						int upperLimit;
 						int lowerLimit;
@@ -614,6 +651,53 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							}
 						});
 						
+						for(int i=lowerLimit;i<=upperLimit;i++) {
+							String hr = Integer.toString(i);
+							if(i<10) {
+								hr = "0"+hr;
+							}
+							hourBox2.getItems().add(hr);
+						}
+						
+						hourBox2.setOnAction(new EventHandler<ActionEvent>() {
+							@Override public void handle(ActionEvent e) {
+								minBox2.getItems().clear();
+								int selectedHour = Integer.parseInt(hourBox.getValue());
+								if(selectedHour==lowerLimit) {
+									for(int j=lowerLimMin;j<61;j++) {
+										String min = Integer.toString(j);
+										if(j<10) {
+											min = "0"+min;
+										}
+										minBox2.getItems().add(min);
+										
+									}
+									return;
+								}
+								if(selectedHour==upperLimit) {
+									for(int j=0;j<=upperLimMin;j++) {
+										String min = Integer.toString(j);
+										if(j<10) {
+											min = "0"+min;
+										}
+										minBox2.getItems().add(min);
+									}
+									
+								}
+								else {
+									for(int j=0;j<61;j++) {
+										String min = Integer.toString(j);
+										if(j<10) {
+											min = "0"+min;
+										}
+										minBox2.getItems().add(min);
+									}
+									
+								}
+									
+							}
+						});
+						
 						/*for(int j=0;j<61;j++) {
 							minBox.getItems().add(Integer.toString(j));
 						}*/
@@ -628,6 +712,10 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 						
 						HBox buttonBox = new HBox();
 						HBox pickTimeBox = new HBox();
+						HBox pickReminderBox = new HBox();
+						
+						Text txtTime = new Text("Select scheduled time!");
+						Text txtReminder = new Text("|OPTIONAL|"+'\n'+"Select a time reminder"+'\n'+"for the day scheduled or specify the"+'\n'+"day we should remind you.");
 						
 						buttonBox.getChildren().addAll(close,ok);
 						
@@ -637,10 +725,11 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 						
 						txt.getStyleClass().add("msstxt");
 						
+						pickReminderBox.getChildren().addAll(hourBox2,minBox2);
 						pickTimeBox.getChildren().addAll(hourBox,minBox);
 						
 						dateBox.setBackground(b);
-						dateBox.getChildren().addAll(txt,pickDate,pickTimeBox,buttonBox);
+						dateBox.getChildren().addAll(txt,pickDate,txtTime,pickTimeBox,txtReminder,pickDateReminder,pickReminderBox,buttonBox);
 						dateBox.setId("dateBox");
 						
 						selectedBox.getChildren().add(dateBox);
@@ -660,22 +749,28 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								String dayStringed = day.format(pickDate.getValue());
 								
 								String[] date = dayStringed.split("-");
-								
+
 								String hourChosen = hourBox.getValue();
 								String minChosen = minBox.getValue();
 								
-								int hourReminderInt = Integer.parseInt(hourChosen);
-								String hourReminder;
-								hourReminder = Integer.toString(hourReminderInt-1);
-						
-								System.out.println("AGGIUNGERE UN QUALCOSA CHE FACCIA SCEGLIERE I REMINDER!!!");
-								
-								if(hourReminderInt-1<10) {
-									hourReminder = "0"+hourReminder;
+								String hourReminder = hourBox2.getValue();
+								String minReminder = minBox2.getValue();
+								String dateReminderChosen = day.format(pickDateReminder.getValue());
+								if (hourReminder.isEmpty() || minReminder.isEmpty()) {
+									int hourReminderInt = Integer.parseInt(hourChosen);
+									hourReminder = Integer.toString(hourReminderInt-1);
+							
+									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");;
+									
+									if(hourReminderInt-1<10) {
+										hourReminder = "0"+hourReminder;
+									}
 								}
-								
+								if(dateReminderChosen.isEmpty()) {
+									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");;
+									dateReminderChosen=dayStringed;
+								}
 								String dateChosen = dayStringed;
-								String dateReminder = dayStringed+' '+hourReminder+':'+minChosen;
 								
 //								DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 //								LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
@@ -693,6 +788,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								sb.setIdActivity(activityId);
 								sb.setScheduledDate(dateChosen);
 								sb.setScheduledTime(hourChosen+':'+minChosen);
+								sb.setReminderDate(dateReminderChosen);
+								sb.setReminderTime(hourReminder+':'+minChosen);
 								
 								AddActivityToScheduleController sc = new AddActivityToScheduleController((User) user, sb);
 								
@@ -938,9 +1035,31 @@ public void filterActivities() {
 		ImageView eventImage = new ImageView();
 		Text eventName = new Text(activities.get(i).getName()+"\n");
 		Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-		Text eventInfo = new Text(activities.get(i).getPlace().getName()+
+		Text eventInfo;
+
+		if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
+			eventInfo = new Text(activities.get(i).getPlace().getName()+
+					"\nExpiring activity"+
+					"- From: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+					"- To: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+					"\n"+activities.get(i).getFrequency().getOpeningTime()+
+					"-"+activities.get(i).getFrequency().getClosingTime());
+		}
+		else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
+			eventInfo = new Text(activities.get(i).getPlace().getName()+
+					"\nPeriodic activity"+
+					"-"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
+					"- From: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
+					"- To: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
+					"\n"+activities.get(i).getFrequency().getOpeningTime()+
+					"-"+activities.get(i).getFrequency().getClosingTime());
+		}
+		else{
+			eventInfo = new Text(activities.get(i).getPlace().getName()+
+				"\n Continuos activity"+
 				"\n"+activities.get(i).getFrequency().getOpeningTime()+
 				"-"+activities.get(i).getFrequency().getClosingTime());
+		}
 		eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
 
 		eventInfo.setId("eventInfo");

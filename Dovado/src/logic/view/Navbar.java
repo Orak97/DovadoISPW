@@ -87,6 +87,8 @@ public class Navbar {
 	
 	public void onEvents() {
 		this.changePage();
+		if(Navbar.user instanceof Partner)
+			((Button)(bPNavbar.lookup("#events"))).setText("Manage activities");
 		bPNavbar.lookup("#events").getStyleClass().add(ACTSTYLEKEY);
 	}
 
