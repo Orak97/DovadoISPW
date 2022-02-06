@@ -167,6 +167,131 @@ if(partner != null){
 
 <%}%>
 
+
+<%-- modal per gestire le attività --%>
+<!-- Modal -->
+		<div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="activityModalLabel"></h5>
+		        <button type="button" class="btn-close" data-bs-target="#findActivitiesModal" data-bs-toggle="modal" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		      
+		      <%-- carosello --%>
+			      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+				  <div class="carousel-indicators">
+				    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+				    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+				    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+				  </div>
+				  <div class="carousel-inner carousel-activity">
+				    <div class="carousel-item active">
+				      <img src="https://source.unsplash.com/random" class="d-block w-100" alt="...">
+				    </div>
+				    <div class="carousel-item">
+				      <img src="https://source.unsplash.com/random" class="d-block w-100" alt="...">
+				    </div>
+				    <div class="carousel-item">
+				      <img src="https://source.unsplash.com/random" class="d-block w-100" alt="...">
+				    </div>
+				  </div>
+				  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+				    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				    <span class="visually-hidden">Previous</span>
+				  </button>
+				  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+				    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+				    <span class="visually-hidden">Next</span>
+				  </button>
+				</div>
+		      
+		      <%-- fine carosello --%>
+		      <label for="activityDescription" class="col-form-label label-activity">Descrizione:</label>
+		      <p id="activityDescription" class="lead"><p>
+		      
+		      <div class="row">
+		      	<div class="col">
+		      		<label for="placename" class="col-form-label label-activity">Luogo:</label>
+		      		<p id="placename" class="lead"></p>
+		      	</div>
+		      	<div class="col">
+		      		<label for="activityaddress" class="col-form-label label-activity">Indirizzo:</label>
+		      		<p id="activityaddress" class="lead"></p>
+		      	</div>
+		      </div>
+		      <div class="row">
+			      <label for="playabilityInfo" class="col-form-label label-activity">Puoi fare questa attività:</label>
+			      <p id="playabilityInfo" class="lead"><p>
+		      </div>
+		      
+
+
+
+		      </div>
+		      <div class="modal-footer">
+  			    <form method="GET" action="CreateActivityPartner.jsp">
+	      	  		<input type="number" id="idActivity" name="idActivity" class="visually-hidden">
+		        	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Modifica Sconti disponibili <i class="bi bi-tag"></i></button>
+		        	<button type="button" class="btn btn-primary"  id="open-chat">Apri la chat della attività <i class="bi bi-chat-dots"></i></button>
+		        	<a role="submit" class="btn btn-success"  id="edit-activity">Modifica i dettagli dell'attività <i class="bi bi-gear-wide-connected"></i></a>
+		      	</form>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+<!-- fine modal -->
+
+<script>
+//---------------------------------------------------------------
+//|						 	modal								|
+//---------------------------------------------------------------
+
+	var exampleModal = document.getElementById('activityModal')
+	exampleModal.addEventListener('show.bs.modal', function (event) {
+	// Button that triggered the modal
+	var button = event.relatedTarget
+	// Extract info from data-bs-* attributes
+	var titolo = button.getAttribute('data-bs-titolo')
+	var id = button.getAttribute('data-bs-id')
+	var luogo = button.getAttribute('data-bs-luogo')
+	let descr = button.getAttribute('data-bs-description')	
+	let playability =  button.getAttribute('data-bs-playabilityInfo')
+	let addr = button.getAttribute('data-bs-address')
+	let data = button.getAttribute('data-bs-date')
+	
+	
+	// If necessary, you could initiate an AJAX request here
+	// and then do the updating in a callback.
+	//
+	// Update the modal's content.
+	var modalTitle = exampleModal.querySelector('.modal-title')
+	var modalID = exampleModal.querySelector('.modal-footer #idActivity')
+	var modalDescription = exampleModal.querySelector('#activityDescription')
+	let modalPlayabilityInfo = exampleModal.querySelector('#playabilityInfo')
+	let modalPlace = exampleModal.querySelector('#placename')
+	let modalAddress = exampleModal.querySelector('#activityaddress')
+	let editActivity =  document.querySelector('#edit-activity')
+	
+	console.log(id);
+	modalID.value=id
+	modalTitle.textContent = titolo
+	modalDescription.textContent = descr
+	modalPlayabilityInfo.textContent = playability 
+	modalPlace.textContent = luogo
+	modalAddress.textContent = addr
+	editActivity.href = 'CreateActivityPartner.jsp?editActivity='+id;
+	
+	//---------------------sezione per controllare se l'attività è certificata---------------
+	
+})
+
+</script>
+
+<%-- fine modal per gestire le attività --%>
+
 <style>
 	/* Chrome, Safari, Edge, Opera */
 	input::-webkit-outer-spin-button,
