@@ -7,6 +7,7 @@ import logic.model.ContinuosActivity;
 import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
 import logic.model.ExpiringActivity;
+import logic.model.Log;
 import logic.model.Partner;
 import logic.model.PeriodicActivity;
 
@@ -118,6 +119,7 @@ public class UpdateCertActController {
 		try {
 			activityId = Long.valueOf(bean.getIdActivity());
 		}catch(NumberFormatException e) {
+			Log.getInstance().getLogger().severe("l'ID dell'attività da reclamare è NULL");
 			throw e;
 		}
 		daoAc.claimActivity(activityId, partnerID);

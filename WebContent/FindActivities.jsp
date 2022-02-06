@@ -18,15 +18,15 @@
 
 <div class="container pt-6">
 
-<%	
-	boolean displayForm = true;
+<%
+boolean displayForm = true;
 	if(request.getParameter("zone") != null){
 		FindActivityController controller = new FindActivityController(findBean,preferenceBean);
 		ArrayList<Activity> foundActivities = new ArrayList<Activity>();
 		try{
-		 foundActivities = controller.FindActivities();
+		 foundActivities = controller.findActivities();
 		}catch(NullPointerException e){
-			%> <script> alert('Inserisci correttamente i campi zona e data!') </script> <%
+%> <script> alert('Inserisci correttamente i campi zona e data!') </script> <%
 			e.printStackTrace();
 		}catch(IllegalArgumentException e){
 			%> <script> alert('La data in cui vuoi fare le attività deve essere oggi o i giorni successivi!') </script> <%

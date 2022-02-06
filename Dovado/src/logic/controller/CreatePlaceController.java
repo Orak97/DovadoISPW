@@ -18,8 +18,7 @@ public class CreatePlaceController {
 	
 	public Place createPlace(String name,String address,String city,String region, String civico,Partner owner){
 		PlaceBean placeB = PlaceBean.getInstance();
-		Place place = placeB.addPlace(address, name, city, region, civico, owner);
-		return place;
+		return placeB.addPlace(address, name, city, region, civico, owner);
 	}
 
 	
@@ -33,13 +32,5 @@ public class CreatePlaceController {
 		return null;
 	
 	}
-	
-//	private int addPlaceToDB(String address, String name, String city, String region,String civico, Partner owner) {
-//		int resultId = DAOPlace.getInstance().addPlaceToJSON(address, name, city, region, civico, owner);
-//		if(resultId>0)
-//			return resultId;
-//		return -1;
-//	
-//	}
 	
 }

@@ -39,7 +39,7 @@ if(request.getParameter("regForm")!= null){
 		} else{
 %>
 	
-		<p style="color:red;"> ${regBean.getError()}</p>
+		<p style="color:red;"> ${regExpBean.getError()}</p>
 <%		
 		}
 		}

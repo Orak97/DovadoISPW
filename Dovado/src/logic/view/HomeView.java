@@ -266,7 +266,7 @@ public class HomeView implements Initializable{
     						eventBox.getChildren().add(placeId);
     						eventBox.getChildren().add(eventImage);
     						eventBox.getChildren().add(eventText);
-    						//Se l'attività è certificata aggiungo un logo in alto a
+    						//Se l'attivitï¿½ ï¿½ certificata aggiungo un logo in alto a
     						//destra per indicarlo.
     						if(activitiesPartn.get(i) instanceof CertifiedActivity) {
     							eventName.getStyleClass().clear();
@@ -761,9 +761,9 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								}else {
 									discountDescription = new Text("Pick a discount if you want.");
 								}
-								percDiscount.getItems().add("0% - 0£");
+								percDiscount.getItems().add("0% - 0ï¿½");
 								for(int i=0;i<discList.size();i++) {
-									percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"£");
+									percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"ï¿½");
 								}
 								dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);								
 							
@@ -840,7 +840,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									String[] percPrice = percDiscount.getValue().split("% - ");
 									int percRequested = Integer.valueOf(percPrice[0]);
 									
-									String priceString = (percPrice[1].split("£"))[0];
+									String priceString = (percPrice[1].split("ï¿½"))[0];
 									int pricePayed = Integer.valueOf(priceString);
 									
 									if(pricePayed > ((User)user).getBalance()) {
@@ -1048,7 +1048,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			//Eseguo un controllo sulla ricerca delle attivitÃ ; se il risultato Ã¨ un'arraylist vuoto, allora
 			//segnalo l'errore e esco dal metodo.
 			
-			if( (activities = findActCtrl.FindActivities()).isEmpty() ) {
+			if( (activities = findActCtrl.findActivities()).isEmpty() ) {
 				Log.getInstance().getLogger().info("Nothing was found!");
 				final Popup popup = popupGen(wPopup,hPopup,"Nothing has been found"); 
 				popup.centerOnScreen(); 
@@ -1157,7 +1157,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			eventBox.getChildren().add(placeId);
 			eventBox.getChildren().add(eventImage);		
 			eventBox.getChildren().add(eventText);
-			//Se l'attività è certificata aggiungo un logo in alto a
+			//Se l'attivitï¿½ ï¿½ certificata aggiungo un logo in alto a
 			//destra per indicarlo.
 			if(activities.get(i) instanceof CertifiedActivity) {
 	

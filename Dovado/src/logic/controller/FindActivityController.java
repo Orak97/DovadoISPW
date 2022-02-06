@@ -35,7 +35,7 @@ public class FindActivityController {
 		this.beanPref = beanPref;
 	}
 	
-	public ArrayList<Activity> FindActivities() throws ClassNotFoundException, SQLException {
+	public ArrayList<Activity> findActivities() throws ClassNotFoundException, SQLException {
 		//controllo che i campi non siano nulli
 		if(beanFind.getZone() == null || beanFind.getDate() == null) throw new NullPointerException();
 		
@@ -49,11 +49,10 @@ public class FindActivityController {
 		if(beanFind.getKeywords()!= null){
 			keywords = beanFind.getKeywords().split(";");
 		}
-		ArrayList<Activity> searchedActivities = new ArrayList<Activity>();
 		
 		DAOActivity dao = DAOActivity.getInstance();
 		
-		searchedActivities = dao.findActivitiesByZone(beanFind.getZone());
+		ArrayList<Activity> searchedActivities = dao.findActivitiesByZone(beanFind.getZone());
 		
 		//to remove
 		System.out.println("dopo find activities by zone");
@@ -82,12 +81,10 @@ public class FindActivityController {
 	public ArrayList<Activity> FindActivitiesByZone() throws ClassNotFoundException, SQLException {
 		//controllo che i campi non siano nulli
 		if(beanFind.getZone() == null) throw new NullPointerException();
-		
-		ArrayList<Activity> searchedActivities = new ArrayList<Activity>();
-		
+				
 		DAOActivity dao = DAOActivity.getInstance();
 		
-		searchedActivities = dao.findActivitiesByZone(beanFind.getZone());
+		ArrayList<Activity> searchedActivities = dao.findActivitiesByZone(beanFind.getZone());
 		
 		return searchedActivities;
 	}	
@@ -95,7 +92,7 @@ public class FindActivityController {
 
 	public static ArrayList<Activity> filterActivitiesByKeyWords(ArrayList<Activity> activities,String[] keywords){
 		//metodo per filtrare una lista di attività in base alle parole chiave
-		ArrayList<Activity> filteredActivities = new ArrayList<Activity>();
+		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {
 			String name = curr.getName().toUpperCase();
 			String description = curr.getDescription().toUpperCase();
@@ -110,7 +107,7 @@ public class FindActivityController {
 	
 	public static ArrayList<Activity> filterActivitiesByDate(ArrayList<Activity> activities, LocalDate date){
 		//metodo per filtrare una lista di attività in base alla data (se è aperta in giorno "date" allora è ok)
-		ArrayList<Activity> filteredActivities = new ArrayList<Activity>();
+		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {
 			if(curr.isPlayableOnThisDate(date)) filteredActivities.add(curr);
 		}	
@@ -119,7 +116,7 @@ public class FindActivityController {
 	
 	public static ArrayList<Activity> filterActivitiesByPreferences(ArrayList<Activity> activities, Preferences preferences){
 		//metodo per filtrare una lista di attività in base alle preferenze		
-		ArrayList<Activity> filteredActivities = new ArrayList<Activity>();
+		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {
 			Preferences currPref = curr.getIntrestedCategories();
 			if(preferences.checkCompatibility(currPref) > 0) filteredActivities.add(curr);

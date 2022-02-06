@@ -88,7 +88,6 @@ public class RegExplorerController {
 			if(e.getErrorCode() == 1062) {
 				// Qui isoliamo e individuiamo la specifica eccezione
 				String excep = e.getMessage().split(" ")[6];
-				System.out.println(excep);
 				
 				switch (excep) {
 				case "'email_UNIQUE'":
@@ -105,23 +104,16 @@ public class RegExplorerController {
 				
 			}
 			else if (e.getErrorCode() == 1048) {
-				String excep = e.getMessage().split(" ")[2];
-				System.out.println(excep);
+				String excep = e.getMessage().split(" ")[2];	
 				
-				switch (excep) {
-				case "'username'":
+				if (excep.equals("'username'")) {
 					bean.setError("L'utente non può essere NULL");
-
-					break;
-
-				default:
-					bean.setError("Il campo "+excep+" non può essere vuoto");
-					break;
+				} else {
+					bean.setError("Il campo " + excep + " non può essere vuoto");
 				}
 			}
-			System.out.println(e.getErrorCode());	
-			System.out.println(e.getMessage());	
-			System.out.println(bean.getError());	
+			Log.getInstance().getLogger().warning("Errore di codice: "+String.valueOf(e.getErrorCode()) + " e mesaggio: " + e.getMessage());	
+			Log.getInstance().getLogger().info(bean.getError());	
 
 			return bean;}
 	}
