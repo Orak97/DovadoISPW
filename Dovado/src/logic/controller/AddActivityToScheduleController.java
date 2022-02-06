@@ -10,6 +10,7 @@ import logic.model.DAOActivity;
 import logic.model.DAOCoupon;
 import logic.model.DAOSchedules;
 import logic.model.DateBean;
+import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Schedule;
 import logic.model.ScheduleBean;
@@ -154,6 +155,7 @@ public class AddActivityToScheduleController {
 		try {
 			coupon = Integer.parseInt((String) couponToRedeem);
 		}catch(NumberFormatException e) {
+			Log.getInstance().getLogger().severe("Per qualche motivo si è tentato di parsare qualcosa di non parsabile in AddActivityToSchedule row: 156");
 			throw e;
 		}
 		

@@ -80,7 +80,7 @@ public class CreateActivityBean {
 	}
 	
 	public String getEndDate() {
-		return openingDate;
+		return endDate;
 	}
 	
 	public void setEndDate(String endDate) {
@@ -355,7 +355,7 @@ public class CreateActivityBean {
 			cab.setCadence(((PeriodicActivity)(a.getFrequency())).getCadence());
 		}
 		else {
-			Log.getInstance().getLogger().info("L'attività non ha un tipo!");
+			Log.getInstance().getLogger().info("L'attivita non ha un tipo!");
 			return null;
 		}
 		return cab;

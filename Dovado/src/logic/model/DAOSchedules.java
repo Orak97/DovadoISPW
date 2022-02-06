@@ -97,7 +97,7 @@ public class DAOSchedules {
 
 		}finally {
 		    // STEP 5.2: Clean-up dell'ambiente
-		    catchRoutine();
+		    disconnRoutine();
 		}
 
         return schedule;
@@ -126,7 +126,7 @@ public class DAOSchedules {
 
         }finally {
 		    // STEP 5.2: Clean-up dell'ambiente
-        	catchRoutine();
+        	disconnRoutine();
 		}
 
 	}
@@ -154,7 +154,7 @@ public class DAOSchedules {
             
         }finally {
 		    // STEP 5.2: Clean-up dell'ambiente
-		    catchRoutine();
+		    disconnRoutine();
 		}
 	}
 
@@ -176,7 +176,7 @@ public class DAOSchedules {
 
         }finally {
 		    // STEP 5.2: Clean-up dell'ambiente
-		    catchRoutine();
+		    disconnRoutine();
 		}
 		return true;
 	}
@@ -206,12 +206,12 @@ public class DAOSchedules {
 
 		        }finally {
 				    // STEP 5.2: Clean-up dell'ambiente
-				    catchRoutine();
+				    disconnRoutine();
 				}
 		
 	}
 	
-	private void catchRoutine() throws SQLException {
+	private void disconnRoutine() throws SQLException {
 		try {
 	        if (stmt != null)
 	            stmt.close();

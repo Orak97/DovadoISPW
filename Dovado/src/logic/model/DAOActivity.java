@@ -38,6 +38,9 @@ public class DAOActivity {
 	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
 	
 	//--------------------------------------------------------------
+	private  Connection conn ;
+	private  CallableStatement stmt;
+	
 	private DAOActivity() {
 	}
 	
@@ -46,21 +49,12 @@ public class DAOActivity {
 			INSTANCE = new DAOActivity();
 		return INSTANCE;
 	}
-	
+        
 	public void createNormalActivity(CreateActivityBean bean) throws SQLException, ClassNotFoundException {
-		//metodo per creare nel db una classe Activity
-		
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
+		//metodo per creare nel db una classe Activity      
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call create_activity(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
@@ -99,21 +93,8 @@ public class DAOActivity {
             stmt.execute();
             
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println(LOGDBDISCONN);
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
         
 		
@@ -123,19 +104,12 @@ public class DAOActivity {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
 		
 		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
         
         ArrayList<Activity> nearbyActivities = new ArrayList<Activity>();
         
         try {
         	
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_nearby_activities(?,?,?)}";
@@ -168,21 +142,8 @@ public class DAOActivity {
             rs.close();
         	
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println(LOGDBDISCONN);
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
         
         return nearbyActivities;
@@ -192,19 +153,12 @@ public class DAOActivity {
 		//metodo per ottenere un attività entro una maxDistance(Km) partendo dal suo id
 		
 		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
+        
         
        Activity act = null;
         
         try {
-        	
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_activity_by_id(?)}";
@@ -234,21 +188,8 @@ public class DAOActivity {
             rs.close();
         	
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println(LOGDBDISCONN);
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
         
         return act;
@@ -256,21 +197,11 @@ public class DAOActivity {
 	
 	public ArrayList<CertifiedActivity> getPartnerActivities(Long idPartner) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
-		
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
-        
+		        
         ArrayList<CertifiedActivity> partnerActivities = new ArrayList<CertifiedActivity>();
         
         try {
-        	
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_partner_activities(?)}";
@@ -301,40 +232,20 @@ public class DAOActivity {
             rs.close();
         	
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println(LOGDBDISCONN);
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
         
         return partnerActivities;
 	}
 	
 	public void updateCertAcivity(CertifiedActivity activity) throws ClassNotFoundException, SQLException {
-		
-			// STEP 1: dichiarazioni
-	        CallableStatement stmt = null;
-	        CallableStatement stmtPref = null;
-	        Connection conn = null;
-	        
+	        //Lo statment dell'altra store procedure lo inizializzo nel modulo resetConnection
+			CallableStatement stmtPref = null;
+	         
 	        try {
-	        	// STEP 2: loading dinamico del driver mysql
-	            Class.forName(DRIVER_CLASS_NAME);
-	            
-	            // STEP 3: apertura connessione
-	            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-	            System.out.println(LOGDBCONN);
+	        	resetConnection();
+	           
 	            
 	            //STEP4.1: preparo le stored procedure
 	            String call =  "{call update_cert_activity(?,?,?,?,?,?,?,?,?,?,?,?,?)}";
@@ -426,21 +337,11 @@ public class DAOActivity {
 	
 	public ArrayList<Activity> findActivitiesByZone(String zone) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività partendo da una zona (CAP, Città, Regione)
-		
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
         
         ArrayList<Activity> searchedActivities = new ArrayList<Activity>();
         
         try {
-        	
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_activities_by_zone(?)}";
@@ -471,21 +372,8 @@ public class DAOActivity {
             rs.close();
         	
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println(LOGDBDISCONN);
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
         
         return searchedActivities;
@@ -493,20 +381,11 @@ public class DAOActivity {
 	
 	public ArrayList<Discount> viewDiscounts (Long idActivity) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
-        
+       
         ArrayList<Discount> scontiDisponibili = new ArrayList<Discount>();
         
-
         try {
-        	
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call view_discounts(?)}";
@@ -536,37 +415,17 @@ public class DAOActivity {
             
         
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println(LOGDBDISCONN);
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
 		return scontiDisponibili;
-	}
+	}	
 	
 	public void claimActivity(Long activity, Long partner) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println(LOGDBCONN);
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call claim_activity(?,?)}";
@@ -579,23 +438,42 @@ public class DAOActivity {
             stmt.execute();
         	
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println(LOGDBDISCONN);
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+            //Clean-up dell'ambiente
+            disconnRoutine();
         }
         
+	}
+	
+	private void resetConnection() throws ClassNotFoundException, SQLException {
+		conn = null;
+		stmt = null;
+
+		Class.forName(DRIVER_CLASS_NAME);
+
+		// apertura connessione
+        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        Log.getInstance().getLogger().info(LOGDBCONN);
+	}
+	
+	private void disconnRoutine() throws SQLException {
+		
+		try {
+	        if (stmt != null)
+	            stmt.close();
+	    } catch (SQLException se2) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
+	    	se2.printStackTrace();
+	    	throw se2;
+	    }
+	    try {
+	        if (conn != null)
+	            conn.close();
+	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
+
+	    } catch (SQLException se) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
+	    	se.printStackTrace();
+	    }
 	}
 	
 	public CreateActivityBean fillBean(ResultSet rs) throws SQLException {

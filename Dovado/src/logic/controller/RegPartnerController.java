@@ -25,6 +25,7 @@ public class RegPartnerController {
 		patternUname = Pattern.compile("^[a-zA-Z0-9_-]{4,15}");
 		patternPIVA = Pattern.compile("[0-9]{11}");
 	}
+	
 	public RegBean validateForm(RegBean bean) {
 		String error = null;
 		// controllo la mail se e scritta in maniera corretta
@@ -88,7 +89,6 @@ public class RegPartnerController {
 			if(e.getErrorCode() == 1062) {
 				// Qui isoliamo e individuiamo la specifica eccezione
 				String excep = e.getMessage().split(" ")[6];
-				System.out.println(excep);
 				
 				switch (excep) {
 				case "'email_UNIQUE'":
@@ -103,9 +103,8 @@ public class RegPartnerController {
 					break;
 				}
 			}
-			System.out.println(e.getErrorCode());	
-			System.out.println(e.getMessage());	
-			System.out.println(bean.getError());	
+			Log.getInstance().getLogger().warning("Errore di codice: "+ e.getErrorCode() + " e mesaggio: " + e.getMessage());
+			Log.getInstance().getLogger().info(bean.getError());	
 
 			return bean;}
 	}

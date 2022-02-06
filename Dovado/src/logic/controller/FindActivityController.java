@@ -83,10 +83,8 @@ public class FindActivityController {
 		if(beanFind.getZone() == null) throw new NullPointerException();
 				
 		DAOActivity dao = DAOActivity.getInstance();
-		
-		ArrayList<Activity> searchedActivities = dao.findActivitiesByZone(beanFind.getZone());
-		
-		return searchedActivities;
+				
+		return dao.findActivitiesByZone(beanFind.getZone());
 	}	
 	
 

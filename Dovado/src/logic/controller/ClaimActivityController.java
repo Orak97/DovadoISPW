@@ -17,7 +17,6 @@ public class ClaimActivityController {
 
 
 	public boolean claimActivityOwnership(Partner owner, SuperActivity a) {
-		DAOActivity daoAc=DAOActivity.getInstance();
 
 		//L'utente da qui potrà riprendere controllo e gestire un'attività
 		//Trasformando l'attività in questione in certificata.

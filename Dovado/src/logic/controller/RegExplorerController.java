@@ -112,7 +112,7 @@ public class RegExplorerController {
 					bean.setError("Il campo " + excep + " non può essere vuoto");
 				}
 			}
-			Log.getInstance().getLogger().warning("Errore di codice: "+String.valueOf(e.getErrorCode()) + " e mesaggio: " + e.getMessage());	
+			Log.getInstance().getLogger().warning("Errore di codice: "+ e.getErrorCode() + " e mesaggio: " + e.getMessage());	
 			Log.getInstance().getLogger().info(bean.getError());	
 
 			return bean;}
