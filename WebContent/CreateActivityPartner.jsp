@@ -82,6 +82,7 @@
 	
 	if(request.getParameter("src") != null) useCaseClaimActivity = true;
 	if(request.getParameter("editActivity") != null) useCaseClaimActivity = true; 
+	if(request.getParameter("activityName")!=null)useCaseClaimActivity = true;
 %>
 
 <%@include file="formCreateActivity.jsp" %>

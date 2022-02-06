@@ -25,7 +25,11 @@
 		if(request.getParameter("placeName")!=null){
 			SpotPlaceController spController = new SpotPlaceController(spotPlaceBean);
 			
-			if(spController.spotPlace()) response.sendRedirect("CreateActivity.jsp?src="+request.getParameter("placeName")); //TODO: renderlo più appetibile
+			if(spController.spotPlace()){ 
+				String url = "CreateActivity.jsp";
+				if(!isUser) url = "CreateActivityPartner.jsp";
+				response.sendRedirect(url+"?src="+request.getParameter("placeName")); //TODO: renderlo più appetibile
+			}
 			else {
 				%>
 				<script>alert('Errore nella creazione del posto, riprova!')</script>
