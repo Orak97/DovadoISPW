@@ -28,8 +28,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.model.DAOPlace;
 import logic.model.Log;
@@ -57,29 +63,24 @@ public class SpotPlaceView implements Initializable{
 	private TextField address;
 
 	@FXML
-	private ListView placesList;
-	@FXML
 	private Button spotPlaceBtn;
-	@FXML
-	private Button searchBtn;
-	@FXML
-	private TextField searchBar;
 	
 	@FXML
-	private ChoiceBox region;
+	private ChoiceBox<String> region;
 
 	private static TextField placeNameText;
-	private static ChoiceBox regionText;
+	private static ChoiceBox<String> regionText;
 	private static TextField cityText;
 	private static TextField addressText;
 	private static TextField civicoText;
-	private static ListView pList;
 	private static VBox rt;
 	private static Stage curr;
 	private static DAOPlace daoPl;
 	private static Place placeSelected;
 	private static ArrayList<Place> placesFound;
 	private static StackPane lastPlaceBoxSelected;
+	private static long wPopup = 500;
+	private static long hPopup = 50;
 	private static final  String[] REGIONSKEY = {
 			"Abruzzo"
 			,"Basilicata"
@@ -107,7 +108,6 @@ public class SpotPlaceView implements Initializable{
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		spotPlaceBtn.getStyleClass().add("src-btn");
-		searchBtn.getStyleClass().add("src-btn");
 		
 		daoPl = DAOPlace.getInstance();
 		placeSelected = null;
@@ -115,7 +115,6 @@ public class SpotPlaceView implements Initializable{
 
 		placeNameText = placeNameTF;
 		rt=root;
-		pList = placesList;
 		regionText = region;
 		addressText = address;
 		civicoText = civico;
@@ -126,222 +125,27 @@ public class SpotPlaceView implements Initializable{
 		spotPlaceBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				if(!spotPlace()) {
-					final Stage dialog = new Stage();
-	                dialog.initModality(Modality.NONE);
-	                dialog.initOwner(curr);
-	                VBox dialogVbox = new VBox(20);
-	                dialogVbox.getChildren().add(new Text("Activity not created:\nInsert all informations"));
-	                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-	                dialog.setScene(dialogScene);
-	                dialog.show();
+					final Popup popup = popupGen(wPopup,hPopup,"Place not spotted:\nInsert all informations"); 
+					popup.centerOnScreen(); 
+				    
+				    popup.show(curr);
+				    popup.setAutoHide(true);
+					
 				} else {
-					final Stage dialog = new Stage();
-	                dialog.initModality(Modality.NONE);
-	                dialog.initOwner(curr);
-	                VBox dialogVbox = new VBox(20);
-	                dialogVbox.getChildren().add(new Text("Activity created successfully"));
-	                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-	                dialog.setScene(dialogScene);
-	                dialog.show();
+					final Popup popup = popupGen(wPopup,hPopup,"Place spotted successfully"); 
+					popup.centerOnScreen(); 
+				    
+				    popup.show(curr);
+				    popup.setAutoHide(true);
 				}
 			}
 
 			
 		});
-		searchBtn.setText("Search");
-		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				
-				Log.getInstance().getLogger().info("Clicked on search.");
-				
-				placeSelected = null;
-				placesFound.clear();
-				
-				String[] placeAttr;
-				placeAttr = searchBar.getText().split(",");
-				boolean found = false;
-				
-				if(placeAttr.length==1) {
-					try {
-						if(!found && (placesFound =  (ArrayList<Place>) daoPl.searchPlaces(placeAttr[0]))==null){
-							final Stage dialog = new Stage();
-						    dialog.initModality(Modality.NONE);
-						    dialog.initOwner(curr);
-						    VBox dialogVbox = new VBox(20);
-						    dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
-						    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-						    dialog.setScene(dialogScene);
-						    dialog.show();
-
-						    return;
-						} else {found=true;}
-					} catch (Exception e1) {
-						Log.getInstance().getLogger().info("Places not found due to Database error.");
-						e1.printStackTrace();
-					}
-//					if (!found && (placesFound = (ArrayList<Place>)daoPl.findPlacesByNameOrCity(placeAttr[0], 1))==null){
-//						final Stage dialog = new Stage();
-//		                dialog.initModality(Modality.NONE);
-//		                dialog.initOwner(curr);
-//		                VBox dialogVbox = new VBox(20);
-//		                dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
-//		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//		                dialog.setScene(dialogScene);
-//		                dialog.show();
-//
-//		                return;
-//					} else {found=true;}
-//					if (!found && (placesFound = (ArrayList<Place>)daoPl.findPlacesByNameOrCity(placeAttr[0], 2))==null){
-//						final Stage dialog = new Stage();
-//		                dialog.initModality(Modality.NONE);
-//		                dialog.initOwner(curr);
-//		                VBox dialogVbox = new VBox(20);
-//		                dialogVbox.getChildren().add(new Text("No place found in "+placeAttr[0]));
-//		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//		                dialog.setScene(dialogScene);
-//		                dialog.show();
-//
-//		                return;
-//					} else {found=true;}
-//					
-					if(found=true) {
-						//TODO::DIRE CHE IL POSTO GI� ESISTE.
-					}
-					
-				}
-//					else if(placeAttr.length==3) {
-//						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
-//						if(placesFound.contains(null)){
-//							final Stage dialog = new Stage();
-//			                dialog.initModality(Modality.NONE);
-//			                dialog.initOwner(curr);
-//			                VBox dialogVbox = new VBox(20);
-//			                dialogVbox.getChildren().add(new Text("No place found in: "+placeAttr[0]+'\n'+"in region: "+placeAttr[2]+'\n'+"named: "+ placeAttr[1]));
-//			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//			                dialog.setScene(dialogScene);
-//			                dialog.show();
-//			                
-//			                return;
-//						}
-//						updatePlaces();
-//					}
-
-					for(int i=0;i<placesFound.size();i++) {
-						System.out.println(placesFound.get(i).getName());
-					}
-				}
-				/*if(placeAttr.length<3) {
-					final Stage dialog = new Stage();
-	                dialog.initModality(Modality.NONE);
-	                dialog.initOwner(curr);
-	                VBox dialogVbox = new VBox(20);
-	                dialogVbox.getChildren().add(new Text("Place's attributest not written correctly"));
-	                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-	                dialog.setScene(dialogScene);
-	                dialog.show();
-					return;
-				}*/		
-		});
 		
-//		if(Navbar.getUser() instanceof Partner) {
-//			Button reclaimPlace = new Button("Reclaim the place");
-//			reclaimPlace.getStyleClass().add("src-btn");
-//			
-//			BorderPane bp = (BorderPane) root.getChildren().get(0);
-//			VBox placeSrcBox = (VBox) bp.getChildren().get(1);
-//			
-//			placeSrcBox.getChildren().add(reclaimPlace);
-//			
-//			reclaimPlace.setOnAction(new EventHandler<ActionEvent>() {
-//
-//				@Override
-//				public void handle(ActionEvent event) {
-//					if (placeSelected==null) {
-//						final Stage dialog = new Stage();
-//		                dialog.initModality(Modality.NONE);
-//		                dialog.initOwner(curr);
-//		                VBox dialogVbox = new VBox(20);
-//		                dialogVbox.getChildren().add(new Text("You didn't select a place!"));
-//		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//		                dialog.setScene(dialogScene);
-//		                dialog.show();
-//		                
-//		                return;
-//					}
-//					
-//					placeSelected.setOwner((Partner)Navbar.getUser());
-//					
-//					if(daoPl.updatePlaceJSON(placeSelected)) {
-//						final Stage dialog = new Stage();
-//		                dialog.initModality(Modality.NONE);
-//		                dialog.initOwner(curr);
-//		                VBox dialogVbox = new VBox(20);
-//		                dialogVbox.getChildren().add(new Text("Your place has been reclaimed!"));
-//		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//		                dialog.setScene(dialogScene);
-//		                dialog.show();
-//		                
-//		                updatePlaces();
-//		                
-//		                return;
-//					}
-//					
-//				}
-//				
-//			});
-//			
-//		}
-	}
-
-public void selectedPlace() {
-		
-		int lastPlaceSelected=-1;
-		
-		StackPane placeBox = null;
-		try {
-			placeBox = (StackPane) pList.getSelectionModel().getSelectedItem();
-		} catch(ClassCastException ce) {
-			Log.getInstance().getLogger().info(ce.getMessage());
-			return;
-		}
-
-		if(lastPlaceBoxSelected == placeBox) return;
-		
-		if(lastPlaceBoxSelected!=null) placeDeselected(lastPlaceBoxSelected);
-		
-		int itemNumber = pList.getSelectionModel().getSelectedIndex();
-		
-		lastPlaceSelected = itemNumber;
-		Log.getInstance().getLogger().info(String.valueOf(lastPlaceSelected));
-		
-		//La prossima vo)lta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
-		lastPlaceBoxSelected = placeBox;
-		int pID = Integer.parseInt(((Text)placeBox.getChildren().get(0)).getId());
-		try {
-			placeSelected = daoPl.getPlace(pID);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-		ImageView placeImage = (ImageView) placeBox.getChildren().get(1);
-
-		placeImage.setScaleX(1.25);
-		placeImage.setScaleY(1.25);
-		
-		Log.getInstance().getLogger().info("Place id found: "+pID+" "+placeSelected.getName());
-			
 	}
 	
-	public void placeDeselected(StackPane lastPlaceBoxSelected2) {
-		
-		ImageView eventImage = (ImageView) lastPlaceBoxSelected2.getChildren().get(1);
-		
-		eventImage.setScaleX(1);
-		eventImage.setScaleY(1);
-	}
-	
-	private static boolean spotPlace() {
+	private boolean spotPlace() {
 		
 		String placeName;
 		String region;
@@ -385,6 +189,7 @@ public void selectedPlace() {
 				&& placesFound.get(i).getAddress().equals(city)
 				&& placesFound.get(i).getAddress().equals(civico)
 				&& placesFound.get(i).getAddress().equals(region));
+				
 					return false;
 			}
             
@@ -408,20 +213,23 @@ public void selectedPlace() {
 		try {
 			double[] coord= {0,0};
 			if(daoPl.spotPlace(address, placeName, city, region, civico, city,coord)<0) {
-			
-				final Stage dialog = new Stage();
-			    dialog.initModality(Modality.NONE);
-			    dialog.initOwner(curr);
-			    VBox dialogVbox = new VBox(20);
-			    dialogVbox.getChildren().add(new Text("Error: place not spotted!"));
-			    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-			    dialog.setScene(dialogScene);
-			    dialog.show();
+				final Popup popup = popupGen(wPopup,hPopup,"Error: place not spotted!"); 
+				popup.centerOnScreen(); 
+			    
+			    popup.show(curr);
+			    popup.setAutoHide(true);
+				
 				return false;
 			}
 		} catch (Exception e) {
+			final Popup popup = popupGen(wPopup,hPopup,"Error: place not spotted!"); 
+			popup.centerOnScreen(); 
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
 			Log.getInstance().getLogger().info("Due to an error in the database the place wasn't spotted.");
 			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
@@ -429,7 +237,7 @@ public void selectedPlace() {
 
 // ----------------------- Metodo di supporto per createActivity() ------------------------------
 
-	private static boolean prevCheck() {
+	private boolean prevCheck() {
 		
 		if(cityText.getText().isEmpty())
 			return false;
@@ -537,5 +345,24 @@ public void selectedPlace() {
 			e.printStackTrace();
 		}
 	}
-
+	public Popup popupGen(double width, double height, String error) {
+		Popup popup = new Popup(); 
+		popup.centerOnScreen();
+		
+		Text errorTxt = new Text(error);
+		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.setTextAlignment(TextAlignment.CENTER);
+		errorTxt.setWrappingWidth(480);
+	    
+	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
+	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
+	    StackPane popupContent = new StackPane(r,errorTxt); 
+	    
+	    r.setStrokeType(StrokeType.OUTSIDE);
+	    r.setStrokeWidth(0.3);
+	    r.setStroke(Paint.valueOf("ffffff"));
+	    
+	    popup.getContent().add(popupContent);
+	    return popup;
+	}
 }

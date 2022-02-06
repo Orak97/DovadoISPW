@@ -15,9 +15,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
@@ -111,51 +118,6 @@ public class ProfileView implements Initializable{
 		
 	}
 
-	public void addNewPref() {
-		
-		//IN QUESTO CASO LA VIEW VA MODIFICATA IN MODO DA INDICARE 
-		//CON DEI BOTTONI DA SETTARE ON o OFF L'AGGIUNTA O RIMOZIONE DI PREFERENZE.
-		if(prefSearch.getText().isEmpty()) {
-			final Stage dialog = new Stage();
-	        dialog.initModality(Modality.NONE);
-	        dialog.initOwner(curr);
-	        VBox dialogVbox = new VBox(20);
-	        dialogVbox.getChildren().add(new Text("Insert a preference!"));
-	        Scene dialogScene = new Scene(dialogVbox, 300, 200);
-	        dialog.setScene(dialogScene);
-	        dialog.show();
-			return;
-		}
-		
-		String pref = prefSearch.getText();
-		
-//		if(daoPr.(pref)) {
-//			HBox prefBox = new HBox();
-//			Text prefName = new Text (pref.toUpperCase());
-//			prefBox.getChildren().add(prefName);
-//			
-//			prefName.getStyleClass().add("textEventName");
-//			
-//			ArrayList<String> newPref =(ArrayList<String>) Navbar.getUser().getPreferences();
-//			newPref.add(pref.toUpperCase());
-//			
-//			Navbar.getUser().setPreferences((List<String>)newPref);
-//			DAOSuperUser.getInstance().updateUserPreferences(Navbar.getUser());
-//			prefList.getItems().add(prefBox);
-//			
-//			return;
-//		}
-//		
-		final Stage dialog = new Stage();
-        dialog.initModality(Modality.NONE);
-        dialog.initOwner(curr);
-        VBox dialogVbox = new VBox(20);
-        dialogVbox.getChildren().add(new Text("Preference not found!"));
-        Scene dialogScene = new Scene(dialogVbox, 300, 200);
-        dialog.setScene(dialogScene);
-        dialog.show();
-	}
-	
 	public void modifyEmail() {
 		
 		TextField newEmail = new TextField();
@@ -164,5 +126,26 @@ public class ProfileView implements Initializable{
 
 	public void modifyUsrname() {
 		
+	}
+	
+	public Popup popupGen(double width, double height, String error) {
+		Popup popup = new Popup(); 
+		popup.centerOnScreen();
+		
+		Text errorTxt = new Text(error);
+		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.setTextAlignment(TextAlignment.CENTER);
+		errorTxt.setWrappingWidth(480);
+	    
+	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
+	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
+	    StackPane popupContent = new StackPane(r,errorTxt); 
+	    
+	    r.setStrokeType(StrokeType.OUTSIDE);
+	    r.setStrokeWidth(0.3);
+	    r.setStroke(Paint.valueOf("ffffff"));
+	    
+	    popup.getContent().add(popupContent);
+	    return popup;
 	}
 }
