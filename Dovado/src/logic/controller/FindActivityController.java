@@ -2,6 +2,7 @@ package logic.controller;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -34,7 +35,7 @@ public class FindActivityController {
 		this.beanPref = beanPref;
 	}
 	
-	public ArrayList<Activity> FindActivities() throws Exception{
+	public ArrayList<Activity> FindActivities() throws ClassNotFoundException, SQLException {
 		//controllo che i campi non siano nulli
 		if(beanFind.getZone() == null || beanFind.getDate() == null) throw new NullPointerException();
 		
@@ -78,7 +79,7 @@ public class FindActivityController {
 		return searchedActivities;
 	}
 	
-	public ArrayList<Activity> FindActivitiesByZone() throws Exception{
+	public ArrayList<Activity> FindActivitiesByZone() throws ClassNotFoundException, SQLException {
 		//controllo che i campi non siano nulli
 		if(beanFind.getZone() == null) throw new NullPointerException();
 		

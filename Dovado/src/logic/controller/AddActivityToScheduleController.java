@@ -1,5 +1,6 @@
 package logic.controller;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -67,7 +68,7 @@ public class AddActivityToScheduleController {
 	}
 	
 	//questo metodo andrebbe chiamato dal controller di playActivity
-	public void addActivityToSchedule() throws Exception {
+	public void addActivityToSchedule() throws ClassNotFoundException, SQLException  {
 		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
 		
 		DAOSchedules daoSc = DAOSchedules.getInstance();
@@ -88,7 +89,7 @@ public class AddActivityToScheduleController {
 		session.setSchedule(daoSc.getSchedule(session.getUserID()));
 	}
 	
-	public void modifySchedule() throws Exception {
+	public void modifySchedule() throws ClassNotFoundException, SQLException   {
 		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
 		
 		DAOSchedules daoSc = DAOSchedules.getInstance();
@@ -109,7 +110,7 @@ public class AddActivityToScheduleController {
 		
 	}
 	
-	public void removeSchedule() throws Exception {
+	public void removeSchedule() throws ClassNotFoundException, SQLException {
 		//qua vanno eseguiti i vari controlli prima della modifica, se è il caso
 		
 		DAOSchedules daoSc = DAOSchedules.getInstance();
@@ -122,7 +123,7 @@ public class AddActivityToScheduleController {
 		
 	}
 	
-	public void addCertifiedActivityToSchedule() throws Exception{
+	public void addCertifiedActivityToSchedule() throws ClassNotFoundException, SQLException {
 		
 
 		DAOSchedules daoSc = DAOSchedules.getInstance();
@@ -146,7 +147,7 @@ public class AddActivityToScheduleController {
 		session.refershWallet();
 	}
 	
-	public void redeemCoupon() throws Exception{
+	public void redeemCoupon() throws ClassNotFoundException, SQLException {
 		//usare questo metodo solo se si è partner e si vuole riscattare un coupon
 		if(sessionPartner == null || couponToRedeem == null) throw new NullPointerException();
 		int coupon;

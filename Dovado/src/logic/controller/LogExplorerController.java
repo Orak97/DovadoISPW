@@ -1,5 +1,7 @@
 package logic.controller;
 
+import java.sql.SQLException;
+
 import logic.model.DAOExplorer;
 import logic.model.DAOSchedules;
 import logic.model.Log;
@@ -15,7 +17,7 @@ private DAOExplorer dao;
 	}
 
 	
-	public User loginExplorer(LogBean bean) throws Exception {
+	public User loginExplorer(LogBean bean) throws ClassNotFoundException, SQLException {
 		User u = dao.login(bean.getEmail(), bean.getPassword());
 		if (u == null) {
 			Log.getInstance().getLogger().info("DB returned null explorer");

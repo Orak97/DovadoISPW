@@ -1,6 +1,6 @@
 package logic.model;
 
-
+import java.sql.SQLException;
 
 /**
  * 
@@ -100,7 +100,7 @@ public class User extends SuperUser{
 		this.maxDistance = maxDistance;
 	}
 
-	public void refershWallet() throws Exception{
+	public void refershWallet() throws ClassNotFoundException, SQLException{
 		this.wallet = DAOExplorer.getInstance().getUserWallet(this.getUserID());
 	}
 	

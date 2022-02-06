@@ -83,7 +83,7 @@ public class DAOPartner {
 	}
 	
 	//Ha senso NON  ritornare un booleano?
-	public void registerPartner(String username, String email, String password, String partitaIva, String nomeAzienda) throws Exception{
+	public void registerPartner(String username, String email, String password, String partitaIva, String nomeAzienda) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -127,7 +127,7 @@ public class DAOPartner {
         }
 	}
 	
-	public Partner login(String email,String password) throws Exception {
+	public Partner login(String email,String password) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;

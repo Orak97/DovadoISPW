@@ -79,7 +79,7 @@ public class RegPartnerController {
 		return bean;
 	}
 	
-	public RegBean addPartner(RegBean bean) throws Exception {
+	public RegBean addPartner(RegBean bean) throws ClassNotFoundException {
 		
 		try{dao.registerPartner(bean.getUsername(), bean.getEmail(), bean.getPassword(), String.valueOf(bean.getpIVA()), bean.getCompName());
 		return bean;			

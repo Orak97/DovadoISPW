@@ -1,5 +1,7 @@
 package logic.controller;
 
+import java.sql.SQLException;
+
 import logic.model.CertifiedActivity;
 import logic.model.ContinuosActivity;
 import logic.model.CreateActivityBean;
@@ -34,7 +36,7 @@ public class UpdateCertActController {
 		this(bean,null);
 	}
 	
-	public boolean updateActivity() throws Exception{
+	public boolean updateActivity() throws ClassNotFoundException, SQLException {
 		boolean error = false;
 		
 		if (activity == null) {
@@ -45,7 +47,7 @@ public class UpdateCertActController {
 		return error;
 	}
 	
-	public boolean updateByBean() throws Exception{
+	public boolean updateByBean() throws ClassNotFoundException, SQLException {
 		CreateActivityController actController = new CreateActivityController(bean);
 		//creo l'attività con i parametri aggiornati
 		activity = (CertifiedActivity) actController.createActivity();
@@ -54,7 +56,7 @@ public class UpdateCertActController {
 		return true;
 	}
 	
-	public boolean updateWithCheck() throws Exception{
+	public boolean updateWithCheck() throws ClassNotFoundException, SQLException {
 		if(bean.getActivityName() != null) {
 			activity.setName(bean.getActivityName());
 		}
@@ -106,19 +108,18 @@ public class UpdateCertActController {
 		daoAc.updateCertAcivity(activity);
 		return true;
 	}
-	
+	//TODO CONTROLLARE QUESTE ECCEZIONI
 	/*Rimuovere in caso si sposti il metodo `claimActivity`in un altra classe*/
-	public void claimActivity() throws Exception{
+	public void claimActivity() throws ClassNotFoundException, SQLException{
 		if(session == null || bean.getIdActivity() == 0) throw new NullPointerException();
 		
 		Long partnerID = session.getUserID();
 		Long activityId;
 		try {
 			activityId = Long.valueOf(bean.getIdActivity());
-		}catch(Exception e) {
+		}catch(NumberFormatException e) {
 			throw e;
 		}
-		
 		daoAc.claimActivity(activityId, partnerID);
 	}
 }

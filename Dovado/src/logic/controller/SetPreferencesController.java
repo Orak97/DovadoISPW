@@ -1,5 +1,6 @@
 package logic.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import logic.model.Activity;
@@ -26,7 +27,7 @@ public class SetPreferencesController {
 		this.bean = bean;
 	}
 	
-	public void updatePreferences() throws Exception{
+	public void updatePreferences() throws ClassNotFoundException, SQLException{
 		Long id = session.getUserID();
 		
 		DAOPreferences.getInstance().updateUserPreferences(

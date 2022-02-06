@@ -53,7 +53,7 @@ public class DAOSchedules {
         conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         System.out.println(LOGDBCONN);
 	}
-	public Schedule getSchedule(Long idUser) throws Exception {
+	public Schedule getSchedule(Long idUser) throws SQLException, ClassNotFoundException {
 		//metodo per prendere dal db lo schedulo di un utente
 		
 		// STEP 1: dichiarazioni
@@ -105,7 +105,7 @@ public class DAOSchedules {
 	}
 
 	public void addActivityToSchedule(Long userID, Long activity, LocalDateTime scheduledTime,
-			LocalDateTime reminderTime) throws Exception {
+			LocalDateTime reminderTime) throws SQLException, ClassNotFoundException {
 
 		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
 		
@@ -132,7 +132,7 @@ public class DAOSchedules {
 	}
 
 	public void changeSchedule(Long idScheduleActivity, LocalDateTime scheduledTime,
-			LocalDateTime reminderTime) throws Exception {
+			LocalDateTime reminderTime) throws SQLException, ClassNotFoundException {
 		//metodo per salvare sul db il fatto che un utente abbia modificato lo schedulo di un'attività
 		
 
@@ -158,7 +158,7 @@ public class DAOSchedules {
 		}
 	}
 
-	public boolean removeActFromSchedule(Long scheduleToRemove,Long user) throws Exception {
+	public boolean removeActFromSchedule(Long scheduleToRemove,Long user) throws SQLException, ClassNotFoundException {
 		
 
         try {
@@ -182,7 +182,7 @@ public class DAOSchedules {
 	}
 
 	public void addCertifiedActivityToSchedule(Long userID, Long activity, LocalDateTime scheduledTime,
-			LocalDateTime reminderTime, int percentage, LocalDateTime expiringDate) throws Exception{
+			LocalDateTime reminderTime, int percentage, LocalDateTime expiringDate) throws SQLException, ClassNotFoundException{
 		
 		//metodo per salvare sul db il fatto che un utente abbia schedulato un'attività
 		
@@ -218,6 +218,7 @@ public class DAOSchedules {
 	    } catch (SQLException se2) {
 	    	System.out.println( se2.getErrorCode());
 	    	se2.printStackTrace();
+	    	throw se2;
 	    }
 	    try {
 	        if (conn != null)

@@ -1,5 +1,6 @@
 package logic.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class ChannelController {
 	}
 	
 	//metodo da chiamare per inviare il messaggio sul DB
-	public void sendMessage(String content) throws Exception {
+	public void sendMessage(String content) throws ClassNotFoundException, SQLException   {
 		
 		//eseguire qui i controlli del contenuto!!!
 		

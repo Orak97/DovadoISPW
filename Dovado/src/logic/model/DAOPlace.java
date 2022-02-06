@@ -34,7 +34,7 @@ public class DAOPlace {
 		return INSTANCE;
 	}
 	
-	public List<Place> searchPlaces(String str) throws Exception {
+	public List<Place> searchPlaces(String str) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -58,8 +58,8 @@ public class DAOPlace {
             
             if(!stmt.execute()) {
             	//NOTA: restituisce true solo è un result set, quindi non usare per le operazioni CURD!!!
-            	Exception e = new Exception("Sembra che non esista nessun luogo per: "+str);
-            	throw e;
+            	
+            	throw new SQLException("Sembra che non esista nessun luogo per: "+str);
             };
             
             ResultSet rs = stmt.getResultSet();
@@ -103,7 +103,7 @@ public class DAOPlace {
         return places;
 	}
 
-	public int spotPlace(String address, String placeName, String city, String region, String civico, String cap, double latitudine, double longitudine) throws Exception{
+	public int spotPlace(String address, String placeName, String city, String region, String civico, String cap, double latitudine, double longitudine) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -180,8 +180,7 @@ public class DAOPlace {
             
             if(!stmt.execute()) {
             	//NOTA: restituisce true solo è un result set, quindi non usare per le operazioni CURD!!!
-            	SQLException e = new SQLException("Sembra che non esista nessun luogo per l'id: "+id);
-            	throw e;
+            	throw new SQLException("Sembra che non esista nessun luogo per l'id: "+id);
             };
             
             ResultSet rs = stmt.getResultSet();

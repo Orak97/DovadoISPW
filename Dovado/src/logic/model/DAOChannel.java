@@ -262,7 +262,7 @@ public class DAOChannel {
 		return channel;
 	}
 	
-	public void sendMsg(Long idActivity, String content, Long idSender) throws Exception {
+	public void sendMsg(Long idActivity, String content, Long idSender) throws SQLException, ClassNotFoundException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;

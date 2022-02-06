@@ -40,7 +40,7 @@ public class DAOPreferences {
 
 	public void updateUserPreferences(Long id, boolean arte, boolean cibo, boolean musica, boolean sport,
 			boolean social, boolean natura, boolean esplorazione, boolean ricorrenze, boolean moda, boolean shopping,
-			boolean adrenalina, boolean relax, boolean istruzione, boolean monumenti) throws Exception{
+			boolean adrenalina, boolean relax, boolean istruzione, boolean monumenti) throws ClassNotFoundException, SQLException {
 		
 		CallableStatement stmt = null;
         Connection conn = null;

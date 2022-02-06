@@ -119,7 +119,7 @@ public class DAOActivity {
 		
 	}
 	
-	public ArrayList<Activity> getNearbyActivities(double userLat,double userLong, float maxDistance) throws Exception{
+	public ArrayList<Activity> getNearbyActivities(double userLat,double userLong, float maxDistance) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
 		
 		// STEP 1: dichiarazioni
@@ -147,8 +147,7 @@ public class DAOActivity {
             stmt.setDouble(3, userLong);
             
             if(!stmt.execute()) {
-            	Exception e = new Exception("Sembra che non esistano attività vicine a te");
-            	throw e;
+            	 throw new SQLException("Sembra che non esistano attività vicine a te");
             }
             
             //ottengo il resultSet
@@ -189,7 +188,7 @@ public class DAOActivity {
         return nearbyActivities;
 	}
 	
-	public Activity getActivityById(Long id) throws Exception{
+	public Activity getActivityById(Long id) throws SQLException, ClassNotFoundException{
 		//metodo per ottenere un attività entro una maxDistance(Km) partendo dal suo id
 		
 		// STEP 1: dichiarazioni
@@ -214,9 +213,8 @@ public class DAOActivity {
             
             stmt.setLong(1, id);
             
-            if(!stmt.execute()) {
-            	Exception e = new Exception("Sembra che non esistano attività con questo ID");
-            	throw e;
+            if(!stmt.execute()) {	
+            	throw new SQLException("Sembra che non esistano attività con questo ID");
             }
             
             //ottengo il resultSet
@@ -256,7 +254,7 @@ public class DAOActivity {
         return act;
 	}
 	
-	public ArrayList<CertifiedActivity> getPartnerActivities(Long idPartner) throws Exception{
+	public ArrayList<CertifiedActivity> getPartnerActivities(Long idPartner) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
 		
 		// STEP 1: dichiarazioni
@@ -282,8 +280,7 @@ public class DAOActivity {
             stmt.setLong(1, idPartner);
             
             if(!stmt.execute()) {
-            	Exception e = new Exception("Sembra che non esistano attività per questo partner");
-            	throw e;
+            	throw new SQLException("Sembra che non esistano attività per questo partner");
             }
             
             //ottengo il resultSet
@@ -324,7 +321,7 @@ public class DAOActivity {
         return partnerActivities;
 	}
 	
-	public void updateCertAcivity(CertifiedActivity activity) throws Exception{
+	public void updateCertAcivity(CertifiedActivity activity) throws ClassNotFoundException, SQLException {
 		
 			// STEP 1: dichiarazioni
 	        CallableStatement stmt = null;
@@ -427,7 +424,7 @@ public class DAOActivity {
 		
 	
 	
-	public ArrayList<Activity> findActivitiesByZone(String zone) throws Exception {
+	public ArrayList<Activity> findActivitiesByZone(String zone) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività partendo da una zona (CAP, Città, Regione)
 		
 		// STEP 1: dichiarazioni
@@ -453,8 +450,7 @@ public class DAOActivity {
             stmt.setString(1, zone);
             
             if(!stmt.execute()) {
-            	Exception e = new Exception("Sembra che non esistano attività in questa zona!");
-            	throw e;
+            	throw new SQLException("Sembra che non esistano attività in questa zona!");
             }
             
             //ottengo il resultSet
@@ -495,7 +491,7 @@ public class DAOActivity {
         return searchedActivities;
 	}
 	
-	public ArrayList<Discount> viewDiscounts (Long idActivity) throws Exception{
+	public ArrayList<Discount> viewDiscounts (Long idActivity) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -520,8 +516,7 @@ public class DAOActivity {
             stmt.setLong(1, idActivity);
             
             if(!stmt.execute()) {
-            	Exception e = new Exception("Sembra che non esistono Coupon per questa attività");
-            	throw e;
+            	throw new SQLException("Sembra che non esistono Coupon per questa attività");
             }
             
             //ottengo il resultSet
@@ -560,7 +555,7 @@ public class DAOActivity {
 		return scontiDisponibili;
 	}
 	
-	public void claimActivity(Long activity, Long partner) throws Exception{
+	public void claimActivity(Long activity, Long partner) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;

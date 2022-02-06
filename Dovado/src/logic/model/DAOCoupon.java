@@ -48,7 +48,7 @@ public class DAOCoupon {
 	}
 	
 	
-	public Coupon findCoupon(int code) throws Exception {
+	public Coupon findCoupon(int code) throws SQLException, ClassNotFoundException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -70,9 +70,8 @@ public class DAOCoupon {
 
             stmt.setInt(1,code);
             
-            if(!stmt.execute()) {
-            	Exception e = new Exception("nessun coupon esistente con questo codice");
-            	throw e;
+            if(!stmt.execute()) {         	
+            	throw new SQLException("nessun coupon esistente con questo codice");
             }
             
             //ottengo il resultSet
@@ -115,7 +114,7 @@ public class DAOCoupon {
         return myCoupon;
 	}
 	
-	public Coupon findCouponPartner(int code) throws Exception {
+	public Coupon findCouponPartner(int code) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -138,8 +137,7 @@ public class DAOCoupon {
             stmt.setInt(1,code);
             
             if(!stmt.execute()) {
-            	Exception e = new Exception("nessun coupon esistente con questo codice");
-            	throw e;
+            	throw new SQLException("nessun coupon esistente con questo codice");
             }
             
             //ottengo il resultSet
@@ -184,7 +182,7 @@ public class DAOCoupon {
         return myCoupon;
 	}
 
-	public void redeemCoupon(int coupon, Long partner) throws Exception{
+	public void redeemCoupon(int coupon, Long partner) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;

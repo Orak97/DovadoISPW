@@ -28,7 +28,7 @@ public class DAOExplorer {
 		return INSTANCE;
 	}
 	
-	public User login(String email, String password) throws Exception {
+	public User login(String email, String password) throws SQLException, ClassNotFoundException  {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -94,17 +94,13 @@ public class DAOExplorer {
             
             rs.close();
             
-            
-        }catch(Exception e){
-        	e.printStackTrace();
-        }
-        finally {
+        } finally {
             // STEP 5.2: Clean-up dell'ambiente
             try {
                 if (stmt != null)
                     stmt.close();
             } catch (SQLException se2) {
-            	throw(se2);
+            	throw se2;
             }
             try {
                 if (conn != null)
@@ -113,12 +109,11 @@ public class DAOExplorer {
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
-            }
-            return u;
-        }
+            }   
+        } return u;
 	}
 	
-	public void registerExplorer(String username, String email, String password, boolean[] pref) throws Exception{
+	public void registerExplorer(String username, String email, String password, boolean[] pref) throws ClassNotFoundException, SQLException{
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -164,7 +159,7 @@ public class DAOExplorer {
         }
 	}
 	
-	public int getUserWallet(Long userID) throws Exception{
+	public int getUserWallet(Long userID) throws ClassNotFoundException, SQLException{
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
         Connection conn = null;
@@ -186,10 +181,9 @@ public class DAOExplorer {
             
             stmt.setLong(1,userID);
             
-            if(!stmt.execute()) {
-            	Exception e = new Exception("Nessun portafogli per questo utente");
-            	throw e;
-            }
+            if(!stmt.execute()) {   	
+            	throw new SQLException("Nessun portafogli per questo utente");
+            	}
             
             //ottengo il resultSet
             ResultSet rs = stmt.getResultSet();

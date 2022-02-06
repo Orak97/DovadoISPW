@@ -65,7 +65,7 @@ public class RegExplorerController {
 		return bean;
 	}
 	
-	public RegExpBean addExplorer(RegExpBean bean) throws Exception {
+	public RegExpBean addExplorer(RegExpBean bean) throws ClassNotFoundException  {
 		boolean[] pref = {bean.getArte(), 
 				bean.getCibo(), 
 				bean.getMusica(),
