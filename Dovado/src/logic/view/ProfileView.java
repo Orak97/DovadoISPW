@@ -1,6 +1,7 @@
 package logic.view;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -28,8 +29,10 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
+import logic.model.Log;
 import logic.model.Preferences;
 import logic.model.User;
+import javafx.scene.control.CheckBox;
 
 public class ProfileView implements Initializable{
 
@@ -38,19 +41,24 @@ public class ProfileView implements Initializable{
 	@FXML
 	private HBox usrHbox;
 	@FXML
+	private HBox root;
+	@FXML
 	private Button emailModifyBtn;
 	@FXML
 	private Button usrModifyBtn;
 	@FXML
-	private Button prefSearchBtn;
+	private Button modifyPsw;
+	@FXML
+	private Button preferencesSet;
 	@FXML
 	private Text setUsr;
 	@FXML
 	private Text setEmail;
 	@FXML
-	private TextField prefSearch;
+	private HBox prefHBox;
 	@FXML
-	private ListView prefList;	
+	private VBox prefVBox;
+	
 	
 	private static DAOPreferences daoPr;
 	private static Stage curr;
@@ -92,30 +100,35 @@ public class ProfileView implements Initializable{
 
 		emailModifyBtn.getStyleClass().add("src-btn");
 		usrModifyBtn.getStyleClass().add("src-btn");
-		prefSearchBtn.getStyleClass().add("src-btn");
+		modifyPsw.getStyleClass().add("src-btn");
+		preferencesSet.getStyleClass().add("src-btn");
+
 		
-		Preferences preferences = ((User)Navbar.getUser()).getPreferences();
-		
-		/*Mi faccio restituire un array di tutti i nomi delle preferenze.
-		 * In seguito un array di tutte le preferenze che l'utente ha settato 
-		 * (false o true che siano)*/
-		String[] allPrefsName = preferences.getPreferencesName();
-		boolean[] allPrefsSet = preferences.getSetPreferences();
-		
-		
-		for(int i=0;i<allPrefsSet.length;i++) {
-			//Se trovo una preferenza che è stata settata dall'utente mi fermo,
-			//Costruisco un element di Testo e lo aggiungo alla View.
-			if(allPrefsSet[i]==true) {
-				
-				Text prefListElement = new Text(allPrefsName[i]);
-				
-				prefListElement.getStyleClass().add("textEventName");
-				
-				prefList.getItems().add(prefListElement);
+		if(Navbar.getUser() instanceof User) {
+			Preferences preferences = ((User)Navbar.getUser()).getPreferences();
+			
+			/*Mi faccio restituire un array di tutti i nomi delle preferenze.
+			 * In seguito un array di tutte le preferenze che l'utente ha settato 
+			 * (false o true che siano)*/
+			boolean[] allPrefsSet = preferences.getSetPreferences();
+			int pset=0;
+			VBox prefVBox;
+			for(int i=0;i<prefHBox.getChildren().size();i++) {
+
+				prefVBox = (VBox)prefHBox.getChildren().get(i);
+				for(int j=0;j<prefVBox.getChildren().size();j++) {
+				//Se trovo una preferenza che è stata settata dall'utente mi fermo,
+				//e segno il checkBox in modo tale da indicare che .
+					if(allPrefsSet[pset]==true) {
+						((CheckBox)(prefVBox.getChildren().get(j))).setSelected(true);
+					}
+					System.out.println(allPrefsSet[pset]+" = ");
+					pset++;
+				}
 			}
+		} else {
+			root.getChildren().remove(prefVBox);
 		}
-		
 	}
 
 	public void modifyEmail() {
@@ -125,6 +138,61 @@ public class ProfileView implements Initializable{
 	}
 
 	public void modifyUsrname() {
+		
+	}
+	
+	public void modifyPassword() {
+		
+	}
+	
+	public void updateUserPreferences() {
+		Preferences newUserPref = new Preferences(false, false, false, false, false, false,
+				false, false, false, false, false, false, false, false);
+		
+		//GRAZIE AL METODO SOTTOSTANTE MI PRENDO UN ARRAY DI BOOLEANI DA CUI POI 
+		//POSSO MODIFICARE UNO AD UNO LE PREFERENZE.
+		boolean[] userPrefSet = newUserPref.getSetPreferences();
+		int pset=0;
+		VBox prefVBox;
+		for(int j=0;j<prefHBox.getChildren().size();j++) {
+			prefVBox = (VBox) prefHBox.getChildren().get(j);
+			int vboxPrefContained = prefVBox.getChildren().size();
+			for(int i=0;i<vboxPrefContained;i++) {
+				//SE IL CHECKBOX DELLA PREFERENZA E' SETTATO ALLORA QUESTA VERR� AGGIUNTA ALLA
+				//LISTA DI PREFERENZE.
+				userPrefSet[pset] = ((CheckBox)(prefVBox.getChildren().get(i))).isSelected();
+				pset++;
+			}
+		}
+		newUserPref.setInterestedCategories(userPrefSet);
+		
+		((User)Navbar.getUser()).setPreferences(newUserPref);
+		try {
+			daoPr.updateUserPreferences(
+					Navbar.getUser().getUserID(), 
+					newUserPref.getSetPreferences()[0], 
+					newUserPref.getSetPreferences()[1], 
+					newUserPref.getSetPreferences()[2], 
+					newUserPref.getSetPreferences()[3], 
+					newUserPref.getSetPreferences()[4], 
+					newUserPref.getSetPreferences()[5], 
+					newUserPref.getSetPreferences()[6], 
+					newUserPref.getSetPreferences()[7], 
+					newUserPref.getSetPreferences()[8], 
+					newUserPref.getSetPreferences()[9], 
+					newUserPref.getSetPreferences()[10], 
+					newUserPref.getSetPreferences()[11], 
+					newUserPref.getSetPreferences()[12], 
+					newUserPref.getSetPreferences()[13]);
+		} catch (ClassNotFoundException | SQLException e) {
+			Log.getInstance().getLogger().info("Error in DB update of user preferences.");
+			e.printStackTrace();
+		}
+		final Popup popup = popupGen(500,50,"New preferences correctly set.");
+		popup.centerOnScreen(); 
+	    
+	    popup.show(curr);
+	    popup.setAutoHide(true);
 		
 	}
 	

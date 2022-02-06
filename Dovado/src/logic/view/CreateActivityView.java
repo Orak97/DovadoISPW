@@ -586,14 +586,17 @@ public class CreateActivityView implements Initializable{
 		//GRAZIE AL METODO SOTTOSTANTE MI PRENDO UN ARRAY DI BOOLEANI DA CUI POI 
 		//POSSO MODIFICARE UNO AD UNO LE PREFERENZE.
 		boolean[] activityPrefSet = newActivityPref.getSetPreferences();
-		
+		int pset=0;
+		VBox prefVBox;
 		for(int j=0;j<pHBox.getChildren().size();j++) {
-			VBox prefVBox = (VBox) pHBox.getChildren().get(j);
+			prefVBox = (VBox) pHBox.getChildren().get(j);
 			int vboxPrefContained = prefVBox.getChildren().size();
 			for(int i=0;i<vboxPrefContained;i++) {
 				//SE IL CHECKBOX DELLA PREFERENZA E' SETTATO ALLORA QUESTA VERRÀ AGGIUNTA ALLA
 				//LISTA DI PREFERENZE.
-				activityPrefSet[i] = ((CheckBox)(prefVBox.getChildren().get(i))).isSelected();
+				activityPrefSet[pset] = ((CheckBox)(prefVBox.getChildren().get(i))).isSelected();
+
+				pset++;
 			}
 		}
 		//FINITE TUTTE LE PREFERENZE SI SETTA LA LISTA DI BOOLEANI RAPPRESENTANTE LE PREFERENZE A
