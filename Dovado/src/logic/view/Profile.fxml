@@ -95,7 +95,7 @@
             </HBox>
          </children>
       </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+      <VBox fx:id="prefVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
          <children>
             <Text fx:id="prefTxt" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Your preferences" VBox.vgrow="ALWAYS">
                <VBox.margin>

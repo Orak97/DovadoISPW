@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -128,6 +129,7 @@ public class ProfileView implements Initializable{
 			}
 		} else {
 			root.getChildren().remove(prefVBox);
+			((VBox)root.getChildren().get(0)).setAlignment(Pos.CENTER);
 		}
 	}
 
