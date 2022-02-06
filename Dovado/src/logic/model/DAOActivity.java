@@ -105,7 +105,7 @@ public class DAOActivity {
 		
 		// STEP 1: dichiarazioni
         
-        ArrayList<Activity> nearbyActivities = new ArrayList<Activity>();
+        ArrayList<Activity> nearbyActivities = new ArrayList<>();
         
         try {
         	
@@ -174,9 +174,7 @@ public class DAOActivity {
             //ottengo il resultSet
             ResultSet rs = stmt.getResultSet();
             
-            while(rs.next()) {
-            	Activity curr;
-            	
+            while(rs.next()) {    	
             	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
             	CreateActivityBean bean = fillBean(rs);
             	
@@ -198,7 +196,7 @@ public class DAOActivity {
 	public ArrayList<CertifiedActivity> getPartnerActivities(Long idPartner) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
 		        
-        ArrayList<CertifiedActivity> partnerActivities = new ArrayList<CertifiedActivity>();
+        ArrayList<CertifiedActivity> partnerActivities = new ArrayList<>();
         
         try {
         	resetConnection();
@@ -311,7 +309,7 @@ public class DAOActivity {
 	            stmtPref.setBoolean(16,activity.getIntrestedCategories().isIstruzione());
 
 	            
-	            
+	            //TODO Chiedere a Sav se necessario il throw
 	        }finally {
 	            // STEP 5.2: Clean-up dell'ambiente
 	            try {
@@ -320,14 +318,15 @@ public class DAOActivity {
 	                if (stmtPref != null)
 	                    stmtPref.close();
 	            } catch (SQLException se2) {
-	            	throw(se2);
+	            	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
 	            }
 	            try {
 	                if (conn != null)
 	                    conn.close();
-	                	System.out.println(LOGDBDISCONN);
+	                Log.getInstance().getLogger().info(LOGDBDISCONN);
 	                	
 	            } catch (SQLException se) {
+	            	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
 	                se.printStackTrace();
 	            }
 	        }
@@ -338,7 +337,7 @@ public class DAOActivity {
 	public ArrayList<Activity> findActivitiesByZone(String zone) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività partendo da una zona (CAP, Città, Regione)
         
-        ArrayList<Activity> searchedActivities = new ArrayList<Activity>();
+        ArrayList<Activity> searchedActivities = new ArrayList<>();
         
         try {
         	resetConnection();
@@ -382,7 +381,7 @@ public class DAOActivity {
 	public ArrayList<Discount> viewDiscounts (Long idActivity) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
        
-        ArrayList<Discount> scontiDisponibili = new ArrayList<Discount>();
+        ArrayList<Discount> scontiDisponibili = new ArrayList<>();
         
         try {
         	resetConnection();
@@ -497,7 +496,7 @@ public class DAOActivity {
         	//serve per convertire da string -> enum ActivityType
         	bean.setType(ActivityType.valueOf(rs.getString("tipo")));
         	if(rs.getString("cadenza") != null)
-        	bean.setCadence(Cadence.valueOf(rs.getString("cadenza")));
+        		bean.setCadence(Cadence.valueOf(rs.getString("cadenza")));
         	
         	bean.setArte(rs.getBoolean("arte"));
         	bean.setCibo(rs.getBoolean("cibo"));

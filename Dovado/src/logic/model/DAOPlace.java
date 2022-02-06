@@ -1,6 +1,5 @@
 package logic.model;
 
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,22 +8,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class DAOPlace {
 	
 	private static DAOPlace INSTANCE;
 	
 	//----------database--------------------------------------
 	
-	private static String USER = "dovado"; //DA CAMBIARE
-	private static String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+	private static final String USER = "dovado"; //DA CAMBIARE
+	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
+	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
+	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 			
 	//------------------------------------------------------------
 	
-	
+	private static final String LOGDBCONN = "Connected database successfully...";
+	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
+		
+	private  Connection conn ;
+	private  CallableStatement stmt;
+		
 	private DAOPlace() {
 	}
 	
@@ -35,19 +37,11 @@ public class DAOPlace {
 	}
 	
 	public List<Place> searchPlaces(String str) throws ClassNotFoundException, SQLException {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
-        
-        ArrayList<Place> places = new ArrayList<Place>();
+		        
+        ArrayList<Place> places = new ArrayList<>();
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call search_places(?)}";
@@ -83,38 +77,17 @@ public class DAOPlace {
             rs.close();
         }
         finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println("Disconnetted database successfully...");
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+        	disconnRoutine();
         }
         
         return places;
 	}
 
-	public int spotPlace(String address, String placeName, String city, String region, String civico, String cap, double latitudine, double longitudine) throws ClassNotFoundException, SQLException {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
-        
+	public int spotPlace(String address, String placeName, String city, String region, String civico, String cap, double[] coord) throws ClassNotFoundException, SQLException {
+		        
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call create_place(?,?,?,?,?,?,?,?)}";
@@ -129,33 +102,20 @@ public class DAOPlace {
             stmt.setString(4,region);
             stmt.setString(5,civico);
             stmt.setString(6,cap);
-            stmt.setDouble(7, latitudine);
-            stmt.setDouble(8, longitudine);
+            stmt.setDouble(7, coord[0]);//lat
+            stmt.setDouble(8, coord[1]);
               
             stmt.execute();
             
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println("Disconnetted database successfully...");
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+        	disconnRoutine();
         }
         
         
 		return 1;
 	}
-
+	//TODO erché questo è statico?
 	public static Place getPlace(int id) throws ClassNotFoundException, SQLException  {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;
@@ -169,7 +129,7 @@ public class DAOPlace {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            Log.getInstance().getLogger().info(LOGDBCONN);
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call search_place_by_id(?)}";
@@ -207,14 +167,14 @@ public class DAOPlace {
                 if (stmt != null)
                     stmt.close();
             } catch (SQLException se2) {
-            	throw(se2);
+            	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
             }
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
-                	
+                Log.getInstance().getLogger().info(LOGDBDISCONN);	
             } catch (SQLException se) {
+                Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
                 se.printStackTrace();
             }
         }
@@ -222,6 +182,37 @@ public class DAOPlace {
         return searchedPlace;
 	}
 	
+	private void resetConnection() throws ClassNotFoundException, SQLException {
+		conn = null;
+		stmt = null;
+
+		Class.forName(DRIVER_CLASS_NAME);
+
+		// apertura connessione
+        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        Log.getInstance().getLogger().info(LOGDBCONN);
+	}
+	
+	private void disconnRoutine() throws SQLException {
+		
+		try {
+	        if (stmt != null)
+	            stmt.close();
+	    } catch (SQLException se2) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
+	    	se2.printStackTrace();
+	    	throw se2;
+	    }
+	    try {
+	        if (conn != null)
+	            conn.close();
+	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
+
+	    } catch (SQLException se) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
+	    	se.printStackTrace();
+	    }
+	}
 
 	
 	

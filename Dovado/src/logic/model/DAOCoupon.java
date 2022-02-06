@@ -21,22 +21,23 @@ import logic.controller.FindActivityController;
 
 public class DAOCoupon {
 	private static DAOCoupon instance;
-	private JSONParser parser; 
-	private static final  String COUPONJSON = "WebContent/coupon.json" ;
-	private static final  String COUPONSKEY = "coupons";
-	private static final  String PARTNERKEY = "partner";
-	private static final  String DISCOUNTKEY = "discount";
-	
+	//TODO Serve il parser? 
+	private JSONParser parser; 	
 	
 	//----------database--------------------------------------
 
-	private static String USER = "dovado"; //DA CAMBIARE
-	private static String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+	private static final String USER = "dovado"; //DA CAMBIARE
+	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
+	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
+	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 
 	//------------------------------------------------------------
+	private static final String LOGDBCONN = "Connected database successfully...";
+	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
 	
+	private  Connection conn ;
+	private  CallableStatement stmt;
+
 	private DAOCoupon() {
 		parser = new JSONParser();
 	}
@@ -49,19 +50,11 @@ public class DAOCoupon {
 	
 	
 	public Coupon findCoupon(int code) throws SQLException, ClassNotFoundException {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
-        
+	
         Coupon myCoupon = null;
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
 
             //STEP4.1: preparo la stored procedure
             String call = "{call get_coupon(?)}";
@@ -94,40 +87,19 @@ public class DAOCoupon {
             
             rs.close();
             }finally {
-                // STEP 5.2: Clean-up dell'ambiente
-                try {
-                    if (stmt != null)
-                        stmt.close();
-                } catch (SQLException se2) {
-                	throw(se2);
-                }
-                try {
-                    if (conn != null)
-                        conn.close();
-                    	System.out.println("Disconnetted database successfully...");
-                    	
-                } catch (SQLException se) {
-                    se.printStackTrace();
-                }
+            	//Clean-up dell'ambiente
+                disconnRoutine();
             }
         
         return myCoupon;
 	}
 	
 	public Coupon findCouponPartner(int code) throws ClassNotFoundException, SQLException {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
         
         Coupon myCoupon = null;
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
 
             //STEP4.1: preparo la stored procedure
             String call = "{call get_coupon(?)}";
@@ -162,37 +134,17 @@ public class DAOCoupon {
             
             rs.close();
             }finally {
-                // STEP 5.2: Clean-up dell'ambiente
-                try {
-                    if (stmt != null)
-                        stmt.close();
-                } catch (SQLException se2) {
-                	throw(se2);
-                }
-                try {
-                    if (conn != null)
-                        conn.close();
-                    	System.out.println("Disconnetted database successfully...");
-                    	
-                } catch (SQLException se) {
-                    se.printStackTrace();
-                }
+            	//Clean-up dell'ambiente
+                disconnRoutine();
             }
         
         return myCoupon;
 	}
 
 	public void redeemCoupon(int coupon, Long partner) throws ClassNotFoundException, SQLException {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
+		        
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
 
             //STEP4.1: preparo la stored procedure
             String call = "{call redeem_coupon(?,?)}";
@@ -204,24 +156,42 @@ public class DAOCoupon {
             
             stmt.execute();
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println("Disconnetted database successfully...");
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+            //Clean-up dell'ambiente
+            disconnRoutine();
         }
 	}
 	
+	private void resetConnection() throws ClassNotFoundException, SQLException {
+		conn = null;
+		stmt = null;
+
+		Class.forName(DRIVER_CLASS_NAME);
+
+		// apertura connessione
+        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        Log.getInstance().getLogger().info(LOGDBCONN);
+	}
+	
+	private void disconnRoutine() throws SQLException {
+		
+		try {
+	        if (stmt != null)
+	            stmt.close();
+	    } catch (SQLException se2) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
+	    	se2.printStackTrace();
+	    	throw se2;
+	    }
+	    try {
+	        if (conn != null)
+	            conn.close();
+	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
+
+	    } catch (SQLException se) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
+	    	se.printStackTrace();
+	    }
+	}
 
 	
 	

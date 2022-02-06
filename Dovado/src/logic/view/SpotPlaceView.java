@@ -205,7 +205,7 @@ public class SpotPlaceView implements Initializable{
 //					} else {found=true;}
 //					
 					if(found=true) {
-						//TODO::DIRE CHE IL POSTO GIÀ ESISTE.
+						//TODO::DIRE CHE IL POSTO GIï¿½ ESISTE.
 					}
 					
 				}
@@ -379,7 +379,7 @@ public void selectedPlace() {
 			
 			for(int i=0;i<placesFound.size();i++) {
 			//Se un posto si trova nella stessa via
-			//e indirizzo del nostro nuovo posto sarà improbabile
+			//e indirizzo del nostro nuovo posto sarï¿½ improbabile
 			//che questo sia un nuovo posto.
 				if(placesFound.get(i).getAddress().equals(address)
 				&& placesFound.get(i).getAddress().equals(city)
@@ -406,7 +406,8 @@ public void selectedPlace() {
 		
 		//TODO:: DA CONTROLLARE SPOT PLACE!
 		try {
-			if(daoPl.spotPlace(address, placeName, city, region, civico, city, 0, 0)<0) {
+			double[] coord= {0,0};
+			if(daoPl.spotPlace(address, placeName, city, region, civico, city,coord)<0) {
 			
 				final Stage dialog = new Stage();
 			    dialog.initModality(Modality.NONE);
