@@ -56,7 +56,7 @@
 				<%
 			}
 			
-		} else if(request.getParameter("idActivity") != null){
+		} else if(request.getParameter("activityName")!= null && request.getParameter("idActivity") != null && !isUser){
 			UpdateCertActController uc;
 			try{
 				uc = new UpdateCertActController(createActivityBean, u);
@@ -161,7 +161,7 @@
 			  
 			  <div class="mb-3 visually-hidden">
 				<input type="number" class="form-control" id="place" name="place">
-				<input type="number" class="form-control" id="idActivity" name="idActivity">
+				<input type="number" class="form-control" id="idActivity" name="idActivity" disabled>
 			  </div>
 			  
 			  <div class="col-md-12">
@@ -652,6 +652,7 @@
   	
   	<%if(editActivity != null){%>
   		setPlace(null,<%=editActivity.getPlace().getId()%>)
+  		document.querySelector('[name=idActivity]').disabled = false
   		document.querySelector('[name=idActivity]').value = <%= editActivity.getId()%>
   		document.querySelector('[name=activityName]').value = '<%=editActivity.getName()%>';
   		document.querySelector('[name=activityDescription]').value = "<%=editActivity.getDescription()%>";

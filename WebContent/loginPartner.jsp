@@ -22,7 +22,11 @@
 		LogPartnerController controller = new LogPartnerController();
 		Partner p = controller.loginPartner(logBean);
 		if(p != null){ 
-			//TODO Una volta fatta la nuova Navbar qui cambiamo
+			Enumeration em = session.getAttributeNames();
+			while (em.hasMoreElements()) {
+			    String element = (String)em.nextElement();
+			    session.removeAttribute(element);
+			}
 			session.setAttribute("partner", p);
 			session.setMaxInactiveInterval(10);
 			

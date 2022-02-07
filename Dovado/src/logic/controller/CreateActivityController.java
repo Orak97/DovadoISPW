@@ -82,22 +82,12 @@ public class CreateActivityController {
 		this.parseId();
 		this.createChannel();
 		
-		switch(bean.getType()) {
-		case CONTINUA:
-			{	
-				createContinuousActivity();
-			}
-		break;
-		case PERIODICA:
-			{
-				createPeriodicActivity();
-			}
-		break;
-		case SCADENZA:
-			{
-				createExpiredActivity();
-			}
-		break;
+		if(!this.isCertified()) {
+			newActivity=Factory.createNormalActivity(idActivity, bean, place); 
+		}
+		else {
+			
+			newActivity=Factory.createCertifiedActivity(idActivity, bean, place, owner); 
 		}
 		
 		newActivity.setIntrestedCategories(intrestedCategories);
@@ -108,102 +98,6 @@ public class CreateActivityController {
 		
 	}
 
-
-	private void createContinuousActivity() throws SQLException, ClassNotFoundException {
-		/*CHIAMARE QUESTO METODO SOLO DA DENTRO CreateActivity()*/		
-		if(!this.isCertified()) {
-			
-			// isCertified controlla se l'attività è certificata, l'informazione è all'interno del bean
-			//in base alla risposta chiameremo la factory per il tipo di attività.
-			//questi metodi vengono usati nella ricostruzione delle attivita ricavate dalla persistenza.
-			
-			newActivity=Factory.createNormalActivity(
-					idActivity,
-					bean.getActivityName(),
-					bean.getActivityDescription(),
-					place,
-					bean.getOpeningLocalTime(),
-					bean.getClosingLocalTime()
-					); 
-		}
-		else {
-			
-			newActivity=Factory.createCertifiedActivity(
-					idActivity,
-					bean.getActivityName(),
-					bean.getActivityDescription(),
-					place,
-					bean.getOpeningLocalTime(),
-					bean.getClosingLocalTime(),
-					owner
-					); 
-		}
-	}
-
-	private void createPeriodicActivity() throws SQLException, ClassNotFoundException{
-		/*CHIAMARE QUESTO METODO SOLO DA DENTRO CreateActivity()*/		
-		LocalTime[] opCloseTime = {bean.getOpeningLocalTime(), bean.getClosingLocalTime()};
-		LocalDate[] startEndDate = {bean.getOpeningLocalDate(), bean.getEndLocalDate()};
-		if(!this.isCertified()) {
-			
-			// isCertified controlla se l'attività è certificata, l'informazione è all'interno del bean
-			//in base alla risposta chiameremo la factory per il tipo di attività.
-			//questi metodi vengono usati nella ricostruzione delle attivita ricavate dalla persistenza.
-			newActivity=Factory.createNormalActivity(
-					idActivity,
-					bean.getActivityName(),
-					bean.getActivityDescription(),
-					place,
-					opCloseTime,
-					startEndDate,
-					bean.getCadence()
-					); 			
-		}
-		else {
-			newActivity=Factory.createCertifiedActivity(
-					idActivity,
-					bean.getActivityName(),
-					bean.getActivityDescription(),
-					place,
-					opCloseTime,
-					startEndDate, 
-					bean.getCadence(),
-					owner
-					);
-		}
-	}
-	
-	private void createExpiredActivity() throws SQLException, ClassNotFoundException {
-		/*CHIAMARE QUESTO METODO SOLO DA DENTRO CreateActivity()*/		
-		LocalTime[] opCloseTime = {bean.getOpeningLocalTime(), bean.getClosingLocalTime()};
-		LocalDate[] startEndDate = {bean.getOpeningLocalDate(), bean.getEndLocalDate()};
-		if(!this.isCertified()) {
-			
-			// isCertified controlla se l'attività è certificata, l'informazione è all'interno del bean
-			//in base alla risposta chiameremo la factory per il tipo di attività.
-			//questi metodi vengono usati nella ricostruzione delle attivita ricavate dalla persistenza.
-			
-			newActivity=Factory.createNormalActivity(
-					idActivity,
-					bean.getActivityName(),
-					bean.getActivityDescription(),
-					place,
-					opCloseTime,
-					startEndDate
-					); 	 
-		}
-		else {
-			newActivity=Factory.createCertifiedActivity(
-					idActivity,
-					bean.getActivityName(),
-					bean.getActivityDescription(),
-					place,
-					opCloseTime,
-					startEndDate,
-					owner
-					);
-		}
-	}
 	
 	private void createChannel() throws SQLException, ClassNotFoundException {
 		DAOChannel daoc = DAOChannel.getInstance();

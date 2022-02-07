@@ -20,7 +20,6 @@ public class Preferences {
 	
 	
 	public Preferences(CreateActivityBean bean) {
-		super();//TODO why this super?
 		boolean[] boolPref = {
 				bean.isArte(),
 				bean.isCibo(),
@@ -40,7 +39,6 @@ public class Preferences {
 	}
 	
 	public Preferences(PreferenceBean bean) {
-		super();//TODO why this super?
 		boolean[] boolPref = {
 				bean.isArte(),
 				bean.isCibo(),

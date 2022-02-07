@@ -129,6 +129,9 @@ public class DAOPlace {
             while(rs.next()) {
             	searchedPlace = fillBean(rs);
             }
+            if(searchedPlace == null) {
+             	Log.getInstance().getLogger().warning("STAROBA E NULLLLLLLLL BROOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!!");
+            }
             rs.close();
         }finally {
         	//Clean-up dell'ambiente
@@ -174,6 +177,9 @@ public class DAOPlace {
 	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
 	    	se2.printStackTrace();
 	    	throw se2;
+	    }catch (NullPointerException se2) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: NullPointerException e mesaggio: " + se2.getMessage());
+	    	se2.printStackTrace();
 	    }
 	    try {
 	        if (conn != null)
@@ -183,6 +189,9 @@ public class DAOPlace {
 	    } catch (SQLException se) {
 	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
 	    	se.printStackTrace();
+	    }catch (NullPointerException se2) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: NullPointerException e mesaggio: " + se2.getMessage());
+	    	se2.printStackTrace();
 	    }
 	}
 
