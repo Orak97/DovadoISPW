@@ -130,20 +130,20 @@ public class PreferenceBean {
 	}
 
 	public void setPreferences(boolean[] interestedCategories) {
-		this.setArte(interestedCategories[0]);
-		this.setCibo(interestedCategories[1]);
-		this.setMusica(interestedCategories[2]);
-		this.setSport(interestedCategories[3]);
-		this.setSocial(interestedCategories[4]);
-		this.setNatura(interestedCategories[5]);
-		this.setEsplorazione(interestedCategories[6]);
-		this.setRicorrenze(interestedCategories[7]);
-		this.setModa(interestedCategories[8]);
-		this.setShopping(interestedCategories[9]);
-		this.setAdrenalina(interestedCategories[10]);
-		this.setRelax(interestedCategories[11]);
-		this.setIstruzione(interestedCategories[12]);
-		this.setMonumenti(interestedCategories[13]);
+		arte = interestedCategories[0];
+		cibo = interestedCategories[1];
+		musica = interestedCategories[2];
+		sport = interestedCategories[3];
+		social = interestedCategories[4];
+		natura = interestedCategories[5];
+		esplorazione = interestedCategories[6];
+		ricorrenze = interestedCategories[7];
+		moda = interestedCategories[8];
+		shopping = interestedCategories[9];
+		adrenalina = interestedCategories[10];
+		relax = interestedCategories[11];
+		istruzione = interestedCategories[12];
+		monumenti = interestedCategories[13];
 	}
 
 }

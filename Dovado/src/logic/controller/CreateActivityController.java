@@ -1,32 +1,18 @@
 package logic.controller;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.logging.Level;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import logic.model.Activity;
 import logic.model.Channel;
-import logic.model.ContinuosActivity;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
 import logic.model.DAOPartner;
 import logic.model.DAOPlace;
-import logic.model.ExpiringActivity;
 import logic.model.Factory;
 import logic.model.Log;
 import logic.model.Partner;
-import logic.model.PeriodicActivity;
 import logic.model.Place;
 import logic.model.Preferences;
-import logic.model.SuperActivity;
 import logic.model.SuperUser;
-import logic.model.User;
 import logic.model.CreateActivityBean;
 
 public class CreateActivityController {
