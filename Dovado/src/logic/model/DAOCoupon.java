@@ -63,7 +63,6 @@ public class DAOCoupon {
 
             //STEP4.1: preparo la stored procedure
             String call = "{call get_coupon(?)}";
-
             stmt = conn.prepareCall(call);
 
             stmt.setInt(1,code);
@@ -147,12 +146,7 @@ public class DAOCoupon {
 		try {
 	        if (stmt != null)
 	            stmt.close();
-	    } catch (SQLException se2) {
-	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
-	    	se2.printStackTrace();
-	    	throw se2;
-	    }
-	    try {
+	    
 	        if (conn != null)
 	            conn.close();
 	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
