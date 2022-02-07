@@ -314,6 +314,8 @@ if(partner != null){
 <script>
 	let modalChat = document.querySelector('#chat-modal')
 	modalChat.addEventListener('show.bs.modal',loadChat)
+	modalChat.addEventListener('shown.bs.modal',scrollToBottomChat)
+	
 	
 	var refreshInterval;
 	var chat;
@@ -367,6 +369,7 @@ if(partner != null){
 	 		//scrollToBottomChat()
  		}
  		
+ 		
  		//step 3: dico quale richiesta fare al server
 		req.open("GET", request);
 		//step 3.1 : imposto document come response type, perché sto per ricevere html html
@@ -399,11 +402,13 @@ if(partner != null){
 				
 				clearChat();
 				populateChat(chat.messages);
-	 			scrollToBottomChat()
+	 			
 	 			
 	 			//pulisco l'input di invio DOPO che ho inviato e riblocco il pulsante
 	 			document.getElementById('chatField').value = '';
 	 			document.getElementById('send-btn').classList.add("disabled");
+	 		
+	 			scrollToBottomChat()
 	 		}
 	 		
 	 		//step 3: dico quale richiesta fare al server
@@ -419,10 +424,10 @@ if(partner != null){
  		}
  	}
  	
- 	async function populateChat(messages){
+ 	function populateChat(messages){
  		let length = messages.length
  		//console.log(messages);		 		
- 		await messages.forEach( (curr, index) => {
+ 		messages.forEach( function(curr, index){
  					
  			let htmlMsg = '<div class="row d-flex '+(curr.sender == chat.user ? 'justify-content-end' : 'justify-content-start')+'">';
  			htmlMsg+= ' <div class="toast show message '+(curr.sender == chat.user ? 'msg-sent' : 'msg-recieved')+'" role="alert" aria-live="assertive" aria-atomic="true">';
@@ -443,7 +448,7 @@ if(partner != null){
 	 		//appendo il messaggio dentro il suo container di messaggi
 	 		document.querySelector('.modal-body.modal-chat').append(message);
  		
- 			if(index+1 == length) scrollToBottomChat()
+ 			//if(index+1 == length) scrollToBottomChat()
  		});
  		
  	}
