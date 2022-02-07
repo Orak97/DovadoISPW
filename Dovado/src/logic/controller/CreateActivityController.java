@@ -37,7 +37,6 @@ public class CreateActivityController {
 	//attributi comuni ad attività certificate e normali
 	private Preferences intrestedCategories;
 	private Place place;
-	private Activity newActivity;
 	private Long idActivity;
 	private Channel channel;
 	
@@ -61,7 +60,7 @@ public class CreateActivityController {
 	}
 	
 	public Activity createActivity() throws SQLException, ClassNotFoundException {
-		
+		Activity newActivity;
 		/******************************************************************************************
 		 * IMPORTANTISSIMO:																		
 		 ******************************************************************************************
@@ -126,7 +125,8 @@ public class CreateActivityController {
 	private void retrievePartner() throws SQLException, ClassNotFoundException{
 		//NOTA: questo deve venir chiamato solo da dentro isCertified!!!
 		// Usare questo metodo per ottenere una classe Partner prima di creare un oggetto attività certificata
-		owner = DAOPartner.getPartnerInfo(bean.getOwner());
+		DAOPartner dao = DAOPartner.getInstance();
+		owner = dao.getPartnerInfo(bean.getOwner());
 	}
 	
 	private boolean isCertified() throws SQLException, ClassNotFoundException {

@@ -38,8 +38,14 @@ public class DAOChannel {
 	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
 	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 			
-	//------------------------------------------------------------
-	
+	//----------log message-----------------------------------------------
+	private static final String LOGDBCONN = "Connected database successfully...";
+	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
+		
+	//--------------------------------------------------------------
+		
+	private  Connection conn ;
+	private  CallableStatement stmt;
 	
 	
 	private DAOChannel() {
@@ -110,20 +116,10 @@ public class DAOChannel {
 	
 	public Channel getChannel(Long idActivity) throws ClassNotFoundException, SQLException  {
 		//metodo per ottenere un channel partendo dall'id dell'attività
-		
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
-        
-        Channel channel = new Channel(idActivity);
+		Channel channel = new Channel(idActivity);
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_channel(?)}";
@@ -152,37 +148,16 @@ public class DAOChannel {
             
             
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println("Disconnetted database successfully...");
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
 		return channel;
 	}
 	
 	public void sendMsg(Long idActivity, String content, Long idSender) throws SQLException, ClassNotFoundException {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call send_msg(?,?,?)}";
@@ -196,21 +171,39 @@ public class DAOChannel {
             stmt.execute();
         	
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	System.out.println("Disconnetted database successfully...");
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
+	}
+	private void resetConnection() throws ClassNotFoundException, SQLException {
+		conn = null;
+		stmt = null;
+
+		Class.forName(DRIVER_CLASS_NAME);
+
+		// apertura connessione
+        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        Log.getInstance().getLogger().info(LOGDBCONN);
+	}
+	
+	private void disconnRoutine() throws SQLException {
+		
+		try {
+	        if (stmt != null)
+	            stmt.close();
+	    } catch (SQLException se2) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
+	    	se2.printStackTrace();
+	    	throw se2;
+	    }
+	    try {
+	        if (conn != null)
+	            conn.close();
+	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
+
+	    } catch (SQLException se) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
+	    	se.printStackTrace();
+	    }
 	}
 }

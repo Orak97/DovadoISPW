@@ -15,13 +15,13 @@ public class CertifiedActivity extends SuperActivity implements Activity {
 		this.owner = owner;
 	}
 
-	public CertifiedActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate, Partner owner) {
-		super(id,nome, description, p,openingTime,closingTime,startDate,endDate);
+	public CertifiedActivity(Long id,String nome, String description, Place p, LocalTime[] openCloseTime, LocalDate[] startEndDate, Partner owner) {
+		super(id,nome, description, p,openCloseTime,startEndDate);
 		this.owner = owner;
 	}
 
-	public CertifiedActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate,Cadence cadence, Partner owner) {
-		super(id,nome, description, p,openingTime,closingTime,startDate,endDate, cadence);
+	public CertifiedActivity(Long id,String nome, String description, Place p, LocalTime[] openCloseTime, LocalDate[] startEndDate,Cadence cadence, Partner owner) {
+		super(id,nome, description, p,openCloseTime,startEndDate, cadence);
 		this.owner = owner;
 	}
 
