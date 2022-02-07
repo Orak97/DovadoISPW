@@ -40,7 +40,7 @@ public class User extends SuperUser{
 	private Preferences preferences;
 	private double latitude;
 	private double longitude;
-	private float maxDistance = 2.0f; //this would be in km;
+	private float maxDistance = 2.0f; //this would be in km
 	
 	public User(String username, String email, Long id, Long wallet) {
 		super(username,email, id);

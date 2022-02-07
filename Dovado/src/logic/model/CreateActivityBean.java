@@ -57,9 +57,7 @@ public class CreateActivityBean {
 	public void setOpeningDate(String openingDate) {
 		this.openingDate = openingDate;
 	}
-	
-	/*********************************************/
-	
+
 	public LocalTime getOpeningLocalTime() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 		return LocalTime.parse(openingTime, formatter);
@@ -73,8 +71,6 @@ public class CreateActivityBean {
 		this.openingTime = openingTime;
 	}
 	
-	/*********************************************/
-	
 	public LocalDate getEndLocalDate() {
 		return stringToLocalDate(endDate);
 	}
@@ -86,8 +82,6 @@ public class CreateActivityBean {
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
-	
-	/*********************************************/
 
 	public LocalTime getClosingLocalTime() {
 		return stringToLocalTime(closingTime);
@@ -101,7 +95,6 @@ public class CreateActivityBean {
 		this.closingTime = closingTime;
 	}
 	
-	/*********************************************/
 
 	public ActivityType getType() {
 		return type;

@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Schedule {
 	private ArrayList<ScheduledActivity> myActivity;
-	private static DAOSchedules daoSc = DAOSchedules.getInstance();
 	
 	public Schedule() {
 		myActivity = new ArrayList<>();
