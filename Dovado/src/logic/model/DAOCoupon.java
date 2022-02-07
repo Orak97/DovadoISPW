@@ -146,7 +146,12 @@ public class DAOCoupon {
 		try {
 	        if (stmt != null)
 	            stmt.close();
-	    
+	    } catch (SQLException se2) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
+	    	se2.printStackTrace();
+	    	throw se2;
+	    }
+	    try {
 	        if (conn != null)
 	            conn.close();
 	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
