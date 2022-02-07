@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 
 public class DAOExplorer {
-	private static DAOExplorer INSTANCE;
+	private static DAOExplorer instance;
 	
 	//----------database--------------------------------------
 	
@@ -28,9 +28,9 @@ public class DAOExplorer {
 	private DAOExplorer() {}
 	
 	public static DAOExplorer getInstance() {
-		if(INSTANCE == null)
-			INSTANCE = new DAOExplorer();
-		return INSTANCE;
+		if(instance == null)
+			instance = new DAOExplorer();
+		return instance;
 	}
 	
 	public User login(String email, String password) throws SQLException, ClassNotFoundException  {

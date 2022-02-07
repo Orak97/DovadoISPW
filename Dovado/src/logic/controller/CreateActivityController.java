@@ -1,6 +1,9 @@
 package logic.controller;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import logic.model.Activity;
 import logic.model.Channel;
 import logic.model.DAOActivity;
@@ -139,7 +142,8 @@ public class CreateActivityController {
 
 	private void createPeriodicActivity() throws SQLException, ClassNotFoundException{
 		/*CHIAMARE QUESTO METODO SOLO DA DENTRO CreateActivity()*/		
-		
+		LocalTime[] opCloseTime = {bean.getOpeningLocalTime(), bean.getClosingLocalTime()};
+		LocalDate[] startEndDate = {bean.getOpeningLocalDate(), bean.getEndLocalDate()};
 		if(!this.isCertified()) {
 			
 			// isCertified controlla se l'attività è certificata, l'informazione è all'interno del bean
@@ -150,10 +154,8 @@ public class CreateActivityController {
 					bean.getActivityName(),
 					bean.getActivityDescription(),
 					place,
-					bean.getOpeningLocalTime(),
-					bean.getClosingLocalTime(),
-					bean.getOpeningLocalDate(), 
-					bean.getEndLocalDate(), 
+					opCloseTime,
+					startEndDate,
 					bean.getCadence()
 					); 			
 		}
@@ -163,10 +165,8 @@ public class CreateActivityController {
 					bean.getActivityName(),
 					bean.getActivityDescription(),
 					place,
-					bean.getOpeningLocalTime(),
-					bean.getClosingLocalTime(),
-					bean.getOpeningLocalDate(), 
-					bean.getEndLocalDate(), 
+					opCloseTime,
+					startEndDate, 
 					bean.getCadence(),
 					owner
 					);
@@ -175,6 +175,8 @@ public class CreateActivityController {
 	
 	private void createExpiredActivity() throws SQLException, ClassNotFoundException {
 		/*CHIAMARE QUESTO METODO SOLO DA DENTRO CreateActivity()*/		
+		LocalTime[] opCloseTime = {bean.getOpeningLocalTime(), bean.getClosingLocalTime()};
+		LocalDate[] startEndDate = {bean.getOpeningLocalDate(), bean.getEndLocalDate()};
 		if(!this.isCertified()) {
 			
 			// isCertified controlla se l'attività è certificata, l'informazione è all'interno del bean
@@ -186,10 +188,8 @@ public class CreateActivityController {
 					bean.getActivityName(),
 					bean.getActivityDescription(),
 					place,
-					bean.getOpeningLocalTime(),
-					bean.getClosingLocalTime(),
-					bean.getOpeningLocalDate(), 
-					bean.getEndLocalDate() 
+					opCloseTime,
+					startEndDate
 					); 	 
 		}
 		else {
@@ -198,10 +198,8 @@ public class CreateActivityController {
 					bean.getActivityName(),
 					bean.getActivityDescription(),
 					place,
-					bean.getOpeningLocalTime(),
-					bean.getClosingLocalTime(),
-					bean.getOpeningLocalDate(), 
-					bean.getEndLocalDate(), 
+					opCloseTime,
+					startEndDate,
 					owner
 					);
 		}
