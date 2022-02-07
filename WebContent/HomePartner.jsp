@@ -230,13 +230,13 @@ if(partner != null){
 
 
 		      </div>
-		      <div class="modal-footer">
-  			    <form method="GET" action="CreateActivityPartner.jsp">
+		      <div class="modal-footer d-flex justify-content-center">
+  			    
 	      	  		<input type="number" id="idActivity" name="idActivity" class="visually-hidden">
 		        	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Modifica Sconti disponibili <i class="bi bi-tag"></i></button>
-		        	<button type="button" class="btn btn-primary"  id="open-chat">Apri la chat della attività <i class="bi bi-chat-dots"></i></button>
-		        	<a role="submit" class="btn btn-success"  id="edit-activity">Modifica i dettagli dell'attività <i class="bi bi-gear-wide-connected"></i></a>
-		      	</form>
+		        	<button type="button" class="btn btn-primary"  id="open-chat" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#chat-modal" >Apri la chat della attività <i class="bi bi-chat-dots"></i></button>
+		        	<a role="button" class="btn btn-success"  id="edit-activity">Modifica i dettagli dell'attività <i class="bi bi-gear-wide-connected"></i></a>
+		      	
 		      </div>
 		    </div>
 		  </div>
@@ -291,6 +291,208 @@ if(partner != null){
 </script>
 
 <%-- fine modal per gestire le attività --%>
+
+<%-- modal per la chat --%>
+<!-- Modal -->
+<div class="modal fade" id="chat-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="chatModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeChat"></button>
+      </div>
+      <div class="modal-body modal-chat" style="background-color:#9FB6CD">
+      </div>
+      <div class="modal-footer chat-bar bg-white">
+		<input type="text" class="form-control flex-grow-1 col" id="chatField" placeholder="scrivi qualcosa"> 
+		<button type="button" class="btn btn-outline-dark send-btn disabled" id="send-btn" onclick="sendMsg()"> <i class="bi bi-send"></i> </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+	let modalChat = document.querySelector('#chat-modal')
+	modalChat.addEventListener('show.bs.modal',loadChat)
+	
+	var refreshInterval;
+	var chat;
+	
+	//disabilito il bottone se non ho testo da inviare
+	var chatField = document.getElementById('chatField');
+	chatField.addEventListener('keyup', ()=>{
+		if(chatField.value.length > 0) document.getElementById('send-btn').classList.remove("disabled");
+		else document.getElementById('send-btn').classList.add("disabled");
+	});
+	
+	document.getElementById('closeChat').addEventListener('click', ()=>{
+			
+		//stop refreshing
+		if(refreshInterval != undefined) clearInterval(refreshInterval);
+			
+		clearChat();
+			
+	});
+	
+ 	function loadChat(){
+ 		let activity = document.querySelector('.modal-footer #idActivity').value;
+ 		console.log('invio messaggi a '+activity)
+ 		let request = "chat.jsp?activity="+activity;
+ 		
+ 		//cancello il timer di refresh nel caso sia attivo
+ 		if(refreshInterval != undefined)
+ 		clearInterval(refreshInterval);
+ 		
+ 		//imposto un intervallo per refreshare la chat
+ 		startRefreshing(request);
+ 		
+ 		//step 1: genero oggetto per richiesta al server
+ 		var req = new XMLHttpRequest();
+ 		
+ 		
+ 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+ 		req.onload = function(){
+			console.log(this);	
+			chat = this.response;
+			
+			console.log(chat);
+	 		
+	 		//imposto il titolo del canale
+	 		document.getElementById('chatModalLabel').innerText = chat.activityName+"'s channel";
+	 		
+	 		clearChat();
+	 		
+	 		populateChat(chat.messages);
+	 		
+	 		//scrollToBottomChat()
+ 		}
+ 		
+ 		//step 3: dico quale richiesta fare al server
+		req.open("GET", request);
+		//step 3.1 : imposto document come response type, perché sto per ricevere html html
+		req.responseType = "json";
+		
+		//step 4: invio la richiesta 
+		req.send();
+ 	}
+ 	
+ 	function sendMsg(){
+ 		var message = document.getElementById("chatField").value;
+ 		let activity = chat.activityId;
+ 		
+ 		//TODO: primo controllo che il campo non sia vuoto
+ 		if(message=='') alert('Chiudi console sviluppatore, è molto poco carino da parte tua voler rompere il sito 🥺')
+ 		
+ 		else{
+ 			let request = "chat.jsp?activity="+activity+"&textMsg="+message;
+ 			//chat = sendRequest(request);
+ 			
+ 			//----------------------------------------AJAX----------------------------------------------
+ 			//step 1: genero oggetto per richiesta al server
+	 		var req = new XMLHttpRequest();
+	 		
+	 		
+	 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+	 		req.onload = function(){
+				console.log(this);	
+				chat = this.response;
+				
+				clearChat();
+				populateChat(chat.messages);
+	 			scrollToBottomChat()
+	 			
+	 			//pulisco l'input di invio DOPO che ho inviato e riblocco il pulsante
+	 			document.getElementById('chatField').value = '';
+	 			document.getElementById('send-btn').classList.add("disabled");
+	 		}
+	 		
+	 		//step 3: dico quale richiesta fare al server
+			req.open("GET", request);
+			//step 3.1 : imposto document come response type, perché sto per ricevere html html
+			req.responseType = "json";
+			
+			//step 4: invio la richiesta 
+			req.send();
+ 			
+	 		//-----------------------------------Fine AJAX----------------------------------------------
+ 			
+ 		}
+ 	}
+ 	
+ 	async function populateChat(messages){
+ 		let length = messages.length
+ 		//console.log(messages);		 		
+ 		await messages.forEach( (curr, index) => {
+ 					
+ 			let htmlMsg = '<div class="row d-flex '+(curr.sender == chat.user ? 'justify-content-end' : 'justify-content-start')+'">';
+ 			htmlMsg+= ' <div class="toast show message '+(curr.sender == chat.user ? 'msg-sent' : 'msg-recieved')+'" role="alert" aria-live="assertive" aria-atomic="true">';
+ 			htmlMsg+= ' <div class="toast-header">';
+ 			htmlMsg+= ' <strong class="me-auto">'+curr.sender+'</strong>';
+ 			htmlMsg+= ' <small class="text-muted">'+curr.sendDate+'</small>';
+ 			htmlMsg+= ' </div>';
+ 			htmlMsg+= ' <div class="toast-body">'+curr.text+'</div>';
+ 			htmlMsg+= ' </div> </div>';
+ 			
+ 			//generaro un nodo html da stringhe per creare il box del messaggio 
+ 			let placeholder = document.createElement('div');
+	 		placeholder.insertAdjacentHTML('afterbegin', htmlMsg);
+	 		
+	 		let message = placeholder.firstElementChild;
+	 		
+	 		//console.log(message);
+	 		//appendo il messaggio dentro il suo container di messaggi
+	 		document.querySelector('.modal-body.modal-chat').append(message);
+ 		
+ 			if(index+1 == length) scrollToBottomChat()
+ 		});
+ 		
+ 	}
+ 	
+ 	function startRefreshing(request){
+			refreshInterval= setInterval(() => {
+				//step 1: genero oggetto per richiesta al server
+	 		var req = new XMLHttpRequest();
+	 		
+	 		
+	 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+	 		req.onload = function(){
+				console.log(this);	
+				let newChat = this.response;
+				if( JSON.stringify(chat) !=  JSON.stringify(newChat)){
+ 					clearChat();
+ 					chat = newChat;
+ 					populateChat(chat.messages);
+ 					scrollToBottomChat();
+ 				}
+	 		}
+	 		
+	 		//step 3: dico quale richiesta fare al server
+			req.open("GET", request);
+			//step 3.1 : imposto document come response type, perché sto per ricevere html html
+			req.responseType = "json";
+			
+			//step 4: invio la richiesta 
+			req.send();
+				//aggiorno la chat solo se ci sono nuovi messaggi
+				console.log('finito timer');
+				}
+			,30000);
+ 	}
+ 	
+ 	function scrollToBottomChat(){
+ 		//comando per scrollare in fondo alla chat
+		let chat = document.querySelector('.modal-body.modal-chat');
+ 		//chat.lastChild.scrollIntoViewIfNeeded()
+ 		chat.scrollTop = chat.scrollHeight;
+ 	}
+ 	
+ 	function clearChat(){
+ 		//pulisco la chat
+		document.querySelector('.modal-body.modal-chat').innerHTML='';
+ 	}
+
+</script>
+<%-- fine modal per la chat --%>
 
 <style>
 	/* Chrome, Safari, Edge, Opera */

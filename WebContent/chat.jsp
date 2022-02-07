@@ -7,7 +7,7 @@
 		<%	
 		
 			
-			if(request.getParameter("activity")!= null){
+			if(request.getParameter("activity")!= null && (session.getAttribute("user") != null || session.getAttribute("partner") != null)){
 				
 				/*preparo i dao*/
 				DAOActivity daoAct = DAOActivity.getInstance();
@@ -16,6 +16,7 @@
 				
 				try{
 					SuperUser u = (SuperUser) session.getAttribute("user");
+					if(u == null) u = (SuperUser) session.getAttribute("partner");
 					
 					//il try Catch mi serve per evitare che se activity non è un intero il sistema crashi
 					Long act = Long.parseLong(request.getParameter("activity"));
