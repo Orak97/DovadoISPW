@@ -21,38 +21,42 @@ public class Preferences {
 	
 	public Preferences(CreateActivityBean bean) {
 		super();//TODO why this super?
-		this.arte = bean.isArte();
-		this.cibo = bean.isCibo();
-		this.musica = bean.isMusica();
-		this.sport = bean.isSport();
-		this.social = bean.isSocial();
-		this.natura = bean.isNatura();
-		this.esplorazione = bean.isEsplorazione();
-		this.ricorrenzeLocali = bean.isRicorrenze();
-		this.moda = bean.isModa();
-		this.shopping = bean.isShopping();
-		this.adrenalina = bean.isAdrenalina();
-		this.relax = bean.isRelax();
-		this.istruzione = bean.isIstruzione();
-		this.monumenti = bean.isMonumenti();
+		boolean[] boolPref = {
+				bean.isArte(),
+				bean.isCibo(),
+				bean.isMusica(),
+				bean.isSport(),
+				bean.isSocial(),
+				bean.isNatura(),
+				bean.isEsplorazione(),
+				bean.isRicorrenze(),
+				bean.isModa(),
+				bean.isShopping(),
+				bean.isAdrenalina(),
+				bean.isRelax(),
+				bean.isIstruzione(),
+				bean.isMonumenti()};
+		setInterestedCategories(boolPref);
 	}
 	
 	public Preferences(PreferenceBean bean) {
 		super();//TODO why this super?
-		this.arte = bean.isArte();
-		this.cibo = bean.isCibo();
-		this.musica = bean.isMusica();
-		this.sport = bean.isSport();
-		this.social = bean.isSocial();
-		this.natura = bean.isNatura();
-		this.esplorazione = bean.isEsplorazione();
-		this.ricorrenzeLocali = bean.isRicorrenze();
-		this.moda = bean.isModa();
-		this.shopping = bean.isShopping();
-		this.adrenalina = bean.isAdrenalina();
-		this.relax = bean.isRelax();
-		this.istruzione = bean.isIstruzione();
-		this.monumenti = bean.isMonumenti();
+		boolean[] boolPref = {
+				bean.isArte(),
+				bean.isCibo(),
+				bean.isMusica(),
+				bean.isSport(),
+				bean.isSocial(),
+				bean.isNatura(),
+				bean.isEsplorazione(),
+				bean.isRicorrenze(),
+				bean.isModa(),
+				bean.isShopping(),
+				bean.isAdrenalina(),
+				bean.isRelax(),
+				bean.isIstruzione(),
+				bean.isMonumenti()};
+		setInterestedCategories(boolPref);
 	}
 	
 	public Preferences(boolean[] interestedCategories) {

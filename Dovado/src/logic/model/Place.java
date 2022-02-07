@@ -16,17 +16,17 @@ public class Place {
 	//Verranno indicate le attivita a cui fa riferimento il posto mediante il loro id.
 	private ArrayList<Long> hostedActivities;
 	
-	public Place(Long id,String name,String address,String city,String region,String civico,String cap, float latitudine, float longitudine){
-		this.id = id;
-		this.name = name;
-		this.address = address;
-		this.city = city;
-		this.region = region;
-		this.civico = civico;
-		this.setCap(cap);
+	public Place(PlaceBean bean){
+		this.id = bean.getId();
+		this.name = bean.getName();
+		this.address = bean.getAddress();
+		this.city = bean.getCity();
+		this.region = bean.getRegion();
+		this.civico = bean.getCivico();
+		this.setCap(bean.getCap());
 		this.hostedActivities = new ArrayList<>();
-		this.latitudine = latitudine;
-		this.longitudine = longitudine;
+		this.latitudine = bean.getLatitudine();
+		this.longitudine = bean.getLongitudine();
 		
 	}
 

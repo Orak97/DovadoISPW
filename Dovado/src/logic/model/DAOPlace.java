@@ -36,56 +36,9 @@ public class DAOPlace {
 		return INSTANCE;
 	}
 	
-	public List<Place> searchPlaces(String str) throws ClassNotFoundException, SQLException {
-		        
-        ArrayList<Place> places = new ArrayList<>();
-        
-        try {
-        	resetConnection();
-            
-            //STEP4.1: preparo la stored procedure
-            String call =  "{call search_places(?)}";
-            
-            stmt = conn.prepareCall(call);
-            
-            stmt.setString(1,str);
-            
-            if(!stmt.execute()) {
-            	//NOTA: restituisce true solo è un result set, quindi non usare per le operazioni CURD!!!
-            	
-            	throw new SQLException("Sembra che non esista nessun luogo per: "+str);
-            }
-            
-            ResultSet rs = stmt.getResultSet();
-            
-            
-            while(rs.next()) {
-            	Place p = new Place(
-            			rs.getLong("idLuogo"),
-            			rs.getString("nome"),
-            			rs.getString("indirizzo"),
-            			rs.getString("citta"),
-            			rs.getString("regione"),
-            			rs.getString("civico"),
-            			rs.getString("cap"),
-            			rs.getFloat("latitudine"),
-            			rs.getFloat("longitudine")
-            			);
-            	places.add(p);
-            }
-            
-            rs.close();
-        }
-        finally {
-        	//Clean-up dell'ambiente
-        	disconnRoutine();
-        }
-        
-        return places;
-	}
-
+	
 	public int spotPlace(String address, String placeName, String city, String region, String civico, String cap, double[] coord) throws ClassNotFoundException, SQLException {
-		        
+        
         try {
         	resetConnection();
             
@@ -115,10 +68,46 @@ public class DAOPlace {
         
 		return 1;
 	}
-	//TODO erché questo è statico? --- posso vedere in daoactivity
+	
+	public List<Place> searchPlaces(String str) throws ClassNotFoundException, SQLException {
+		        
+        ArrayList<Place> places = new ArrayList<>();
+        
+        try {
+        	resetConnection();
+            
+            //STEP4.1: preparo la stored procedure
+            String call =  "{call search_places(?)}";
+            
+            stmt = conn.prepareCall(call);
+            stmt.setString(1,str);
+            
+            if(!stmt.execute()) {
+            	throw new SQLException("Sembra che non esista nessun luogo per: "+str);
+            }
+            
+            ResultSet rs = stmt.getResultSet();
+            
+            
+            while(rs.next()) {
+            	Place p = new Place(fillBean(rs));
+            	places.add(p);
+            }
+            
+            rs.close();
+        }
+        finally {
+        	//Clean-up dell'ambiente
+        	disconnRoutine();
+        }
+        
+        return places;
+	}
+
+	
 	public Place getPlace(int id) throws ClassNotFoundException, SQLException  {
         
-        Place searchedPlace = null;
+        PlaceBean searchedPlace = null;
         
         try {
         	resetConnection();
@@ -133,32 +122,36 @@ public class DAOPlace {
             if(!stmt.execute()) {
             	//NOTA: restituisce true solo è un result set, quindi non usare per le operazioni CURD!!!
             	throw new SQLException("Sembra che non esista nessun luogo per l'id: "+id);
-            };
+            }
             
             ResultSet rs = stmt.getResultSet();
             
-            
             while(rs.next()) {
-            	searchedPlace = new Place(
-            			rs.getLong("idLuogo"),
-            			rs.getString("nome"),
-            			rs.getString("indirizzo"),
-            			rs.getString("citta"),
-            			rs.getString("regione"),
-            			rs.getString("civico"),
-            			rs.getString("cap"),
-            			rs.getFloat("latitudine"),
-            			rs.getFloat("longitudine")
-            			);
+            	searchedPlace = fillBean(rs);
             }
-            
             rs.close();
         }finally {
         	//Clean-up dell'ambiente
         	disconnRoutine();
         }
         
-        return searchedPlace;
+        return new Place(searchedPlace);
+	}
+	
+	private PlaceBean fillBean(ResultSet rs) throws SQLException {
+		PlaceBean searchedPlace = new PlaceBean();
+        	
+		searchedPlace.setId(rs.getLong("idLuogo"));
+		searchedPlace.setName(rs.getString("nome"));
+		searchedPlace.setAddress(rs.getString("indirizzo"));
+		searchedPlace.setCity(rs.getString("citta"));
+		searchedPlace.setRegion(rs.getString("regione"));
+		searchedPlace.setCivico(rs.getString("civico"));
+		searchedPlace.setCap(rs.getString("cap"));
+		searchedPlace.setLatitudine(rs.getFloat("latitudine"));
+		searchedPlace.setLongitudine(rs.getFloat("longitudine"));
+			
+		return searchedPlace;
 	}
 	
 	private void resetConnection() throws ClassNotFoundException, SQLException {
