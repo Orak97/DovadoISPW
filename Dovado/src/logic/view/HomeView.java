@@ -60,7 +60,6 @@ import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSuperUser;
-import logic.model.DateBean;
 import logic.model.Discount;
 import logic.model.ExpiringActivity;
 import logic.model.FindActivitiesBean;

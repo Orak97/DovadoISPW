@@ -31,7 +31,7 @@ public class DAOPartner {
 		return INSTANCE;
 	}
 	
-	//TODO PERCHÉ STATICO QUESTO METODO?
+	//TODO PERCHÉ STATICO QUESTO METODO? ---- come l'altra
 	public static Partner getPartnerInfo(int owner) throws SQLException, ClassNotFoundException {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;

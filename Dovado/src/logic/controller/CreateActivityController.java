@@ -17,7 +17,6 @@ import logic.model.DAOActivity;
 import logic.model.DAOChannel;
 import logic.model.DAOPartner;
 import logic.model.DAOPlace;
-import logic.model.DateBean;
 import logic.model.ExpiringActivity;
 import logic.model.Factory;
 import logic.model.Log;

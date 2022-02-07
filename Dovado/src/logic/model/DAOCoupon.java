@@ -21,8 +21,6 @@ import logic.controller.FindActivityController;
 
 public class DAOCoupon {
 	private static DAOCoupon instance;
-	//TODO Serve il parser? 
-	private JSONParser parser; 	
 	
 	//----------database--------------------------------------
 
@@ -39,7 +37,6 @@ public class DAOCoupon {
 	private  CallableStatement stmt;
 
 	private DAOCoupon() {
-		parser = new JSONParser();
 	}
 	
 	public static DAOCoupon getInstance() {
@@ -50,52 +47,15 @@ public class DAOCoupon {
 	
 	
 	public Coupon findCoupon(int code) throws SQLException, ClassNotFoundException {
-	
-        Coupon myCoupon = null;
-        
-        try {
-        	resetConnection();
-
-            //STEP4.1: preparo la stored procedure
-            String call = "{call get_coupon(?)}";
-
-            stmt = conn.prepareCall(call);
-
-            stmt.setInt(1,code);
-            
-            if(!stmt.execute()) {         	
-            	throw new SQLException("nessun coupon esistente con questo codice");
-            }
-            
-            //ottengo il resultSet
-            ResultSet rs = stmt.getResultSet();
-            
-            while(rs.next()) {
-            	
-            	int  utente = rs.getInt("utente");
-            	int attivita = rs.getInt("attivita");
-            	int codice = rs.getInt("idCoupon");
-            	int sconto = rs.getInt("sconto");
-            	
-            	String scadenzaStr = rs.getString("data_scadenza");
-            	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
-            	
-            	LocalDateTime scadenza = LocalDateTime.parse(scadenzaStr,dtf);
-            	
-            	myCoupon = new Coupon(utente,attivita,codice,sconto,scadenza);
-            }
-            
-            rs.close();
-            }finally {
-            	//Clean-up dell'ambiente
-                disconnRoutine();
-            }
-        
-        return myCoupon;
+        return findCoupon(code, false);
 	}
 	
-	public Coupon findCouponPartner(int code) throws ClassNotFoundException, SQLException {
-        
+	public Coupon findCouponPartner(int code) throws ClassNotFoundException, SQLException {     
+        return findCoupon(code, true);
+	}
+	
+	private Coupon findCoupon(int code, boolean isPartner) throws ClassNotFoundException, SQLException {
+
         Coupon myCoupon = null;
         
         try {
@@ -116,20 +76,30 @@ public class DAOCoupon {
             ResultSet rs = stmt.getResultSet();
             
             while(rs.next()) {
-            	
-            	String  utente = rs.getString("username_utente");
-            	String attivita = rs.getString("nome_attivita");
             	int codice = rs.getInt("idCoupon");
-            	int sconto = rs.getInt("sconto");
-            	String dataScadenzaStr = rs.getString("data_scadenza");
-            	String dataScheduloStr = rs.getString("data_schedulo");
+        		int sconto = rs.getInt("sconto");
             	
-            	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
-            	
+        		String dataScadenzaStr = rs.getString("data_scadenza");            	
+            	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");           	
             	LocalDateTime scadenza = LocalDateTime.parse(dataScadenzaStr,formatter);
-            	LocalDateTime schedulo = LocalDateTime.parse(dataScheduloStr,formatter);
             	
-            	myCoupon = new Coupon(codice,utente,attivita,sconto,scadenza,schedulo);
+            	if(isPartner) {
+            		String  utente = rs.getString("username_utente");
+            		String attivita = rs.getString("nome_attivita");
+            		
+            		
+            		String dataScheduloStr = rs.getString("data_schedulo");
+            	
+            		
+            		LocalDateTime schedulo = LocalDateTime.parse(dataScheduloStr,formatter);
+            	
+            		myCoupon = new Coupon(codice,utente,attivita,sconto,scadenza,schedulo);
+            	} else {
+            		int  utente = rs.getInt("utente");
+                	int attivita = rs.getInt("attivita");
+                	
+                	myCoupon = new Coupon(utente,attivita,codice,sconto,scadenza);
+            	}
             }
             
             rs.close();
@@ -140,7 +110,7 @@ public class DAOCoupon {
         
         return myCoupon;
 	}
-
+	
 	public void redeemCoupon(int coupon, Long partner) throws ClassNotFoundException, SQLException {
 		        
         try {

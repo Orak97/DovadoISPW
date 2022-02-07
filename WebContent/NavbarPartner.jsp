@@ -91,7 +91,7 @@
 
 	    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
 	      <div class="container-fluid">
-	        <a class="navbar-brand" href="Home.jsp">
+	        <a class="navbar-brand" href="HomePartner.jsp">
 	        	 <img src="logo/DovadoLogo(3).png" alt="" width="auto" height="50vh">
 	        </a>
 	        <%
@@ -121,7 +121,7 @@
 		          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 		            <li><a class="dropdown-item" href="UserProfile.jsp">My profile</a></li>
 		            <li><hr class="dropdown-divider"></li>
-		            <li><a class="dropdown-item" href="#">Log out</a></li>
+		            <li><a class="dropdown-item" href="logout.jsp">Log out</a></li>
 		          </ul>
 		        </li>
 	            	            

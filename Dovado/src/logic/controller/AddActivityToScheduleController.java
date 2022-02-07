@@ -9,7 +9,6 @@ import logic.model.Activity;
 import logic.model.DAOActivity;
 import logic.model.DAOCoupon;
 import logic.model.DAOSchedules;
-import logic.model.DateBean;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Schedule;

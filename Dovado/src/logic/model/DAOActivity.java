@@ -58,9 +58,7 @@ public class DAOActivity {
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call create_activity(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-            
-            //TODO proprietario == null da modificare
-            
+                 
             stmt = conn.prepareCall(call);
            
             stmt.setString(1,bean.getActivityName());
@@ -309,7 +307,7 @@ public class DAOActivity {
 	            stmtPref.setBoolean(16,activity.getIntrestedCategories().isIstruzione());
 
 	            
-	            //TODO Chiedere a Sav se necessario il throw
+	            //TODO Chiedere a Sav se necessario il throw -- separare le store procedure 
 	        }finally {
 	            // STEP 5.2: Clean-up dell'ambiente
 	            try {
@@ -318,7 +316,7 @@ public class DAOActivity {
 	                if (stmtPref != null)
 	                    stmtPref.close();
 	            } catch (SQLException se2) {
-	            	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
+	            	Log.getInstance().getLogger().warning("Errore con codice : messaggio "+ se2.getErrorCode() + " : " + se2.getMessage());
 	            }
 	            try {
 	                if (conn != null)
@@ -326,7 +324,7 @@ public class DAOActivity {
 	                Log.getInstance().getLogger().info(LOGDBDISCONN);
 	                	
 	            } catch (SQLException se) {
-	            	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
+	            	Log.getInstance().getLogger().warning("Errore di codice : messsaggio "+ se.getErrorCode() + " : " + se.getMessage());
 	                se.printStackTrace();
 	            }
 	        }

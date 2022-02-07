@@ -1,5 +1,4 @@
 package logic.model;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -34,10 +33,10 @@ public class DAOChannel {
 	
 	//----------database--------------------------------------
 	
-	private static String USER = "dovado"; //DA CAMBIARE
-	private static String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+	private static final String USER = "dovado"; //DA CAMBIARE
+	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
+	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
+	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 			
 	//------------------------------------------------------------
 	
@@ -53,7 +52,7 @@ public class DAOChannel {
 		return INSTANCE;
 	}
 	
-	//Metodo per aggiornare nella persistenza un canale
+	//Metodo per aggiornare nella persistenza un canale -- TODO REFERENZIATA ELLA PARTE DESKTOP
 		public boolean updateChannelInJSON(List<Message> msges, SuperActivity a) {
 			JSONParser pars = new JSONParser(); 
 			
@@ -107,96 +106,6 @@ public class DAOChannel {
 		
 		}
 
-		//Metodo per aggiungere nella persistenza un canale
-		public Channel setupChannelJSON(Long aID) {
-			JSONParser pars = new JSONParser();
-			Channel foundCh = null;
-			try 
-			{
-				
-				Object channels = pars.parse(new FileReader(CHANNJSON));
-				JSONObject channel = (JSONObject) channels;
-				JSONArray channelArray = (JSONArray) channel.get(CHANNKEY);
-				
-				if((foundCh = findChannel(aID))!=null) {
-					Log.getInstance().getLogger().info("Il canale è già presente nella persistenza.");
-					return foundCh;
-				}
-				
-				Log.getInstance().getLogger().info("Il canale non è presente nella persistenza, pertanto sarà aggiunto.");
-				
-				JSONObject newChannel = new JSONObject();
-				JSONArray newMessageArray = new JSONArray();
-				
-				newChannel.put(ACTIVITYKEY, aID);
-				
-				/*Se il canale dovesse essere nullo e quindi appena creato
-				 * vado a inserire l'array json di messaggi, vuoto, all'
-				 * interno dell'oggetto json del canale e aggiungerlo ai 
-				 * canali già esistenti.*/
-				newChannel.put(MESSKEY,newMessageArray);
-				channelArray.add(newChannel);
-				try (FileWriter file = new FileWriter(CHANNJSON)){	
-					file.write(channel.toString());
-					file.flush();
-				}
-				foundCh = new Channel(aID);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-				}
-
-			return foundCh;
-		}
-
-
-	public Channel findChannel(Long activityId) {
-		Channel chFound=null;
-		Long aID;
-		try {
-			Object channels = parser.parse(new FileReader(CHANNJSON));
-			JSONObject channelObj = (JSONObject) channels;
-			JSONArray channelArray = (JSONArray) channelObj.get(CHANNKEY);
-			JSONObject result;
-			JSONArray resultMss;
-				
-			for(int i=0; i<channelArray.size();i++) {
-				//Recupero dall'array di canali ciascun canale uno alla volta.
-				result = (JSONObject)channelArray.get(i);
-				
-				//Prendo l'id trovato nel JSON
-				aID = (Long) result.get(ACTIVITYKEY);
-				Log.getInstance().getLogger().info("id attività trovata nel json find:"+ aID + " id attività cercata "+ activityId);
-				
-				//Se il JSON trovato ha lo stesso id dell'attività
-				if(Long.compare(aID, activityId) == 0) {
-					//Ricostruisco il canale compresi i messaggi ad esso collegati.
-					resultMss = (JSONArray) result.get(MESSKEY);
-					chFound = new Channel(aID);
-					Log.getInstance().getLogger().info("Ricostruendo l'istanza di canale dalla persistenza.");
-					//Per ora faccioo che ogni messaggio della chat viene 
-					//inserito uno alla volta all'interno della nuova istanza del canale.
-					for(int j=0;j<resultMss.size();j++) {
-						JSONObject mss = (JSONObject)resultMss.get(j);
-						Log.getInstance().getLogger().info("\n\nMessaggio scritto: "+mss.get(MTXTKEY)+"\n\n");
-						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy'  'HH:mm");
-						
-						chFound.addMsg(DAOSuperUser.getInstance().findSuperUserByID((Long)mss.get(UIDKEY)).getUsername(), (String)mss.get(MTXTKEY),LocalDateTime.parse((String)mss.get(DATESENTKEY),dtf));
-					}
-					return chFound;
-				}
-				
-			}
-			
-			/*Se non ho trovato niente, restituisco null.*/
-		} catch (IOException | ParseException e) {
-			e.printStackTrace();
-			return null;
-			}
-		return null;
-	}
-	
-	
 	//aggiunta metodi db
 	
 	public Channel getChannel(Long idActivity) throws ClassNotFoundException, SQLException  {

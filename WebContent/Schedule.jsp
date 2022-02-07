@@ -1,6 +1,6 @@
 <%@page import="java.sql.SQLException"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User, logic.model.DateBean, logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules, logic.model.SuperUser, logic.model.User, logic.model.Schedule, logic.model.ScheduledActivity, logic.controller.AddActivityToScheduleController, logic.model.CertifiedActivity" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.Schedule, logic.model.ScheduledActivity, logic.model.User,  logic.controller.AddActivityToScheduleController, logic.model.SuperActivity, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.DAOSchedules, logic.model.SuperUser, logic.model.User, logic.model.Schedule, logic.model.ScheduledActivity, logic.controller.AddActivityToScheduleController, logic.model.CertifiedActivity" %>
 
 	<% application.setAttribute( "titolo" , "Schedule"); %>
 

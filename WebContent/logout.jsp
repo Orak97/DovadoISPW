@@ -2,10 +2,10 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-<%session.invalidate();
-response.sendRedirect("Home.jsp");
-%>
 
+<%session.invalidate();
+	response.sendRedirect("totem.jsp");
+%>
 
 <head>
 <meta charset="UTF-8">

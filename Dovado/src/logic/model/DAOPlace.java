@@ -115,7 +115,7 @@ public class DAOPlace {
         
 		return 1;
 	}
-	//TODO erché questo è statico?
+	//TODO erché questo è statico? --- posso vedere in daoactivity
 	public static Place getPlace(int id) throws ClassNotFoundException, SQLException  {
 		// STEP 1: dichiarazioni
         CallableStatement stmt = null;

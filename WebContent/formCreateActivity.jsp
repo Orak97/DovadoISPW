@@ -1,4 +1,6 @@
 
+<%@page import="java.security.InvalidParameterException"%>
+<%@page import="logic.controller.UpdateCertActController"%>
 <%@ page import = "java.io.*,java.util.*,logic.model.SuperUser, logic.controller.SpotPlaceController, logic.model.User, logic.controller.CreateActivityController, logic.model.Place, logic.model.DAOPlace, logic.model.Partner, logic.model.DAOActivity, logic.model.Activity, logic.model.CertifiedActivity, logic.model.FrequencyOfRepeat, logic.model.ContinuosActivity, logic.model.PeriodicActivity, logic.model.ExpiringActivity, logic.model.Preferences " %>
 
   <div class="container pt-6">
@@ -39,18 +41,42 @@
 	
 		
 		//controllo se 'openingDate' è null, se non lo è ho fatto una request per creare un' attività, istanzio il createActivityController etc etc
-		if(request.getParameter("activityName")!= null){
+		if(request.getParameter("activityName")!= null && request.getParameter("idActivity") == null){
 			CreateActivityController c = new CreateActivityController(createActivityBean,u);
-			try{c.saveActivity();}
+			try{
+				c.saveActivity();
+				%>
+					<script>alert('Attività creata correttamente!')</script>
+				<%
+			}
 			catch(Exception e){
 				e.printStackTrace();
 				%>
-				<script>alert('Errore nella creazione dell\'attivita\', riprova!')</script>
+					<script>alert('Errore nella creazione dell\'attivita\', riprova!')</script>
 				<%
 			}
-			%>
-			<script>alert('Attività creata correttamente!')</script>
-			<%
+			
+		} else if(request.getParameter("idActivity") != null){
+			UpdateCertActController uc;
+			try{
+				uc = new UpdateCertActController(createActivityBean, u);
+			} catch (InvalidParameterException e){
+				%>
+					<script>alert('SOLO I PARTNER POSSONO MODIFICARE LE ATTIVITA!!!!!')</script>
+				<%
+				return;
+			}
+			try{
+				uc.updateByBean();
+				%>
+					<script>alert('Attività aggiornata correttamente!')</script>
+				<%
+			} catch (Exception e){
+				e.printStackTrace();
+				%>
+					<script>alert('C\' è stato un errore durante la modifica dell\'attività!')</script>
+				<%
+			}
 		}
 		
 		Activity editActivity = null;

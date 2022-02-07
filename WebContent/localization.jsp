@@ -24,9 +24,6 @@
 			
 			response.sendRedirect("Home.jsp");
 		}catch(Exception e){
-			
-			//TODO: unico modo per andare in errore qua è fare in modo che uno modifichi i campi esistenti con le proprie manine e l'editor sviluppatore
-			//dovremmo far comparire un messaggio di errore?
 			response.sendRedirect("localization.jsp");
 		}	
 	}

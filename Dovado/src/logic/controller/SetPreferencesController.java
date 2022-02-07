@@ -70,13 +70,4 @@ public class SetPreferencesController {
 				bean.isMonumenti());
 	}
 	
-	public void updatePreferencesUser() {
-		//TODO;
-	}
-	
-	public void updatePreferencesActivity() {
-		//TODO;
-	}
-	
-	
 }

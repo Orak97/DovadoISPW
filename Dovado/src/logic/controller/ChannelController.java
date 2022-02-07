@@ -12,54 +12,26 @@ public class ChannelController {
 	private SuperUser usr;
 	
 	private Long idActivity;
-	
+	//questo metodo è chiamato solo dal PAC
 	public ChannelController(Activity activity) {
 		this.channel = activity.getChannel();
 		}
-	
+	//Questo da chat.jsp
 	public ChannelController(SuperUser usr,Long idActivity) {
 		this.usr = usr;
 		this.idActivity = idActivity;
 	}
 	
-	public void writeMessage(String user, String textMsg) {
-		this.channel.addMsg(user, textMsg);
-	}
-	
-	/*SPAGHETTI CODE:
+	/*SPAGHETTI CODE: 
 	 * 
 	 * Credo sia necessario che il Controller sia collegato al DAO in maniera migliore
 	 * forse dando come parametro una SuperActivity si risparmia ma credo si violi la legge di Demetra
 	 * also: come mai channel deve passare la lista di messaggi per salvare in persistenza?
 	 * 
 	 * */
-	public void writeMessage(String user, String textMsg, SuperActivity activity) {
-		this.channel.addMsg(user, textMsg);
-		this.dao.updateChannelInJSON(this.channel.getChat(), activity);
-	}
 	
-	
-	public List<String[]> formattedChat(String user){
-		ArrayList<Message> listOfMsg = (ArrayList<Message>) this.channel.getChat();
-		ArrayList<String[]> chat = new ArrayList<>();
-		String[] msg;
-		if (listOfMsg.size() == 1) {
-			return chat;
-		}
-		for (int i = 1; i < listOfMsg.size() ; i++) {
-			msg = new String[2];
-			if (listOfMsg.get(i).getUsr().equals(user)) {
-				msg[0] = "0";
-			}
-			else msg[0] = "1";
-			
-			msg[1] = listOfMsg.get(i).getMsgSentDate() + " ----> " + listOfMsg.get(i).getMsgText()+"\n";
-			chat.add(msg);
-		}
-		return chat;
-	}
-	
-	//metodo da chiamare per inviare il messaggio sul DB
+
+	//metodo da chiamare per inviare il messaggio sul DB --- Referenziato da chat.jsp
 	public void sendMessage(String content) throws ClassNotFoundException, SQLException   {
 		
 		//eseguire qui i controlli del contenuto!!!

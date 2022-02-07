@@ -26,7 +26,6 @@
 			session.setAttribute("partner", p);
 			session.setMaxInactiveInterval(10);
 			
-			//TODO INSERIRE HOME DEL PARTNER
 			response.sendRedirect("HomePartner.jsp");
 		} else{
 %>

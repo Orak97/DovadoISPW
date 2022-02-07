@@ -1,5 +1,6 @@
 package logic.controller;
 
+import java.security.InvalidParameterException;
 import java.sql.SQLException;
 
 import logic.model.CertifiedActivity;
@@ -10,6 +11,7 @@ import logic.model.ExpiringActivity;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.PeriodicActivity;
+import logic.model.SuperUser;
 
 public class UpdateCertActController {
 	private CertifiedActivity activity;
@@ -26,15 +28,28 @@ public class UpdateCertActController {
 	}
 	
 	/*Rimuovere in caso si sposti il metodo `claimActivity`in un altra classe*/
-	public UpdateCertActController(Partner session,CreateActivityBean bean) {
+	public UpdateCertActController(CreateActivityBean bean,Partner session) {
 		this.session = session;
 		this.bean = bean;
 		daoAc = DAOActivity.getInstance();
+
 	}
+	
+	public UpdateCertActController(CreateActivityBean bean, SuperUser session) {
+		if(session instanceof Partner) {
+			this.session = (Partner)session;
+			this.bean = bean;
+			bean.setOwner(this.session.getUserID().intValue());
+			daoAc = DAOActivity.getInstance();
+		} else {
+			throw new InvalidParameterException("Si accettano solo partner");
+		}
+	}
+	
 	/*-----------------------------------------------------------------------*/
 	
 	public UpdateCertActController(CreateActivityBean bean) {
-		this(bean,null);
+		this(bean,(Partner)null);
 	}
 	
 	public boolean updateActivity() throws ClassNotFoundException, SQLException {

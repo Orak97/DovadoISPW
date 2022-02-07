@@ -58,7 +58,6 @@ public class ExpiringActivity extends FrequencyOfRepeat {
 	
 	@Override
 	public boolean checkDate(LocalDate date) {
-		// TODO Auto-generated method stub
 		return (startDate.isBefore(date) && endDate.isAfter(date)) || (startDate.isEqual(date) || endDate.isEqual(date));
 	}
 

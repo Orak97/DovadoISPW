@@ -59,10 +59,6 @@ public abstract class SuperActivity {
 	public Long getId() {
 		return this.id;
 	}
-	public void setId(Long id) {
-		this.id=id;
-		this.channel = DAOChannel.getInstance().setupChannelJSON(id);
-	}
 	
 	public FrequencyOfRepeat getFrequency() {
 		return this.frequencyOfRepeat;

@@ -36,7 +36,7 @@
 		boolean success = true;
 		try{
 			Partner partner = (Partner) session.getAttribute("partner");
-			UpdateCertActController controller = new UpdateCertActController(partner,createBean);
+			UpdateCertActController controller = new UpdateCertActController(createBean, partner);
 			controller.claimActivity();
 		}catch(Exception e){
 			e.printStackTrace();

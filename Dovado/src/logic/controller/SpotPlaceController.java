@@ -41,13 +41,7 @@ public class SpotPlaceController {
 		String cap = bean.getCap();
 		double[] coord = {bean.getLatitude(),bean.getLongitude()};
 		
-		/*
-		 * TODO: implementare un controllo che la via esista veramente!
-		 * 
-		 * 
-		 * 
-		 * */
-		
+				
 		try{
 			daoPl.spotPlace(address, placeName, city, region, civico, cap,coord);
 		}
