@@ -233,7 +233,7 @@ if(partner != null){
 		      <div class="modal-footer d-flex justify-content-center">
   			    
 	      	  		<input type="number" id="idActivity" name="idActivity" class="visually-hidden">
-		        	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Modifica Sconti disponibili <i class="bi bi-tag"></i></button>
+		        	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#couponModal">Modifica Sconti disponibili <i class="bi bi-tag"></i></button>
 		        	<button type="button" class="btn btn-primary"  id="open-chat" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#chat-modal" >Apri la chat della attività <i class="bi bi-chat-dots"></i></button>
 		        	<a role="button" class="btn btn-success"  id="edit-activity">Modifica i dettagli dell'attività <i class="bi bi-gear-wide-connected"></i></a>
 		      	
@@ -498,6 +498,112 @@ if(partner != null){
 
 </script>
 <%-- fine modal per la chat --%>
+
+<%-- inizio modal per gestione coupon --%>
+
+<!-- inizio modal per Coupon -->
+		<!-- Modal -->
+		<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="couponModalLabel">Quali percentuali di sconto possono generare gli utenti per questa attività?</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body modal-coupon">		      
+		      
+		      <%-- come funziona --%>
+		      
+		      <div class="accordion" id="infoCoupon">
+				  <div class="accordion-item">
+				    <h2 class="accordion-header" id="come-funziona">
+				      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#spiegazione" aria-expanded="true" aria-controls="spiegazione">
+				        Come funzionano i coupon?
+				      </button>
+				    </h2>
+				    <div id="spiegazione" class="accordion-collapse collapse show" aria-labelledby="come-funziona" data-bs-parent="#infoCoupon">
+				      <div class="accordion-body">
+				        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+				      </div>
+				    </div>
+				  </div>
+				</div>
+		      
+		      
+		      <%--inizio righe dei coupon --%>
+		       <div class="row coupon shadow">
+		       	<div class="col percentage-info text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
+		       			<p id="percentage"><span class="percentage">40%</span></p>
+		       		</div>
+		       	</div>
+		       	<div class="col percentage-redeem text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">		
+						<input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+						<label class="btn btn-outline-success btnHome btn-lg" for="btn-check-outlined">Attiva sconto</label>
+		       		</div>
+		       	</div>
+		       </div>
+		       
+		       <div class="row coupon shadow">
+		       	<div class="col percentage-info text-center disabled">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
+		       			<p id="percentage"><strong>60%</strong></p>
+		       		</div>
+		       	</div>
+		       	<div class="col percentage-redeem text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<p class="lead insufficient-funds">Soldi insufficienti per generare questo coupon</p>
+		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 100 soldi</button>
+		       		</div>
+		       	</div>
+		       </div>
+		       
+		       <div class="row coupon shadow">
+		       	<div class="col percentage-info text-center disabled">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
+		       			<p id="percentage"><strong>80%</strong></p>
+		       		</div>
+		       	</div>
+		       	<div class="col percentage-redeem text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 300 soldi</button>
+		       		</div>
+		       	</div>
+		       </div>
+		       
+		       <div class="row coupon shadow">
+		       	<div class="col percentage-info text-center disabled">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
+		       			<p id="percentage"><strong>100%</strong></p>
+		       		</div>
+		       	</div>
+		       	<div class="col percentage-redeem text-center">
+		       		<div class="position-relative top-50 start-50 translate-middle">
+		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 600 soldi</button>
+		       		</div>
+		       	</div>
+		       </div>
+		       
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-success" onclick="generateDiscount(0)">Non desidero generare nessun coupon</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+				
+		
+		
+		<!-- fine modal per coupon -->
+	
+
+<%-- fine modal per gestione coupon --%>
 
 <style>
 	/* Chrome, Safari, Edge, Opera */
