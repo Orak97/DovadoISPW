@@ -1,28 +1,15 @@
 package logic.model;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import logic.controller.RegExplorerController;
-
 public class RegBean {
 private String email;
 private String password;
 private String password2;
 private String username;
 private String compName;
-
-
-
 private String pIVA;
 private String error;
-private Pattern patternPsw;
-private Pattern patternEmail;
-private RegExplorerController regController;
-private String radio;
 
-public RegBean() {
-}
+private String radio;
 
 public String getRadio() {
     return radio;

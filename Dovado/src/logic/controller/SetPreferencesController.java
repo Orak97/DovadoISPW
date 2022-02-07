@@ -54,20 +54,7 @@ public class SetPreferencesController {
 	}
 	
 	public static Preferences getPreferencesFromBean(PreferenceBean bean) {
-		return new Preferences(bean.isArte(),
-				bean.isCibo(),
-				bean.isMusica(),
-				bean.isSport(),
-				bean.isSocial(),
-				bean.isNatura(),
-				bean.isEsplorazione(),
-				bean.isRicorrenze(),
-				bean.isModa(),
-				bean.isShopping(),
-				bean.isAdrenalina(),
-				bean.isRelax(),
-				bean.isIstruzione(),
-				bean.isMonumenti());
+		return new Preferences(bean);
 	}
 	
 }

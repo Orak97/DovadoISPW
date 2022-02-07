@@ -235,13 +235,14 @@ public class CreateActivityController {
 	
 	private void fillPreferences() {
 		// Usare questo metodo per riempire una classe Preferences (che in questo caso rispecchia le categorie interessate), prima di metterla dentro all'attività
-		intrestedCategories = new Preferences(bean.isArte(), bean.isCibo(), bean.isMusica(), bean.isSport(), bean.isSocial(), bean.isNatura(), bean.isEsplorazione(), bean.isRicorrenze(), bean.isModa(), bean.isShopping(), bean.isAdrenalina(), bean.isRelax(), bean.isIstruzione(), bean.isMonumenti());
+		intrestedCategories = new Preferences(bean);
 		
 	}
 	
 	private void retrievePlace() throws ClassNotFoundException, SQLException {
 		// Usare questo metodo per ottenere una classe Place prima di creare un oggetto attività
-		place = DAOPlace.getPlace(bean.getPlace());
+		DAOPlace dao = DAOPlace.getInstance();
+		place = dao.getPlace(bean.getPlace());
 	}
 	
 	private void retrievePartner() throws SQLException, ClassNotFoundException{

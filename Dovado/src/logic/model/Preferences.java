@@ -1,5 +1,7 @@
 package logic.model;
 
+import java.util.Iterator;
+
 public class Preferences {
 	private boolean arte; 
 	private boolean cibo; 
@@ -17,28 +19,46 @@ public class Preferences {
 	private boolean monumenti;
 	
 	
+	public Preferences(CreateActivityBean bean) {
+		super();//TODO why this super?
+		this.arte = bean.isArte();
+		this.cibo = bean.isCibo();
+		this.musica = bean.isMusica();
+		this.sport = bean.isSport();
+		this.social = bean.isSocial();
+		this.natura = bean.isNatura();
+		this.esplorazione = bean.isEsplorazione();
+		this.ricorrenzeLocali = bean.isRicorrenze();
+		this.moda = bean.isModa();
+		this.shopping = bean.isShopping();
+		this.adrenalina = bean.isAdrenalina();
+		this.relax = bean.isRelax();
+		this.istruzione = bean.isIstruzione();
+		this.monumenti = bean.isMonumenti();
+	}
 	
-	public Preferences(boolean arte, boolean cibo, boolean musica, boolean sport, boolean social, boolean natura,
-			boolean esplorazione, boolean ricorrenzeLocali, boolean moda, boolean shopping, boolean adrenalina,
-			boolean relax, boolean istruzione, boolean monumenti) {
-		super();
-		this.arte = arte;
-		this.cibo = cibo;
-		this.musica = musica;
-		this.sport = sport;
-		this.social = social;
-		this.natura = natura;
-		this.esplorazione = esplorazione;
-		this.ricorrenzeLocali = ricorrenzeLocali;
-		this.moda = moda;
-		this.shopping = shopping;
-		this.adrenalina = adrenalina;
-		this.relax = relax;
-		this.istruzione = istruzione;
-		this.monumenti = monumenti;
+	public Preferences(PreferenceBean bean) {
+		super();//TODO why this super?
+		this.arte = bean.isArte();
+		this.cibo = bean.isCibo();
+		this.musica = bean.isMusica();
+		this.sport = bean.isSport();
+		this.social = bean.isSocial();
+		this.natura = bean.isNatura();
+		this.esplorazione = bean.isEsplorazione();
+		this.ricorrenzeLocali = bean.isRicorrenze();
+		this.moda = bean.isModa();
+		this.shopping = bean.isShopping();
+		this.adrenalina = bean.isAdrenalina();
+		this.relax = bean.isRelax();
+		this.istruzione = bean.isIstruzione();
+		this.monumenti = bean.isMonumenti();
+	}
+	
+	public Preferences(boolean[] interestedCategories) {
+		setInterestedCategories(interestedCategories);
 	}
 
-	
 	/******************************************************************************
 	 *  getter e setter 
 	 ******************************************************************************/
@@ -87,8 +107,8 @@ public class Preferences {
 	public boolean isRicorrenzeLocali() {
 		return ricorrenzeLocali;
 	}
-	public void setRicorrenzeLocali(boolean ricorrenze_locali) {
-		this.ricorrenzeLocali = ricorrenze_locali;
+	public void setRicorrenzeLocali(boolean ricorrenzeLocali) {
+		this.ricorrenzeLocali = ricorrenzeLocali;
 	}
 	public boolean isModa() {
 		return moda;
@@ -145,7 +165,7 @@ public class Preferences {
 	}
 	
 	public boolean[] getSetPreferences() {
-		boolean[] prefSet = {
+		return new boolean[]	{
 				isArte(),
 				isCibo(),
 				isMusica(),
@@ -160,13 +180,12 @@ public class Preferences {
 				isRelax(),
 				isIstruzione(),
 				isMonumenti()};
-		return prefSet;
-	}
+				}
+	
 	public String[] getPreferencesName() {
-		String[] prefNames = {"Arte","Cibo","Musica","Sport","Social","Natura","Esplorazione","Ricorrenze_locali", 
+		return new String[] {"Arte","Cibo","Musica","Sport","Social","Natura",
+				"Esplorazione","Ricorrenze_locali", 
 				"Moda","Shopping","Adrenalina","Relax","Istruzione","Monumenti"};
-		
-		return prefNames;
 	}
 	/******************************************************************************
 	 *  fine getter e setter 
@@ -175,21 +194,16 @@ public class Preferences {
 	public int checkCompatibility(Preferences activityPref) {
 		int compatibilityRate = 0;
 		
-		if(this.isArte() && activityPref.isArte()) compatibilityRate++;
-		if(this.isCibo() && activityPref.isCibo()) compatibilityRate++;
-		if(this.isMusica() && activityPref.isMusica()) compatibilityRate++;
-		if(this.isSport() && activityPref.isSport()) compatibilityRate++;
-		if(this.isSocial() && activityPref.isSocial()) compatibilityRate++;
-		if(this.isNatura() && activityPref.isNatura()) compatibilityRate++;
-		if(this.isEsplorazione() && activityPref.isEsplorazione()) compatibilityRate++;
-		if(this.isRicorrenzeLocali() && activityPref.isRicorrenzeLocali()) compatibilityRate++;
-		if(this.isModa() && activityPref.isModa()) compatibilityRate++;
-		if(this.isShopping() && activityPref.isShopping()) compatibilityRate++;
-		if(this.isAdrenalina() && activityPref.isAdrenalina()) compatibilityRate++;
-		if(this.isRelax() && activityPref.isRelax()) compatibilityRate++;
-		if(this.isIstruzione() && activityPref.isIstruzione()) compatibilityRate++;
-		if(this.isMonumenti() && activityPref.isMonumenti()) compatibilityRate++;
+		boolean[] thisPref = getSetPreferences();
+		boolean[] compPref = activityPref.getSetPreferences();
 		
+		int i = 0;
+		for(boolean pref : thisPref) {
+			if(pref && compPref[i]) {
+				compatibilityRate++;
+			}
+			i++;
+		}	
 		return compatibilityRate;
 		
 	}

@@ -489,8 +489,8 @@ public class CreateActivityView implements Initializable{
 		caBean.setActivityName(activityName);
 		caBean.setType(ActivityType.valueOf(typeBox.getValue().toUpperCase()));
 
-//-----------------------QUI SI FA DISTINZIONE TRA I VARI TIPI DI ATTIVITÀ---------------------------------------------------//
-//---------IN BASE A QUESTA DISTINZIONE AVREMO L'ATTIVITÀ COSTRUITA SECONDO PROCEDIMENTI DIVERSI---------------------------------------------------//
+//-----------------------QUI SI FA DISTINZIONE TRA I VARI TIPI DI ATTIVITï¿½---------------------------------------------------//
+//---------IN BASE A QUESTA DISTINZIONE AVREMO L'ATTIVITï¿½ COSTRUITA SECONDO PROCEDIMENTI DIVERSI---------------------------------------------------//
 				
 		if(ActivityType.valueOf(typeBox.getValue().toUpperCase()).equals(ActivityType.CONTINUA)) 
 		{
@@ -552,7 +552,7 @@ public class CreateActivityView implements Initializable{
 		    popup.show(curr);
 		    popup.setAutoHide(true);
 		    
-		Log.getInstance().getLogger().info("AttivitÃ non aggiunta alla persistenza");
+		Log.getInstance().getLogger().info("Attivitï¿½ non aggiunta alla persistenza");
 		}
 		
 		//SE L'UTENTE CHE CREA L'ATTIVITA' E' UN PARTNER LA SUA ATTIVITA' SARA' CERTIFICATA DALLA 
@@ -581,7 +581,8 @@ public class CreateActivityView implements Initializable{
 		//--------------------------------------------------------------------------------------------
 				//DA AGGIUNGERE UNA LISTA DI BOTTONI DA CUI SCEGLIERE LA PREFERENZA DELL'ATTIVITA'
 		//--------------------------------------------------------------------------------------------
-		Preferences newActivityPref = new Preferences(false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+		boolean[] boolPref = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+		Preferences newActivityPref = new Preferences(boolPref);
 		
 		//GRAZIE AL METODO SOTTOSTANTE MI PRENDO UN ARRAY DI BOOLEANI DA CUI POI 
 		//POSSO MODIFICARE UNO AD UNO LE PREFERENZE.
@@ -592,7 +593,7 @@ public class CreateActivityView implements Initializable{
 			prefVBox = (VBox) pHBox.getChildren().get(j);
 			int vboxPrefContained = prefVBox.getChildren().size();
 			for(int i=0;i<vboxPrefContained;i++) {
-				//SE IL CHECKBOX DELLA PREFERENZA E' SETTATO ALLORA QUESTA VERRÀ AGGIUNTA ALLA
+				//SE IL CHECKBOX DELLA PREFERENZA E' SETTATO ALLORA QUESTA VERRï¿½ AGGIUNTA ALLA
 				//LISTA DI PREFERENZE.
 				activityPrefSet[pset] = ((CheckBox)(prefVBox.getChildren().get(i))).isSelected();
 

@@ -62,24 +62,24 @@ public class DAOExplorer {
 	            		rs.getString("email"),
 	            		rs.getLong("id"),
 	            		rs.getLong("wallet"));
-	            
-	            
-	            Preferences p = new Preferences(
-	            rs.getBoolean("Arte"),
-	        	rs.getBoolean("Cibo"),
-	        	rs.getBoolean("Musica"),
-	        	rs.getBoolean("Sport"),
-	        	rs.getBoolean("Social"),
-	        	rs.getBoolean("Natura"),
-	        	rs.getBoolean("Esplorazione"),
-	        	rs.getBoolean("Ricorrenze_locali"),
-	        	rs.getBoolean("Moda"),
-	        	rs.getBoolean("Shopping"),
-	        	rs.getBoolean("Adrenalina"),
-	        	rs.getBoolean("Relax"),
-	        	rs.getBoolean("Istruzione"),
-	        	rs.getBoolean("Monumenti")
-	            );
+	                      
+	            boolean[] boolPref= {
+	            		rs.getBoolean("Arte"),
+	            		rs.getBoolean("Cibo"),
+	            		rs.getBoolean("Musica"),
+	            		rs.getBoolean("Sport"),
+	            		rs.getBoolean("Social"),
+	            		rs.getBoolean("Natura"),
+	            		rs.getBoolean("Esplorazione"),
+	            		rs.getBoolean("Ricorrenze_locali"),
+	            		rs.getBoolean("Moda"),
+	            		rs.getBoolean("Shopping"),
+	            		rs.getBoolean("Adrenalina"),
+	            		rs.getBoolean("Relax"),
+	            		rs.getBoolean("Istruzione"),
+	            		rs.getBoolean("Monumenti")
+	            	};
+	            Preferences p = new Preferences(boolPref);
 	            
 	            
 	            u.setPreferences(p);

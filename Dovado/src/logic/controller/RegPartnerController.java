@@ -82,8 +82,9 @@ public class RegPartnerController {
 	
 	public RegBean addPartner(RegBean bean) throws ClassNotFoundException {
 		
-		try{dao.registerPartner(bean.getUsername(), bean.getEmail(), bean.getPassword(), String.valueOf(bean.getpIVA()), bean.getCompName());
-		return bean;			
+		try{
+			dao.registerPartner(bean.getUsername(), bean.getEmail(), bean.getPassword(), String.valueOf(bean.getpIVA()), bean.getCompName());
+			return bean;			
 		}catch(SQLException e){
 			//Questo vuol dire che abbiamo un duplicato nel BB
 			if(e.getErrorCode() == 1062) {

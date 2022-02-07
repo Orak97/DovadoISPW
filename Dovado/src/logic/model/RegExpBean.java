@@ -27,9 +27,6 @@ public class RegExpBean {
 	
 	private String error;
 
-	public RegExpBean() {
-	}
-
 	public String getUsername() {
 	    return username;
 	}

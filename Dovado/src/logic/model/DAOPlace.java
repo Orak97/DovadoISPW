@@ -54,7 +54,7 @@ public class DAOPlace {
             	//NOTA: restituisce true solo è un result set, quindi non usare per le operazioni CURD!!!
             	
             	throw new SQLException("Sembra che non esista nessun luogo per: "+str);
-            };
+            }
             
             ResultSet rs = stmt.getResultSet();
             
@@ -116,20 +116,12 @@ public class DAOPlace {
 		return 1;
 	}
 	//TODO erché questo è statico? --- posso vedere in daoactivity
-	public static Place getPlace(int id) throws ClassNotFoundException, SQLException  {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
+	public Place getPlace(int id) throws ClassNotFoundException, SQLException  {
         
         Place searchedPlace = null;
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            Log.getInstance().getLogger().info(LOGDBCONN);
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call search_place_by_id(?)}";
@@ -162,21 +154,8 @@ public class DAOPlace {
             
             rs.close();
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                Log.getInstance().getLogger().info(LOGDBDISCONN);	
-            } catch (SQLException se) {
-                Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+        	disconnRoutine();
         }
         
         return searchedPlace;

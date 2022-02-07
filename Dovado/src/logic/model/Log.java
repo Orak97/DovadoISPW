@@ -9,7 +9,7 @@ import java.util.logging.SimpleFormatter;
 
 public class Log {
 	private static Log INSTANCE;
-	private static final String LOGLEVEL = "INFO"; //Qui alternare INFO o WARNING a seconda di ciò che si vuole intercettare
+	private static final String LOGLEVEL = "INFO"; //Qui alternare INFO o WARNING a seconda di ciï¿½ che si vuole intercettare
 	private Logger logger;
 	private FileHandler fh;
 	private String fileName  = "log.txt";
@@ -28,7 +28,6 @@ public class Log {
 		try {
 			File fileLog = new File(fileName);
 				if (!fileLog.exists()) {
-					System.out.println("il file non esiste");
 					fileLog.createNewFile();
 				}
 		
@@ -49,7 +48,6 @@ public class Log {
 		logger.setLevel(logLev);
 		
 		} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

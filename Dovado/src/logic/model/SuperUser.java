@@ -1,8 +1,5 @@
 package logic.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class SuperUser {
 	private String username;
 	private Long uID;

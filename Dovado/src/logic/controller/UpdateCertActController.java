@@ -124,7 +124,7 @@ public class UpdateCertActController {
 		daoAc.updateCertAcivity(activity);
 		return true;
 	}
-	//TODO CONTROLLARE QUESTE ECCEZIONI
+
 	/*Rimuovere in caso si sposti il metodo `claimActivity`in un altra classe*/
 	public void claimActivity() throws ClassNotFoundException, SQLException{
 		if(session == null || bean.getIdActivity() == 0) throw new NullPointerException();

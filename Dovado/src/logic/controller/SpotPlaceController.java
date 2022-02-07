@@ -1,6 +1,7 @@
 package logic.controller;
 
 import logic.model.DAOPlace;
+import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
 import logic.model.SpotPlaceBean;
@@ -46,7 +47,7 @@ public class SpotPlaceController {
 			daoPl.spotPlace(address, placeName, city, region, civico, cap,coord);
 		}
 		catch(Exception e) {
-			System.out.println("posto non creato");
+			Log.getInstance().getLogger().warning("posto non creato");
 			return false;
 		}
 		

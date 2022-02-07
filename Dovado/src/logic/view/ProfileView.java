@@ -148,8 +148,8 @@ public class ProfileView implements Initializable{
 	}
 	
 	public void updateUserPreferences() {
-		Preferences newUserPref = new Preferences(false, false, false, false, false, false,
-				false, false, false, false, false, false, false, false);
+		boolean[] initPref = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+		Preferences newUserPref = new Preferences(initPref);
 		
 		//GRAZIE AL METODO SOTTOSTANTE MI PRENDO UN ARRAY DI BOOLEANI DA CUI POI 
 		//POSSO MODIFICARE UNO AD UNO LE PREFERENZE.
@@ -160,7 +160,7 @@ public class ProfileView implements Initializable{
 			prefVBox = (VBox) prefHBox.getChildren().get(j);
 			int vboxPrefContained = prefVBox.getChildren().size();
 			for(int i=0;i<vboxPrefContained;i++) {
-				//SE IL CHECKBOX DELLA PREFERENZA E' SETTATO ALLORA QUESTA VERRÀ AGGIUNTA ALLA
+				//SE IL CHECKBOX DELLA PREFERENZA E' SETTATO ALLORA QUESTA VERRï¿½ AGGIUNTA ALLA
 				//LISTA DI PREFERENZE.
 				userPrefSet[pset] = ((CheckBox)(prefVBox.getChildren().get(i))).isSelected();
 				pset++;

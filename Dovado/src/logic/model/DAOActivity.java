@@ -236,100 +236,100 @@ public class DAOActivity {
 	}
 	
 	public void updateCertAcivity(CertifiedActivity activity) throws ClassNotFoundException, SQLException {
-	        //Lo statment dell'altra store procedure lo inizializzo nel modulo resetConnection
-			CallableStatement stmtPref = null;
-	         
-	        try {
+	        	
+		upInfoActivity(activity);
+	    upPrefActivity(activity);
+		}
+		
+	private void upInfoActivity(CertifiedActivity activity) throws ClassNotFoundException, SQLException {
+	       
+        try {
+        	resetConnection();
+           
+            //STEP4.1: preparo le stored procedure
+            String call =  "{call update_cert_activity(?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+            
+          //effettuo la prima Store procedure 
+            stmt = conn.prepareCall(call);
+            
+            stmt.setInt(1, activity.getId() != null ? activity.getId().intValue() : null);
+            stmt.setInt(2,activity.getOwner().getUserID() != null ? activity.getOwner().getUserID().intValue() : null);
+            stmt.setString(3,activity.getName());
+            stmt.setString(4,activity.getDescription());
+            stmt.setString(5,activity.getSite());
+            stmt.setString(6,activity.getPrice());
+            stmt.setInt(7,activity.getPlace().getId().intValue());
+            
+            String type = null;
+            String cadence = null;
+            String startDate = null;
+            String endDate = null;
+            
+            if (activity.getFrequency() instanceof ContinuosActivity) {
+            	type = "CONTINUA";
+            } else if(activity.getFrequency() instanceof PeriodicActivity) {
+            	type = "PERIODICA";
+            	cadence = ((PeriodicActivity)activity.getFrequency()).getCadence().name();
+            	startDate = ((PeriodicActivity)activity.getFrequency()).getStartDate().toString();
+            	endDate = ((PeriodicActivity)activity.getFrequency()).getEndDate().toString();
+            	
+            } else if(activity.getFrequency() instanceof ExpiringActivity) {
+            	type = "SCADENZA";
+            	startDate = ((ExpiringActivity)activity.getFrequency()).getStartDate().toString();
+            	endDate = ((ExpiringActivity)activity.getFrequency()).getEndDate().toString();
+            }
+
+            stmt.setString(8,type);
+            stmt.setString(9,activity.getFrequency().getOpeningTime().toString());
+            stmt.setString(10,activity.getFrequency().getClosingTime().toString());
+            stmt.setString(11,startDate);
+            stmt.setString(12,endDate);
+            stmt.setString(13,cadence);
+            
+            stmt.execute();
+        
+        }finally {
+        	//Clean-up dell'ambiente
+            disconnRoutine();
+        }
+	}
+	
+	private void upPrefActivity(CertifiedActivity activity) throws ClassNotFoundException, SQLException{
+		 try {
 	        	resetConnection();
 	           
 	            
 	            //STEP4.1: preparo le stored procedure
-	            String call =  "{call update_cert_activity(?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-	            String callPref =  "{call update_pref_activity(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+	            String call =  "{call update_pref_activity(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 	            
-	            //effettuo la prima Store procedure 
+	            //effettuo la seconda store procedure
 	            stmt = conn.prepareCall(call);
 	            
 	            stmt.setInt(1, activity.getId() != null ? activity.getId().intValue() : null);
 	            stmt.setInt(2,activity.getOwner().getUserID() != null ? activity.getOwner().getUserID().intValue() : null);
-	            stmt.setString(3,activity.getName());
-	            stmt.setString(4,activity.getDescription());
-	            stmt.setString(5,activity.getSite());
-	            stmt.setString(6,activity.getPrice());
-	            stmt.setInt(7,activity.getPlace().getId().intValue());
-	            
-	            String type = null;
-	            String cadence = null;
-	            String startDate = null;
-	            String endDate = null;
-	            
-	            if (activity.getFrequency() instanceof ContinuosActivity) {
-	            	type = "CONTINUA";
-	            } else if(activity.getFrequency() instanceof PeriodicActivity) {
-	            	type = "PERIODICA";
-	            	cadence = ((PeriodicActivity)activity.getFrequency()).getCadence().name();
-	            	startDate = ((PeriodicActivity)activity.getFrequency()).getStartDate().toString();
-	            	endDate = ((PeriodicActivity)activity.getFrequency()).getEndDate().toString();
-	            	
-	            } else if(activity.getFrequency() instanceof ExpiringActivity) {
-	            	type = "SCADENZA";
-	            	startDate = ((ExpiringActivity)activity.getFrequency()).getStartDate().toString();
-	            	endDate = ((ExpiringActivity)activity.getFrequency()).getEndDate().toString();
-	            }
-
-	            stmt.setString(8,type);
-	            stmt.setString(9,activity.getFrequency().getOpeningTime().toString());
-	            stmt.setString(10,activity.getFrequency().getClosingTime().toString());
-	            stmt.setString(11,startDate);
-	            stmt.setString(12,endDate);
-	            stmt.setString(13,cadence);
+	            stmt.setBoolean(3,activity.getIntrestedCategories().isArte());
+	            stmt.setBoolean(4,activity.getIntrestedCategories().isCibo());
+	            stmt.setBoolean(5,activity.getIntrestedCategories().isMusica());
+	            stmt.setBoolean(6,activity.getIntrestedCategories().isSport());
+	            stmt.setBoolean(7,activity.getIntrestedCategories().isSocial());
+	            stmt.setBoolean(8,activity.getIntrestedCategories().isNatura());
+	            stmt.setBoolean(9,activity.getIntrestedCategories().isEsplorazione());
+	            stmt.setBoolean(10,activity.getIntrestedCategories().isRicorrenzeLocali());
+	            stmt.setBoolean(11,activity.getIntrestedCategories().isModa());
+	            stmt.setBoolean(12,activity.getIntrestedCategories().isShopping());
+	            stmt.setBoolean(13,activity.getIntrestedCategories().isAdrenalina());
+	            stmt.setBoolean(14,activity.getIntrestedCategories().isMonumenti());
+	            stmt.setBoolean(15,activity.getIntrestedCategories().isRelax());
+	            stmt.setBoolean(16,activity.getIntrestedCategories().isIstruzione());
 	            
 	            stmt.execute();
 	            
-	            //effettuo la seconda store procedure
-	            stmtPref = conn.prepareCall(callPref);
-	            
-	            stmtPref.setInt(1, activity.getId() != null ? activity.getId().intValue() : null);
-	            stmtPref.setInt(2,activity.getOwner().getUserID() != null ? activity.getOwner().getUserID().intValue() : null);
-	            stmtPref.setBoolean(3,activity.getIntrestedCategories().isArte());
-	            stmtPref.setBoolean(4,activity.getIntrestedCategories().isCibo());
-	            stmtPref.setBoolean(5,activity.getIntrestedCategories().isMusica());
-	            stmtPref.setBoolean(6,activity.getIntrestedCategories().isSport());
-	            stmtPref.setBoolean(7,activity.getIntrestedCategories().isSocial());
-	            stmtPref.setBoolean(8,activity.getIntrestedCategories().isNatura());
-	            stmtPref.setBoolean(9,activity.getIntrestedCategories().isEsplorazione());
-	            stmtPref.setBoolean(10,activity.getIntrestedCategories().isRicorrenzeLocali());
-	            stmtPref.setBoolean(11,activity.getIntrestedCategories().isModa());
-	            stmtPref.setBoolean(12,activity.getIntrestedCategories().isShopping());
-	            stmtPref.setBoolean(13,activity.getIntrestedCategories().isAdrenalina());
-	            stmtPref.setBoolean(14,activity.getIntrestedCategories().isMonumenti());
-	            stmtPref.setBoolean(15,activity.getIntrestedCategories().isRelax());
-	            stmtPref.setBoolean(16,activity.getIntrestedCategories().isIstruzione());
-
-	            
 	            //TODO Chiedere a Sav se necessario il throw -- separare le store procedure 
 	        }finally {
-	            // STEP 5.2: Clean-up dell'ambiente
-	            try {
-	                if (stmt != null)
-	                    stmt.close();
-	                if (stmtPref != null)
-	                    stmtPref.close();
-	            } catch (SQLException se2) {
-	            	Log.getInstance().getLogger().warning("Errore con codice : messaggio "+ se2.getErrorCode() + " : " + se2.getMessage());
-	            }
-	            try {
-	                if (conn != null)
-	                    conn.close();
-	                Log.getInstance().getLogger().info(LOGDBDISCONN);
-	                	
-	            } catch (SQLException se) {
-	            	Log.getInstance().getLogger().warning("Errore di codice : messsaggio "+ se.getErrorCode() + " : " + se.getMessage());
-	                se.printStackTrace();
-	            }
+	        	//Clean-up dell'ambiente
+	            disconnRoutine();
 	        }
-		}
-		
+	}
 	
 	
 	public ArrayList<Activity> findActivitiesByZone(String zone) throws ClassNotFoundException, SQLException {

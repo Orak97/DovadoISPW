@@ -7,14 +7,12 @@ import java.util.List;
 import logic.model.*;
 public class ChannelController {
 	
-	private Channel channel;	
 	private DAOChannel dao = DAOChannel.getInstance();
 	private SuperUser usr;
 	
 	private Long idActivity;
 	//questo metodo è chiamato solo dal PAC
 	public ChannelController(Activity activity) {
-		this.channel = activity.getChannel();
 		}
 	//Questo da chat.jsp
 	public ChannelController(SuperUser usr,Long idActivity) {

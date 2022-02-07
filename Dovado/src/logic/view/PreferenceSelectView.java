@@ -47,7 +47,8 @@ public class PreferenceSelectView implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		daoPr = DAOPreferences.getInstance();
-		preferences = new Preferences(false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+		boolean[] initPref = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+		preferences = new Preferences(initPref);
 		String[] prefsNames = preferences.getPreferencesName();
 		preferencesChosen = preferences.getSetPreferences();
 		ArrayList<Button> prefBtns = new ArrayList<Button>();
@@ -144,7 +145,7 @@ public class PreferenceSelectView implements Initializable{
 
 	public void goHomeView() {
 
-		preferences = new Preferences(preferencesChosen[0], preferencesChosen[1], preferencesChosen[2], preferencesChosen[3], preferencesChosen[4], preferencesChosen[5], preferencesChosen[6], preferencesChosen[7], preferencesChosen[8], preferencesChosen[9], preferencesChosen[10], preferencesChosen[11], preferencesChosen[12],preferencesChosen[13]);
+		preferences = new Preferences(preferencesChosen);
 		
 		((User)Navbar.getUser()).setPreferences(preferences);
 		
