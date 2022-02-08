@@ -87,7 +87,9 @@ public class ProfileView implements Initializable{
 		setUsr.getStyleClass().add("textEventInfo");
 		currency.getStyleClass().add("textEventInfo");
 		
-		currency.setText(((User)Navbar.getUser()).getBalance()+" �");
+		if(Navbar.getUser() instanceof User) {
+			currency.setText(((User)Navbar.getUser()).getBalance()+" �");
+		}
 		setEmail.setText(Navbar.getUser().getEmail());
 		setUsr.setText(Navbar.getUser().getUsername());
 		
