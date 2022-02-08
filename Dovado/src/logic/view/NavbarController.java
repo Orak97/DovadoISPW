@@ -76,7 +76,7 @@ public class NavbarController {
     	nav.onEvents();
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
-    	//EventsView ev = new EventsView();
+    	//EventsView ev = new EventsView()
     	EventsView.render(current);
     	Log.getInstance().getLogger().info("Clicked events");
     }
@@ -86,7 +86,6 @@ public class NavbarController {
     	nav.onSpotPlace();
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
-    	SpotPlaceView sv = new SpotPlaceView();
     	SpotPlaceView.render(current);
     	Log.getInstance().getLogger().info("Clicked Spot place");
     }

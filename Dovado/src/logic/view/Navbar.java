@@ -18,7 +18,7 @@ import logic.model.SuperUser;
 public class Navbar {
 	private static final  String NAVITEMKEY = ".navbar-item";
 	private static final  String ACTSTYLEKEY = "active";
-	private static final  String EVNTPARTNER = "My events";
+	private static final  String EVENTSKEY = "#events";
 	
 	private static BorderPane bPNavbar = null;
 	private static SuperUser user;
@@ -64,12 +64,13 @@ public class Navbar {
 	       	curr.setVisible(true);
 	    }
 		if(Navbar.user instanceof Partner)
-			((Button)(bPNavbar.lookup("#events"))).setText("Manage activities");
+			((Button)(bPNavbar.lookup("EVENTSKEY"))).setText("Manage activities");
 	}
 
 	public void onHome() {
-		this.changePage();if(Navbar.user instanceof Partner)
-			((Button)(bPNavbar.lookup("#events"))).setText("Manage activities");
+		this.changePage();
+		if(Navbar.user instanceof Partner)
+			((Button)(bPNavbar.lookup("EVENTSKEY"))).setText("Manage activities");
 		bPNavbar.lookup("#home").getStyleClass().add(ACTSTYLEKEY);
 	}
 	
@@ -90,7 +91,7 @@ public class Navbar {
 	
 	public void onEvents() {
 		this.changePage();
-		bPNavbar.lookup("#events").getStyleClass().add(ACTSTYLEKEY);
+		bPNavbar.lookup("EVENTSKEY").getStyleClass().add(ACTSTYLEKEY);
 	}
 
 	public void onPreferences() {

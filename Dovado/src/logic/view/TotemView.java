@@ -59,9 +59,7 @@ public class TotemView {
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - totem");
 			primaryStage.setScene(scene);
-			GridPane totem = new GridPane();
-						
-			totem = FXMLLoader.load(Main.class.getResource("Totem.fxml"));
+			GridPane totem = FXMLLoader.load(Main.class.getResource("Totem.fxml"));
 			
 			
 			root.getChildren().addAll(navbar,totem);
