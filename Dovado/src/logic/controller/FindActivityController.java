@@ -77,7 +77,7 @@ public class FindActivityController {
 		return searchedActivities;
 	}
 	
-	public ArrayList<Activity> FindActivitiesByZone() throws ClassNotFoundException, SQLException {
+	public ArrayList<Activity> findActivitiesByZone() throws ClassNotFoundException, SQLException {
 		//controllo che i campi non siano nulli
 		if(beanFind.getZone() == null) throw new NullPointerException();
 				
