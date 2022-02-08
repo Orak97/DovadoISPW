@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-import de.saring.leafletmap.LatLong;
-import de.saring.leafletmap.MapConfig;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

@@ -80,7 +80,7 @@ import logic.view.Navbar;
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
 	private static final  String BGUCOLORKEY = "BC9416";
-	private static final  String MAPPATHKEY = "http://localhost:8614/Dovado/MapView.html";
+	private static final  String MAPPATHKEY = "http://localhost:8080/Dovado/MapView.html";
 	//botton KEYS
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
