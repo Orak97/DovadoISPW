@@ -115,7 +115,9 @@ public class EventsView implements Initializable{
 			current.setScene(scene);
 			eventSchedule = FXMLLoader.load(Main.class.getResource("events.fxml"));
 			VBox.setVgrow(eventSchedule, Priority.SOMETIMES);
-		
+			
+			curr=current;
+
 			root.getChildren().addAll(navbar,eventSchedule);
 			
 			current.show();	

@@ -67,20 +67,17 @@ public class SpotPlaceView implements Initializable{
 	@FXML
 	private ChoiceBox<String> region;
 
-	private static TextField placeNameText;
-	private static ChoiceBox<String> regionText;
-	private static TextField cityText;
-	private static TextField addressText;
-	private static TextField civicoText;
-	private static VBox rt;
+	private TextField placeNameText;
+	private ChoiceBox<String> regionText;
+	private TextField cityText;
+	private TextField addressText;
+	private TextField civicoText;
 	private static Stage curr;
-	private static DAOPlace daoPl;
-	private static Place placeSelected;
-	private static ArrayList<Place> placesFound;
-	private static StackPane lastPlaceBoxSelected;
-	private static long wPopup = 500;
-	private static long hPopup = 50;
-	private static WebEngine we;
+	private DAOPlace daoPl;
+	private ArrayList<Place> placesFound;
+	private long wPopup = 500;
+	private long hPopup = 50;
+	private WebEngine we;
 	
 	private static final  String[] REGIONSKEY = {
 			"Abruzzo"
@@ -111,11 +108,9 @@ public class SpotPlaceView implements Initializable{
 		spotPlaceBtn.getStyleClass().add("src-btn");
 		
 		daoPl = DAOPlace.getInstance();
-		placeSelected = null;
 		placesFound = new ArrayList<>();
 
 		placeNameText = placeNameTF;
-		rt=root;
 		regionText = region;
 		addressText = address;
 		civicoText = civico;
@@ -131,16 +126,11 @@ public class SpotPlaceView implements Initializable{
 			@Override public void handle(ActionEvent e) {
 				if(!spotPlace()) {
 					final Popup popup = popupGen(wPopup,hPopup,"Place not spotted:\nInsert all informations"); 
-					popup.centerOnScreen(); 
-				    
-				    popup.show(curr);
+					
 				    popup.setAutoHide(true);
 					
 				} else {
 					final Popup popup = popupGen(wPopup,hPopup,"Place spotted successfully"); 
-					popup.centerOnScreen(); 
-				    
-				    popup.show(curr);
 				    popup.setAutoHide(true);
 				}
 			}
@@ -153,25 +143,23 @@ public class SpotPlaceView implements Initializable{
 	private boolean spotPlace() {
 		
 		String placeName;
-		String region;
-		String address;
-		String civico;
-		String city;
+		String spotRegion;
+		String spotAddress;
+		String spotCivico;
+		String spotCity;
 		
 		if(!prevCheck()) {
 			return false;
 		}
 		
 		placeName = placeNameText.getText();
-		region = regionText.getSelectionModel().getSelectedItem().toString();
-		address = addressText.getText();
-		civico = civicoText.getText();
-		city = cityText.getText();
+		spotRegion = regionText.getSelectionModel().getSelectedItem().toString();
+		spotAddress = addressText.getText();
+		spotCivico = civicoText.getText();
+		spotCity = cityText.getText();
 	
-		System.out.println(placeName+'\n'+region+'\n'+address+'\n'+city+'\n'+civico);
-		
-		Place newPlc = null;
-		
+		System.out.println(placeName+'\n'+spotRegion+'\n'+spotAddress+'\n'+spotCity+'\n'+spotCivico);
+				
 		//Forse va cambiato e aggiunto anche il civico per
 		//distinguere con precisione posti nuovi da alcuni
 		//probabilmente già presenti.
@@ -190,10 +178,10 @@ public class SpotPlaceView implements Initializable{
 			//Se un posto si trova nella stessa via
 			//e indirizzo del nostro nuovo posto sar� improbabile
 			//che questo sia un nuovo posto.
-				if(placesFound.get(i).getAddress().equals(address)
-				&& placesFound.get(i).getAddress().equals(city)
-				&& placesFound.get(i).getAddress().equals(civico)
-				&& placesFound.get(i).getAddress().equals(region));
+				if(placesFound.get(i).getAddress().equals(spotAddress)
+				&& placesFound.get(i).getAddress().equals(spotCity)
+				&& placesFound.get(i).getAddress().equals(spotCivico)
+				&& placesFound.get(i).getAddress().equals(spotRegion))
 				
 					return false;
 			}
@@ -201,34 +189,29 @@ public class SpotPlaceView implements Initializable{
 		}
 		
 		SpotPlaceBean spBean = new SpotPlaceBean();
-		spBean.setAddress(address);
-		spBean.setCity(city);
+		spBean.setAddress(spotAddress);
+		spBean.setCity(spotCity);
 		spBean.setPlaceName(placeName);
-		spBean.setRegion(region);
-		spBean.setStreetNumber(civico);
+		spBean.setRegion(spotRegion);
+		spBean.setStreetNumber(spotCivico);
 
         
-		we.executeScript("retrieveLatLng('"+civico+"',\""+address+"\",\""+city+"\",\""+region+"\",'null')");
+		we.executeScript("retrieveLatLng('"+spotCivico+"',\""+spotAddress+"\",\""+spotCity+"\",\""+spotRegion+"\",'null')");
 		double[] coord = {0,0};
 		coord[0] = (double) we.executeScript("getDesktopLatitude()");
 		coord[1] = (double) we.executeScript("getDesktopLongitude()");
 		
 		try {
-			if(daoPl.spotPlace(address, placeName, city, region, civico, city,coord)<0) {
+			if(daoPl.spotPlace(spotAddress, placeName, spotCity, spotRegion, spotCivico, spotCity,coord)<0) {
 				final Popup popup = popupGen(wPopup,hPopup,"Error: place not spotted!"); 
-				popup.centerOnScreen(); 
-			    
-			    popup.show(curr);
 			    popup.setAutoHide(true);
 				
 				return false;
 			}
 		} catch (Exception e) {
 			final Popup popup = popupGen(wPopup,hPopup,"Error: place not spotted!"); 
-			popup.centerOnScreen(); 
-		    
-		    popup.show(curr);
 		    popup.setAutoHide(true);
+		    
 			Log.getInstance().getLogger().info("Due to an error in the database the place wasn't spotted.");
 			e.printStackTrace();
 			return false;
@@ -253,75 +236,9 @@ public class SpotPlaceView implements Initializable{
 		if(regionText.getSelectionModel().getSelectedItem().toString().isEmpty())
 			return false;
 		
-		if(placeNameText.getText().isEmpty())
-			return false;
-		
-		return true;
+		return !placeNameText.getText().isEmpty();
 	}
-	
-//	private static void updatePlaces() {
-//		pList.getItems().clear();
-//		
-//		for(int i=0;i<placesFound.size();i++) {
-//			System.out.println(placesFound.get(i).getOwner());
-//				if(placesFound.get(i).getOwner()==null) {
-//					ImageView plImage = new ImageView();
-//					Text plName = new Text(placesFound.get(i).getName()+"\n");
-//					Log.getInstance().getLogger().info("\n\n"+placesFound.get(i).getName()+"\n\n");
-//					Text plInfo = new Text(placesFound.get(i).getCity()+
-//						"\n"+placesFound.get(i).getRegion()+
-//						"\n"+placesFound.get(i).getAddress()+
-//						"-"+placesFound.get(i).getCivico());
-//						
-//					plImage.setImage(new Image("https://source.unsplash.com/user/erondu/350x100"));
-//					plImage.getStyleClass().add("place-image");
-//						
-//					plInfo.setId("placeInfo");
-//					plInfo.getStyleClass().add("placeInfo");
-//			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-//					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-//					eventInfo.setFill(Paint.valueOf("#ffffff"));
-//					eventInfo.setStrokeWidth(0.3);
-//					eventInfo.setStroke(Paint.valueOf("#000000"));
-//				*/		
-//					plName.setId("placeName");
-//					plName.getStyleClass().add("placeName");
-//			/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-//					eventName.setFill(Paint.valueOf("#ffffff"));
-//					eventName.setStrokeWidth(0.3);
-//					eventName.setStroke(Paint.valueOf("#000000"));
-//				*/	
-//					VBox eventText = new VBox(plName,plInfo);
-//					eventText.setAlignment(Pos.CENTER);
-//					eventText.getStyleClass().add("eventTextVbox");
-//					//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-//					//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-//					StackPane eventBox = new StackPane();
-//					eventBox.getStyleClass().add("eventBox");
-//						
-//						
-//					Text placeId = new Text();
-//						
-//					Long pID = placesFound.get(i).getId();
-//					Log.getInstance().getLogger().info("ID POSTO: "+pID);
-//					placeId.setId(pID.toString());
-//						
-//					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-//					//dell'evento ed infine il testo dell'evento.
-//					eventBox.getChildren().add(placeId);
-//					eventBox.getChildren().add(plImage);
-//					eventBox.getChildren().add(eventText);
-//						
-//					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-//					eventBox.setAlignment(Pos.CENTER_LEFT);
-//						
-//					eventBox.setMinWidth(rt.getWidth()/2);
-//					eventBox.setMaxWidth(rt.getWidth()/2);
-//					pList.getItems().add(eventBox);
-//				}
-//			}
-//			
-//	}
+
 	
 	public static void render(Stage current) {
 		try {
@@ -329,15 +246,13 @@ public class SpotPlaceView implements Initializable{
 			BorderPane navbar = Navbar.getNavbar();
 			Navbar.authenticatedSetup();
 			
-			VBox spotPlace = new VBox();
-			
 			curr=current;
 			
 			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - Spot a place");
 			current.setScene(scene);
-			spotPlace = FXMLLoader.load(Main.class.getResource("spotPlace.fxml"));
+			VBox spotPlace = FXMLLoader.load(Main.class.getResource("spotPlace.fxml"));
 			VBox.setVgrow(spotPlace, Priority.SOMETIMES);
 			
 			root.getChildren().addAll(navbar,spotPlace);
@@ -365,6 +280,9 @@ public class SpotPlaceView implements Initializable{
 	    r.setStroke(Paint.valueOf("ffffff"));
 	    
 	    popup.getContent().add(popupContent);
+	    popup.centerOnScreen(); 
+	    
+	    popup.show(curr);
 	    return popup;
 	}
 }
