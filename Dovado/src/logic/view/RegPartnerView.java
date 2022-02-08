@@ -67,22 +67,12 @@ public class RegPartnerView implements Initializable{
 	
 	@FXML
 	private Label errorLabel;
-    
-	private VBox rt;
 	
-	private static String BGCOLORKEY = "ffffff";
+	private static final String BGCOLORKEY = "ffffff";
 	private static long wErrPopup = 500;
 	private static long hErrPopup = 50;
 	private static Stage curr;
 	
-	private String password;
-	private String passwordCheck;
-	private String username;
-	private String email;
-	private String pIVA;
-	private String cName;
-	
-
     @FXML
     void login(ActionEvent event) {
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -91,19 +81,16 @@ public class RegPartnerView implements Initializable{
 
     public void register() {
     	
-    	password = pswField.getText();
-		passwordCheck = pswField2.getText();
-		username = usrnameTField.getText();
-		email = emailTField.getText();
-		pIVA = pIVATField.getText();
-		cName = compNameTField.getText();
+    	String password = pswField.getText();
+    	String passwordCheck = pswField2.getText();
+    	String username = usrnameTField.getText();
+    	String email = emailTField.getText();
+    	String pIVA = pIVATField.getText();
+    	String cName = compNameTField.getText();
 		
 		if(password.isEmpty() || passwordCheck.isEmpty() || username.isEmpty() || email.isEmpty()) {
 			Log.getInstance().getLogger().info("One of the fields is empty!");
-			final Popup popup = popupGen(wErrPopup,hErrPopup, "One of the fields is empty!");
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
+			popupGen(wErrPopup,hErrPopup, "One of the fields is empty!");
 			return;
 		}
 		
@@ -121,26 +108,19 @@ public class RegPartnerView implements Initializable{
 		
 		if(regBean.getError() != null) {
 			Log.getInstance().getLogger().info(regBean.getError());
-			final Popup popup = popupGen(wErrPopup,hErrPopup, regBean.getError());
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
+			popupGen(wErrPopup,hErrPopup, regBean.getError());
 			return;
 		}
 		
 		try {
 			regBean = controller.addPartner(regBean);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		if(regBean.getError() != null) {
 			Log.getInstance().getLogger().info(regBean.getError());
-			final Popup popup = popupGen(wErrPopup,hErrPopup, regBean.getError());
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
+			popupGen(wErrPopup,hErrPopup, regBean.getError());
 			return;
 		}
     	LoginView.render(curr);
@@ -176,8 +156,7 @@ public class RegPartnerView implements Initializable{
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		signUpBtn.getStyleClass().add("src-btn");
-		
-		rt=root;
+		VBox rt=root;
 		
 	}
     
@@ -190,15 +169,14 @@ public class RegPartnerView implements Initializable{
     }
    
     
-    public Popup popupGen(double width, double height, String error) {
+    public void popupGen(double width, double height, String error) {
     	Popup popup = new Popup(); 
     	popup.centerOnScreen();
     	
     	Text passwordNotEqualTxt = new Text(error);
 	    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
+	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
 	    
-	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
 	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
 	    StackPane popupContent = new StackPane(r,passwordNotEqualTxt); 
 	    
@@ -207,6 +185,9 @@ public class RegPartnerView implements Initializable{
 	    r.setStroke(Paint.valueOf(BGCOLORKEY));
 	    
 	    popup.getContent().add(popupContent);
-	    return popup;
+	    
+	    popup.show(curr);
+	    popup.setAutoHide(true);
+	    return;
     }
 }

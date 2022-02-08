@@ -35,12 +35,11 @@ import logic.model.User;
 
 public class LoginView{
 	
-	private static String BGCOLORKEY = "ffffff";
+	private static final String BGCOLORKEY = "ffffff";
 	private static long wErrPopup = 500;
 	private static long hErrPopup = 50;
 	private static Stage curr;
-	private String passw;
-	private String email;
+	
 
     @FXML
     private Button loginInput;
@@ -70,8 +69,8 @@ public class LoginView{
     void login(ActionEvent event) {
     	Log.getInstance().getLogger().info("Clicked login");
     	SuperUser user = null;
-    	passw = password.getText();
-    	email = username.getText();
+    	String passw = password.getText();
+    	String email = username.getText();
     	if(passw.isEmpty() || email.isEmpty() ) {
 			Log.getInstance().getLogger().info("One of the fields is empty!");
 			final Popup popup = popupGen(wErrPopup,hErrPopup, "One of the fields is empty!");
@@ -81,11 +80,13 @@ public class LoginView{
 			return;
 		}
     	if(radioPartner.isSelected()) {
-    		user =logPartner(event);
+    		LogPartnerController logPartner = new LogPartnerController();
+    		user =logAppend(logPartner, null);
     		Log.getInstance().getLogger().info("voglio accedere come partner");
     	} 
     	else if(radioExplorer.isSelected()) {
-    		user = logExplorer(event);
+    		LogExplorerController logExp = new LogExplorerController();
+    		user = logAppend(null,logExp);
 			Log.getInstance().getLogger().info("voglio accedere come explorer");
     	} else {
     		final Popup popup = popupGen(wErrPopup,hErrPopup, "Select Partner or Explorer");
@@ -95,20 +96,24 @@ public class LoginView{
     	}
     	if (user != null) {
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
-    	//HomeView hv = new HomeView();
+    	//HomeView hv = new HomeView()
     	HomeView.render(current);
     	}
     }
-    
-    private User logExplorer(ActionEvent event) {
-    	User user = null;
-    	LogExplorerController logExp = new LogExplorerController();
+    private SuperUser logAppend(LogPartnerController logPartner, LogExplorerController logExp) {
+    	SuperUser user = null;
     	LogBean  logbean = new LogBean();
     	logbean.setEmail(username.getText());
     	logbean.setPassword(password.getText());
-    	Log.getInstance().getLogger().info("Lo username dell'esploratore è: " +username.toString());
+    	Log.getInstance().getLogger().info("Lo username è: " +username.toString());
     	try {
-			if( (user = logExp.loginExplorer(logbean)) ==null) {
+    		if(logPartner != null) {
+    			user = logPartner.loginPartner(logbean);
+    		} else {
+    			user = logExp.loginExplorer(logbean);
+    		}
+    		
+			if(user == null) {
 				final Popup popup = popupGen(wErrPopup,hErrPopup, "Wrong email or password");
 			    
 			    popup.show(curr);
@@ -118,34 +123,6 @@ public class LoginView{
 				return user;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return user;
-		}
-    	Navbar.setUser(user);
-    	
-    	return user;
-    }
-    
-    private Partner logPartner(ActionEvent event) {
-    	Partner user = null;
-    	LogPartnerController logPartner = new LogPartnerController();
-    	LogBean  logbean = new LogBean();
-    	logbean.setEmail(username.getText());
-    	logbean.setPassword(password.getText());
-    	Log.getInstance().getLogger().info("Lo username del partner è: " +username.toString());
-    	try {
-			if( (user = logPartner.loginPartner(logbean)) ==null) {
-				final Popup popup = popupGen(wErrPopup,hErrPopup, "Wrong email or password");
-			    
-			    popup.show(curr);
-			    popup.setAutoHide(true);
-	    		
-				Log.getInstance().getLogger().info("Email o password incorrette.");
-				return user;
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return user;
 		}
@@ -154,7 +131,7 @@ public class LoginView{
     	return user;
     }
     
-    
+   
     @FXML
     void register(ActionEvent event) {
     	Log.getInstance().getLogger().info("Clicked register");
@@ -192,9 +169,8 @@ public class LoginView{
     	
     	Text passwordNotEqualTxt = new Text(error);
 	    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
+	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
 	    
-	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
 	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
 	    StackPane popupContent = new StackPane(r,passwordNotEqualTxt); 
 	    

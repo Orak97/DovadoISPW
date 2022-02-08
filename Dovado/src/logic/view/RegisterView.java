@@ -102,13 +102,7 @@ public class RegisterView implements Initializable{
 	
 	//------------------------ FINE PREFERENZE -----------------------------------------------------
 	
-	private VBox rt;
-
-	private static String password;
-	private static String passwordCheck;
-	private static String username;
-	private static String email;
-	private static String BGCOLORKEY = "ffffff";
+	private static final String BGCOLORKEY = "ffffff";
 	private static long wErrPopup = 500;
 	private static long hErrPopup = 50;
 	private static Stage curr;
@@ -121,18 +115,16 @@ public class RegisterView implements Initializable{
 
     public void register() {
     	
-    	password = pswField.getText();
-		passwordCheck = pswField2.getText();
-		username = usrnameTField.getText();
-		email = emailTField.getText();
+    	String password = pswField.getText();
+		String passwordCheck = pswField2.getText();
+		String username = usrnameTField.getText();
+		String email = emailTField.getText();
 		
 		if(password.isEmpty() || passwordCheck.isEmpty() || username.isEmpty() || email.isEmpty()) {
 			Log.getInstance().getLogger().info("One of the four fields is empty!");
-			final Popup popup = popupGen(wErrPopup,hErrPopup, "One of the four fields is empty!");
+			popupGen(wErrPopup,hErrPopup, "One of the four fields is empty!");
 		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
-			return;
+		    return;
 		}
 		
 		RegExplorerController controller = new RegExplorerController();
@@ -142,7 +134,6 @@ public class RegisterView implements Initializable{
 		regBean.setEmail(email);
 		regBean.setPassword(password);
 		regBean.setPassword2(passwordCheck);
-		
 		
 		//----AGGIORNO LE PREFERENZE AL BEAN DA DARE AL CONTROLLER--------
 		
@@ -160,34 +151,26 @@ public class RegisterView implements Initializable{
 		regBean.setMonumenti(btMonumenti.isSelected());
 		regBean.setRelax(btRelax.isSelected());
 		regBean.setIstruzione(btIstruzione.isSelected());
-		
-		
-		
-		
+				
 		regBean = controller.validateForm(regBean);
 		
 		if(regBean.getError() != null) {
 			Log.getInstance().getLogger().info(regBean.getError());
-			final Popup popup = popupGen(wErrPopup,hErrPopup, regBean.getError());
+			popupGen(wErrPopup,hErrPopup, regBean.getError());
 		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
 			return;
 		}
 		
 		try {
 			regBean = controller.addExplorer(regBean);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		if(regBean.getError() != null) {
 			Log.getInstance().getLogger().info(regBean.getError());
-			final Popup popup = popupGen(wErrPopup,hErrPopup, regBean.getError());
+			popupGen(wErrPopup,hErrPopup, regBean.getError());
 		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
 			return;
 		}
     	LoginView.render(curr);
@@ -208,9 +191,7 @@ public class RegisterView implements Initializable{
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - Register");
 			primaryStage.setScene(scene);
-			VBox home = new VBox();
-	
-			home = FXMLLoader.load(Main.class.getResource("Register.fxml"));
+			VBox home = FXMLLoader.load(Main.class.getResource("Register.fxml"));
 			
 			root.getChildren().addAll(navbar,home);
 			primaryStage.show();
@@ -224,7 +205,7 @@ public class RegisterView implements Initializable{
 		
 		signUpBtn.getStyleClass().add("src-btn");
 		
-		rt=root;
+		VBox rt=root;
 		
 	}
     
@@ -235,15 +216,14 @@ public class RegisterView implements Initializable{
     	LoginView.render(curr);
     }
     
-    public Popup popupGen(double width, double height, String error) {
+    public void popupGen(double width, double height, String error) {
     	Popup popup = new Popup(); 
     	popup.centerOnScreen();
     	
     	Text passwordNotEqualTxt = new Text(error);
 	    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
-	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);;
+	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
 	    
-	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
 	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
 	    StackPane popupContent = new StackPane(r,passwordNotEqualTxt); 
 	    
@@ -252,6 +232,9 @@ public class RegisterView implements Initializable{
 	    r.setStroke(Paint.valueOf(BGCOLORKEY));
 	    
 	    popup.getContent().add(popupContent);
-	    return popup;
+
+	    popup.show(curr);
+	    popup.setAutoHide(true);
+	    return;
     }
 }
