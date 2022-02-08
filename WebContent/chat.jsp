@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Channel, logic.model.Message, logic.controller.ChannelController, logic.model.Activity, logic.model.DAOChannel ,org.json.simple.JSONObject, org.json.simple.JSONArray" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Channel, logic.model.Message, logic.controller.ChannelController, logic.model.Activity, logic.model.DAOChannel ,org.json.simple.JSONObject, org.json.simple.JSONArray" %>
 
 		<%	
 		

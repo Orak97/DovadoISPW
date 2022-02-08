@@ -87,7 +87,7 @@ public class ProfileView implements Initializable{
 		setUsr.getStyleClass().add("textEventInfo");
 		currency.getStyleClass().add("textEventInfo");
 		
-		currency.setText(((User)Navbar.getUser()).getBalance()+" £");
+		currency.setText(((User)Navbar.getUser()).getBalance()+" ï¿½");
 		setEmail.setText(Navbar.getUser().getEmail());
 		setUsr.setText(Navbar.getUser().getUsername());
 		
@@ -148,22 +148,7 @@ public class ProfileView implements Initializable{
 		
 		((User)Navbar.getUser()).setPreferences(newUserPref);
 		try {
-			daoPr.updateUserPreferences(
-					Navbar.getUser().getUserID(), 
-					newUserPref.getSetPreferences()[0], 
-					newUserPref.getSetPreferences()[1], 
-					newUserPref.getSetPreferences()[2], 
-					newUserPref.getSetPreferences()[3], 
-					newUserPref.getSetPreferences()[4], 
-					newUserPref.getSetPreferences()[5], 
-					newUserPref.getSetPreferences()[6], 
-					newUserPref.getSetPreferences()[7], 
-					newUserPref.getSetPreferences()[8], 
-					newUserPref.getSetPreferences()[9], 
-					newUserPref.getSetPreferences()[10], 
-					newUserPref.getSetPreferences()[11], 
-					newUserPref.getSetPreferences()[12], 
-					newUserPref.getSetPreferences()[13]);
+			daoPr.updateUserPreferences(Navbar.getUser().getUserID(), newUserPref.getSetPreferences());
 		} catch (ClassNotFoundException | SQLException e) {
 			Log.getInstance().getLogger().info("Error in DB update of user preferences.");
 			e.printStackTrace();

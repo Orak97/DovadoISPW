@@ -61,7 +61,6 @@ import logic.model.DAOActivity;
 import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
-import logic.model.DAOSuperUser;
 import logic.model.Discount;
 import logic.model.ExpiringActivity;
 import logic.model.FindActivitiesBean;
@@ -128,7 +127,6 @@ public class HomeView implements Initializable{
 
     private static DAOPreferences daoPref;
     private static DAOActivity daoAct;
-    private static DAOSuperUser daoSU;
     private static DAOChannel daoCH;
     private static DAOPlace daoPlc;
     private static SuperActivity activitySelected;
@@ -172,7 +170,6 @@ public class HomeView implements Initializable{
 		lastEventBoxSelected = null;
 		daoPref = DAOPreferences.getInstance();
 		daoAct = DAOActivity.getInstance();
-		daoSU = DAOSuperUser.getInstance();
 		
 
 		//Prendo la geolocalizazione da questa 
@@ -474,7 +471,6 @@ public class HomeView implements Initializable{
 public void activitySelected() {
 		
 		daoAct = DAOActivity.getInstance();
-		daoSU = DAOSuperUser.getInstance();
 		daoPlc = DAOPlace.getInstance();
 		
 		StackPane eventBox = null;
@@ -1070,7 +1066,6 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 	
 	public void filterActivities() {
 		daoAct = DAOActivity.getInstance();
-		daoSU = DAOSuperUser.getInstance();
 		daoPlc = DAOPlace.getInstance();
 		daoPref = DAOPreferences.getInstance();
 		int searchMode = -1;

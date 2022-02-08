@@ -47,7 +47,6 @@ import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
-import logic.model.DAOSuperUser;
 import logic.model.Discount;
 import logic.model.Log;
 import logic.model.NormalActivity;

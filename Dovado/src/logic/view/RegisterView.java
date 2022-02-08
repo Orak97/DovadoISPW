@@ -36,7 +36,6 @@ import javafx.stage.Window;
 import logic.controller.RegExplorerController;
 import logic.controller.RegPartnerController;
 import logic.model.DAOPlace;
-import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;

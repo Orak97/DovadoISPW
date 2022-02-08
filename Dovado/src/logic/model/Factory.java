@@ -6,8 +6,6 @@ import java.time.LocalTime;
 
 public class Factory {
 	private Factory(){}
-	private LocalTime[] openCloseTime;
-	private LocalDate[] startEndDate;
 	private static Activity newActivity;
 	
 	public static Activity createNormalActivity(Long id,CreateActivityBean bean,Place p) {

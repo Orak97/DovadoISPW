@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import logic.model.DAOExplorer;
-import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.RegBean;
 import logic.model.RegExpBean;

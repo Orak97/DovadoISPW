@@ -54,7 +54,6 @@ import logic.model.DAOChannel;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.DAOSchedules;
-import logic.model.DAOSuperUser;
 import logic.model.ExpiringActivity;
 import logic.model.Log;
 import logic.model.Partner;
@@ -70,7 +69,6 @@ public class EventsView implements Initializable{
 	private static ArrayList<Activity> activities;
 	private static DAOPreferences daoPref;
     private static DAOActivity daoAct;
-    private static DAOSuperUser daoSU;
     private static DAOChannel daoCH;
     private static DAOPlace daoPlc;
     private static DAOSchedules daoSch;
@@ -130,7 +128,6 @@ public class EventsView implements Initializable{
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		daoPref = DAOPreferences.getInstance();
 		daoAct = DAOActivity.getInstance();
-		daoSU = DAOSuperUser.getInstance();
 		daoSch = DAOSchedules.getInstance();
 		
 		schedActivities = new ArrayList<>();
@@ -383,7 +380,6 @@ public class EventsView implements Initializable{
 	public void scheduledActSelected() {
 
 		daoAct = DAOActivity.getInstance();
-		daoSU = DAOSuperUser.getInstance();
 		daoPlc = DAOPlace.getInstance();
 
 		StackPane eventBox = null;

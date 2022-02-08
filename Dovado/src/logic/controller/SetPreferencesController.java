@@ -1,21 +1,16 @@
 package logic.controller;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 
-import logic.model.Activity;
 import logic.model.DAOActivity;
 import logic.model.DAOPreferences;
-import logic.model.DAOSuperUser;
 import logic.model.PreferenceBean;
 import logic.model.Preferences;
-import logic.model.SuperActivity;
-import logic.model.SuperUser;
+
 import logic.model.User;
 
 public class SetPreferencesController {
 	
-	DAOSuperUser daoSu;
 	DAOActivity daoAc;
 	DAOPreferences daoPr;
 	
@@ -29,26 +24,10 @@ public class SetPreferencesController {
 	
 	public void updatePreferences() throws ClassNotFoundException, SQLException{
 		Long id = session.getUserID();
-		
-		DAOPreferences.getInstance().updateUserPreferences(
-				id,
-				bean.isArte(),
-				bean.isCibo(),
-				bean.isMusica(),
-				bean.isSport(),
-				bean.isSocial(),
-				bean.isNatura(),
-				bean.isEsplorazione(),
-				bean.isRicorrenze(),
-				bean.isModa(),
-				bean.isShopping(),
-				bean.isAdrenalina(),
-				bean.isRelax(),
-				bean.isIstruzione(),
-				bean.isMonumenti()
-				);
-		
 		Preferences p = getPreferencesFromBean(bean);
+		DAOPreferences.getInstance().updateUserPreferences(id, p.getSetPreferences());
+		
+		
 		
 		session.setPreferences(p);
 	}
