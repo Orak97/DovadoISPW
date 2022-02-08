@@ -202,11 +202,8 @@ public class RegisterView implements Initializable{
 
     @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
 		signUpBtn.getStyleClass().add("src-btn");
-		
-		VBox rt=root;
-		
+				
 	}
     
     public void switchToRegisterPartner() {
@@ -235,6 +232,5 @@ public class RegisterView implements Initializable{
 
 	    popup.show(curr);
 	    popup.setAutoHide(true);
-	    return;
     }
 }

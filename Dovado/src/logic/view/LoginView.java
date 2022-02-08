@@ -151,9 +151,7 @@ public class LoginView{
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - login");
 			primaryStage.setScene(scene);
-			GridPane login = new GridPane();
-			
-			login = FXMLLoader.load(Main.class.getResource("Login.fxml"));
+			GridPane login = FXMLLoader.load(Main.class.getResource("Login.fxml"));
 			
 			root.getChildren().addAll(navbar,login);
 			primaryStage.show();

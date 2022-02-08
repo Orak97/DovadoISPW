@@ -131,7 +131,6 @@ public class RegPartnerView implements Initializable{
     
     public static void render(Stage current) {
 		Stage primaryStage = current;
-
 		curr=current;
 		
 		try {
@@ -141,9 +140,7 @@ public class RegPartnerView implements Initializable{
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - PartnerRegister");
 			primaryStage.setScene(scene);
-			VBox home = new VBox();
-	
-			home = FXMLLoader.load(Main.class.getResource("RegPartner.fxml"));
+			VBox home = FXMLLoader.load(Main.class.getResource("RegPartner.fxml"));
 			
 			root.getChildren().addAll(navbar,home);
 			primaryStage.show();
@@ -154,9 +151,7 @@ public class RegPartnerView implements Initializable{
 
     @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
 		signUpBtn.getStyleClass().add("src-btn");
-		VBox rt=root;
 		
 	}
     
@@ -188,6 +183,5 @@ public class RegPartnerView implements Initializable{
 	    
 	    popup.show(curr);
 	    popup.setAutoHide(true);
-	    return;
     }
 }
