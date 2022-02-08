@@ -125,13 +125,11 @@ public class SpotPlaceView implements Initializable{
 		spotPlaceBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				if(!spotPlace()) {
-					final Popup popup = popupGen(wPopup,hPopup,"Place not spotted:\nInsert all informations"); 
-					
-				    popup.setAutoHide(true);
+					popupGen(wPopup,hPopup,"Place not spotted:\nInsert all informations"); 
 					
 				} else {
-					final Popup popup = popupGen(wPopup,hPopup,"Place spotted successfully"); 
-				    popup.setAutoHide(true);
+					popupGen(wPopup,hPopup,"Place spotted successfully"); 
+				   
 				}
 			}
 
@@ -203,14 +201,13 @@ public class SpotPlaceView implements Initializable{
 		
 		try {
 			if(daoPl.spotPlace(spotAddress, placeName, spotCity, spotRegion, spotCivico, spotCity,coord)<0) {
-				final Popup popup = popupGen(wPopup,hPopup,"Error: place not spotted!"); 
-			    popup.setAutoHide(true);
+				popupGen(wPopup,hPopup,"Error: place not spotted!"); 
+			    
 				
 				return false;
 			}
 		} catch (Exception e) {
-			final Popup popup = popupGen(wPopup,hPopup,"Error: place not spotted!"); 
-		    popup.setAutoHide(true);
+			popupGen(wPopup,hPopup,"Error: place not spotted!"); 
 		    
 			Log.getInstance().getLogger().info("Due to an error in the database the place wasn't spotted.");
 			e.printStackTrace();
@@ -271,7 +268,6 @@ public class SpotPlaceView implements Initializable{
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    
-	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
 	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
 	    StackPane popupContent = new StackPane(r,errorTxt); 
 	    
@@ -283,6 +279,7 @@ public class SpotPlaceView implements Initializable{
 	    popup.centerOnScreen(); 
 	    
 	    popup.show(curr);
+	    popup.setAutoHide(true);
 	    return popup;
 	}
 }
