@@ -2,48 +2,47 @@ package logic.model;
 
 public class DiscountBean {
 	private int actToEdit;
-	private boolean dicount5;
-	private boolean dicount10;
-	private boolean dicount20;
-	private boolean dicount30;
-	private boolean dicount50;
+	private boolean discount5;
+	private boolean discount10;
+	private boolean discount20;
+	private boolean discount30;
+	private boolean discount50;
 	
-	public boolean isDicount5() {
-		return dicount5;
-	}
-	public void setDicount5(boolean dicount5) {
-		this.dicount5 = dicount5;
-	}
-	public boolean isDicount10() {
-		return dicount10;
-	}
-	public void setDicount10(boolean dicount10) {
-		this.dicount10 = dicount10;
-	}
-	public boolean isDicount20() {
-		return dicount20;
-	}
-	public void setDicount20(boolean dicount20) {
-		this.dicount20 = dicount20;
-	}
-	public boolean isDicount30() {
-		return dicount30;
-	}
-	public void setDicount30(boolean dicount30) {
-		this.dicount30 = dicount30;
-	}
-
-	public boolean isDicount50() {
-		return dicount50;
-	}
-	public void setDicount50(boolean dicount50) {
-		this.dicount50 = dicount50;
-	}
 	public int getActToEdit() {
 		return actToEdit;
 	}
 	public void setActToEdit(int actToEdit) {
 		this.actToEdit = actToEdit;
+	}
+	public boolean isDiscount5() {
+		return discount5;
+	}
+	public void setDiscount5(boolean discount5) {
+		this.discount5 = discount5;
+	}
+	public boolean isDiscount10() {
+		return discount10;
+	}
+	public void setDiscount10(boolean discount10) {
+		this.discount10 = discount10;
+	}
+	public boolean isDiscount20() {
+		return discount20;
+	}
+	public void setDiscount20(boolean discount20) {
+		this.discount20 = discount20;
+	}
+	public boolean isDiscount30() {
+		return discount30;
+	}
+	public void setDiscount30(boolean discount30) {
+		this.discount30 = discount30;
+	}
+	public boolean isDiscount50() {
+		return discount50;
+	}
+	public void setDiscount50(boolean discount50) {
+		this.discount50 = discount50;
 	}
 
 }
