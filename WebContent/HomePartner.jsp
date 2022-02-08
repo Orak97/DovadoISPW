@@ -54,10 +54,48 @@ if(partner != null){
 		<%-- fine modal per fare conferma o errore nello schedulo di un'attività --%>
 		
 		<%
+	}
+	
+	//inizio modal risposta
+	if(request.getParameter("serverResponse")!=null){
+		boolean success = true;
+		String serverResponse = request.getParameter("serverResponse");
+		if(serverResponse != "Sconti correttamente modificati!"){
+			success = false;		
+		}
 	
 	
+	%>
+	<%--inizio prova modal per fare conferma o errore nello schedulo di un'attività --%>
+	<!-- Modal elimina -->
+		<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+	  		<div class="modal-dialog">
+	    		<div class="modal-content">
+	      			<div class="modal-header">
+	        			<h5 class="modal-title" id="responseModalLabel"><%= serverResponse  %></h5>
+	        			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      			</div>
+	      			<div class="modal-body">
+	        			<p class="delete-icon-schedule text-center" <%if(!success){ %>style="color:#198754"><i class="bi bi-check-circle-fill"></i> <%}else{%> ><i class="bi bi-x-circle-fill"></i> <%} %></p>
+	        			<h5 class="text-center irreversible-process"><%= serverResponse  %></h5>
+	      			</div>
+	      			<div class="modal-footer">
+	        			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Torna indietro</button>
+	      			</div>
+	    		</div>
+	  		</div>
+		</div>
+		
+		<script>
+			let responseModal = new bootstrap.Modal(document.getElementById('responseModal'))
+			responseModal.show();
+		</script>
 	
-	}		
+	<%-- fine modal per fare conferma o errore nello schedulo di un'attività --%>
+	
+	<%
+	}
+	
 	
 	ArrayList<CertifiedActivity> foundActivities = new ArrayList<CertifiedActivity>();
 	try{	  		
@@ -564,6 +602,7 @@ if(partner != null){
 		       
 		      </div>
 		      <div class="modal-footer">
+		      	<input type="number" class="visually-hidden" name="actToEdit">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Indietro</button>
 		        <button type="submit" class="btn btn-success">Salva modifiche</button>
 		      </div>
@@ -581,6 +620,8 @@ if(partner != null){
 			couponModal.addEventListener('show.bs.modal', function(){
 		 		let activity = document.querySelector('#activityModal input#idActivity').value;
 		 		console.log("l'attività selezionata è:"+activity);
+		 		
+		 		document.querySelector('[name=actToEdit]').value = activity;
 		 		
 		 		let url = "discount.jsp?activity="+activity;
 		 		

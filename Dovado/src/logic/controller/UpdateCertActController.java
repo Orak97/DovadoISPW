@@ -162,12 +162,12 @@ public class UpdateCertActController {
 			throw e;
 		}
 		
-		ArrayList<Discount> discounts = new ArrayList<>();
-		discounts.add(new Discount(5,beanDiscount.isDicount5(),0));
-		discounts.add(new Discount(10,beanDiscount.isDicount10(),0));
-		discounts.add(new Discount(20,beanDiscount.isDicount20(),0));
-		discounts.add(new Discount(30,beanDiscount.isDicount30(),0));
-		discounts.add(new Discount(50,beanDiscount.isDicount50(),0));
+		ArrayList<Discount> discounts = new ArrayList<Discount>();
+		discounts.add(new Discount(5,beanDiscount.isDiscount5(),0));
+		discounts.add(new Discount(10,beanDiscount.isDiscount10(),0));
+		discounts.add(new Discount(20,beanDiscount.isDiscount20(),0));
+		discounts.add(new Discount(30,beanDiscount.isDiscount30(),0));
+		discounts.add(new Discount(50,beanDiscount.isDiscount50(),0));
 		
 		daoAc.modifyDiscounts(activityId, partnerID, discounts);
 	}

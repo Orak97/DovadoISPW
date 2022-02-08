@@ -77,7 +77,7 @@
 		UpdateCertActController controller = new UpdateCertActController(discountBean,partner);
 		try{
 			controller.modifyDiscounts();
-			response.sendRedirect("HomePartner.jsp?serverResponse=\"ok\"");
+			response.sendRedirect("HomePartner.jsp?serverResponse=\"Sconti correttamente modificati!\"");
 		}catch(NullPointerException se){
 			response.sendRedirect("HomePartner.jsp");
 		}catch(SQLException se){

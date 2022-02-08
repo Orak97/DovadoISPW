@@ -99,4 +99,39 @@ function moveView(latitude,longitude,id){
 
 function removeAllMarkers(){
 	markersOnMap.forEach( elem => elem.marker.remove());  
-} 
+}
+
+
+//------------------------------------------------------------------------------------------_//
+//								 inizio codice per andrea
+//-------------------------------------------------------------------------------------------//
+	
+	let desktopLatLng;
+	
+	//chiama prima questa
+  	function retrieveLatLng(civicoTxt,indirizzoTxt,cittaTxt,regioneTxt,capTxt){
+		
+  		L.esri.Geocoding.geocode().address(civicoTxt+' '+indirizzoTxt).city(cittaTxt).region(regioneTxt).postal(capTxt).run( function (err, results, response) {
+  		  if (err) {
+  		    console.log(err);
+  		    return;
+  		  }
+  		  
+  		  if(results.results.length < 1){
+  			 desktopLatLng = null
+  		  }else{
+  		  
+	  		  //console.log(results.results)
+	  		  
+	  		  //let latitude = results.results[0].latlng.lat;
+	  		  //let longitude = results.results[0].latlng.lng
+	  		  //console.log(results.results[0].latlng);
+	  		  desktopLatLng = results.results[0].latlng;
+  		  }
+  		});
+  	}
+  	
+  	//e poi questa
+  	function getDesktopLatLng(){
+		return desktopLatLng;
+}
