@@ -40,20 +40,16 @@ public class PreferenceSelectView implements Initializable{
 	@FXML
 	private HBox prefHBox;
 	
-	private static Preferences preferences;
-	private static boolean[] preferencesChosen;
+	private Preferences preferences;
+	private boolean[] preferencesChosen;
 
 	private static Stage curr;
-	private DAOPreferences daoPr;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
-		daoPr = DAOPreferences.getInstance();
 		boolean[] initPref = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-		preferences = new Preferences(initPref);
-		String[] prefsNames = preferences.getPreferencesName();
-		
+		preferences = new Preferences(initPref);		
 		preferencesChosen = preferences.getSetPreferences();
 		continueBtn.getStyleClass().add("src-btn");
 		
@@ -95,9 +91,7 @@ public class PreferenceSelectView implements Initializable{
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			primaryStage.setTitle("Dovado - Select preferences");
 			primaryStage.setScene(scene);
-			VBox home = new VBox();
-	
-			home = FXMLLoader.load(Main.class.getResource("PreferenceSelect.fxml"));
+			VBox home = FXMLLoader.load(Main.class.getResource("PreferenceSelect.fxml"));
 			
 			root.getChildren().addAll(navbar,home);
 			primaryStage.show();

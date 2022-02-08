@@ -21,16 +21,7 @@ import logic.controller.FindActivityController;
 
 public class DAOChannel {
 	private static DAOChannel INSTANCE;
-	private JSONParser parser; 
 
-	private static final  String CHANNJSON = "WebContent/channels.json";
-	private static final  String CHANNKEY = "channels";
-	private static final  String ACTIVITYKEY = "activity";
-	private static final  String MTXTKEY = "messtxt";
-	private static final  String MESSKEY = "messages";
-	private static final  String UIDKEY = "userID";
-	private static final  String DATESENTKEY = "datesent";
-	
 	//----------database--------------------------------------
 	
 	private static final String USER = "dovado"; //DA CAMBIARE
@@ -49,7 +40,6 @@ public class DAOChannel {
 	
 	
 	private DAOChannel() {
-		parser = new JSONParser();
 	}
 	
 	public static DAOChannel getInstance() {
@@ -57,62 +47,7 @@ public class DAOChannel {
 			INSTANCE = new DAOChannel();
 		return INSTANCE;
 	}
-	
-	//Metodo per aggiornare nella persistenza un canale -- TODO REFERENZIATA ELLA PARTE DESKTOP
-		public boolean updateChannelInJSON(List<Message> msges, SuperActivity a) {
-			JSONParser pars = new JSONParser(); 
-			
-			try
-			{
-				
-				Object channels = pars.parse(new FileReader(CHANNJSON));
-				JSONObject channel = (JSONObject) channels;
-				JSONArray channelArray = (JSONArray) channel.get(CHANNKEY);
-				JSONArray newMessageArray = new JSONArray();
-				JSONObject result;
-				
-				for(int j=0; j<channelArray.size();j++) {
-					result = (JSONObject)channelArray.get(j);
-					
-					Long aID = (Long) result.get(ACTIVITYKEY);
-					Log.getInstance().getLogger().info("id attività update:"+ aID);
 
-					if(Long.compare(a.getId(), aID)==0) {
-						
-						for(int i=0;i<msges.size();i++) {
-						//Scrivo il messaggio in JSONObject e lo inserisco nell'
-						//array dei messaggi.
-							JSONObject message = new JSONObject();
-							
-							message.put(UIDKEY,msges.get(i).getUsr());
-							message.put(MTXTKEY,msges.get(i).getMsgText());
-							message.put(DATESENTKEY,msges.get(i).getMsgSentDate());
-							
-							newMessageArray.add(message);
-							
-						}
-						
-						result.remove(MESSKEY);
-						result.put(MESSKEY, newMessageArray);
-						
-						try (FileWriter file = new FileWriter(CHANNJSON)) {	
-							file.write(channel.toString());
-							file.flush();
-						}
-						return true;
-					}
-				}
-				
-				return false;
-									
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-				}
-		
-		}
-
-	//aggiunta metodi db
 	
 	public Channel getChannel(Long idActivity) throws ClassNotFoundException, SQLException  {
 		//metodo per ottenere un channel partendo dall'id dell'attività

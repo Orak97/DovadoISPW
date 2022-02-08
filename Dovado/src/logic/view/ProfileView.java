@@ -53,7 +53,7 @@ public class ProfileView implements Initializable{
 	private HBox currencyHBox;
 	
 	
-	private static DAOPreferences daoPr;
+	private DAOPreferences daoPr;
 	private static Stage curr;
 	
 	public static void render(Stage current) {
@@ -62,15 +62,13 @@ public class ProfileView implements Initializable{
 			BorderPane navbar = Navbar.getNavbar();
 			Navbar.authenticatedSetup();
 			
-			HBox profileView = new HBox();
-			
 			curr=current;
 			
 			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - events");
 			current.setScene(scene);
-			profileView = FXMLLoader.load(Main.class.getResource("Profile.fxml"));
+			HBox profileView = FXMLLoader.load(Main.class.getResource("Profile.fxml"));
 			VBox.setVgrow(profileView, Priority.SOMETIMES);
 			
 			root.getChildren().addAll(navbar,profileView);
@@ -83,9 +81,10 @@ public class ProfileView implements Initializable{
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		setEmail.getStyleClass().add("textEventInfo");
-		setUsr.getStyleClass().add("textEventInfo");
-		currency.getStyleClass().add("textEventInfo");
+		String styleTextInfo = "textEventInfo";
+		setEmail.getStyleClass().add(styleTextInfo);
+		setUsr.getStyleClass().add(styleTextInfo);
+		currency.getStyleClass().add(styleTextInfo);
 		
 		if(Navbar.getUser() instanceof User) {
 			currency.setText(((User)Navbar.getUser()).getBalance()+" �");
@@ -106,15 +105,15 @@ public class ProfileView implements Initializable{
 			 * (false o true che siano)*/
 			boolean[] allPrefsSet = preferences.getSetPreferences();
 			int pset=0;
-			VBox prefVBox;
+			VBox prefInitVBox;
 			for(int i=0;i<prefHBox.getChildren().size();i++) {
 
-				prefVBox = (VBox)prefHBox.getChildren().get(i);
-				for(int j=0;j<prefVBox.getChildren().size();j++) {
+				prefInitVBox = (VBox)prefHBox.getChildren().get(i);
+				for(int j=0;j<prefInitVBox.getChildren().size();j++) {
 				//Se trovo una preferenza che è stata settata dall'utente mi fermo,
 				//e segno il checkBox in modo tale da indicare che .
-					if(allPrefsSet[pset]==true) {
-						((CheckBox)(prefVBox.getChildren().get(j))).setSelected(true);
+					if(allPrefsSet[pset]) {
+						((CheckBox)(prefInitVBox.getChildren().get(j))).setSelected(true);
 					}
 					pset++;
 				}
@@ -135,14 +134,14 @@ public class ProfileView implements Initializable{
 		//POSSO MODIFICARE UNO AD UNO LE PREFERENZE.
 		boolean[] userPrefSet = newUserPref.getSetPreferences();
 		int pset=0;
-		VBox prefVBox;
+		VBox prefUpdateVBox;
 		for(int j=0;j<prefHBox.getChildren().size();j++) {
-			prefVBox = (VBox) prefHBox.getChildren().get(j);
-			int vboxPrefContained = prefVBox.getChildren().size();
+			prefUpdateVBox = (VBox) prefHBox.getChildren().get(j);
+			int vboxPrefContained = prefUpdateVBox.getChildren().size();
 			for(int i=0;i<vboxPrefContained;i++) {
 				//SE IL CHECKBOX DELLA PREFERENZA E' SETTATO ALLORA QUESTA VERR� AGGIUNTA ALLA
 				//LISTA DI PREFERENZE.
-				userPrefSet[pset] = ((CheckBox)(prefVBox.getChildren().get(i))).isSelected();
+				userPrefSet[pset] = ((CheckBox)(prefUpdateVBox.getChildren().get(i))).isSelected();
 				pset++;
 			}
 		}
@@ -172,8 +171,7 @@ public class ProfileView implements Initializable{
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    
-	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
-	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
+		Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
 	    StackPane popupContent = new StackPane(r,errorTxt); 
 	    
 	    r.setStrokeType(StrokeType.OUTSIDE);
