@@ -87,7 +87,6 @@ public class RegPartnerView implements Initializable{
     	String email = emailTField.getText();
     			
 		if(password.isEmpty() || passwordCheck.isEmpty() || username.isEmpty() || email.isEmpty()) {
-			Log.getInstance().getLogger().info("One of the fields is empty!");
 			popupGen(wErrPopup,hErrPopup, "One of the fields is empty!");
 			return;
 		}
@@ -105,7 +104,6 @@ public class RegPartnerView implements Initializable{
 		regBean = controller.validateForm(regBean);
 		
 		if(regBean.getError() != null) {
-			Log.getInstance().getLogger().info(regBean.getError());
 			popupGen(wErrPopup,hErrPopup, regBean.getError());
 			return;
 		}
@@ -117,7 +115,6 @@ public class RegPartnerView implements Initializable{
 		}
 		
 		if(regBean.getError() != null) {
-			Log.getInstance().getLogger().info(regBean.getError());
 			popupGen(wErrPopup,hErrPopup, regBean.getError());
 			return;
 		}
@@ -163,6 +160,7 @@ public class RegPartnerView implements Initializable{
    
     
     public void popupGen(double width, double height, String error) {
+    	Log.getInstance().getLogger().info(error);
     	Popup popup = new Popup(); 
     	popup.centerOnScreen();
     	
