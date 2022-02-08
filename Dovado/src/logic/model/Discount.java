@@ -18,4 +18,8 @@ public class Discount {
 	public int getPrice() {
 		return this.price;
 	}
+	
+	public boolean isActive(){
+		return this.active;
+	}
 }

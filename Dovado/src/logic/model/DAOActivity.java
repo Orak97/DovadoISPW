@@ -413,6 +413,38 @@ public class DAOActivity {
         }
         
 	}
+	
+	public void modifyDiscounts(Long activityId, Long partnerID, ArrayList<Discount> discounts) throws SQLException, ClassNotFoundException{
+		try {
+			resetConnection();
+			
+            //STEP4.1: preparo la stored procedure
+            String call = "{call modify_discount(?,?,?,?)}";
+
+            
+            for(Discount curr : discounts) {
+                //preparo la procedura
+            	stmt = conn.prepareCall(call);            	
+            	
+            	//imposto i parametri
+                stmt.setLong(1,activityId);
+            	stmt.setLong(2,partnerID);
+            	stmt.setInt(3,curr.getPercentuale());
+            	stmt.setBoolean(4, curr.isActive());
+            	
+            	//eseguo la procedura
+            	stmt.execute();
+            	
+            	//chiudo la procedura
+            	stmt.close();
+            }	
+		}finally {
+            //Clean-up dell'ambiente
+            disconnRoutine();
+		}
+	}
+	
+	
 	//---- Da qui in poi ci sono i metodi utili per la classe ma private
 	private Activity getActivitybyResultSet(ResultSet rs) throws SQLException, ClassNotFoundException {
     	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
@@ -496,4 +528,5 @@ public class DAOActivity {
 	    	se.printStackTrace();
 	    }
 	}
+
 }

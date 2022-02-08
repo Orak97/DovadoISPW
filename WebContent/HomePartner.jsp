@@ -65,6 +65,7 @@ if(partner != null){
 		  	
 	}catch(Exception e){
 		%> <script>alert('errore nel recupero attività')</script> <%
+		e.printStackTrace();
 	} 
 %>
 	
@@ -175,7 +176,7 @@ if(partner != null){
 		    <div class="modal-content">
 		      <div class="modal-header">
 		        <h5 class="modal-title" id="activityModalLabel"></h5>
-		        <button type="button" class="btn-close" data-bs-target="#findActivitiesModal" data-bs-toggle="modal" data-bs-dismiss="modal" aria-label="Close"></button>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
 		      
@@ -503,6 +504,7 @@ if(partner != null){
 
 <!-- inizio modal per Coupon -->
 		<!-- Modal -->
+		<form method="GET" action="discount.jsp">
 		<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
 		  <div class="modal-dialog modal-xl modal-dialog-scrollable">
 		    <div class="modal-content">
@@ -511,7 +513,6 @@ if(partner != null){
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body modal-coupon">		      
-		      
 		      <%-- come funziona --%>
 		      
 		      <div class="accordion" id="infoCoupon">
@@ -531,77 +532,114 @@ if(partner != null){
 		      
 		      
 		      <%--inizio righe dei coupon --%>
-		       <div class="row coupon shadow">
-		       	<div class="col percentage-info text-center">
-		       		<div class="position-relative top-50 start-50 translate-middle">
-		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
-		       			<p id="percentage"><span class="percentage">40%</span></p>
-		       		</div>
-		       	</div>
-		       	<div class="col percentage-redeem text-center">
-		       		<div class="position-relative top-50 start-50 translate-middle">		
-						<input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-						<label class="btn btn-outline-success btnHome btn-lg" for="btn-check-outlined">Attiva sconto</label>
-		       		</div>
-		       	</div>
-		       </div>
-		       
-		       <div class="row coupon shadow">
-		       	<div class="col percentage-info text-center disabled">
-		       		<div class="position-relative top-50 start-50 translate-middle">
-		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
-		       			<p id="percentage"><strong>60%</strong></p>
-		       		</div>
-		       	</div>
-		       	<div class="col percentage-redeem text-center">
-		       		<div class="position-relative top-50 start-50 translate-middle">
-		       			<p class="lead insufficient-funds">Soldi insufficienti per generare questo coupon</p>
-		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 100 soldi</button>
-		       		</div>
-		       	</div>
-		       </div>
-		       
-		       <div class="row coupon shadow">
-		       	<div class="col percentage-info text-center disabled">
-		       		<div class="position-relative top-50 start-50 translate-middle">
-		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
-		       			<p id="percentage"><strong>80%</strong></p>
-		       		</div>
-		       	</div>
-		       	<div class="col percentage-redeem text-center">
-		       		<div class="position-relative top-50 start-50 translate-middle">
-		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 300 soldi</button>
-		       		</div>
-		       	</div>
-		       </div>
-		       
-		       <div class="row coupon shadow">
-		       	<div class="col percentage-info text-center disabled">
-		       		<div class="position-relative top-50 start-50 translate-middle">
-		       			<label for="percentage" class="col-form-label label-sale">Sconto del</label>
-		       			<p id="percentage"><strong>100%</strong></p>
-		       		</div>
-		       	</div>
-		       	<div class="col percentage-redeem text-center">
-		       		<div class="position-relative top-50 start-50 translate-middle">
-		       			<button type="button" class="btn btn-outline-success btn-lg btnHome" disabled>Genera Coupon per 600 soldi</button>
-		       		</div>
-		       	</div>
-		       </div>
+		       <table class="table table-discount">
+				  <thead>
+				    <tr>
+				      <th scope="col">Sconto</th>
+				      <th scope="col">Prezzo</th>
+				      <th scope="col">Stato</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr>
+				      <td>5%</td>
+				      <td>150</td>
+				      <td>
+				      	<div class="form-check form-switch">
+						  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+						</div>
+				      </td>
+				    </tr>
+				    <tr>
+				      <td>10%</td>
+				      <td>300</td>
+				      <td>
+				      	<div class="form-check form-switch">
+						  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked>
+						</div>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table>
 		       
 		      </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-success" onclick="generateDiscount(0)">Non desidero generare nessun coupon</button>
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Indietro</button>
+		        <button type="submit" class="btn btn-success">Salva modifiche</button>
 		      </div>
+		      </form>
 		    </div>
 		  </div>
 		</div>
 				
-		
-		
 		<!-- fine modal per coupon -->
-	
+		
+		<script>
+			let couponModal =document.getElementById('couponModal')
+			
+			let discounts;
+			couponModal.addEventListener('show.bs.modal', function(){
+		 		let activity = document.querySelector('#activityModal input#idActivity').value;
+		 		console.log("l'attività selezionata è:"+activity);
+		 		
+		 		let url = "discount.jsp?activity="+activity;
+		 		
+		 		//step 1: genero oggetto per richiesta al server
+		 		var req = new XMLHttpRequest();
+		 		
+		 		//step 2: creo la funzione che viene eseguita quando ricevo risposta dal server
+		 		discounts = null;
+		 		req.onload= function(){
+		 			console.log(this.response);
+		 			if(this.response == null) location.reload();
+		 			if(this.response == 'invalid-activity') {
+		 				alert('Attività inserita non corretta');
+		 				couponModal.querySelector('.btn-close').click;
+		 				
+		 			}else{	
+		 				discounts = this.response;
+		 				populateDiscounts(discounts);
+		 			}
+		 		}
+		 		
+		 		//step 3: dico quale richiesta fare al server
+				req.open("GET", url);
+		 		
+				//step 3.1 : imposto document come response type, perché sto per ricevere html html
+				req.responseType = "json";
+				
+				//step 4: invio la richiesta 
+				req.send();
+		 	});
+			
+			function populateDiscounts(discounts){
+		 		
+		 		clearDiscounts();
+		 		
+		 		discounts.forEach(curr => {
+			 		let htmlDiscount='';
+			 		
+			 		htmlDiscount+='<tr>';
+			 			htmlDiscount+='<td>'+curr.percentage+'%</td>';
+			 			htmlDiscount+='<td>'+curr.price+'</td>';
+			 			htmlDiscount+='<td>';
+			 				htmlDiscount+='<div class="form-check form-switch">';
+			 					htmlDiscount+='<input class="form-check-input" type="checkbox" name="discount'+curr.percentage+'" '+(curr.state ? 'checked' : '')+'>'
+			 				htmlDiscount+='</div>';
+			 			htmlDiscount+='</td>';
+			 		htmlDiscount+='</tr>';
+					
+			 		couponModal.querySelector('.table-discount tbody').innerHTML+=htmlDiscount;
+		 		
+		 		});
+		 	}
+			
+		 	function clearDiscounts(){
+		 		couponModal.querySelector('tbody').innerHTML = '';
+		 	}
+		 	
+		
+		</script>
 
 <%-- fine modal per gestione coupon --%>
 

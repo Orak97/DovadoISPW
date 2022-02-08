@@ -2,11 +2,14 @@ package logic.controller;
 
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import logic.model.CertifiedActivity;
 import logic.model.ContinuosActivity;
 import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
+import logic.model.Discount;
+import logic.model.DiscountBean;
 import logic.model.ExpiringActivity;
 import logic.model.Log;
 import logic.model.Partner;
@@ -17,6 +20,7 @@ public class UpdateCertActController {
 	private CertifiedActivity activity;
 	private DAOActivity daoAc;
 	private CreateActivityBean bean;
+	private DiscountBean beanDiscount;
 	
 	/*Rimuovere in caso si sposti il metodo `claimActivity`in un altra classe*/
 	private Partner session; 
@@ -32,7 +36,13 @@ public class UpdateCertActController {
 		this.session = session;
 		this.bean = bean;
 		daoAc = DAOActivity.getInstance();
-
+	}
+	
+	/*Costruttore che viene chiamato solo quando si vogliono modificare gli sconti di un'attività dal partner, metodo `modifyDiscounts`*/
+	public UpdateCertActController(DiscountBean bean, Partner session) {
+		this.session = session;
+		this.beanDiscount = bean;
+		daoAc = DAOActivity.getInstance();
 	}
 	
 	public UpdateCertActController(CreateActivityBean bean, SuperUser session) {
@@ -139,4 +149,27 @@ public class UpdateCertActController {
 		}
 		daoAc.claimActivity(activityId, partnerID);
 	}
+	
+	/*Chiamare questo metodo dopo aver istanziato il controller tramite il costruttore che prende come parametri `DiscountBean` e `Partner`*/
+	public void modifyDiscounts() throws ClassNotFoundException, SQLException{
+		if(session == null || beanDiscount.getActToEdit() == 0) throw new NullPointerException();
+		Long partnerID = session.getUserID();
+		Long activityId;
+		try {
+			activityId = Long.valueOf(beanDiscount.getActToEdit());
+		}catch(NumberFormatException e) {
+			Log.getInstance().getLogger().severe("l'ID dell'attività da reclamare è NULL");
+			throw e;
+		}
+		
+		ArrayList<Discount> discounts = new ArrayList<Discount>();
+		discounts.add(new Discount(5,beanDiscount.isDicount5(),0));
+		discounts.add(new Discount(10,beanDiscount.isDicount10(),0));
+		discounts.add(new Discount(20,beanDiscount.isDicount20(),0));
+		discounts.add(new Discount(30,beanDiscount.isDicount30(),0));
+		discounts.add(new Discount(50,beanDiscount.isDicount50(),0));
+		
+		daoAc.modifyDiscounts(activityId, partnerID, discounts);
+	}
+	
 }
