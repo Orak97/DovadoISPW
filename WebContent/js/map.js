@@ -131,7 +131,12 @@ function removeAllMarkers(){
   		});
   	}
   	
-  	//e poi questa
-  	function getDesktopLatLng(){
-		return desktopLatLng;
-}
+  	//e poi queste
+  	function getDesktopLatitude(){
+		return desktopLatLng.lat;
+	}
+	
+	//e poi questa
+  	function getDesktopLongitude(){
+		return desktopLatLng.lng;
+	}
