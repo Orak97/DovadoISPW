@@ -76,34 +76,7 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 		case ANNUALLY: 
 			{	
 				
-				int myMonth = date.getMonthValue();
-				int startMonth = startDate.getMonthValue();
-				int endMonth = endDate.getMonthValue();
-				int myDate = date.getDayOfMonth();
-				int startDay = startDate.getDayOfMonth();
-				int endDay = endDate.getDayOfMonth();
-				
-				if(startMonth == endMonth) {
-					if(myMonth != startMonth) return false;	
-					return checkDays(startDay,endDay,myDate);
-				}
-				
-				if(startMonth < endMonth) {
-					//se mese inizio < mese fine sono nello stesso anno, controllo che il mese in cui voglio fare l'attività sia mese inizio<= mio mese<= mese fine
-					if(!(myMonth >= startMonth && myMonth <= endMonth)) return false;
-				} else {
-					if(!(myMonth >= startMonth || myMonth <= endMonth)) return false;
-				}
-			
-				if(myMonth == startMonth) {
-					return (startDay <= myDate);
-				}
-					
-				if(myMonth == endMonth) {
-					return (endDay >= myDate);
-				}	
-				
-				return true;				
+				return checkAnnnualyDate(date);				
 			} 
 		default:
 				throw new NullPointerException("La cadenza non può essere null");		
@@ -142,7 +115,37 @@ public class PeriodicActivity extends FrequencyOfRepeat{
 			//l'evento si verifica sempre
 		return true;
 	}	
+	private boolean checkAnnnualyDate(LocalDate date) {
+		int myMonth = date.getMonthValue();
+		int startMonth = startDate.getMonthValue();
+		int endMonth = endDate.getMonthValue();
+		int myDate = date.getDayOfMonth();
+		int startDay = startDate.getDayOfMonth();
+		int endDay = endDate.getDayOfMonth();
+		
+		if(startMonth == endMonth) {
+			if(myMonth != startMonth) return false;	
+			return checkDays(startDay,endDay,myDate);
+		}
+		
+		if(startMonth < endMonth) {
+			//se mese inizio < mese fine sono nello stesso anno, controllo che il mese in cui voglio fare l'attività sia mese inizio<= mio mese<= mese fine
+			if(!(myMonth >= startMonth && myMonth <= endMonth)) return false;
+		} else {
+			if(!(myMonth >= startMonth || myMonth <= endMonth)) return false;
+		}
 	
+		if(myMonth == startMonth) {
+			return (startDay <= myDate);
+		}
+			
+		if(myMonth == endMonth) {
+			return (endDay >= myDate);
+		}	
+		
+		return true;
+		
+	}	
 	private boolean checkDays(int startDay, int endDay, int myDate) {
 		if(startDay < endDay)
 			//l'evento si verifica all'interno di uno stesso mese
