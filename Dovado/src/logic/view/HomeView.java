@@ -2,12 +2,24 @@ package logic.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 
 //import org.openstreetmap.gui.jmapviewer.JMapViewer;
 //import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -52,6 +64,7 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.AddActivityToScheduleController;
+import logic.controller.ChannelController;
 import logic.controller.FindActivityController;
 import logic.model.Activity;
 import logic.model.CertifiedActivity;
@@ -98,9 +111,12 @@ public class HomeView implements Initializable{
 	
 	@FXML
 	private VBox root;
-	
+
 	@FXML
 	private Slider distanceSelector;
+	
+	@FXML
+	private Text distanceSelected;
 
     @FXML
     private Button searchButton;
@@ -468,7 +484,13 @@ public class HomeView implements Initializable{
     	}
     }
 
-public void activitySelected() {
+	private void distanceSelected() {
+		
+		
+		
+	}
+	
+	public void activitySelected() {
 		
 		daoAct = DAOActivity.getInstance();
 		daoPlc = DAOPlace.getInstance();
@@ -482,12 +504,13 @@ public void activitySelected() {
 
 		if(user instanceof User) {	
 			for(Activity curr:activitiesToSpotUsr) {
-				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', '"+curr.getPlace().getName()+"','"+curr.getPlace().getId()+"')");;
+				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', '"+curr.getPlace().getName()+"','"+curr.getPlace().getId()+"')");
 			}
+			eng.executeScript("setUser('"+usrLat+"','"+usrLon+"')");
 		}
 		else {
 			for(CertifiedActivity curr:activitiesToSpotPart) {
-				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', '"+curr.getPlace().getName()+"','"+curr.getPlace().getId()+"')");;
+				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', '"+curr.getPlace().getName()+"','"+curr.getPlace().getId()+"')");
 			}	
 		}
 		
@@ -596,10 +619,20 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							}
 							activitySelected.getChannel().addMsg(user.getUsername(), mss.getText());
 							
-							//TODO Nel metodo chiamato non conviene passare solo l'attivit� selezionata e da l� estrapolare gli altri parametri essendo tutti derivati? P.S:ho gi� levato uno dei parametri
-							daoCH.updateChannelInJSON(activitySelected.getChannel().getChat(), activitySelected);
-
-						Log.getInstance().getLogger().info("\nMessaggi dopo l'invio:\n");
+							ChannelController c = new ChannelController(user, activitySelected.getId());
+							try {
+								c.sendMessage(mss.getText());
+							} catch (ClassNotFoundException | SQLException e1) {
+								final Popup popup = popupGen(wPopup,hPopup,"Message not sent due to DB error");
+								popup.centerOnScreen(); 
+							    
+							    popup.show(curr);
+							    popup.setAutoHide(true);
+								
+								e1.printStackTrace();
+								return;
+							}
+							Log.getInstance().getLogger().info("\nMessaggi dopo l'invio:\n");
 
 							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
 								Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
@@ -621,13 +654,29 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					chatContainer.setAlignment(Pos.BOTTOM_RIGHT);
 					chatContainer.setId("activityCh");
 					root.getChildren().add(chatContainer);
+					Timer chatRefreshTimer = new Timer();
 					
 					close.setOnAction(new EventHandler<ActionEvent>(){
 						@Override public void handle(ActionEvent e) {
 							root.getChildren().remove(chatContainer);
+							chatRefreshTimer.cancel();
 						}
 					});
 					
+					
+					chatRefreshTimer.scheduleAtFixedRate(new TimerTask() {
+						@Override
+						public void run() {
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									Log.getInstance().getLogger().info("Refreshing messages...");
+									updateChat(chat,activitySelected.getChannel());
+								}
+							});
+						}
+						
+					},0, 10000);
 				}
 		});
 		
@@ -973,9 +1022,26 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		}
 	}
 
+	
+	
 	private void updateChat(ListView chat, Channel ch) {
 		int i;
 		chat.getItems().clear();
+		try {
+			ch = daoCH.getChannel(ch.getActivityReferenced());
+		} catch (ClassNotFoundException | SQLException e) {
+			final Popup popup = popupGen(wPopup,hPopup,"Unable to get chat.");
+			popup.centerOnScreen(); 
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
+		    
+			e.printStackTrace();
+			return;
+		}
+		//ONCE THE ACTIVITY HAS HIS NEWLY UPDATED CHANNEL THE CHAT WILL BE 
+		//UPDATED.
+		activitySelected.setChannel(ch);
 		for(i=0;i<ch.getChat().size();i++) {
 			//TODO qui posso nominarla in altro modo la VBOX?
 			VBox chatContainer = new VBox();
@@ -1006,6 +1072,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			chatMss.getChildren().add(chatContainer);
 			chatMss.autosize();
 			
+			System.out.println("Messaggi ricevuti: "+chatMss);
 			
 			if(user.getUsername().equals(usernameMss)) {
 				CornerRadii cr = new CornerRadii(8);

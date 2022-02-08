@@ -1,12 +1,8 @@
 package logic.view;
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -14,7 +10,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -37,7 +32,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.ActivityType;
@@ -46,14 +40,9 @@ import logic.model.Cadence;
 import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
 import logic.model.DAOPlace;
-import logic.model.DAOPreferences;
-import logic.model.Discount;
 import logic.model.Log;
-import logic.model.NormalActivity;
-import logic.model.Partner;
 import logic.model.Place;
 import logic.model.Preferences;
-import logic.model.SuperActivity;
 
 public class CreateActivityView implements Initializable{
 
@@ -114,9 +103,7 @@ public class CreateActivityView implements Initializable{
 	private static DatePicker eDate;
 	private static DatePicker sDate2;
 	private static DatePicker eDate2;
-	private static TextField searchField;
 	private static TextField actNameField;
-	private static TextField tField;
 	private static Stage curr;
 	private static VBox rt;
 	private static DAOActivity daoAc;
@@ -136,9 +123,6 @@ public class CreateActivityView implements Initializable{
 	private static TextField actDescriptionText;
 	private static long wPopup = 500;
 	private static long hPopup = 50;
-	private static ChoiceBox<String> discountPercentage;
-	private static CheckBox addCoupons;
-	
 	private static String BGCOLORKEY = "ffffff";
 		
 	public static void render(Stage current) {
@@ -177,13 +161,11 @@ public class CreateActivityView implements Initializable{
 		placesFound = new ArrayList<>();
 		
 		actNameField=actNameTF;
-		searchField=searchBar;
 		clTime=closingTime;
 		opTime=openingTime;
 		pList=placesList;
 		rt=root;
 		typeBox = tBox;
-		tField=tagField;
 		actDescriptionText = activityDescriptionText;
 		pHBox=prefHBox;
 
@@ -308,7 +290,7 @@ public class CreateActivityView implements Initializable{
 				
 			}
 		});
-		if(Navbar.getUser() instanceof Partner) {
+/*		if(Navbar.getUser() instanceof Partner) {
 			VBox couponBox = new VBox();
 			
 			addCoupons = new CheckBox();
@@ -348,7 +330,7 @@ public class CreateActivityView implements Initializable{
 			});
 
 			elementsVBox.getChildren().add(couponBox);
-		}
+		}*/
 	}
 	
 	public void updateDescription() {
@@ -601,7 +583,7 @@ public class CreateActivityView implements Initializable{
 		//SE L'UTENTE CHE CREA L'ATTIVITA' E' UN PARTNER LA SUA ATTIVITA' SARA' CERTIFICATA DALLA 
 		//NASCITA.
 		
-		if(Navbar.getUser() instanceof Partner) {
+		/*if(Navbar.getUser() instanceof Partner) {
 			caBean.setOwner(Navbar.getUser().getUserID().intValue());
 			caBean.setPrice("200");
 			if(addCoupons.isSelected()) {
@@ -609,7 +591,7 @@ public class CreateActivityView implements Initializable{
 				
 			}
 			
-		}
+		}*/
 		
 		
 //		SuperActivity act = null;
@@ -683,10 +665,9 @@ public class CreateActivityView implements Initializable{
 //            dialog.show();
 //			return false;
 //		}
-		SuperActivity act = null;
 		CreateActivityController caCont = new CreateActivityController(caBean);
 		try {
-			act = (SuperActivity)caCont.createActivity();
+			caCont.createActivity();
 			caCont.saveActivity();
 		} catch (Exception e) {
 			Log.getInstance().getLogger().info("Error in DB");
