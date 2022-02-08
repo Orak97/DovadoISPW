@@ -19,7 +19,7 @@
 	if(request.getParameter("zone")!= null){
 		FindActivityController controller = new FindActivityController(findBean,null);	
 		try{
-			foundActivities = controller.FindActivitiesByZone();
+			foundActivities = controller.findActivitiesByZone();
 			isSearch = true;
 		}catch(NullPointerException e){
 			%> <script> alert('Inserisci correttamente i campi zona!') </script> <%
