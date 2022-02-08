@@ -42,7 +42,7 @@ public class NavbarController {
     	Log.getInstance().getLogger().info("Clicked home");
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
-    	//HomeView hv = new HomeView();
+    	//HomeView hv = new HomeView()
     	HomeView.render(current);
     }
 
@@ -52,7 +52,7 @@ public class NavbarController {
     	Log.getInstance().getLogger().info("Clicked create activity");
     	Stage current = (Stage)((Node)Navbar.getNavbar()).getScene().getWindow();
     	Navbar.loginSetup();
-    	//HomeView hv = new HomeView();
+    	//HomeView hv = new HomeView()
     	CreateActivityView.render(current);
     }
     
