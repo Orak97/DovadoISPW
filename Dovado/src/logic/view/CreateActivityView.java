@@ -141,6 +141,8 @@ public class CreateActivityView implements Initializable{
 			createActivity = FXMLLoader.load(Main.class.getResource("createActivity.fxml"));
 			VBox.setVgrow(createActivity, Priority.SOMETIMES);
 			
+			curr=current;
+			
 			root.getChildren().addAll(navbar,createActivity);
 			
 			current.show();	
@@ -197,14 +199,23 @@ public class CreateActivityView implements Initializable{
 		expiringBox.setAlignment(Pos.CENTER);
 		periodicBox.setAlignment(Pos.CENTER);
 		
-		//TODO:: GUARDARE CON ATTENZIONE QUESTA PARTE DI CODICE
-		//DUE ELEMENTI NON POSSO CONDIVIDERE STESSI FIGLI.
-		
 		periodicBox.getChildren().addAll(cadenceText,cadBox,sDate2Text,sDate2,eDate2Text,eDate2);
 		expiringBox.getChildren().addAll(sDateText,sDate,eDateText,eDate);
 		
 		cadBox.getItems().addAll(CADENCEKEY[0],CADENCEKEY[1],CADENCEKEY[2]);
 		typeBox.getItems().addAll("Continua","Periodica","Scadenza");
+		
+		typeBox.setOnAction(new EventHandler<ActionEvent>(){
+			
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				updateDescription();
+	
+			}
+			
+		});
 		
 		createActBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
@@ -708,7 +719,7 @@ public class CreateActivityView implements Initializable{
 		popup.centerOnScreen();
 		
 		Text errorTxt = new Text(error);
-		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.getStyleClass().add("textEventName");
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    

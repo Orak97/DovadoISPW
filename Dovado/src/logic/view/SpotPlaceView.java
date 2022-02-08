@@ -32,6 +32,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.web.WebEngine;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -79,6 +80,8 @@ public class SpotPlaceView implements Initializable{
 	private static StackPane lastPlaceBoxSelected;
 	private static long wPopup = 500;
 	private static long hPopup = 50;
+	private static WebEngine we;
+	
 	private static final  String[] REGIONSKEY = {
 			"Abruzzo"
 			,"Basilicata"
@@ -117,6 +120,10 @@ public class SpotPlaceView implements Initializable{
 		addressText = address;
 		civicoText = civico;
 		cityText = city;
+		
+		we = new WebEngine();
+		we.load("http://localhost:8080/Dovado/MapView.html");
+		we.setJavaScriptEnabled(true);
 		
 		region.getItems().addAll(REGIONSKEY);
 		
@@ -199,17 +206,14 @@ public class SpotPlaceView implements Initializable{
 		spBean.setPlaceName(placeName);
 		spBean.setRegion(region);
 		spBean.setStreetNumber(civico);
-//		Aggiungere qualcosa che prenda e trovi lat e long di quello che sto inserendo
-//		MapConfig mg = new MapConfig();
-//		mg.
-//		LatLong ll = new LatLong(0, 0);
-//		ll.
-//		
-//		spBean.set
+
+        
+		we.executeScript("retrieveLatLng('"+civico+"',\""+address+"\",\""+city+"\",\""+region+"\",'null')");
+		double[] coord = {0,0};
+		coord[0] = (double) we.executeScript("getDesktopLatitude()");
+		coord[1] = (double) we.executeScript("getDesktopLongitude()");
 		
-		//TODO:: DA CONTROLLARE SPOT PLACE!
 		try {
-			double[] coord= {0,0};
 			if(daoPl.spotPlace(address, placeName, city, region, civico, city,coord)<0) {
 				final Popup popup = popupGen(wPopup,hPopup,"Error: place not spotted!"); 
 				popup.centerOnScreen(); 
@@ -348,7 +352,7 @@ public class SpotPlaceView implements Initializable{
 		popup.centerOnScreen();
 		
 		Text errorTxt = new Text(error);
-		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.getStyleClass().add("textEventName");
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    

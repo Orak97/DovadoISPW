@@ -96,6 +96,8 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: bold;
     -fx-font-size:16.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:white;
  }
  
@@ -103,6 +105,8 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: bold;
  	-fx-font-size:22.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:white;
  }
  
@@ -110,6 +114,8 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: bold;
  	-fx-font-size:22.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:#BC9416;
  }
  
@@ -118,6 +124,8 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: bold;
     -fx-font-size:16.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:white;
  }
  
@@ -125,6 +133,8 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: bold;
  	-fx-font-size:19.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:white;
  }
  
@@ -140,6 +150,8 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: normal;
  	-fx-font-size:13.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:white;
  }
  
@@ -147,6 +159,8 @@
   -fx-font-family: 'Montserrat';
   -fx-font-weight: bold;
   -fx-font-size:16.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:white;
  }
  
@@ -154,6 +168,8 @@
   -fx-font-family: 'Montserrat';
   -fx-font-weight: bold;
   -fx-font-size:16.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill: #BC9416;
  }
 
@@ -161,6 +177,8 @@
  	-fx-font-family: 'Montserrat';
  	-fx-font-weight: normal;
  	-fx-font-size:12.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:white;
  }
  
@@ -168,9 +186,26 @@
   -fx-font-family: 'Montserrat';
   -fx-font-weight: bold;
   -fx-font-size:16.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
+ 	-fx-fill:white;
+ }
+ 
+ .placeName {
+  -fx-font-family: 'Montserrat';
+  -fx-font-weight: bold;
+  -fx-font-size:16.0;
+ 	-fx-stroke : #000000;
+ 	-fx-stroke-width: 0.5;
  	-fx-fill:white;
  }
 
+.actInfo{
+	-fx-font-family: 'Montserrat';
+ 	-fx-font-weight: normal;
+ 	-fx-font-size:13.0;
+ 	-fx-fill:white;
+}
 
 .mssusr{
   	-fx-font-family: 'Montserrat';

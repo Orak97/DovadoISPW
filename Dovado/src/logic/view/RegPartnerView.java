@@ -165,7 +165,7 @@ public class RegPartnerView implements Initializable{
     	popup.centerOnScreen();
     	
     	Text passwordNotEqualTxt = new Text(error);
-	    passwordNotEqualTxt.getStyleClass().add("textEventInfo");
+	    passwordNotEqualTxt.getStyleClass().add("textEventName");
 	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
 	    
 	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));

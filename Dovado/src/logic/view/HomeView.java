@@ -1,25 +1,16 @@
 package logic.view;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
+
 
 //import org.openstreetmap.gui.jmapviewer.JMapViewer;
 //import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -51,16 +42,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.AddActivityToScheduleController;
@@ -80,15 +67,12 @@ import logic.model.FindActivitiesBean;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.PeriodicActivity;
-import logic.model.Place;
 import logic.model.PreferenceBean;
 import logic.model.Preferences;
 import logic.model.ScheduleBean;
 import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
-import logic.view.Main;
-import logic.view.Navbar;
 
 public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
@@ -151,6 +135,7 @@ public class HomeView implements Initializable{
     private static double usrLon;
     private static ArrayList<Activity> activitiesToSpotUsr;
     private ArrayList<CertifiedActivity> activitiesToSpotPart;
+    private static boolean searchByPreference;
 
     
     public static void render(Stage current) {
@@ -201,13 +186,10 @@ public class HomeView implements Initializable{
         System.out.println("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
 
         preference1.getStyleClass().add(BTNPREFKEY);
-        preference2.getStyleClass().add(BTNPREFKEY);
-        preference3.getStyleClass().add(BTNPREFKEY);
-        
         preference1.setText("By preferences");
         
-        ArrayList<Activity> activitiesUsr = new ArrayList<Activity>();
-        ArrayList<CertifiedActivity> activitiesP = new ArrayList<CertifiedActivity>();
+        new ArrayList<Activity>();
+        new ArrayList<CertifiedActivity>();
         
         user = Navbar.getUser();
     	if(user instanceof Partner) {
@@ -226,6 +208,14 @@ public class HomeView implements Initializable{
     			// Setting permissions to interact with Js
     	        searchButton.setText("SEARCH");
     			searchButton.getStyleClass().add(BTNSRCKEY);
+    			
+    			//Al partner non serve il distance selector, ne il filter by preference.
+    			distanceSelected.setVisible(false);
+    			distanceSelected.setManaged(false);
+    			distanceSelector.setVisible(false);
+    			distanceSelector.setManaged(false);
+    			preference1.setVisible(false);
+    			preference1.setManaged(false);
     			
     			if(!activitiesPartn.isEmpty()){
     				
@@ -250,22 +240,14 @@ public class HomeView implements Initializable{
     						
     						eventInfo.setId("eventInfo");
     						eventInfo.getStyleClass().add("textEventInfo");
-    				/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-    						eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-    						eventInfo.setFill(Paint.valueOf("#BGCOLOR"));
-    						eventInfo.setStrokeWidth(0.3);
-    						eventInfo.setStroke(Paint.valueOf("#000000"));
-    					*/	
+    						eventInfo.setWrappingWidth(280);
+	
     						eventName.setId("eventName");
     						eventName.getStyleClass().add("textEventName");
     						eventName.setWrappingWidth(280);
-							/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-    						eventName.setFill(Paint.valueOf("#BGCOLOR"));
-    						eventName.setStrokeWidth(0.3);
-    						eventName.setStroke(Paint.valueOf("#000000"));
-    						*/
+
     						VBox eventText = new VBox(eventName,eventInfo);
-    						eventText.setAlignment(Pos.CENTER);
+    						eventText.setAlignment(Pos.CENTER_LEFT);
     						eventText.getStyleClass().add("eventTextVbox");
     						//Preparo un box in cui contenere il nome dell'attivit� e altre sue
     						//informazioni; uso uno StackPane per poter mettere scritte su immagini.
@@ -341,7 +323,30 @@ public class HomeView implements Initializable{
 		        
 		        searchButton.setText("SEARCH");
 				searchButton.getStyleClass().add(BTNSRCKEY);
-		   
+				int dist = (int) Math.round(distanceSelector.getMin());
+				distanceSelected.setText(Integer.toString(dist));
+    			
+				preference1.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						final Popup popup;
+						if(searchByPreference==false) {
+							searchByPreference=true;
+							popup = popupGen(wPopup,hPopup,"Your searched activities will be filtered by preference!");
+							
+						}
+						else {
+							searchByPreference=false;
+							popup = popupGen(wPopup,hPopup,"Your searched activities will not be filtered by preference!");
+						}
+						popup.centerOnScreen();
+						
+						popup.setHideOnEscape(true);
+						popup.show(curr);
+					}
+					
+				});
 				//Al posto di scegliere preferenze casuali
 				//e mostrarne i risultati prendo le preferenze dell'utente e 
 				//in base a quello restituisco risultati appropriati.
@@ -350,7 +355,7 @@ public class HomeView implements Initializable{
 			
 				if(preferences!=null){
 						
-					activities.addAll(daoAct.getNearbyActivities(usrLat,usrLon,50));
+					activities.addAll(daoAct.getNearbyActivities(usrLat,usrLon,100));
 					
 					int j;
 					for(j=0;j<activities.size();j++)
@@ -398,22 +403,13 @@ public class HomeView implements Initializable{
 							eventInfo.setId("eventInfo");
 							eventInfo.getStyleClass().add("textEventInfo");
 							eventInfo.setWrappingWidth(280);
-					/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-							eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-							eventInfo.setFill(Paint.valueOf("#BGCOLOR"));
-							eventInfo.setStrokeWidth(0.3);
-							eventInfo.setStroke(Paint.valueOf("#000000"));
-						*/	
+					
 							eventName.setId("eventName");
 							eventName.getStyleClass().add("textEventName");
 							eventName.setWrappingWidth(280);
-							/*eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-							eventName.setFill(Paint.valueOf("#BGCOLOR"));
-							eventName.setStrokeWidth(0.3);
-							eventName.setStroke(Paint.valueOf("#000000"));
-							*/
+					
 							VBox eventText = new VBox(eventName,eventInfo);
-							eventText.setAlignment(Pos.CENTER);
+							eventText.setAlignment(Pos.CENTER_LEFT);
 							eventText.getStyleClass().add("eventTextVbox");
 							//Preparo un box in cui contenere il nome dell'attivit� e altre sue
 							//informazioni; uso uno StackPane per poter mettere scritte su immagini.
@@ -484,10 +480,10 @@ public class HomeView implements Initializable{
     	}
     }
 
-	private void distanceSelected() {
+	public void updateDistance() {
 		
-		
-		
+		int dist = (int) Math.round(distanceSelector.getValue());
+		distanceSelected.setText(Integer.toString(dist));
 	}
 	
 	public void activitySelected() {
@@ -504,13 +500,13 @@ public class HomeView implements Initializable{
 
 		if(user instanceof User) {	
 			for(Activity curr:activitiesToSpotUsr) {
-				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', '"+curr.getPlace().getName()+"','"+curr.getPlace().getId()+"')");
+				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', \""+curr.getPlace().getName()+"\",'"+curr.getPlace().getId()+"')");
 			}
 			eng.executeScript("setUser('"+usrLat+"','"+usrLon+"')");
 		}
 		else {
 			for(CertifiedActivity curr:activitiesToSpotPart) {
-				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', '"+curr.getPlace().getName()+"','"+curr.getPlace().getId()+"')");
+				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', \""+curr.getPlace().getName()+"\",'"+curr.getPlace().getId()+"')");
 			}	
 		}
 		
@@ -526,7 +522,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		lastEventBoxSelected = eventBox;
 		
 		Long activityId = Long.parseLong(eventBox.getChildren().get(0).getId());
-		Long placeId = Long.parseLong(eventBox.getChildren().get(1).getId());
+		Long.parseLong(eventBox.getChildren().get(1).getId());
 		ImageView eventImage = (ImageView) eventBox.getChildren().get(2);
 		VBox eventInfo = (VBox) eventBox.getChildren().get(3);
 		
@@ -580,14 +576,13 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			activityDescription.setText(activitySelected.getDescription());
 		}
 		activityDescription.setWrappingWidth(280);
-		activityDescription.getStyleClass().add("textEventInfo");
+		activityDescription.getStyleClass().add("actInfo");
 		
 		selection.getChildren().add(0,activityDescription);
 		
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-					eng.executeScript("spotPlace('"+activitySelected.getPlace().getLatitudine()+"','"+activitySelected.getPlace().getLongitudine()+"','"+activitySelected.getPlace().getName()+"','"+activitySelected.getPlace().getId()+"')");
-					
+				eng.executeScript("spotPlace('"+activitySelected.getPlace().getLatitudine()+"','"+activitySelected.getPlace().getLongitudine()+"', \""+activitySelected.getPlace().getName()+"\",'"+activitySelected.getPlace().getId()+"')");
 					eng.executeScript("moveView('"+activitySelected.getPlace().getLatitudine()+"','"+activitySelected.getPlace().getLongitudine()+"','"+activitySelected.getId()+"')");
 					
 				}
@@ -893,13 +888,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 								String dayStringed = day.format(pickDate.getValue());
 																								
-								String[] date = dayStringed.split("-");
+								dayStringed.split("-");
 								
 								String hourChosen = hourBox.getValue();
 								String minChosen = minBox.getValue();
 								String dateReminderChosen;
 								String hourReminder;
-								String minReminder;
 								if (hourBox2.getValue()==null || minBox2.getValue()==null) {
 									int hourReminderInt = Integer.parseInt(hourChosen);
 									hourReminder = Integer.toString(hourReminderInt-1);
@@ -916,7 +910,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									}
 								} else {
 									hourReminder = hourBox2.getValue();
-									minReminder = minBox2.getValue();
+									minBox2.getValue();
 								}
 								if(pickDateReminder.getValue().toString().isBlank()) {
 									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
@@ -1105,9 +1099,9 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 	
 	public void activityDeselected(StackPane lastBox,boolean delete) {
 		
-		if(lastActivitySelected>=0)
+		if(lastActivitySelected>=0) {
 			eventsList.getItems().remove(lastActivitySelected+1);
-		
+		}
 		if(delete==true) {
 			eventsList.getItems().remove(lastEventBoxSelected);
 		
@@ -1135,32 +1129,25 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		daoAct = DAOActivity.getInstance();
 		daoPlc = DAOPlace.getInstance();
 		daoPref = DAOPreferences.getInstance();
-		int searchMode = -1;
-		
+
+		lastActivitySelected = -1;
 		String searchItem = null;
 		
+		ArrayList<Activity> activities = new ArrayList<Activity>();
+		if((searchItem = searchBar.getText())==null) return; 
+
 		eng.executeScript("removeAllMarkers()");
-		
-		if((searchItem = searchBar.getText())==null) return;
-	
-		FindActivitiesBean findActBeanZone = new FindActivitiesBean();
-		findActBeanZone.setZone(searchItem);
-		findActBeanZone.setDate(LocalDate.now().toString());
-		
-		FindActivitiesBean findActBeanKeywords = new FindActivitiesBean();
-		findActBeanKeywords.setZone(searchItem);
-		findActBeanKeywords.setDate(LocalDate.now().toString());
-		
-		PreferenceBean prefBean = new PreferenceBean();
-		prefBean.setPreferences(((User)user).getPreferences().getSetPreferences());
-		System.out.println("Preferenze settate: "+((User)user).getPreferences().getSetPreferences());
-		FindActivityController findActCtrl = new FindActivityController(findActBeanZone, prefBean);
-		ArrayList<Activity> activities = new ArrayList<>();
+		String[] keywords = searchItem.split(";");
+		activities = new ArrayList<>();
 		try {
 			//Eseguo un controllo sulla ricerca delle attività; se il risultato è un'arraylist vuoto, allora
 			//segnalo l'errore e esco dal metodo.
-			
-			if( (activities = findActCtrl.findActivities()).isEmpty() ) {
+			activities = daoAct.getNearbyActivities(usrLat, usrLon, Float.parseFloat(distanceSelected.getText()));
+			if(searchByPreference) {
+				FindActivityController.filterActivitiesByPreferences(activities,((User)user).getPreferences());
+			}
+			FindActivityController.filterActivitiesByKeyWords(activities, keywords);
+			if(activities.isEmpty() ) {
 				Log.getInstance().getLogger().info("Nothing was found!");
 				final Popup popup = popupGen(wPopup,hPopup,"Nothing has been found"); 
 				popup.centerOnScreen(); 
@@ -1175,33 +1162,6 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			e.printStackTrace();
 			return;
 		}
-	//  In base all'input dell'utente le righe sottostanti vedono se
-	//	l'utente cercava tramite preferenza o tramite nome dell'attività
-	//	
-	//	if(daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase())!=null) {
-	//		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByPreference(daoSU, searchItem.toUpperCase()));
-	//		searchMode = 1;
-	//	}
-	//	
-	//	else if(daoAct.findActivityByName(daoSU, searchItem.toUpperCase())!=null) {
-	//		activities.addAll((ArrayList<SuperActivity>)daoAct.findActivityByName(daoSU, searchItem.toUpperCase()));
-	//		searchMode = 0;
-	//	}
-		
-		//else if() {
-			
-		//}
-		
-		if(searchMode == -1) return;
-		
-	//	if(user instanceof Partner) {
-	//		ArrayList<SuperActivity> partnerAct = new ArrayList<SuperActivity>();
-	//		for(int i=0;i<activities.size();i++) {
-	//			if((activities.get(i).getCreator().getUserID()).equals(user.getUserID()))
-	//				partnerAct.add(activities.get(i));
-	//		}
-	//		activities=partnerAct;
-	//	}
 		eventsList.getItems().clear();
 		
 		int i;
@@ -1238,25 +1198,18 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					"\n"+activities.get(i).getFrequency().getOpeningTime()+
 					"-"+activities.get(i).getFrequency().getClosingTime());
 			}
-			eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/200x100"));
+			eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/290x120"));
 	
 			eventInfo.setId("eventInfo");
 			eventInfo.getStyleClass().add("textEventInfo");
-		/*	eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.MEDIUM, 12));
-			eventInfo.setTextAlignment(TextAlignment.LEFT);
-			eventInfo.setFill(Paint.valueOf("#ffffff"));
-			eventInfo.setStroke(Paint.valueOf("#000000"));
-	*/
+			eventInfo.setWrappingWidth(280);
+
 			eventName.setId("eventName");
 			eventName.getStyleClass().add("textEventName");
-		/*	eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-			eventName.setFill(Paint.valueOf("#ffffff"));
-			eventName.setStroke(Paint.valueOf("#000000"));
-	*/
-			
+			eventName.setWrappingWidth(280);
 			
 			VBox eventText = new VBox(eventName,eventInfo);
-			eventText.setAlignment(Pos.CENTER);
+			eventText.setAlignment(Pos.CENTER_LEFT);
 			
 			//Preparo un box in cui contenere il nome dell'attivit� e altre sue
 			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
@@ -1280,6 +1233,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 				eventName.getStyleClass().clear();
 				eventName.getStyleClass().add("certEventName");
 				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+				
 			}	
 			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 			eventBox.setAlignment(Pos.CENTER);
@@ -1291,7 +1245,6 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					closed.setTextAlignment(TextAlignment.CENTER);
 					eventBox.getChildren().add(closed);
 				}
-				eventsList.getItems().add(eventBox);
 			} else {
 				if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
 					eventBox.setOpacity(0.4);
@@ -1300,9 +1253,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					closed.setTextAlignment(TextAlignment.CENTER);
 					eventBox.getChildren().add(closed);
 				}
-				eventsList.getItems().add(eventBox);
 			}
-			eng.executeScript("spotPlace("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", '"+activities.get(i).getPlace().getName()+"',"+activities.get(i).getPlace().getId()+"))");;
+			eng.executeScript("spotPlace("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")");;
 			eventsList.getItems().add(eventBox);
 		}
 	}
@@ -1312,7 +1264,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		popup.centerOnScreen();
 		
 		Text errorTxt = new Text(error);
-		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.getStyleClass().add("textEventName");
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    
