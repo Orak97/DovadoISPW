@@ -85,9 +85,7 @@ public class RegPartnerView implements Initializable{
     	String passwordCheck = pswField2.getText();
     	String username = usrnameTField.getText();
     	String email = emailTField.getText();
-    	String pIVA = pIVATField.getText();
-    	String cName = compNameTField.getText();
-		
+    			
 		if(password.isEmpty() || passwordCheck.isEmpty() || username.isEmpty() || email.isEmpty()) {
 			Log.getInstance().getLogger().info("One of the fields is empty!");
 			popupGen(wErrPopup,hErrPopup, "One of the fields is empty!");
@@ -101,8 +99,8 @@ public class RegPartnerView implements Initializable{
 		regBean.setEmail(email);
 		regBean.setPassword(password);
 		regBean.setPassword2(passwordCheck);
-		regBean.setpIVA(pIVA);
-		regBean.setCompName(cName);
+		regBean.setpIVA(pIVATField.getText());
+		regBean.setCompName(compNameTField.getText());
 		
 		regBean = controller.validateForm(regBean);
 		
