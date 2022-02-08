@@ -22,6 +22,11 @@
 	User u= controller.loginExplorer(logBean);
 	if(request.getParameter("logForm")!= null){ //controllo la richiesta ricevuta, se all'interno e presente un parametro login vuol dire che arrivo a questa pagina tramite la pressione del bottone login, quindi ne consegue che i dati username e password sono pieni e quindi posso andare avanti
 		if(u != null){ 
+			Enumeration em = session.getAttributeNames();
+			while (em.hasMoreElements()) {
+			    String element = (String)em.nextElement();
+			    session.removeAttribute(element);
+			}
 			session.setAttribute("user", u);
 			session.setMaxInactiveInterval(10);
 			

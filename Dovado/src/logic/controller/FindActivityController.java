@@ -14,7 +14,6 @@ import logic.model.Activity;
 import logic.model.Cadence;
 import logic.model.CertifiedActivity;
 import logic.model.DAOActivity;
-import logic.model.DAOSuperUser;
 import logic.model.FindActivitiesBean;
 import logic.model.Log;
 import logic.model.NormalActivity;

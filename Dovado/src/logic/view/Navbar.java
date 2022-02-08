@@ -63,10 +63,13 @@ public class Navbar {
 	       	curr.setDisable(false);
 	       	curr.setVisible(true);
 	    }
+		if(Navbar.user instanceof Partner)
+			((Button)(bPNavbar.lookup("#events"))).setText("Manage activities");
 	}
 
 	public void onHome() {
-		this.changePage();
+		this.changePage();if(Navbar.user instanceof Partner)
+			((Button)(bPNavbar.lookup("#events"))).setText("Manage activities");
 		bPNavbar.lookup("#home").getStyleClass().add(ACTSTYLEKEY);
 	}
 	
@@ -87,8 +90,6 @@ public class Navbar {
 	
 	public void onEvents() {
 		this.changePage();
-		if(Navbar.user instanceof Partner)
-			((Button)(bPNavbar.lookup("#events"))).setText("Manage activities");
 		bPNavbar.lookup("#events").getStyleClass().add(ACTSTYLEKEY);
 	}
 

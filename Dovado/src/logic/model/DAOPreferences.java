@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -20,10 +21,10 @@ public class DAOPreferences {
 	
 	//----------database--------------------------------------
 	
-	private static String USER = "dovado"; //DA CAMBIARE
-	private static String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
+	private static final String USER = "dovado"; //DA CAMBIARE
+	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
+	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
+	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
 			
 	//------------------------------------------------------------
 	
@@ -38,9 +39,7 @@ public class DAOPreferences {
 		return INSTANCE;
 	}
 
-	public void updateUserPreferences(Long id, boolean arte, boolean cibo, boolean musica, boolean sport,
-			boolean social, boolean natura, boolean esplorazione, boolean ricorrenze, boolean moda, boolean shopping,
-			boolean adrenalina, boolean relax, boolean istruzione, boolean monumenti) throws ClassNotFoundException, SQLException {
+	public void updateUserPreferences(Long id, boolean[] bool) throws ClassNotFoundException, SQLException {
 		
 		CallableStatement stmt = null;
         Connection conn = null;
@@ -57,23 +56,12 @@ public class DAOPreferences {
             String call =  "{call update_user_Preferences(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
             
             stmt = conn.prepareCall(call);
-            
-            stmt.setLong(1,id);
-            stmt.setBoolean(2,arte);
-            stmt.setBoolean(3,cibo);
-            stmt.setBoolean(4,musica);
-            stmt.setBoolean(5,sport);
-            stmt.setBoolean(6,social);
-            stmt.setBoolean(7,natura);
-            stmt.setBoolean(8,esplorazione);
-            stmt.setBoolean(9,ricorrenze);
-            stmt.setBoolean(10,moda);
-            stmt.setBoolean(11,shopping);
-            stmt.setBoolean(12,adrenalina);
-            stmt.setBoolean(13,monumenti);
-            stmt.setBoolean(14,relax);
-            stmt.setBoolean(15,istruzione);
-            
+            int i=1;
+            stmt.setLong(i,id);
+            for (boolean b : bool) {
+            	i++;
+				stmt.setBoolean(i,b);
+			}
             stmt.execute();
             
         }finally {

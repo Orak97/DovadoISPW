@@ -35,16 +35,18 @@ public abstract class SuperActivity {
 		this.frequencyOfRepeat = new ContinuosActivity(openingTime,closingTime);
 	}
 	
-	protected SuperActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate) {
+	protected SuperActivity(Long id,String nome, String description, Place p, LocalTime[] openCloseTime, LocalDate[] startEndDate) {
 		//chiamare questo metodo quando si vuole creare una attività a scadenza!
+		//NOTA-----> Gli array openCloseTime e startEndDate presentano all'index 0 open/start e all'indice 1closing/end
 		this(id,nome,description,p);
-		this.frequencyOfRepeat = new ExpiringActivity(openingTime,closingTime,startDate,endDate);
+		this.frequencyOfRepeat = new ExpiringActivity(openCloseTime[0],openCloseTime[1],startEndDate[0],startEndDate[1]);
 	}
 	
-	protected SuperActivity(Long id,String nome, String description, Place p, LocalTime openingTime, LocalTime closingTime, LocalDate startDate, LocalDate endDate, Cadence cadence) {
+	protected SuperActivity(Long id,String nome, String description, Place p, LocalTime[] openCloseTime, LocalDate[] startEndDate, Cadence cadence) {
 		//chiamare questo metodo quando si vuole creare una attività periodica !
+		//NOTA-----> Gli array openCloseTime e startEndDate presentano all'index 0 open/start e all'indice 1closing/end
 		this(id,nome,description,p);
-		this.frequencyOfRepeat = new PeriodicActivity(openingTime,closingTime,startDate,endDate,cadence);
+		this.frequencyOfRepeat = new PeriodicActivity(openCloseTime[0],openCloseTime[1],startEndDate[0],startEndDate[1],cadence);
 	}
 	
 	

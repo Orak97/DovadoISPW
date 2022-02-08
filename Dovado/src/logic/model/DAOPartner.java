@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DAOPartner {
-	private static DAOPartner INSTANCE;
+	private static DAOPartner instance;
 	//----------database--------------------------------------
 	
 	private static final String USER = "dovado"; //DA CAMBIARE
@@ -26,26 +26,17 @@ public class DAOPartner {
 	private DAOPartner() {}
 	
 	public static DAOPartner getInstance() {
-		if(INSTANCE == null)
-			INSTANCE = new DAOPartner();
-		return INSTANCE;
+		if(instance == null)
+			instance = new DAOPartner();
+		return instance;
 	}
 	
-	//TODO PERCHÉ STATICO QUESTO METODO? ---- come l'altra
-	public static Partner getPartnerInfo(int owner) throws SQLException, ClassNotFoundException {
-		// STEP 1: dichiarazioni
-        CallableStatement stmt = null;
-        Connection conn = null;
-        
+	public Partner getPartnerInfo(int owner) throws SQLException, ClassNotFoundException {
+       
         Partner partner = null;
 		
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call = "{call get_partner_info(?)}";
@@ -55,8 +46,7 @@ public class DAOPartner {
             stmt.setInt(1, owner);
             
             if(!stmt.execute()) {
-            	SQLException e = new SQLException("Sembra che questo partner non esista");
-            	throw e;
+            	throw new SQLException("Sembra che questo partner non esista");
             }
             
           //ottengo il resultSet
@@ -71,21 +61,8 @@ public class DAOPartner {
            
           rs.close();
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-            	Log.getInstance().getLogger().info(LOGDBDISCONN);
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        	//Clean-up dell'ambiente
+            disconnRoutine();
         }
 		return partner;
 	}
@@ -131,7 +108,7 @@ public class DAOPartner {
             
             if(!stmt.execute()) {
             	Log.getInstance().getLogger().info("Partner non trovato");
-            };
+            }
      
             ResultSet rs = stmt.getResultSet();
                         

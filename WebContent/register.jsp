@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" %>
-<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.controller.RegExplorerController, logic.model.DAOSuperUser, logic.model.SuperActivity,logic.model.Log" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.controller.RegExplorerController, logic.model.SuperActivity,logic.model.Log" %>
 
 <jsp:useBean id ="regExpBean" scope="request" class="logic.model.RegExpBean" />
 <jsp:setProperty name="regExpBean" property="*" />

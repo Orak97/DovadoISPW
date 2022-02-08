@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -32,6 +33,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -45,7 +47,7 @@ import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
-import logic.model.DAOSuperUser;
+import logic.model.Discount;
 import logic.model.Log;
 import logic.model.NormalActivity;
 import logic.model.Partner;
@@ -132,7 +134,11 @@ public class CreateActivityView implements Initializable{
 	private static Text sDate2Text;
 	private static Text eDate2Text;
 	private static TextField actDescriptionText;
-
+	private static long wPopup = 500;
+	private static long hPopup = 50;
+	private static ChoiceBox<String> discountPercentage;
+	private static CheckBox addCoupons;
+	
 	private static String BGCOLORKEY = "ffffff";
 		
 	public static void render(Stage current) {
@@ -221,23 +227,21 @@ public class CreateActivityView implements Initializable{
 		createActBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				if(!createActivity()) {
-					final Stage dialog = new Stage();
-	                dialog.initModality(Modality.NONE);
-	                dialog.initOwner(curr);
-	                VBox dialogVbox = new VBox(20);
-	                dialogVbox.getChildren().add(new Text("Activity not created:\nInsert all informations"));
-	                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-	                dialog.setScene(dialogScene);
-	                dialog.show();
+					
+					final Popup popup = popupGen(wPopup,hPopup,"Activity not created:\nInsert all informations"); 
+					popup.centerOnScreen(); 
+				    
+				    popup.show(curr);
+				    popup.setAutoHide(true);
+					
 				} else {
-					final Stage dialog = new Stage();
-	                dialog.initModality(Modality.NONE);
-	                dialog.initOwner(curr);
-	                VBox dialogVbox = new VBox(20);
-	                dialogVbox.getChildren().add(new Text("Activity created successfully"));
-	                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-	                dialog.setScene(dialogScene);
-	                dialog.show();
+					
+					final Popup popup = popupGen(wPopup,hPopup,"Activity created successfully"); 
+					popup.centerOnScreen(); 
+				    
+				    popup.show(curr);
+				    popup.setAutoHide(true);
+					
 				}
 			}
 		});
@@ -250,14 +254,13 @@ public class CreateActivityView implements Initializable{
 					placesFound  =  (ArrayList<Place>) daoPl.searchPlaces(searchTerm);
 				
 					if( (placesFound)==null){
-							final Stage dialog = new Stage();
-						    dialog.initModality(Modality.NONE);
-						    dialog.initOwner(curr);
-						    VBox dialogVbox = new VBox(20);
-						    dialogVbox.getChildren().add(new Text("No place found in "+searchTerm));
-						    Scene dialogScene = new Scene(dialogVbox, 300, 200);
-						    dialog.setScene(dialogScene);
-						    dialog.show();
+						
+							final Popup popup = popupGen(wPopup,hPopup,"No place found in "+searchTerm); 
+							popup.centerOnScreen(); 
+						    
+						    popup.show(curr);
+						    popup.setAutoHide(true);
+							
 						}
 					} catch (Exception e1) {
 						Log.getInstance().getLogger().info("Due to DB errors places were not fetched.");
@@ -305,7 +308,47 @@ public class CreateActivityView implements Initializable{
 				
 			}
 		});
-		
+		if(Navbar.getUser() instanceof Partner) {
+			VBox couponBox = new VBox();
+			
+			addCoupons = new CheckBox();
+			addCoupons.setText("Want to add discounts to your activity?");
+			addCoupons.setTextFill(Paint.valueOf(BGCOLORKEY));
+			addCoupons.setAlignment(Pos.CENTER);
+			discountPercentage = new ChoiceBox<String>();
+			couponBox.getChildren().add(0,addCoupons);
+			
+			VBox discountBox = new VBox();
+			Text discountPerc = new Text("Chose the percentage of the discount");
+			
+			couponBox.setAlignment(Pos.CENTER);
+			discountBox.setAlignment(Pos.CENTER);
+			discountPerc.setTextAlignment(TextAlignment.CENTER);
+			
+			couponBox.setPadding(Insets.EMPTY);
+			discountBox.setPadding(Insets.EMPTY);
+			
+			discountPerc.setFill(Paint.valueOf(BGCOLORKEY));
+			discountPerc.setWrappingWidth(180);
+			discountBox.getChildren().addAll(discountPerc,discountPercentage);
+			discountPercentage.getItems().addAll("10%","20%","30%","40%","50%");
+			
+			addCoupons.setOnAction(new EventHandler<ActionEvent>(){
+
+				@Override
+				public void handle(ActionEvent event) {
+					if(couponBox.getChildren().contains(discountBox)) {
+						couponBox.getChildren().remove(discountBox);
+					} else {
+						couponBox.getChildren().add(discountBox);
+						
+					}
+				}			
+				
+			});
+
+			elementsVBox.getChildren().add(couponBox);
+		}
 	}
 	
 	public void updateDescription() {
@@ -560,6 +603,12 @@ public class CreateActivityView implements Initializable{
 		
 		if(Navbar.getUser() instanceof Partner) {
 			caBean.setOwner(Navbar.getUser().getUserID().intValue());
+			caBean.setPrice("200");
+			if(addCoupons.isSelected()) {
+				Discount disc = new Discount(Integer.valueOf(discountPercentage.getValue()),true,Integer.valueOf(discountPercentage.getValue())*10);
+				
+			}
+			
 		}
 		
 		
@@ -672,4 +721,26 @@ public class CreateActivityView implements Initializable{
 		}
 		return true;
 	}
+	
+	public Popup popupGen(double width, double height, String error) {
+		Popup popup = new Popup(); 
+		popup.centerOnScreen();
+		
+		Text errorTxt = new Text(error);
+		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.setTextAlignment(TextAlignment.CENTER);
+		errorTxt.setWrappingWidth(480);
+	    
+	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
+	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
+	    StackPane popupContent = new StackPane(r,errorTxt); 
+	    
+	    r.setStrokeType(StrokeType.OUTSIDE);
+	    r.setStrokeWidth(0.3);
+	    r.setStroke(Paint.valueOf(BGCOLORKEY));
+	    
+	    popup.getContent().add(popupContent);
+	    return popup;
+	}
+	
 }

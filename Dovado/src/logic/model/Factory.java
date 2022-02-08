@@ -6,36 +6,39 @@ import java.time.LocalTime;
 
 public class Factory {
 	private Factory(){}
-	
 	private static Activity newActivity;
 	
-	public static Activity createNormalActivity(Long id,String nome, String description, Place p,LocalTime openingTime, LocalTime closingTime) {
-		newActivity = new NormalActivity(id,nome,description, p,openingTime,closingTime);
+	public static Activity createNormalActivity(Long id,CreateActivityBean bean,Place p) {
+		LocalTime[] openCloseTime = {bean.getOpeningLocalTime(), bean.getClosingLocalTime()};
+		LocalDate[] startEndDate = {bean.getOpeningLocalDate(), bean.getEndLocalDate()};
+		switch (bean.getType()) {
+		case CONTINUA:
+			newActivity = new NormalActivity(id, bean.getActivityName(), bean.getActivityDescription(), p, bean.getOpeningLocalTime(), bean.getClosingLocalTime());
+			break;
+		case PERIODICA:
+			newActivity = new NormalActivity(id,bean.getActivityName(), bean.getActivityDescription(), p, openCloseTime ,startEndDate,bean.getCadence());
+			break;
+		case SCADENZA:
+			newActivity = new NormalActivity(id,bean.getActivityName(), bean.getActivityDescription(), p, openCloseTime ,startEndDate);
+			break;
+		}
 		return newActivity;
 	}
 	
-	public static Activity createNormalActivity(Long id,String nome, String description, Place p,LocalTime[] opCloseTime, LocalDate[] startEndDate) {
-		newActivity = new NormalActivity(id,nome,description, p,opCloseTime[0],opCloseTime[1],startEndDate[0],startEndDate[1]);
-		return newActivity;
-	}
-	
-	public static Activity createNormalActivity(Long id,String nome, String description, Place p,LocalTime[] opCloseTime, LocalDate[] startEndDate, Cadence cadence ) {
-		newActivity = new NormalActivity(id,nome,description, p,opCloseTime[0],opCloseTime[1],startEndDate[0],startEndDate[1],cadence);
-		return newActivity;
-	}
-	
-	public static Activity createCertifiedActivity(Long id,String nome, String description, Place p,LocalTime openingTime, LocalTime closingTime, Partner owner) {
-		newActivity = new CertifiedActivity(id,nome,description, p,openingTime,closingTime, owner);
-		return newActivity;
-	}
-	
-	public static Activity createCertifiedActivity(Long id,String nome, String description, Place p,LocalTime[] opCloseTime, LocalDate[] startEndDate, Partner owner) {
-		newActivity = new CertifiedActivity(id,nome,description, p,opCloseTime[0],opCloseTime[1],startEndDate[0],startEndDate[1], owner);
-		return newActivity;
-	}
-	
-	public static Activity createCertifiedActivity(Long id,String nome, String description, Place p,LocalTime[] opCloseTime, LocalDate[] startEndDate, Cadence cadence, Partner owner) {
-		newActivity = new CertifiedActivity(id,nome,description, p,opCloseTime[0],opCloseTime[1],startEndDate[0],startEndDate[1],cadence, owner);
+	public static Activity createCertifiedActivity(Long id,CreateActivityBean bean,Place p, Partner owner) {
+		LocalTime[] openCloseTime = {bean.getOpeningLocalTime(), bean.getClosingLocalTime()};
+		LocalDate[] startEndDate = {bean.getOpeningLocalDate(), bean.getEndLocalDate()};
+		switch (bean.getType()) {
+		case CONTINUA:
+			newActivity = new CertifiedActivity(id, bean.getActivityName(), bean.getActivityDescription(), p, bean.getOpeningLocalTime(), bean.getClosingLocalTime(), owner);
+			break;
+		case PERIODICA:
+			newActivity = new CertifiedActivity(id,bean.getActivityName(), bean.getActivityDescription(), p, openCloseTime ,startEndDate,bean.getCadence(), owner);
+			break;
+		case SCADENZA:
+			newActivity = new CertifiedActivity(id,bean.getActivityName(), bean.getActivityDescription(), p, openCloseTime ,startEndDate, owner);
+			break;
+		}
 		return newActivity;
 	}
 

@@ -100,10 +100,7 @@ public class DAOActivity {
 	
 	public ArrayList<Activity> getNearbyActivities(double userLat,double userLong, float maxDistance) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
-		
-		// STEP 1: dichiarazioni
-        
-        ArrayList<Activity> nearbyActivities = new ArrayList<>();
+		ArrayList<Activity> nearbyActivities = new ArrayList<>();
         
         try {
         	
@@ -126,13 +123,7 @@ public class DAOActivity {
             ResultSet rs = stmt.getResultSet();
             
             while(rs.next()) {
-            	Activity curr;
-            	
-            	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
-            	CreateActivityBean bean = fillBean(rs);
-            	
-            	CreateActivityController createActivity = new CreateActivityController(bean);
-            	curr = createActivity.createActivity();
+            	Activity curr = getActivitybyResultSet(rs);
             	
             	nearbyActivities.add(curr);
             }
@@ -145,6 +136,42 @@ public class DAOActivity {
         }
         
         return nearbyActivities;
+	}
+	
+	public ArrayList<CertifiedActivity> getPartnerActivities(Long idPartner) throws ClassNotFoundException, SQLException {
+		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
+        ArrayList<CertifiedActivity> partnerActivities = new ArrayList<>();
+        
+        try {
+        	resetConnection();
+            
+            //STEP4.1: preparo la stored procedure
+            String call = "{call get_partner_activities(?)}";
+            stmt = conn.prepareCall(call);
+            
+            stmt.setLong(1, idPartner);
+            
+            if(!stmt.execute()) {
+            	throw new SQLException("Sembra che non esistano attività per questo partner");
+            }
+            
+            //ottengo il resultSet
+            ResultSet rs = stmt.getResultSet();
+            
+            while(rs.next()) {
+            	Activity curr = getActivitybyResultSet(rs); 
+            	
+            	partnerActivities.add((CertifiedActivity) curr);
+            }
+            
+            rs.close();
+        	
+        }finally {
+        	//Clean-up dell'ambiente
+            disconnRoutine();
+        }
+        
+        return partnerActivities;
 	}
 	
 	public Activity getActivityById(Long id) throws SQLException, ClassNotFoundException{
@@ -173,12 +200,7 @@ public class DAOActivity {
             ResultSet rs = stmt.getResultSet();
             
             while(rs.next()) {    	
-            	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
-            	CreateActivityBean bean = fillBean(rs);
-            	
-            	
-            	CreateActivityController createActivity = new CreateActivityController(bean);
-            	act = createActivity.createActivity();
+            	act = getActivitybyResultSet(rs);
             }
             
             rs.close();
@@ -191,49 +213,7 @@ public class DAOActivity {
         return act;
 	}
 	
-	public ArrayList<CertifiedActivity> getPartnerActivities(Long idPartner) throws ClassNotFoundException, SQLException {
-		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
-		        
-        ArrayList<CertifiedActivity> partnerActivities = new ArrayList<>();
-        
-        try {
-        	resetConnection();
-            
-            //STEP4.1: preparo la stored procedure
-            String call = "{call get_partner_activities(?)}";
-            
-            stmt = conn.prepareCall(call);
-            
-            stmt.setLong(1, idPartner);
-            
-            if(!stmt.execute()) {
-            	throw new SQLException("Sembra che non esistano attività per questo partner");
-            }
-            
-            //ottengo il resultSet
-            ResultSet rs = stmt.getResultSet();
-            
-            while(rs.next()) {
-            	Activity curr;
-            	
-            	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
-            	CreateActivityBean bean = fillBean(rs);
-            	
-            	CreateActivityController createActivity = new CreateActivityController(bean);
-            	curr = createActivity.createActivity();
-            	
-            	partnerActivities.add((CertifiedActivity) curr);
-            }
-            
-            rs.close();
-        	
-        }finally {
-        	//Clean-up dell'ambiente
-            disconnRoutine();
-        }
-        
-        return partnerActivities;
-	}
+
 	
 	public void updateCertAcivity(CertifiedActivity activity) throws ClassNotFoundException, SQLException {
 	        	
@@ -324,7 +304,6 @@ public class DAOActivity {
 	            
 	            stmt.execute();
 	            
-	            //TODO Chiedere a Sav se necessario il throw -- separare le store procedure 
 	        }finally {
 	        	//Clean-up dell'ambiente
 	            disconnRoutine();
@@ -355,13 +334,7 @@ public class DAOActivity {
             ResultSet rs = stmt.getResultSet();
             
             while(rs.next()) {
-            	Activity curr;
-            	
-            	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
-            	CreateActivityBean bean = fillBean(rs);
-            	
-            	CreateActivityController createActivity = new CreateActivityController(bean);
-            	curr = createActivity.createActivity();
+            	Activity curr = getActivitybyResultSet(rs);
             	
             	searchedActivities.add(curr);
             }
@@ -440,40 +413,16 @@ public class DAOActivity {
         }
         
 	}
-	
-	private void resetConnection() throws ClassNotFoundException, SQLException {
-		conn = null;
-		stmt = null;
-
-		Class.forName(DRIVER_CLASS_NAME);
-
-		// apertura connessione
-        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-        Log.getInstance().getLogger().info(LOGDBCONN);
+	//---- Da qui in poi ci sono i metodi utili per la classe ma private
+	private Activity getActivitybyResultSet(ResultSet rs) throws SQLException, ClassNotFoundException {
+    	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
+    	CreateActivityBean bean = fillBean(rs);
+    	
+    	CreateActivityController createActivity = new CreateActivityController(bean);
+    	return createActivity.createActivity();
 	}
 	
-	private void disconnRoutine() throws SQLException {
-		
-		try {
-	        if (stmt != null)
-	            stmt.close();
-	    } catch (SQLException se2) {
-	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
-	    	se2.printStackTrace();
-	    	throw se2;
-	    }
-	    try {
-	        if (conn != null)
-	            conn.close();
-	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
-
-	    } catch (SQLException se) {
-	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
-	    	se.printStackTrace();
-	    }
-	}
-	
-	public CreateActivityBean fillBean(ResultSet rs) throws SQLException {
+	private CreateActivityBean fillBean(ResultSet rs) throws SQLException {
 	        	
            	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
         	CreateActivityBean bean = new CreateActivityBean();
@@ -514,6 +463,37 @@ public class DAOActivity {
         	bean.setOwner(rs.getInt("proprietario"));
         	
         	return bean;
+	}
 
+	private void resetConnection() throws ClassNotFoundException, SQLException {
+		conn = null;
+		stmt = null;
+
+		Class.forName(DRIVER_CLASS_NAME);
+
+		// apertura connessione
+        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        Log.getInstance().getLogger().info(LOGDBCONN);
+	}
+	
+	private void disconnRoutine() throws SQLException {
+		
+		try {
+	        if (stmt != null)
+	            stmt.close();
+	    } catch (SQLException se2) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
+	    	se2.printStackTrace();
+	    	throw se2;
+	    }
+	    try {
+	        if (conn != null)
+	            conn.close();
+	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
+
+	    } catch (SQLException se) {
+	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
+	    	se.printStackTrace();
+	    }
 	}
 }

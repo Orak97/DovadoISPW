@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.DAOSuperUser, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController, logic.model.Preferences, logic.controller.SetPreferencesController, logic.controller.FindActivityController, java.time.LocalDate, logic.model.CertifiedActivity" %>
+    <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Activity, logic.controller.AddActivityToScheduleController, logic.model.Preferences, logic.controller.SetPreferencesController, logic.controller.FindActivityController, java.time.LocalDate, logic.model.CertifiedActivity" %>
 
     <% application.setAttribute( "titolo" , "Home"); %>
 
