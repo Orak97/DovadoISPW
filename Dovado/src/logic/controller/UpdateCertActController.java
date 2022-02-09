@@ -162,7 +162,7 @@ public class UpdateCertActController {
 			throw e;
 		}
 		
-		ArrayList<Discount> discounts = new ArrayList<Discount>();
+		ArrayList<Discount> discounts = new ArrayList<>();
 		discounts.add(new Discount(5,beanDiscount.isDiscount5(),0));
 		discounts.add(new Discount(10,beanDiscount.isDiscount10(),0));
 		discounts.add(new Discount(20,beanDiscount.isDiscount20(),0));

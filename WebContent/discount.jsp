@@ -17,7 +17,7 @@
 		
 		try{
 			Long act = Long.parseLong(request.getParameter("activity"));
-			ArrayList<Discount> activityDiscounts = dao.viewDiscounts(act);
+			ArrayList<Discount> activityDiscounts = (ArrayList<Discount>)dao.viewDiscounts(act);
 			
 			JSONObject discountInfo = new JSONObject();
 			JSONArray discounts = new JSONArray();
@@ -50,7 +50,7 @@
 		
 		try{
 			Long act = Long.parseLong(request.getParameter("activity"));
-			ArrayList<Discount> activityDiscounts = dao.viewDiscounts(act);
+			ArrayList<Discount> activityDiscounts = (ArrayList<Discount>)dao.viewDiscounts(act);
 			
 			JSONArray discounts = new JSONArray();
 			

@@ -101,7 +101,7 @@
 		
 		
 		try{	
-			activities = daoAct.getNearbyActivities(userLat, userLong, maxDistance);
+			activities = (ArrayList<Activity>)daoAct.getNearbyActivities(userLat, userLong, maxDistance);
 		}catch(Exception e) {
 			//TODO: Fixare ASAP facendo comparire un messaggio di errore!!!!
 			e.printStackTrace();
@@ -112,7 +112,7 @@
 			p = SetPreferencesController.getPreferencesFromBean(preferenceBean);
 			areFiltersOn = true;
 		}
-		activities = FindActivityController.filterActivitiesByPreferences(activities, p);
+		activities = (ArrayList<Activity>)FindActivityController.filterActivitiesByPreferences(activities, p);
 		
 		LocalDate searchedDate = LocalDate.now();
 		if(request.getParameter("date")!= null){
@@ -129,7 +129,7 @@
 			}
 		}
 		
-		activities = FindActivityController.filterActivitiesByDate(activities, searchedDate);
+		activities = (ArrayList<Activity>) FindActivityController.filterActivitiesByDate(activities, searchedDate);
 		
 	%>
 	

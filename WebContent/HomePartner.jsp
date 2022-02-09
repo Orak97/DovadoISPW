@@ -99,7 +99,7 @@ if(partner != null){
 	
 	ArrayList<CertifiedActivity> foundActivities = new ArrayList<CertifiedActivity>();
 	try{	  		
-		foundActivities = DAOActivity.getInstance().getPartnerActivities(partner.getUserID());
+		foundActivities = (ArrayList<CertifiedActivity>)DAOActivity.getInstance().getPartnerActivities(partner.getUserID());
 		  	
 	}catch(Exception e){
 		%> <script>alert('errore nel recupero attività')</script> <%

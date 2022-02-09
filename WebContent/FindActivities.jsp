@@ -24,7 +24,7 @@ boolean displayForm = true;
 		FindActivityController controller = new FindActivityController(findBean,preferenceBean);
 		ArrayList<Activity> foundActivities = new ArrayList<Activity>();
 		try{
-		 foundActivities = controller.findActivities();
+		 foundActivities = (ArrayList<Activity>)controller.findActivities();
 		}catch(NullPointerException e){
 %> <script> alert('Inserisci correttamente i campi zona e data!') </script> <%
 			e.printStackTrace();
