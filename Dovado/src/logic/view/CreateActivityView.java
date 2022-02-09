@@ -99,46 +99,51 @@ public class CreateActivityView implements Initializable{
 	private static ChoiceBox<String> cadBox;
 	private static TextField clTime;
 	private static TextField opTime;
-	private static DatePicker sDate;
+	private static volatile DatePicker sDate;
 	private static DatePicker eDate;
 	private static DatePicker sDate2;
 	private static DatePicker eDate2;
 	private static TextField actNameField;
 	private static Stage curr;
 	private static VBox rt;
-	private static DAOActivity daoAc;
-	private static DAOPlace daoPl;
+	private DAOPlace daoPl;
 	private static Place placeSelected;
-	private static ArrayList<Place> placesFound;
+	private ArrayList<Place> placesFound;
 	private static StackPane lastPlaceBoxSelected;
 	private static Text cadenceSelText;
 	private static HBox pHBox;
 	private static VBox periodicBox;
 	private static VBox expiringBox;
-	private static Text cadenceText;
-	private static Text sDateText;
-	private static Text eDateText;
-	private static Text sDate2Text;
-	private static Text eDate2Text;
 	private static TextField actDescriptionText;
 	private static long wPopup = 500;
 	private static long hPopup = 50;
-	private static String BGCOLORKEY = "ffffff";
+	private static final String BGCOLORKEY = "ffffff";
 		
+	
+	private static void setEDate(DatePicker edate) {
+		CreateActivityView.eDate = edate;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
 			BorderPane navbar = Navbar.getNavbar();
 			Navbar.authenticatedSetup();
 			
-			VBox createActivity = new VBox();
-			
-			
 			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - events");
 			current.setScene(scene);
-			createActivity = FXMLLoader.load(Main.class.getResource("createActivity.fxml"));
+			VBox createActivity = FXMLLoader.load(Main.class.getResource("createActivity.fxml"));
 			VBox.setVgrow(createActivity, Priority.SOMETIMES);
 			
 			curr=current;
@@ -157,7 +162,6 @@ public class CreateActivityView implements Initializable{
 		createActBtn.getStyleClass().add("src-btn");
 		searchBtn.getStyleClass().add("src-btn");
 		
-		daoAc = DAOActivity.getInstance();
 		daoPl = DAOPlace.getInstance();
 		placeSelected = null;
 		placesFound = new ArrayList<>();
@@ -178,11 +182,11 @@ public class CreateActivityView implements Initializable{
 		sDate = new DatePicker(); 
 		eDate2 = new DatePicker();
 		sDate2 = new DatePicker();
-		sDateText = new Text("When does the activity begin?");
-		eDateText= new Text("When does it end?");
-		sDate2Text = new Text("When does the activity begin?");
-		eDate2Text= new Text("When does it end?");
-		cadenceText= new Text("How often does the event repeat?");
+		Text sDateText = new Text("When does the activity begin?");
+		Text eDateText= new Text("When does it end?");
+		Text sDate2Text = new Text("When does the activity begin?");
+		Text eDate2Text= new Text("When does it end?");
+		Text cadenceText= new Text("How often does the event repeat?");
 		cadenceSelText = new Text();
 
 		sDateText.setFill(Paint.valueOf(BGCOLORKEY));		
