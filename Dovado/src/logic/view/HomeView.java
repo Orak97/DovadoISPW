@@ -10,7 +10,9 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 
 //import org.openstreetmap.gui.jmapviewer.JMapViewer;
 //import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -50,6 +52,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import jdk.nashorn.api.scripting.JSObject;
 import logic.controller.AddActivityToScheduleController;
 import logic.controller.ChannelController;
 import logic.controller.FindActivityController;
@@ -61,15 +64,11 @@ import logic.model.Coupon;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
 import logic.model.DAOCoupon;
-import logic.model.DAOPlace;
-import logic.model.DAOPreferences;
 import logic.model.Discount;
 import logic.model.ExpiringActivity;
-import logic.model.FindActivitiesBean;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.PeriodicActivity;
-import logic.model.PreferenceBean;
 import logic.model.Preferences;
 import logic.model.ScheduleBean;
 import logic.model.SuperActivity;
@@ -196,6 +195,31 @@ public class HomeView implements Initializable{
 	    		activitiesToSpotPart = activitiesPartn;
     			eng = map.getEngine();
     			eng.setJavaScriptEnabled(true);
+    	        eng.getLoadWorker().stateProperty().addListener(
+    					  new ChangeListener<Worker.State>() {
+    						    @Override
+    						    public void changed(
+    						                ObservableValue<? extends Worker.State> observable,
+    						                Worker.State oldValue, Worker.State newValue) {
+    						      switch (newValue) {
+    						        case SUCCEEDED:
+    						        case FAILED:
+    						        case CANCELLED:
+    						          eng
+    						            .getLoadWorker()
+    						            .stateProperty()
+    						            .removeListener(this);
+    						      }
+
+
+    						      if (newValue != Worker.State.SUCCEEDED) {
+    						        return;
+    						      }
+
+    						      // Your logic here
+    						      System.out.println("page loaded");
+    						    }
+    			} );
     	        eng.load(MAPPATHKEY);
     			
     			// Setting permissions to interact with Js
@@ -313,10 +337,36 @@ public class HomeView implements Initializable{
 				
 				// Setting permissions to interact with Js
 		        eng.setJavaScriptEnabled(true);
+		        eng.getLoadWorker().stateProperty().addListener(
+  					  new ChangeListener<Worker.State>() {
+  						    @Override
+  						    public void changed(
+  						                ObservableValue<? extends Worker.State> observable,
+  						                Worker.State oldValue, Worker.State newValue) {
+  						      switch (newValue) {
+  						        case SUCCEEDED:
+  						        case FAILED:
+  						        case CANCELLED:
+  						          eng
+  						            .getLoadWorker()
+  						            .stateProperty()
+  						            .removeListener(this);
+  						      }
+
+
+  						      if (newValue != Worker.State.SUCCEEDED) {
+  						        return;
+  						      }
+
+  						      // Your logic here
+  						      System.out.println("page loaded");
+  						    }
+  				} );
 		        eng.load(MAPPATHKEY);
 		        
 		        searchButton.setText("SEARCH");
 				searchButton.getStyleClass().add(BTNSRCKEY);
+				searchBar.setPromptText("Search activities");
 				int dist = (int) Math.round(distanceSelector.getMin());
 				distanceSelected.setText(Integer.toString(dist));
     			
@@ -481,9 +531,7 @@ public class HomeView implements Initializable{
 	}
 	
 	public void activitySelected() {
-		
 		daoAct = DAOActivity.getInstance();
-		
 		StackPane eventBox = null;
 		try {
 			eventBox = (StackPane) eventsList.getSelectionModel().getSelectedItem();
@@ -491,18 +539,23 @@ public class HomeView implements Initializable{
 			return;
 		}
 
-		if(user instanceof User) {	
-			for(Activity curr:activitiesToSpotUsr) {
-				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', \""+curr.getPlace().getName()+"\",'"+curr.getPlace().getId()+"')");
+		if(user instanceof User) {
+			if(lastEventBoxSelected==null) {
+				for(Activity current:activitiesToSpotUsr) {
+					eng.executeScript("spotPlace("
+						+ ""+(current.getPlace().getLatitudine())+""
+						+ ","+(current.getPlace().getLongitudine())+", "
+						+ "\""+current.getPlace().getName()+"\","
+						+ ""+(current.getPlace().getId())+")");
+				}
+				eng.executeScript("setUser("+usrLat+","+usrLon+")");	
 			}
-			eng.executeScript("setUser('"+usrLat+"','"+usrLon+"')");
 		}
 		else {
 			for(CertifiedActivity curr:activitiesToSpotPart) {
-				eng.executeScript("spotPlace('"+curr.getPlace().getLatitudine()+"','"+curr.getPlace().getLongitudine()+"', \""+curr.getPlace().getName()+"\",'"+curr.getPlace().getId()+"')");
+				eng.executeScript("spotPlace("+curr.getPlace().getLatitudine()+","+curr.getPlace().getLongitudine()+", \""+curr.getPlace().getName()+"\","+curr.getPlace().getId()+")");
 			}	
 		}
-		
 Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 
 		if(lastEventBoxSelected == eventBox) return;
@@ -575,9 +628,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				eng.executeScript("spotPlace('"+activitySelected.getPlace().getLatitudine()+"','"+activitySelected.getPlace().getLongitudine()+"', \""+activitySelected.getPlace().getName()+"\",'"+activitySelected.getPlace().getId()+"')");
-					eng.executeScript("moveView('"+activitySelected.getPlace().getLatitudine()+"','"+activitySelected.getPlace().getLongitudine()+"','"+activitySelected.getId()+"')");
-					
+					eng.executeScript("moveView("+activitySelected.getPlace().getLatitudine()+","+activitySelected.getPlace().getLongitudine()+","+activitySelected.getId()+")");	
 				}
 		});
 		
@@ -1142,6 +1193,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		    searchBar.setText("");
 		    searchBar.setPromptText("Insert a 6 digit coupon code");
 		    return;
+		} else {
+			searchBar.setPromptText("Search activities");
 		}
 		
 		lastActivitySelected = -1;

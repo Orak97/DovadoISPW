@@ -91,9 +91,8 @@ function setUser(latitude,longitude){
 }
 
 function moveView(latitude,longitude,id){
-	let activity = markersOnMap.find(element => element.id == id);
+	var activity = markersOnMap.find(element => id);
 	mymap.setView([latitude,longitude],zoom+15);
-	console.log(activity);
 	activity.marker.openPopup();
 }
 
@@ -113,7 +112,7 @@ function removeAllMarkers(){
 		
   		L.esri.Geocoding.geocode().address(civicoTxt+' '+indirizzoTxt).city(cittaTxt).region(regioneTxt).postal(capTxt).run( function (err, results, response) {
   		  if (err) {
-  		    console.log(err);
+//  		    console.log(err);
   		    return;
   		  }
   		  

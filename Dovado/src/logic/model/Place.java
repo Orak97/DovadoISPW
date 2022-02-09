@@ -71,7 +71,7 @@ public class Place {
 	}
 
 	public float getLatitudine() {
-		return latitudine;
+		return this.latitudine;
 	}
 
 	public void setLatitudine(float latitudine) {
@@ -79,7 +79,7 @@ public class Place {
 	}
 
 	public float getLongitudine() {
-		return longitudine;
+		return this.longitudine;
 	}
 
 	public void setLongitudine(float longitudine) {
