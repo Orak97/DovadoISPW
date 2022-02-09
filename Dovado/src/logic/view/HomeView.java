@@ -834,7 +834,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							Text discountDescription;
 							try {
 								
-								ArrayList<Discount> discList = daoAct.viewDiscounts(activityId);
+								ArrayList<Discount> discList = (ArrayList<Discount>) daoAct.viewDiscounts(activityId);
 								if (discList==null || discList.isEmpty()) {
 									discountDescription = new Text("No discount available"+'\n'+" for this activity.");
 								}else {
@@ -1156,7 +1156,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		try {
 			//Eseguo un controllo sulla ricerca delle attività; se il risultato è un'arraylist vuoto, allora
 			//segnalo l'errore e esco dal metodo.
-			activities = daoAct.getNearbyActivities(usrLat, usrLon, Float.parseFloat(distanceSelected.getText()));
+			activities = (ArrayList<Activity>) daoAct.getNearbyActivities(usrLat, usrLon, Float.parseFloat(distanceSelected.getText()));
 			if(searchByPreference) {
 				FindActivityController.filterActivitiesByPreferences(activities,((User)user).getPreferences());
 			}

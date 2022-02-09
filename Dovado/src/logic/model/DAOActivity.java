@@ -98,7 +98,7 @@ public class DAOActivity {
 		
 	}
 	
-	public ArrayList<Activity> getNearbyActivities(double userLat,double userLong, float maxDistance) throws ClassNotFoundException, SQLException {
+	public List<Activity> getNearbyActivities(double userLat,double userLong, float maxDistance) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
 		ArrayList<Activity> nearbyActivities = new ArrayList<>();
         
@@ -138,7 +138,7 @@ public class DAOActivity {
         return nearbyActivities;
 	}
 	
-	public ArrayList<CertifiedActivity> getPartnerActivities(Long idPartner) throws ClassNotFoundException, SQLException {
+	public List<CertifiedActivity> getPartnerActivities(Long idPartner) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
         ArrayList<CertifiedActivity> partnerActivities = new ArrayList<>();
         
@@ -311,7 +311,7 @@ public class DAOActivity {
 	}
 	
 	
-	public ArrayList<Activity> findActivitiesByZone(String zone) throws ClassNotFoundException, SQLException {
+	public List<Activity> findActivitiesByZone(String zone) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività partendo da una zona (CAP, Città, Regione)
         
         ArrayList<Activity> searchedActivities = new ArrayList<>();
@@ -349,7 +349,7 @@ public class DAOActivity {
         return searchedActivities;
 	}
 	
-	public ArrayList<Discount> viewDiscounts (Long idActivity) throws ClassNotFoundException, SQLException {
+	public List<Discount> viewDiscounts (Long idActivity) throws ClassNotFoundException, SQLException {
 		// STEP 1: dichiarazioni
        
         ArrayList<Discount> scontiDisponibili = new ArrayList<>();
@@ -414,7 +414,7 @@ public class DAOActivity {
         
 	}
 	
-	public void modifyDiscounts(Long activityId, Long partnerID, ArrayList<Discount> discounts) throws SQLException, ClassNotFoundException{
+	public void modifyDiscounts(Long activityId, Long partnerID, List<Discount> discounts) throws SQLException, ClassNotFoundException{
 		try {
 			resetConnection();
 			

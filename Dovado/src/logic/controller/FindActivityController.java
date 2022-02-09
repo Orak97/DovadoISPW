@@ -34,7 +34,7 @@ public class FindActivityController {
 		this.beanPref = beanPref;
 	}
 	
-	public ArrayList<Activity> findActivities() throws ClassNotFoundException, SQLException {
+	public List<Activity> findActivities() throws ClassNotFoundException, SQLException {
 		//controllo che i campi non siano nulli
 		if(beanFind.getZone() == null || beanFind.getDate() == null) throw new NullPointerException();
 		
@@ -51,24 +51,24 @@ public class FindActivityController {
 		
 		DAOActivity dao = DAOActivity.getInstance();
 		
-		ArrayList<Activity> searchedActivities = dao.findActivitiesByZone(beanFind.getZone());
+		ArrayList<Activity> searchedActivities = (ArrayList<Activity>) dao.findActivitiesByZone(beanFind.getZone());
 		
 		//to remove
 		Log.getInstance().getLogger().info("dopo find activities by zone");
 		for(Activity a : searchedActivities) Log.getInstance().getLogger().info(a.getName());
 		
 		
-		if(keywords != null) searchedActivities = filterActivitiesByKeyWords(searchedActivities, keywords);
+		if(keywords != null) searchedActivities = (ArrayList<Activity>) filterActivitiesByKeyWords(searchedActivities, keywords);
 		
 		Preferences p = SetPreferencesController.getPreferencesFromBean(beanPref);
 		
-		searchedActivities = filterActivitiesByPreferences(searchedActivities,p);
+		searchedActivities = (ArrayList<Activity>) filterActivitiesByPreferences(searchedActivities,p);
 		
 		//to remove
 		Log.getInstance().getLogger().info("dopo find activities by preferences");
 		for(Activity a : searchedActivities) Log.getInstance().getLogger().info(a.getName());
 		
-		searchedActivities = filterActivitiesByDate(searchedActivities,date);
+		searchedActivities = (ArrayList<Activity>) filterActivitiesByDate(searchedActivities,date);
 		
 		//to remove
 		Log.getInstance().getLogger().info("dopo find activities by date");
@@ -77,7 +77,7 @@ public class FindActivityController {
 		return searchedActivities;
 	}
 	
-	public ArrayList<Activity> findActivitiesByZone() throws ClassNotFoundException, SQLException {
+	public List<Activity> findActivitiesByZone() throws ClassNotFoundException, SQLException {
 		//controllo che i campi non siano nulli
 		if(beanFind.getZone() == null) throw new NullPointerException();
 				
@@ -87,7 +87,7 @@ public class FindActivityController {
 	}	
 	
 
-	public static ArrayList<Activity> filterActivitiesByKeyWords(ArrayList<Activity> activities,String[] keywords){
+	public static List<Activity> filterActivitiesByKeyWords(ArrayList<Activity> activities,String[] keywords){
 		//metodo per filtrare una lista di attività in base alle parole chiave
 		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {
@@ -102,7 +102,7 @@ public class FindActivityController {
 		return filteredActivities;
 	}
 	
-	public static ArrayList<Activity> filterActivitiesByDate(ArrayList<Activity> activities, LocalDate date){
+	public static List<Activity> filterActivitiesByDate(ArrayList<Activity> activities, LocalDate date){
 		//metodo per filtrare una lista di attività in base alla data (se è aperta in giorno "date" allora è ok)
 		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {
@@ -111,7 +111,7 @@ public class FindActivityController {
 		return filteredActivities;
 	}
 	
-	public static ArrayList<Activity> filterActivitiesByPreferences(ArrayList<Activity> activities, Preferences preferences){
+	public static List<Activity> filterActivitiesByPreferences(ArrayList<Activity> activities, Preferences preferences){
 		//metodo per filtrare una lista di attività in base alle preferenze		
 		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {

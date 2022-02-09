@@ -184,7 +184,7 @@ public class EventsView implements Initializable{
 			Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
 	}
 	private void initPartner() throws ClassNotFoundException,SQLException{
-		ArrayList<CertifiedActivity> activitiesPart = daoAct.getPartnerActivities(user.getUserID());
+		ArrayList<CertifiedActivity> activitiesPart = (ArrayList<CertifiedActivity>) daoAct.getPartnerActivities(user.getUserID());
     	
 		for(int i=0;i<activitiesPart.size();i++) {
 			activities.add((Activity)activitiesPart.get(i));
@@ -769,7 +769,7 @@ public class EventsView implements Initializable{
 		activities.clear();
 		try { 
 			if(user instanceof Partner) {
-				ArrayList<CertifiedActivity> activitiesP = daoAct.getPartnerActivities(user.getUserID());
+				ArrayList<CertifiedActivity> activitiesP = (ArrayList<CertifiedActivity>) daoAct.getPartnerActivities(user.getUserID());
 				for(CertifiedActivity act:activitiesP)
 					activities.add((Activity)act);
 				fillEventsListPartner();
