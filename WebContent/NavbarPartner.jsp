@@ -41,7 +41,7 @@
 	  			case "Create Activity": active = 1;
 	  			break;
 				
-	  			case "User Profile": active = 2;
+	  			case "Partner Profile": active = 2;
 	  			break;
 	  			
 	  			case "HomeLogin": active = 3;
@@ -119,7 +119,7 @@
 		            My profile <i class="bi bi-person-circle"></i>
 		          </a>
 		          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-		            <li><a class="dropdown-item" href="UserProfile.jsp">My profile</a></li>
+		            <li><a class="dropdown-item" href="PartnerProfile.jsp">My profile</a></li>
 		            <li><hr class="dropdown-divider"></li>
 		            <li><a class="dropdown-item" href="logout.jsp">Log out</a></li>
 		          </ul>
