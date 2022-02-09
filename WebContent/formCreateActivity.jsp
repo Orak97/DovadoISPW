@@ -50,6 +50,12 @@
 					<script>alert('Attività creata correttamente!')</script>
 				<%
 			}
+			catch(IllegalArgumentException e){
+				e.printStackTrace();
+				%>
+					<script>alert("<%=e.getMessage()%>")</script>
+				<%
+			}
 			catch(Exception e){
 				e.printStackTrace();
 				%>
