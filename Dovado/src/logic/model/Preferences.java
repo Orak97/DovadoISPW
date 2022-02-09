@@ -1,7 +1,5 @@
 package logic.model;
 
-import java.util.Iterator;
-
 public class Preferences {
 	private boolean arte; 
 	private boolean cibo; 
@@ -18,6 +16,7 @@ public class Preferences {
 	private boolean istruzione; 
 	private boolean monumenti;
 	
+	private PreferenceBean prefs;
 	
 	public Preferences(CreateActivityBean bean) {
 		boolean[] boolPref = {
@@ -35,118 +34,130 @@ public class Preferences {
 				bean.isRelax(),
 				bean.isIstruzione(),
 				bean.isMonumenti()};
-		setInterestedCategories(boolPref);
+		prefs.setPreferences(boolPref);
 	}
 	
 	public Preferences(PreferenceBean bean) {
-		boolean[] boolPref = {
-				bean.isArte(),
-				bean.isCibo(),
-				bean.isMusica(),
-				bean.isSport(),
-				bean.isSocial(),
-				bean.isNatura(),
-				bean.isEsplorazione(),
-				bean.isRicorrenze(),
-				bean.isModa(),
-				bean.isShopping(),
-				bean.isAdrenalina(),
-				bean.isRelax(),
-				bean.isIstruzione(),
-				bean.isMonumenti()};
-		setInterestedCategories(boolPref);
+		prefs = bean;
 	}
 	
 	public Preferences(boolean[] interestedCategories) {
-		setInterestedCategories(interestedCategories);
+		prefs.setPreferences(interestedCategories);
 	}
 
 	/******************************************************************************
 	 *  getter e setter 
 	 ******************************************************************************/
 	public boolean isArte() {
-		return arte;
+		return prefs.isArte();
 	}
+
 	public void setArte(boolean arte) {
-		this.arte = arte;
+		prefs.setArte(arte);
 	}
+
 	public boolean isCibo() {
-		return cibo;
+		return prefs.isCibo();
 	}
+
 	public void setCibo(boolean cibo) {
-		this.cibo = cibo;
+		prefs.setCibo(cibo);
 	}
+
 	public boolean isMusica() {
-		return musica;
+		return prefs.isMusica();
 	}
+
 	public void setMusica(boolean musica) {
-		this.musica = musica;
+		prefs.setMusica(musica);
 	}
+
 	public boolean isSport() {
-		return sport;
+		return prefs.isSport();
 	}
+
 	public void setSport(boolean sport) {
-		this.sport = sport;
+		prefs.setSport(sport);
 	}
+
 	public boolean isSocial() {
-		return social;
+		return prefs.isSocial();
 	}
+
 	public void setSocial(boolean social) {
-		this.social = social;
+		prefs.setSocial(social);
 	}
+
 	public boolean isNatura() {
-		return natura;
+		return prefs.isNatura();
 	}
+
 	public void setNatura(boolean natura) {
-		this.natura = natura;
+		prefs.setNatura(natura);
 	}
+
 	public boolean isEsplorazione() {
-		return esplorazione;
+		return prefs.isEsplorazione();
 	}
+
 	public void setEsplorazione(boolean esplorazione) {
-		this.esplorazione = esplorazione;
+		prefs.setEsplorazione(esplorazione);
 	}
+
 	public boolean isRicorrenzeLocali() {
-		return ricorrenzeLocali;
+		return prefs.isRicorrenze();
 	}
-	public void setRicorrenzeLocali(boolean ricorrenzeLocali) {
-		this.ricorrenzeLocali = ricorrenzeLocali;
+
+	public void setRicorrenzeLocali(boolean ricorrenze) {
+		prefs.setRicorrenze(ricorrenze);
 	}
+
 	public boolean isModa() {
-		return moda;
+		return prefs.isModa();
 	}
+
 	public void setModa(boolean moda) {
-		this.moda = moda;
+		prefs.setModa(moda);
 	}
+
 	public boolean isShopping() {
-		return shopping;
+		return prefs.isShopping();
 	}
+
 	public void setShopping(boolean shopping) {
-		this.shopping = shopping;
+		prefs.setShopping(shopping);
 	}
+
 	public boolean isAdrenalina() {
-		return adrenalina;
+		return prefs.isAdrenalina();
 	}
+
 	public void setAdrenalina(boolean adrenalina) {
-		this.adrenalina = adrenalina;
+		prefs.setAdrenalina(adrenalina);
 	}
+
 	public boolean isRelax() {
-		return relax;
+		return prefs.isRelax();
 	}
+
 	public void setRelax(boolean relax) {
-		this.relax = relax;
+		prefs.setRelax(relax);
 	}
+
 	public boolean isIstruzione() {
-		return istruzione;
+		return prefs.isIstruzione();
 	}
+
 	public void setIstruzione(boolean istruzione) {
-		this.istruzione = istruzione;
+		prefs.setIstruzione(istruzione);
 	}
+
 	public boolean isMonumenti() {
-		return monumenti;
+		return prefs.isMonumenti();
 	}
+
 	public void setMonumenti(boolean monumenti) {
-		this.monumenti = monumenti;
+		prefs.setMonumenti(monumenti);
 	}
 
 	public void setInterestedCategories(boolean[] interestedCategories) {

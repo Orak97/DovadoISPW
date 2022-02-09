@@ -27,11 +27,11 @@ import java.util.List;
 public class FindActivityController {
 	
 	private FindActivitiesBean beanFind;
-	private PreferenceBean beanPref;
+	private Preferences beanPref;
 	
 	public FindActivityController(FindActivitiesBean beanFind,PreferenceBean beanPref) {
 		this.beanFind = beanFind;
-		this.beanPref = beanPref;
+		this.beanPref = new Preferences(beanPref);
 	}
 	
 	public List<Activity> findActivities() throws ClassNotFoundException, SQLException {
@@ -60,7 +60,7 @@ public class FindActivityController {
 		
 		if(keywords != null) searchedActivities = (ArrayList<Activity>) filterActivitiesByKeyWords(searchedActivities, keywords);
 		
-		Preferences p = SetPreferencesController.getPreferencesFromBean(beanPref);
+		Preferences p = beanPref;
 		
 		searchedActivities = (ArrayList<Activity>) filterActivitiesByPreferences(searchedActivities,p);
 		

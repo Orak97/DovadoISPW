@@ -5,134 +5,124 @@ import java.util.regex.Pattern;
 import logic.controller.RegExplorerController;
 
 public class RegExpBean extends RegBean{
+	private PreferenceBean pref;
 	
-	private boolean arte = false;
-	private boolean cibo = false;
-	private boolean musica = false;
-	private boolean sport = false;
-	private boolean social = false;
-	private boolean natura = false;
-	private boolean esplorazione = false;
-	private boolean ricorrenze = false;
-	private boolean moda = false;
-	private boolean shopping = false;
-	private boolean adrenalina = false;
-	private boolean relax = false;
-	private boolean istruzione= false;
-	private boolean monumenti = false;
-	
+	public RegExpBean(){
+		super();
+		pref = new PreferenceBean();
+	}
 	//Inizio getter e setter delle preferenze
 	
 	public boolean getArte() {
-		return arte;
+		return pref.isArte();
 	}
 
 	public void setArte(boolean arte) {
-		this.arte = arte;
+		pref.setArte(arte);
 	}
 
 	public boolean getCibo() {
-		return cibo;
+		return pref.isCibo();
 	}
 
 	public void setCibo(boolean cibo) {
-		this.cibo = cibo;
+		pref.setCibo(cibo);
 	}
 
 	public boolean getMusica() {
-		return musica;
+		return pref.isMusica();
 	}
 
 	public void setMusica(boolean musica) {
-		this.musica = musica;
+		pref.setMusica(musica);
 	}
 
 	public boolean getSport() {
-		return sport;
+		return pref.isSport();
 	}
 
 	public void setSport(boolean sport) {
-		this.sport = sport;
+		pref.setSport(sport);
 	}
 
 	public boolean getSocial() {
-		return social;
+		return pref.isSocial();
 	}
 
 	public void setSocial(boolean social) {
-		this.social = social;
+		pref.setSocial(social);
 	}
 
 	public boolean getNatura() {
-		return natura;
+		return pref.isNatura();
 	}
 
 	public void setNatura(boolean natura) {
-		this.natura = natura;
+		pref.setNatura(natura);
 	}
 
 	public boolean getEsplorazione() {
-		return esplorazione;
+		return pref.isEsplorazione();
 	}
 
 	public void setEsplorazione(boolean esplorazione) {
-		this.esplorazione = esplorazione;
+		pref.setEsplorazione(esplorazione);
 	}
 
 	public boolean getRicorrenze() {
-		return ricorrenze;
+		return pref.isRicorrenze();
 	}
 
 	public void setRicorrenze(boolean ricorrenze) {
-		this.ricorrenze = ricorrenze;
+		pref.setRicorrenze(ricorrenze);
 	}
 
 	public boolean getModa() {
-		return moda;
+		return pref.isModa();
 	}
 
 	public void setModa(boolean moda) {
-		this.moda = moda;
+		pref.setModa(moda);
 	}
 
 	public boolean getShopping() {
-		return shopping;
+		return pref.isShopping();
 	}
 
 	public void setShopping(boolean shopping) {
-		this.shopping = shopping;
+		pref.setShopping(shopping);
 	}
 
 	public boolean getAdrenalina() {
-		return adrenalina;
+		return pref.isAdrenalina();
 	}
 
 	public void setAdrenalina(boolean adrenalina) {
-		this.adrenalina = adrenalina;
+		pref.setAdrenalina(adrenalina);
 	}
 
 	public boolean getRelax() {
-		return relax;
+		return pref.isRelax();
 	}
 
 	public void setRelax(boolean relax) {
-		this.relax = relax;
+		pref.setRelax(relax);
 	}
 
 	public boolean getIstruzione() {
-		return istruzione;
+		return pref.isIstruzione();
 	}
 
 	public void setIstruzione(boolean istruzione) {
-		this.istruzione = istruzione;
+		pref.setIstruzione(istruzione);
 	}
 
 	public boolean getMonumenti() {
-		return monumenti;
+		return pref.isMonumenti();
 	}
 
 	public void setMonumenti(boolean monumenti) {
-		this.monumenti = monumenti;
+		pref.setMonumenti(monumenti);
 	}
 
 }
