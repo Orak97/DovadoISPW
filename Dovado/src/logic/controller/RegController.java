@@ -5,14 +5,13 @@ import java.util.regex.Pattern;
 
 import logic.model.Log;
 import logic.model.RegBean;
-import logic.model.RegPartnerBean;
 
 public abstract class RegController {
 	private Pattern patternPsw;
 	private Pattern patternEmail;
 	private Pattern patternUname;
 	
-	public RegController() {
+	protected RegController() {
 		patternEmail = Pattern.compile(".+@.+\\.[a-z]+");
 		patternPsw = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[,.!?&]).{8,20})");
 		patternUname = Pattern.compile("^[a-zA-Z0-9_-]{4,15}");
