@@ -1,10 +1,25 @@
 package logic.model;
 
 public class Preferences {
+	private boolean arte; 
+	private boolean cibo; 
+	private boolean musica;
+	private boolean sport;
+	private boolean social;
+	private boolean natura; 
+	private boolean esplorazione; 
+	private boolean ricorrenzeLocali;
+	private boolean moda;
+	private boolean shopping;
+	private boolean adrenalina;
+	private boolean relax;
+	private boolean istruzione; 
+	private boolean monumenti;
 	
 	private PreferenceBean prefs;
 	
 	public Preferences(CreateActivityBean bean) {
+		prefs = new PreferenceBean();
 		boolean[] boolPref = {
 				bean.isArte(),
 				bean.isCibo(),
@@ -24,10 +39,14 @@ public class Preferences {
 	}
 	
 	public Preferences(PreferenceBean bean) {
+		prefs = new PreferenceBean();
+
 		prefs = bean;
 	}
 	
 	public Preferences(boolean[] interestedCategories) {
+		prefs = new PreferenceBean();
+
 		prefs.setPreferences(interestedCategories);
 	}
 
