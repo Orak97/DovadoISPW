@@ -60,12 +60,6 @@ public class CreateActivityView implements Initializable{
 
 	@FXML
 	private TextField tagField;
-//	
-//	@FXML
-//	private DatePicker startDate;
-//	
-//	@FXML
-//	private DatePicker endDate;
 
 	@FXML
 	private VBox elementsVBox;
@@ -163,7 +157,7 @@ public class CreateActivityView implements Initializable{
 
 		expiringBox = new VBox();
 		periodicBox = new VBox();
-		cadBox = new ChoiceBox<String>(); 
+		cadBox = new ChoiceBox<>(); 
 		eDate = new DatePicker();
 		sDate = new DatePicker(); 
 		eDate2 = new DatePicker();
@@ -267,42 +261,33 @@ public class CreateActivityView implements Initializable{
 		if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.CONTINUA) 
 		{
 			cadenceDescription.setText("Activities open every day of the week, eg: a walk in villa Borghese ");
-			cadenceDescription.setWrappingWidth(280);
-
-			if(elementsVBox.getChildren().contains(expiringBox))
-				elementsVBox.getChildren().remove(expiringBox);
-
-			if(elementsVBox.getChildren().contains(periodicBox))
-				elementsVBox.getChildren().remove(periodicBox);
+			chooseBox();
 		}
 		else if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.PERIODICA) 
 		{
 			cadenceDescription.setText("Activities repeated with a certain frequency, for a period of time.");
-			cadenceDescription.setWrappingWidth(280);
-			
-			if(elementsVBox.getChildren().contains(expiringBox))
-				elementsVBox.getChildren().remove(expiringBox);
-			
-			if(!elementsVBox.getChildren().contains(periodicBox)) {
-				elementsVBox.getChildren().add(3, periodicBox);
-			}			
+			chooseBox();
 		}
 		else if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.SCADENZA) {
 			cadenceDescription.setText("Activities that take place just once.");
-			cadenceDescription.setWrappingWidth(280);
-
-			if(elementsVBox.getChildren().contains(periodicBox))
-				elementsVBox.getChildren().remove(periodicBox);
-			
-			if(!elementsVBox.getChildren().contains(expiringBox)) {
-				elementsVBox.getChildren().add(3, expiringBox);
-			}			
+			chooseBox();
 		}
 		else {
 			cadenceSelText.setText("Select a type and I'll describe it.");
 		}
 		
 	}
+	
+	private void chooseBox() {
+		cadenceDescription.setWrappingWidth(280);
+
+		if(elementsVBox.getChildren().contains(expiringBox))
+			elementsVBox.getChildren().remove(expiringBox);
+
+		if(elementsVBox.getChildren().contains(periodicBox))
+			elementsVBox.getChildren().remove(periodicBox);
+	}
+	
 	
 	public void updatePlaces() {
 		pList.getItems().clear();
@@ -497,7 +482,6 @@ public class CreateActivityView implements Initializable{
 		
 		if(Navbar.getUser() instanceof Partner) {
 			caBean.setOwner(Navbar.getUser().getUserID().intValue());
-			//TODO::Prezzo per ora scelto fisso
 			caBean.setPrice("200");	
 		}
 		

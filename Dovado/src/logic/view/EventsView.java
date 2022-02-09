@@ -2,6 +2,7 @@ package logic.view;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -65,28 +66,25 @@ import logic.model.User;
 
 public class EventsView implements Initializable{
 	
-	private static ArrayList<ScheduledActivity> schedActivities;
-	private static ArrayList<Activity> activities;
-	private static DAOPreferences daoPref;
-    private static DAOActivity daoAct;
-    private static DAOChannel daoCH;
-    private static DAOPlace daoPlc;
-    private static DAOSchedules daoSch;
-    private static SuperActivity activitySelected = null;
-    private static StackPane lastEventBoxSelected = null;
-    private static SuperUser user;
-    private static DatePicker pickDateOp = null;
-    private static DatePicker pickDateCl = null;
-	private static ChoiceBox<String> pickCadence = null;
-	private static Text txtCadence = null;
-	private static Text txtDateOp = null;
-	private static Text txtDateCl = null;
-	private static long wPopup = 500;
-	private static long hPopup = 50;
+	private ArrayList<ScheduledActivity> schedActivities;
+	private ArrayList<Activity> activities;
+    private DAOActivity daoAct;
+    private DAOSchedules daoSch;
+    private SuperActivity activitySelected = null;
+    private StackPane lastEventBoxSelected = null;
+    private SuperUser user;
+    private DatePicker pickDateOp = null;
+    private DatePicker pickDateCl = null;
+	private ChoiceBox<String> pickCadence = null;
+	private Text txtCadence = null;
+	private Text txtDateOp = null;
+	private Text txtDateCl = null;
+	private long wPopup = 500;
+	private long hPopup = 50;
     
     private static Stage curr;
     
-    private static int lastActivitySelected = -1;
+    private int lastActivitySelected = -1;
     
     @FXML
     private ListView<Object> eventsList;
@@ -104,16 +102,13 @@ public class EventsView implements Initializable{
 		try {
 			VBox root = new VBox();
 			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
-			
-			VBox eventSchedule = new VBox();
-			
+			Navbar.authenticatedSetup();			
 			
 			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - events");
 			current.setScene(scene);
-			eventSchedule = FXMLLoader.load(Main.class.getResource("events.fxml"));
+			VBox eventSchedule = FXMLLoader.load(Main.class.getResource("events.fxml"));
 			VBox.setVgrow(eventSchedule, Priority.SOMETIMES);
 			
 			curr=current;
@@ -128,7 +123,6 @@ public class EventsView implements Initializable{
     
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		daoPref = DAOPreferences.getInstance();
 		daoAct = DAOActivity.getInstance();
 		daoSch = DAOSchedules.getInstance();
 		
@@ -144,14 +138,7 @@ public class EventsView implements Initializable{
 			try{
 				//Apro di default la lista di attività schedulate.
 				
-				schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
-	
-				for(int j=0;j<schedActivities.size();j++) {
-					activities.add((Activity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
-				}
-	
-				for(int j=0;j<activities.size();j++)
-					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+				initUser();
 				
 				Thread newThread = new Thread(() -> {
 					fillEventsListUser();
@@ -170,14 +157,7 @@ public class EventsView implements Initializable{
 			}
 	    }else{
 	    	try {
-	    		ArrayList<CertifiedActivity> activitiesPart = daoAct.getPartnerActivities(user.getUserID());
-		    	
-	    		for(int i=0;i<activitiesPart.size();i++) {
-	    			activities.add((Activity)activitiesPart.get(i));
-	    		}
-	    		
-	    		for(int j=0;j<activities.size();j++)
-					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+	    		initPartner();
 				
 	    		Thread newThread = new Thread(() -> {
 						fillEventsListPartner();
@@ -196,7 +176,28 @@ public class EventsView implements Initializable{
 			}
 	    }
 	}
+	private void initUser() throws ClassNotFoundException,SQLException{
+		schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
+		
+		for(int j=0;j<schedActivities.size();j++) {
+			activities.add((Activity)daoAct.getActivityById(schedActivities.get(j).getReferencedActivity().getId()));
+		}
 
+		for(int j=0;j<activities.size();j++)
+			Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+	}
+	private void initPartner() throws ClassNotFoundException,SQLException{
+		ArrayList<CertifiedActivity> activitiesPart = daoAct.getPartnerActivities(user.getUserID());
+    	
+		for(int i=0;i<activitiesPart.size();i++) {
+			activities.add((Activity)activitiesPart.get(i));
+		}
+		
+		for(int j=0;j<activities.size();j++)
+			Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+	
+	}
+	
 	private void fillEventsListUser() {
 		int i;
 		for(i=0;i<activities.size();i++) {
@@ -236,20 +237,12 @@ public class EventsView implements Initializable{
 			eventInfo.getStyleClass().add("textEventInfo");
 			eventInfo.setTextAlignment(TextAlignment.LEFT);
 			eventInfo.setWrappingWidth(480);
-	/*		eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-			eventInfo.setFill(Paint.valueOf("#ffffff"));
-			eventInfo.setStrokeWidth(0.3);
-			eventInfo.setStroke(Paint.valueOf("#000000"));
-	*/		
+			
 			eventName.setId("eventName");
 			eventName.getStyleClass().add("textEventName");
 			eventName.setTextAlignment(TextAlignment.LEFT);
 			eventName.setWrappingWidth(480);
-	/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-			eventName.setFill(Paint.valueOf("#ffffff"));
-			eventName.setStrokeWidth(0.3);
-			eventName.setStroke(Paint.valueOf("#000000"));
-		*/	
+		
 			VBox eventText = new VBox(eventName,eventInfo);
 			eventText.setAlignment(Pos.CENTER_LEFT);
 			eventText.getStyleClass().add("eventTextVbox");
@@ -332,21 +325,12 @@ public class EventsView implements Initializable{
 			eventInfo.getStyleClass().add("textEventInfo");
 			eventInfo.setTextAlignment(TextAlignment.LEFT);
 			eventInfo.setWrappingWidth(480);
-	/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-			eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-			eventInfo.setFill(Paint.valueOf("#ffffff"));
-			eventInfo.setStrokeWidth(0.3);
-			eventInfo.setStroke(Paint.valueOf("#000000"));
-	*/		
+		
 			eventName.setId("eventName");
 			eventName.getStyleClass().add("textEventName");
 			eventName.setTextAlignment(TextAlignment.LEFT);
 			eventName.setWrappingWidth(480);
-	/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-			eventName.setFill(Paint.valueOf("#ffffff"));
-			eventName.setStrokeWidth(0.3);
-			eventName.setStroke(Paint.valueOf("#000000"));
-		*/	
+		
 			VBox eventText = new VBox(eventName,eventInfo);
 			eventText.setAlignment(Pos.CENTER_LEFT);
 			eventText.getStyleClass().add("eventTextVbox");
@@ -385,7 +369,6 @@ public class EventsView implements Initializable{
 	public void scheduledActSelected() {
 
 		daoAct = DAOActivity.getInstance();
-		daoPlc = DAOPlace.getInstance();
 
 		StackPane eventBox = null;
 		try {
@@ -508,10 +491,7 @@ public class EventsView implements Initializable{
 						clminBox.getItems().add(min);
 					}
 							
-					/*for(int j=0;j<61;j++) {
-						minBox.getItems().add(Integer.toString(j));
-					}*/
-
+			
 					Text txtOp = new Text("Select opening time");
 					Text txtCl = new Text("Select closing time");
 					Button ok = new Button();
@@ -605,7 +585,7 @@ public class EventsView implements Initializable{
 								String dayStringedCl = dayCl.format(pickDateCl.getValue());
 								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
 								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
-								//DATA DI FINE ED INFINE LA CADENZA; PERTANTO:
+								//DATA DI FINE ED INFINE LA CADENZA PERTANTO:
 								cab.setEndDate(dayStringedCl);
 								cab.setOpeningDate(dayStringed);
 								cab.setCadence(((PeriodicActivity)(activitySelected.getFrequency())).getCadence());
@@ -620,14 +600,14 @@ public class EventsView implements Initializable{
 								String dayStringedCl = dayCl.format(pickDateCl.getValue());
 								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
 								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
-								//E DATA DI FINE; PERTANTO:
+								//E DATA DI FINE PERTANTO:
 								cab.setEndDate(dayStringedCl);
 								cab.setOpeningDate(dayStringed);
 							}
 							else if(activitySelected.getFrequency() instanceof ContinuosActivity) {
 								cab.setType(ActivityType.CONTINUA);
 								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
-								//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA; PERTANTO:	
+								//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA, PERTANTO:	
 							}
 							cab.setOpeningTime(openingTimeChosen);
 							cab.setClosingTime(closingTimeChosen);
@@ -757,41 +737,7 @@ public class EventsView implements Initializable{
 				      }
 				}
 			});
-			/*viewSchedInfo.setOnAction(new EventHandler<ActionEvent>(){
-				@Override public void handle(ActionEvent e) {
-					DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					String dayStringed = day.format();
-							
-					String hourChosen = hourBox.getValue();
-					String minChosen = minBox.getValue();
-							
-					int hourReminderInt = Integer.parseInt(hourChosen);
-					String hourReminder;
-					hourReminder = Integer.toString(hourReminderInt-1);
-					
-					if(hourReminderInt-1<10) {
-						hourReminder = "0"+hourReminder;
-					}
-							
-					String dateChosen = dayStringed+' '+hourChosen+':'+minChosen;
-					String dateReminder = dayStringed+' '+hourReminder+':'+minChosen;
-							
-					DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-					LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
-					LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
-						
-					final Stage dialog = new Stage();
-			        dialog.initModality(Modality.NONE);
-			        dialog.initOwner(curr);
-			        VBox dialogVbox = new VBox(20);
-			        dialogVbox.getChildren().add(new Text("Activity successfully scheduled"));
-			        Scene dialogScene = new Scene(dialogVbox, 300, 200);
-			        dialog.setScene(dialogScene);
-			        dialog.show();
-			                
-				}
-			});
-				*/	
+		
 	}
 	
 	public void activityDeselected(StackPane lastEventBoxSelected2) {
@@ -862,7 +808,6 @@ public class EventsView implements Initializable{
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    
-	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
 	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
 	    StackPane popupContent = new StackPane(r,errorTxt); 
 	    
