@@ -19,8 +19,8 @@ public abstract class DAO {
 	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
 	
 	//--------------------------------------------------------------
-	public Connection conn; 
-	public CallableStatement stmt;
+	protected Connection conn; 
+	protected CallableStatement stmt;
 	
 	public void resetConnection() throws ClassNotFoundException, SQLException {
 		conn = null;
