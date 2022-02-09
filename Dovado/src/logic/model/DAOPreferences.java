@@ -15,20 +15,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class DAOPreferences {
+public class DAOPreferences extends DAO{
 	
 	private static DAOPreferences INSTANCE;
-	
-	//----------database--------------------------------------
-	
-	private static final String USER = "dovado"; //DA CAMBIARE
-	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
-			
-	//------------------------------------------------------------
-	
-	
 	
 	private DAOPreferences() {
 	}
@@ -40,17 +29,9 @@ public class DAOPreferences {
 	}
 
 	public void updateUserPreferences(Long id, boolean[] bool) throws ClassNotFoundException, SQLException {
-		
-		CallableStatement stmt = null;
-        Connection conn = null;
         
         try {
-        	// STEP 2: loading dinamico del driver mysql
-            Class.forName(DRIVER_CLASS_NAME);
-            
-            // STEP 3: apertura connessione
-            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            Log.getInstance().getLogger().info("Connected database successfully...");
+        	resetConnection();
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call update_user_Preferences(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
@@ -65,21 +46,7 @@ public class DAOPreferences {
             stmt.execute();
             
         }finally {
-            // STEP 5.2: Clean-up dell'ambiente
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            	throw(se2);
-            }
-            try {
-                if (conn != null)
-                    conn.close();
-                	Log.getInstance().getLogger().info("Disconnetted database successfully...");
-                	
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+           disconnRoutine();
         }
 		
 	}

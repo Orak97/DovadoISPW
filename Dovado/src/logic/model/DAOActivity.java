@@ -22,7 +22,7 @@ import logic.controller.ActivityType;
 import logic.controller.CreateActivityController;
 import logic.controller.FindActivityController;
 
-public class DAOActivity {
+public class DAOActivity extends DAO{
 	
 	private static DAOActivity INSTANCE;
 	
@@ -37,9 +37,7 @@ public class DAOActivity {
 	private static final String LOGDBCONN = "Connected database successfully...";
 	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
 	
-	//--------------------------------------------------------------
-	private  Connection conn ;
-	private  CallableStatement stmt;
+
 	
 	private DAOActivity() {
 	}
@@ -497,36 +495,6 @@ public class DAOActivity {
         	return bean;
 	}
 
-	private void resetConnection() throws ClassNotFoundException, SQLException {
-		conn = null;
-		stmt = null;
 
-		Class.forName(DRIVER_CLASS_NAME);
-
-		// apertura connessione
-        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-        Log.getInstance().getLogger().info(LOGDBCONN);
-	}
-	
-	private void disconnRoutine() throws SQLException {
-		
-		try {
-	        if (stmt != null)
-	            stmt.close();
-	    } catch (SQLException se2) {
-	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se2.getErrorCode() + " e mesaggio: " + se2.getMessage());
-	    	se2.printStackTrace();
-	    	throw se2;
-	    }
-	    try {
-	        if (conn != null)
-	            conn.close();
-	    	Log.getInstance().getLogger().info(LOGDBDISCONN);
-
-	    } catch (SQLException se) {
-	    	Log.getInstance().getLogger().warning("Errore di codice: "+ se.getErrorCode() + " e mesaggio: " + se.getMessage());
-	    	se.printStackTrace();
-	    }
-	}
 
 }
