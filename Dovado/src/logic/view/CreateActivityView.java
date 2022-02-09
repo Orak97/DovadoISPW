@@ -109,7 +109,7 @@ public class CreateActivityView implements Initializable{
 	private DAOPlace daoPl;
 	private static Place placeSelected;
 	private ArrayList<Place> placesFound;
-	private static StackPane lastPlaceBoxSelected;
+	private StackPane lastPlaceBoxSelected;
 	private static Text cadenceSelText;
 	private static HBox pHBox;
 	private static VBox periodicBox;
@@ -361,7 +361,7 @@ public class CreateActivityView implements Initializable{
 		
 	}
 	
-	public void selectedPlace() {
+	public synchronized void selectedPlace() {
 		
 		int lastPlaceSelected=-1;
 		
@@ -384,7 +384,7 @@ public class CreateActivityView implements Initializable{
 		
 		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
 		lastPlaceBoxSelected = placeBox;
-		int pID = Integer.valueOf(((Text)placeBox.getChildren().get(0)).getId());
+		int pID = Integer.parseInt(((Text)placeBox.getChildren().get(0)).getId());
 		try {
 			placeSelected = daoPl.getPlace(pID);
 		} catch (Exception e) {
@@ -477,7 +477,7 @@ public class CreateActivityView implements Initializable{
 			 
 		    Text popupText = new Text("Activity"+'\n'+"type not"+'\n'+"selected yet");
 		    popupText.getStyleClass().add("textEventInfo");
-		    popupText.setTextAlignment(TextAlignment.CENTER);;
+		    popupText.setTextAlignment(TextAlignment.CENTER);
 		    
 		    Circle c = new Circle(0, 0, 50, Color.valueOf("212121"));
 		    
@@ -492,7 +492,7 @@ public class CreateActivityView implements Initializable{
 		    popup.show(curr);
 		    popup.setAutoHide(true);
 		    
-		Log.getInstance().getLogger().info("Attivit� non aggiunta alla persistenza");
+		    Log.getInstance().getLogger().info("Attivit� non aggiunta alla persistenza");
 		}
 		
 		if(Navbar.getUser() instanceof Partner) {
@@ -504,12 +504,29 @@ public class CreateActivityView implements Initializable{
 		//--------------------------------------------------------------------------------------------
 				//DA AGGIUNGERE UNA LISTA DI BOTTONI DA CUI SCEGLIERE LA PREFERENZA DELL'ATTIVITA'
 		//--------------------------------------------------------------------------------------------
-		boolean[] boolPref = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-		Preferences newActivityPref = new Preferences(boolPref);
-		
 		//GRAZIE AL METODO SOTTOSTANTE MI PRENDO UN ARRAY DI BOOLEANI DA CUI POI 
 		//POSSO MODIFICARE UNO AD UNO LE PREFERENZE.
-		boolean[] activityPrefSet = newActivityPref.getSetPreferences();
+		boolean[] activityPrefSet = suppCreateActivity();
+		//FINITE TUTTE LE PREFERENZE SI SETTA LA LISTA DI BOOLEANI RAPPRESENTANTE LE PREFERENZE A
+		//TRUE SONO STATE SELEZIONATE COME TRUE.
+		caBean.setInterestedCategories(activityPrefSet);
+		caBean.setActivityDescription(actDescriptionText.getText());
+		caBean.setPlace(placeSelected.getId().intValue());
+
+		CreateActivityController caCont = new CreateActivityController(caBean);
+		try {
+			caCont.createActivity();
+			caCont.saveActivity();
+		} catch (Exception e) {
+			Log.getInstance().getLogger().info("Error in DB");
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean[] suppCreateActivity() {
+		boolean[] activityPrefSet = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 		int pset=0;
 		VBox prefVBox;
 		for(int j=0;j<pHBox.getChildren().size();j++) {
@@ -523,53 +540,8 @@ public class CreateActivityView implements Initializable{
 				pset++;
 			}
 		}
-		//FINITE TUTTE LE PREFERENZE SI SETTA LA LISTA DI BOOLEANI RAPPRESENTANTE LE PREFERENZE A
-		//TRUE SONO STATE SELEZIONATE COME TRUE.
-		caBean.setInterestedCategories(activityPrefSet);
-		caBean.setActivityDescription(actDescriptionText.getText());
-		caBean.setPlace(placeSelected.getId().intValue());
-//		Log.getInstance().getLogger().info(act.toString());
-//		act.setId(daoAc.addActivityToJSON(placeSelected,(SuperActivity)act,"no"));
-//		int result = Long.compare(act.getId(),0L);
-//		if(result>0) {
-//			act.setPreferences((List<String>)prefsList);
-//			return true;
-//		} 
-//		else if(result<0) {
-//			final Stage dialog = new Stage();
-//            dialog.initModality(Modality.NONE);
-//            dialog.initOwner(curr);
-//            VBox dialogVbox = new VBox(20);
-//            dialogVbox.getChildren().add(new Text("Activity already created!"));
-//            Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//            dialog.setScene(dialogScene);
-//            dialog.show();
-//			return false;
-//		}
-//		else if(result==0) {
-//			final Stage dialog = new Stage();
-//            dialog.initModality(Modality.NONE);
-//            dialog.initOwner(curr);
-//            VBox dialogVbox = new VBox(20);
-//            dialogVbox.getChildren().add(new Text("Activity creation error!"));
-//            Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//            dialog.setScene(dialogScene);
-//            dialog.show();
-//			return false;
-//		}
-		CreateActivityController caCont = new CreateActivityController(caBean);
-		try {
-			caCont.createActivity();
-			caCont.saveActivity();
-		} catch (Exception e) {
-			Log.getInstance().getLogger().info("Error in DB");
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+		return activityPrefSet;
 	}
-
-
 // ----------------------- Metodo di supporto per createActivity() ------------------------------
 
 	private static boolean prevCheck() {
@@ -604,7 +576,6 @@ public class CreateActivityView implements Initializable{
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    
-	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
 	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
 	    StackPane popupContent = new StackPane(r,errorTxt); 
 	    
