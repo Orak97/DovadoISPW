@@ -34,7 +34,7 @@
                         <Insets top="10.0" />
                      </VBox.margin>
                      <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Slide to set a distance for the search" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
+                        <Text fx:id="sliderText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Slide to set a distance for the search" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
                         <HBox prefWidth="200.0">
                            <children>
                               <Slider fx:id="distanceSelector" min="5.0" onMouseDragged="#updateDistance" HBox.hgrow="ALWAYS">

@@ -57,8 +57,10 @@ import logic.model.Activity;
 import logic.model.CertifiedActivity;
 import logic.model.NormalActivity;
 import logic.model.Channel;
+import logic.model.Coupon;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
+import logic.model.DAOCoupon;
 import logic.model.DAOPlace;
 import logic.model.DAOPreferences;
 import logic.model.Discount;
@@ -113,6 +115,9 @@ public class HomeView implements Initializable{
     
     @FXML
     private Button preference3;
+    
+    @FXML
+    private Text sliderText;
 
     @FXML
     private ListView<Object> eventsList;
@@ -172,15 +177,6 @@ public class HomeView implements Initializable{
 		daoPref = DAOPreferences.getInstance();
 		daoAct = DAOActivity.getInstance();
 		
-
-		//Prendo la geolocalizazione da questa 
-//		libreria per poi non utilizzarla mai più
-//        JMapViewer jpm = new JMapViewer();
-//        ICoordinate coords = jpm.getPosition();
-//        
-//        usrLat = coords.getLat();
-//        usrLon = coords.getLon();
-//        
 		usrLat = 41.952928;
 		usrLon = 12.518342;
         System.out.println("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
@@ -207,7 +203,9 @@ public class HomeView implements Initializable{
     			
     			// Setting permissions to interact with Js
     	        searchButton.setText("SEARCH");
-    			searchButton.getStyleClass().add(BTNSRCKEY);
+    			searchButton.getStyleClass().add(BTNSRCKEY); 
+    			searchBar.setPromptText("Insert a 6 digit coupon code");    			
+    			sliderText.setText("You can validate any coupon up here\nor join a channel from your activities");
     			
     			//Al partner non serve il distance selector, ne il filter by preference.
     			distanceSelected.setVisible(false);
@@ -285,7 +283,6 @@ public class HomeView implements Initializable{
     						}
     						eventsList.getItems().add(eventBox);
     						
-    						//eng.executeScript("");
     					}
     				});
     				newThread.start();
@@ -804,10 +801,6 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							}
 						});
 						
-						/*for(int j=0;j<61;j++) {
-							minBox.getItems().add(Integer.toString(j));
-						}*/
-						
 						Text txt = new Text("Select date");
 						Button ok = new Button();
 						Button close = new Button();
@@ -944,19 +937,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 										sb.setSelectedCoupon(percRequested);
 									}
 								}
-								
-//								DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-//								LocalDateTime dateSelected = LocalDateTime.parse(dateChosen,dateFormatter);
-//								LocalDateTime remindDate = LocalDateTime.parse(dateReminder,dateFormatter);
-								
-								
-//								DateBean dateB = new DateBean();
-//								dateB.setDay(Integer.parseInt(date[2]));
-//								dateB.setHour(Integer.parseInt(hourChosen));
-//								dateB.setMinutes(Integer.parseInt(minChosen));
-//								dateB.setMonth(Integer.parseInt(date[1]));
-//								dateB.setYear(Integer.parseInt(date[0]));
-								
+												
 								sb.setIdActivity(activityId);
 								sb.setScheduledDate(dateChosen);
 								sb.setScheduledTime(hourChosen+':'+minChosen);
@@ -1105,19 +1086,11 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		if(delete==true) {
 			eventsList.getItems().remove(lastEventBoxSelected);
 		
-		//	Metodo da aggiungere al DAO
-		//		
-		//	daoAct.DELETEACTIVITYFROMDB(activitySelected);
-		
 			lastEventBoxSelected=null;
 			return;
 		}
 		
 		ImageView eventImage = (ImageView) lastBox.getChildren().get(2);
-	/**CANCEL	VBox eventInfo = (VBox) lastBox.getChildren().get(3);
-		
-		Text eventName = (Text) eventInfo.getChildren().get(0);
-		Text eventDetails = (Text) eventInfo.getChildren().get(1);**/
 	
 		eventImage.setScaleX(1);
 		eventImage.setScaleY(1);
@@ -1130,6 +1103,53 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		daoPlc = DAOPlace.getInstance();
 		daoPref = DAOPreferences.getInstance();
 
+		if(Navbar.getUser() instanceof Partner) {
+			int couponCode;
+			try {
+			couponCode = Integer.parseInt(searchBar.getText());
+			} catch(NumberFormatException ne) {
+				final Popup popup = popupGen(wPopup,hPopup,"Insert a 6 digit NUMBER");
+				popup.centerOnScreen(); 
+			    
+			    popup.show(curr);
+			    popup.setAutoHide(true);
+			    return;
+			}
+			try{ 
+				//Con il metodo sottostante mi assicuro della presenza del coupon.
+				Coupon cToRedeem;
+				if((cToRedeem = DAOCoupon.getInstance().findCouponPartner(couponCode))==null) {
+					final Popup popup = popupGen(wPopup,hPopup,"No such coupon found!");
+					popup.centerOnScreen(); 
+				    
+				    popup.show(curr);
+				    popup.setAutoHide(true);
+				    return;
+				}
+				//Una volta trovato eseguo il codice necessario a redimerlo.
+				AddActivityToScheduleController actSched = new AddActivityToScheduleController((Partner)(Navbar.getUser()), searchBar.getText());
+				actSched.redeemCoupon();
+			} 
+			catch(Exception e){
+				//Si cattura un'eccezione se trovata e si avverte l'utente				
+				final Popup popup = popupGen(wPopup,hPopup,"Due to an issue the coupon was not redeemed.");
+				popup.centerOnScreen(); 
+			    
+			    popup.show(curr);
+			    popup.setAutoHide(true);
+			    e.printStackTrace();
+			    return;
+			}
+			final Popup popup = popupGen(wPopup,hPopup,"Coupon redeemed correctly");
+			popup.centerOnScreen(); 
+		    
+		    popup.show(curr);
+		    popup.setAutoHide(true);
+		    searchBar.setText("");
+		    searchBar.setPromptText("Insert a 6 digit coupon code");
+		    return;
+		}
+		
 		lastActivitySelected = -1;
 		String searchItem = null;
 		
