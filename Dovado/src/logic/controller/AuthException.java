@@ -7,14 +7,16 @@ import logic.model.Log;
 public class AuthException extends Exception{
 	private static final long serialVersionUID = 1L;
 	
-	private SQLException errorSQL;
+	private final SQLException errorSQL;
 	
 	public AuthException() {
 		super("Problemi durante l'autenticazione");
+		errorSQL = null;
 	}
 	
 	public AuthException(String message) {
 		super(message);
+		errorSQL= null;
 	}
 	
 	public AuthException(SQLException e) {

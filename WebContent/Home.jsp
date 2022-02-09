@@ -202,7 +202,7 @@
 				
 				
 				 <% for(Activity curr:activities){ %>
-				 	spotPlace(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, '<%= curr.getName() %>', <%=curr.getId()%>);
+				 	spotPlace(<%= curr.getPlace().getLatitudine() %>,<%= curr.getPlace().getLongitudine() %>, "<%= curr.getName() %>", <%=curr.getId()%>);
 				 <% }%>
 				 
 				 var lastMarker = setUser(latitude,longitude);
