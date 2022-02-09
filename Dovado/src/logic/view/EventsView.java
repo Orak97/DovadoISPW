@@ -67,8 +67,11 @@ import logic.model.User;
 public class EventsView implements Initializable{
 	
 	private static final  String BTNSRCKEY = "src-btn";
+	private static final  String STYLEINFO = "textEventInfo";
+	private static final  String STYLENAME = "textEventName";
+	private static final  String STYLETXT = "msstxt";
+	private static final  String DATEPATTERN = "yyyy-MM-dd";
 
-	
 	private ArrayList<ScheduledActivity> schedActivities;
 	private ArrayList<Activity> activities;
     private DAOActivity daoAct;
@@ -162,10 +165,14 @@ public class EventsView implements Initializable{
     		newThread.join();
     		
     	} catch (InterruptedException e) {
+    		Thread.currentThread().interrupt();
 			e.printStackTrace();
 			Log.getInstance().getLogger().info(e.getMessage());
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 	}
+	
 	private void initUser() throws ClassNotFoundException,SQLException{
 		schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
 		
@@ -224,12 +231,12 @@ public class EventsView implements Initializable{
 			eventImage.getStyleClass().add("event-image");
 			
 			eventInfo.setId("eventInfo");
-			eventInfo.getStyleClass().add("textEventInfo");
+			eventInfo.getStyleClass().add(STYLEINFO);
 			eventInfo.setTextAlignment(TextAlignment.LEFT);
 			eventInfo.setWrappingWidth(480);
 			
 			eventName.setId("eventName");
-			eventName.getStyleClass().add("textEventName");
+			eventName.getStyleClass().add(STYLENAME);
 			eventName.setTextAlignment(TextAlignment.LEFT);
 			eventName.setWrappingWidth(480);
 		
@@ -312,12 +319,12 @@ public class EventsView implements Initializable{
 			eventImage.getStyleClass().add("event-image");
 			
 			eventInfo.setId("eventInfo");
-			eventInfo.getStyleClass().add("textEventInfo");
+			eventInfo.getStyleClass().add(STYLEINFO);
 			eventInfo.setTextAlignment(TextAlignment.LEFT);
 			eventInfo.setWrappingWidth(480);
 		
 			eventName.setId("eventName");
-			eventName.getStyleClass().add("textEventName");
+			eventName.getStyleClass().add(STYLENAME);
 			eventName.setTextAlignment(TextAlignment.LEFT);
 			eventName.setWrappingWidth(480);
 		
@@ -505,7 +512,7 @@ public class EventsView implements Initializable{
 						pickCadence.getItems().addAll(Cadence.WEEKLY.toString(),Cadence.MONTHLY.toString(),Cadence.ANNUALLY.toString());
 						
 						txtCadence = new Text("Select new cadence");
-						txtCadence.getStyleClass().add("msstxt");
+						txtCadence.getStyleClass().add(STYLETXT);
 						
 						dateBox.getChildren().addAll(txtCadence,pickCadence);			
 						
@@ -517,8 +524,8 @@ public class EventsView implements Initializable{
 						txtDateOp = new Text("Select opening date");
 						txtDateCl = new Text("Select closing date");
 						
-						txtDateOp.getStyleClass().add("msstxt");
-						txtDateCl.getStyleClass().add("msstxt");
+						txtDateOp.getStyleClass().add(STYLETXT);
+						txtDateCl.getStyleClass().add(STYLETXT);
 						
 						dateBox.getChildren().addAll(txtDateOp,pickDateOp,txtDateCl,pickDateCl);						
 					}
@@ -564,10 +571,10 @@ public class EventsView implements Initializable{
 							if(activitySelected.getFrequency() instanceof PeriodicActivity) {
 								cab.setType(ActivityType.PERIODICA);
 
-								DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
 								String dayStringed = day.format(pickDateOp.getValue());
 
-								DateTimeFormatter dayCl = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
 								String dayStringedCl = dayCl.format(pickDateCl.getValue());
 								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
 								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
@@ -579,10 +586,10 @@ public class EventsView implements Initializable{
 							if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
 								cab.setType(ActivityType.SCADENZA);
 
-								DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
 								String dayStringed = day.format(pickDateOp.getValue());
 
-								DateTimeFormatter dayCl = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+								DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
 								String dayStringedCl = dayCl.format(pickDateCl.getValue());
 								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
 								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
@@ -621,7 +628,7 @@ public class EventsView implements Initializable{
 							} catch (Exception e1) {
 								e1.printStackTrace();
 								Log.getInstance().getLogger().info("Database access was not obtained");
-								return;
+								
 							}
 							
 
@@ -639,8 +646,8 @@ public class EventsView implements Initializable{
 			Text reminderTime = new Text("Activity reminder at: "+remind);
 			Text scheduledTime = new Text("Activity scheduled for: "+sched);
 			
-			reminderTime.getStyleClass().add("textEventInfo");
-			scheduledTime.getStyleClass().add("textEventName");
+			reminderTime.getStyleClass().add(STYLEINFO);
+			scheduledTime.getStyleClass().add(STYLENAME);
 			
 			VBox schedInfo = new VBox();
 			
@@ -667,8 +674,8 @@ public class EventsView implements Initializable{
 			Text reminderTime = new Text("Activity opening at: "+remind);
 			Text scheduledTime = new Text("Activity closing at: "+sched);
 			
-			reminderTime.getStyleClass().add("textEventInfo");
-			scheduledTime.getStyleClass().add("textEventInfo");
+			reminderTime.getStyleClass().add(STYLEINFO);
+			scheduledTime.getStyleClass().add(STYLEINFO);
 			
 			VBox eventsInfo = new VBox();
 			
@@ -731,10 +738,7 @@ public class EventsView implements Initializable{
 			eventsList.getItems().remove(lastActivitySelected+1);
 		
 		ImageView eventImage = (ImageView) lastEventBoxSelected2.getChildren().get(2);
-/**CANCEL		VBox eventInfo = (VBox) lastEventBoxSelected2.getChildren().get(3);
-		
-		Text eventName = (Text) eventInfo.getChildren().get(0);
-		Text eventDetails = (Text) eventInfo.getChildren().get(1);**/
+
 		
 		eventImage.setScaleX(1);
 		eventImage.setScaleY(1);
@@ -756,9 +760,8 @@ public class EventsView implements Initializable{
 	
 	public void searchEvent() {
 		
-		String searchItem = null;
 		
-		if((searchItem = searchBar.getText())==null) return;
+		if(searchBar.getText()==null) return;
 		lastEventBoxSelected=null;
 		lastActivitySelected=-1;
 		eventsList.getItems().clear();
@@ -766,8 +769,8 @@ public class EventsView implements Initializable{
 		try { 
 			if(user instanceof Partner) {
 				ArrayList<CertifiedActivity> activitiesP = daoAct.getPartnerActivities(user.getUserID());
-				for(CertifiedActivity curr:activitiesP)
-					activities.add((Activity)curr);
+				for(CertifiedActivity act:activitiesP)
+					activities.add((Activity)act);
 				fillEventsListPartner();
 			} else {
 				schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
@@ -780,17 +783,15 @@ public class EventsView implements Initializable{
 		catch (Exception e) {
 			Log.getInstance().getLogger().info("Error in DB prevented activities from being fetched.");
 			e.printStackTrace();
-			return;
 		}		
-		
-		}
+	}
 
 	public Popup popupGen(double width, double height, String error) {
 		Popup popup = new Popup(); 
 		popup.centerOnScreen();
 		
 		Text errorTxt = new Text(error);
-		errorTxt.getStyleClass().add("textEventInfo");
+		errorTxt.getStyleClass().add(STYLEINFO);
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    

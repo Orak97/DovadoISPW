@@ -130,10 +130,8 @@ public class HomeView implements Initializable{
 	
     private static int lastActivitySelected = -1;
 
-    private static DAOPreferences daoPref;
     private static DAOActivity daoAct;
     private static DAOChannel daoCH;
-    private static DAOPlace daoPlc;
     private static SuperActivity activitySelected;
     private static SuperUser user;
     private static double usrLat;
@@ -174,7 +172,6 @@ public class HomeView implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		lastEventBoxSelected = null;
-		daoPref = DAOPreferences.getInstance();
 		daoAct = DAOActivity.getInstance();
 		
 		usrLat = 41.952928;
@@ -486,7 +483,6 @@ public class HomeView implements Initializable{
 	public void activitySelected() {
 		
 		daoAct = DAOActivity.getInstance();
-		daoPlc = DAOPlace.getInstance();
 		
 		StackPane eventBox = null;
 		try {
@@ -1100,8 +1096,6 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 	
 	public void filterActivities() {
 		daoAct = DAOActivity.getInstance();
-		daoPlc = DAOPlace.getInstance();
-		daoPref = DAOPreferences.getInstance();
 
 		if(Navbar.getUser() instanceof Partner) {
 			int couponCode;
