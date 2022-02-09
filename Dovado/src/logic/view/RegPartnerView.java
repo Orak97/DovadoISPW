@@ -26,6 +26,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import logic.controller.AuthException;
 import logic.controller.RegPartnerController;
 import logic.model.Log;
 import logic.model.RegPartnerBean;
@@ -101,22 +102,14 @@ public class RegPartnerView implements Initializable{
 		regBean.setpIVA(pIVATField.getText());
 		regBean.setCompName(compNameTField.getText());
 		
-		regBean = controller.validateForm(regBean);
-		
-		if(regBean.getError() != null) {
-			popupGen(wErrPopup,hErrPopup, regBean.getError());
-			return;
-		}
-		
 		try {
-			regBean = controller.addPartner(regBean);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			regBean = controller.validateForm(regBean);
 		
-		if(regBean.getError() != null) {
-			popupGen(wErrPopup,hErrPopup, regBean.getError());
-			return;
+			regBean = controller.addPartner(regBean);
+		}catch (AuthException e) {
+			popupGen(wErrPopup,hErrPopup, e.getMessage());
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
     	LoginView.render(curr);
 		
@@ -165,6 +158,8 @@ public class RegPartnerView implements Initializable{
     	popup.centerOnScreen();
     	
     	Text passwordNotEqualTxt = new Text(error);
+    	passwordNotEqualTxt.setWrappingWidth(wErrPopup - 10);
+
 	    passwordNotEqualTxt.getStyleClass().add("textEventName");
 	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
 	    

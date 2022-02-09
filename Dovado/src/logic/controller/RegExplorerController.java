@@ -19,13 +19,13 @@ public class RegExplorerController extends RegController{
 	
 	
 	
-	public RegExpBean validateForm(RegBean bean) {
+	public RegExpBean validateForm(RegBean bean) throws AuthException {
 		return (RegExpBean) super.validateForm(bean);
 	}
 
 
 
-	public RegExpBean addExplorer(RegExpBean bean) throws ClassNotFoundException  {
+	public RegExpBean addExplorer(RegExpBean bean) throws ClassNotFoundException, AuthException {
 		boolean[] pref = {bean.getArte(), 
 				bean.getCibo(), 
 				bean.getMusica(),
@@ -45,37 +45,9 @@ public class RegExplorerController extends RegController{
 			return bean;			
 		}catch(SQLException e){
 			//Questo vuol dire che abbiamo un duplicato nel BB
-			if(e.getErrorCode() == 1062) {
-				// Qui isoliamo e individuiamo la specifica eccezione
-				String excep = e.getMessage().split(" ")[6];
-				
-				switch (excep) {
-				case "'email_UNIQUE'":
-					bean.setError("Esiste già un utente con questa mail");
-					break;
-				case "'username_UNIQUE'":
-					bean.setError("Esiste già un utente con questo Username");
-					break;
-
-				default:
-					bean.setError("Errore duplicazione di: "+excep);
-					break;
-				}
-				
-			}
-			else if (e.getErrorCode() == 1048) {
-				String excep = e.getMessage().split(" ")[2];	
-				
-				if (excep.equals("'username'")) {
-					bean.setError("L'utente non può essere NULL");
-				} else {
-					bean.setError("Il campo " + excep + " non può essere vuoto");
-				}
-			}
 			Log.getInstance().getLogger().warning("Errore di codice: "+ e.getErrorCode() + " e mesaggio: " + e.getMessage());	
-			Log.getInstance().getLogger().info(bean.getError());	
-
-			return bean;}
+			throw new AuthException(e);
+		}
 	}
 
 }

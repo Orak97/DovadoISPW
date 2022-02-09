@@ -1,3 +1,4 @@
+<%@page import="logic.controller.AuthException"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import = "java.io.*,java.util.*, logic.controller.RegPartnerController, logic.model.DAOActivity, logic.model.SuperActivity,logic.model.Log" %>
 
@@ -27,28 +28,22 @@
 	if(request.getParameter("regForm")!= null){ //controllo la richiesta ricevuta, se all'interno e presente un parametro login vuol dire che arrivo a questa pagina tramite la pressione del bottone login, quindi ne consegue che i dati username e password sono pieni e quindi posso andare avanti
 		String error;
 		RegPartnerController regController = new RegPartnerController();
-		regBean = regController.validateForm(regBean);
 		
-		if(regBean.getError() == null){ 
+		AuthException exc;
+		try{
+		
+			regBean = regController.validateForm(regBean);
 			regBean = regController.addPartner(regBean);
-					if(regBean.getError() == null){
 				
-			
 %>			
-			<jsp:forward page="login.jsp"/>
+			<jsp:forward page="loginPartner.jsp"/>
 <%
-			}else{
-				%>
-				
-				<p style="color:red;"> ${regBean.getError()}</p>
-				<%
-			}
-		} else{
-			Log.getInstance().getLogger().warning(regBean.getError());
-%>
-	
-		<p style="color:red;"> ${regBean.getError()}</p>
-<%		
+			
+		} catch(AuthException e){
+			exc = e;
+			%>
+				<p style="color:red;"> <%= exc.getMessage()%></p>
+			<%	
 		};
 	}
 %>

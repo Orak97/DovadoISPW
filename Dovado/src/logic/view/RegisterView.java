@@ -33,6 +33,7 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import logic.controller.AuthException;
 import logic.controller.RegExplorerController;
 import logic.controller.RegPartnerController;
 import logic.model.DAOPlace;
@@ -151,28 +152,17 @@ public class RegisterView implements Initializable{
 		regBean.setMonumenti(btMonumenti.isSelected());
 		regBean.setRelax(btRelax.isSelected());
 		regBean.setIstruzione(btIstruzione.isSelected());
-				
-		regBean = controller.validateForm(regBean);
-		
-		if(regBean.getError() != null) {
-			Log.getInstance().getLogger().info(regBean.getError());
-			popupGen(wErrPopup,hErrPopup, regBean.getError());
-		    
-			return;
-		}
 		
 		try {
+			regBean = controller.validateForm(regBean);
+
 			regBean = controller.addExplorer(regBean);
+		}catch (AuthException e) {
+			popupGen(wErrPopup,hErrPopup, e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		if(regBean.getError() != null) {
-			Log.getInstance().getLogger().info(regBean.getError());
-			popupGen(wErrPopup,hErrPopup, regBean.getError());
-		    
-			return;
-		}
     	LoginView.render(curr);
 		
     	Log.getInstance().getLogger().info("User registered");
@@ -218,6 +208,7 @@ public class RegisterView implements Initializable{
     	popup.centerOnScreen();
     	
     	Text passwordNotEqualTxt = new Text(error);
+    	passwordNotEqualTxt.setWrappingWidth(wErrPopup - 10);
 	    passwordNotEqualTxt.getStyleClass().add("textEventName");
 	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
 	    

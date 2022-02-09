@@ -167,6 +167,8 @@ public class ProfileView implements Initializable{
 		popup.centerOnScreen();
 		
 		Text errorTxt = new Text(error);
+    	errorTxt.setWrappingWidth(width - 10);
+
 		errorTxt.getStyleClass().add("textEventName");
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);

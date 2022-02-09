@@ -166,6 +166,7 @@ public class LoginView{
     	popup.centerOnScreen();
     	
     	Text passwordNotEqualTxt = new Text(error);
+    	passwordNotEqualTxt.setWrappingWidth(wErrPopup - 10);
 	    passwordNotEqualTxt.getStyleClass().add("textEventName");
 	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
 	    

@@ -1,3 +1,4 @@
+<%@page import="logic.controller.AuthException"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" %>
 <%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.controller.RegExplorerController, logic.model.SuperActivity,logic.model.Log" %>
@@ -27,23 +28,24 @@
 <%
 if(request.getParameter("regForm")!= null){ 
 	String error;
+	AuthException exc;
 	RegExplorerController regController = new RegExplorerController();
-	regExpBean = regController.validateForm(regExpBean);
-
-	if(regExpBean.getError() == null){ 
-		regExpBean = regController.addExplorer(regExpBean);
-			if(regExpBean.getError() == null){
-%>
-			<jsp:forward page="login.jsp"/>
-<%
-		} else{
-%>
 	
-		<p style="color:red;"> ${regExpBean.getError()}</p>
-<%		
-		}
-		}
+	try{
+		regExpBean = regController.validateForm(regExpBean);
+		
+		regExpBean = regController.addExplorer(regExpBean);
+%>
+				<jsp:forward page="login.jsp"/>
+<%
+		
+	} catch(AuthException e){
+			exc = e;
+		%>
+			<p style="color:red;"> <%= exc.getMessage()%></p>
+		<%	
 	}
+}
 %>
    <form action="register.jsp" method="POST">   
    		<img class="mb-4" src="logo/DovadoLogo(3).png" alt="" width="72" height="57">  

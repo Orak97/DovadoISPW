@@ -18,30 +18,27 @@ public abstract class RegController {
 		
 	}
 	
-	public RegBean validateForm(RegBean bean) {
+	public RegBean validateForm(RegBean bean) throws AuthException{
 		String error = null;
 		// controllo la mail se e scritta in maniera corretta
 		Matcher matchEmail = patternEmail.matcher(bean.getEmail());
 		if (!matchEmail.matches()) {
 				error = "Mail sintatticamente sbagliata";
 				Log.getInstance().getLogger().info("Mail sintatticamente sbagliata");
-				bean.setError(error);
-				return bean;
+				throw new AuthException(error);
 		}
 		
 		//check sulla password		
 		if (!bean.getPassword().equals(bean.getPassword2())) {
 				error = "Le password non coincidono";
 				Log.getInstance().getLogger().info(error);
-				bean.setError(error);
-				return bean;
+				throw new AuthException(error);
 		}		
 		Matcher matchPsw = patternPsw.matcher(bean.getPassword2());
 		if (!matchPsw.matches()) {
 			error = "La password deve contenere almeno 8 cratteri e deve contenere numeri, lettere e un carattere tra:{',','.','&','!','?'} ";
 			Log.getInstance().getLogger().info("password non conforme");
-			bean.setError(error);
-			return bean;
+			throw new AuthException(error);
 		}
 		
 		//check sullo username
@@ -50,8 +47,7 @@ public abstract class RegController {
 			
 			error = "Lo username non deve contenere spazi e deve avere dai 4 ai 15 caratteri. Accetta numeri, lettere e {'_','-'}";
 			Log.getInstance().getLogger().info(error);		
-			bean.setError(error);
-			return bean;
+			throw new AuthException(error);
 		}
 		
 		bean.setError(error);
