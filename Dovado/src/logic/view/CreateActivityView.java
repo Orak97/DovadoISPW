@@ -99,7 +99,7 @@ public class CreateActivityView implements Initializable{
 	private static ChoiceBox<String> cadBox;
 	private static TextField clTime;
 	private static TextField opTime;
-	private static volatile DatePicker sDate;
+	private static DatePicker sDate;
 	private static DatePicker eDate;
 	private static DatePicker sDate2;
 	private static DatePicker eDate2;
@@ -119,20 +119,6 @@ public class CreateActivityView implements Initializable{
 	private static long hPopup = 50;
 	private static final String BGCOLORKEY = "ffffff";
 		
-	
-	private static void setEDate(DatePicker edate) {
-		CreateActivityView.eDate = edate;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
@@ -157,7 +143,7 @@ public class CreateActivityView implements Initializable{
 	}
 	
 	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
+	public synchronized void initialize(URL arg0, ResourceBundle arg1) {
 
 		createActBtn.getStyleClass().add("src-btn");
 		searchBtn.getStyleClass().add("src-btn");
