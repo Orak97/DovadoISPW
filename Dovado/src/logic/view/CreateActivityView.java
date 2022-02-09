@@ -38,9 +38,9 @@ import logic.controller.ActivityType;
 import logic.controller.CreateActivityController;
 import logic.model.Cadence;
 import logic.model.CreateActivityBean;
-import logic.model.DAOActivity;
 import logic.model.DAOPlace;
 import logic.model.Log;
+import logic.model.Partner;
 import logic.model.Place;
 import logic.model.Preferences;
 
@@ -250,88 +250,11 @@ public class CreateActivityView implements Initializable{
 						e1.printStackTrace();
 						return;
 				}
-//					if( (placesFound =  (ArrayList<Place>) daoPl.findPlacesByNameOrCity(placeAttr[0],1))==null){
-//						final Stage dialog = new Stage();
-//		                dialog.initModality(Modality.NONE);
-//		                dialog.initOwner(curr);
-//		                VBox dialogVbox = new VBox(20);
-//		                dialogVbox.getChildren().add(new Text("No place found named "+placeAttr[0]));
-//		                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//		                dialog.setScene(dialogScene);
-//		                dialog.show();
-//					}
-				
-//				else if(placeAttr.length==3) {
-//						placesFound.add(daoPl.findPlace(placeAttr[1], placeAttr[0], placeAttr[2], null));
-//						if(placesFound.contains(null)){
-//							final Stage dialog = new Stage();
-//			                dialog.initModality(Modality.NONE);
-//			                dialog.initOwner(curr);
-//			                VBox dialogVbox = new VBox(20);
-//			                dialogVbox.getChildren().add(new Text("No place found in: "+placeAttr[0]+'\n'+"in region: "+placeAttr[2]+'\n'+"named: "+ placeAttr[1]));
-//			                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//			                dialog.setScene(dialogScene);
-//			                dialog.show();
-//						}
-//				}
+
 				updatePlaces();
-				
-				
-				/*if(placeAttr.length<3) {
-					final Stage dialog = new Stage();
-	                dialog.initModality(Modality.NONE);
-	                dialog.initOwner(curr);
-	                VBox dialogVbox = new VBox(20);
-	                dialogVbox.getChildren().add(new Text("Place's attributest not written correctly"));
-	                Scene dialogScene = new Scene(dialogVbox, 300, 200);
-	                dialog.setScene(dialogScene);
-	                dialog.show();
-					return;
-				}*/
-				
+					
 			}
 		});
-/*		if(Navbar.getUser() instanceof Partner) {
-			VBox couponBox = new VBox();
-			
-			addCoupons = new CheckBox();
-			addCoupons.setText("Want to add discounts to your activity?");
-			addCoupons.setTextFill(Paint.valueOf(BGCOLORKEY));
-			addCoupons.setAlignment(Pos.CENTER);
-			discountPercentage = new ChoiceBox<String>();
-			couponBox.getChildren().add(0,addCoupons);
-			
-			VBox discountBox = new VBox();
-			Text discountPerc = new Text("Chose the percentage of the discount");
-			
-			couponBox.setAlignment(Pos.CENTER);
-			discountBox.setAlignment(Pos.CENTER);
-			discountPerc.setTextAlignment(TextAlignment.CENTER);
-			
-			couponBox.setPadding(Insets.EMPTY);
-			discountBox.setPadding(Insets.EMPTY);
-			
-			discountPerc.setFill(Paint.valueOf(BGCOLORKEY));
-			discountPerc.setWrappingWidth(180);
-			discountBox.getChildren().addAll(discountPerc,discountPercentage);
-			discountPercentage.getItems().addAll("10%","20%","30%","40%","50%");
-			
-			addCoupons.setOnAction(new EventHandler<ActionEvent>(){
-
-				@Override
-				public void handle(ActionEvent event) {
-					if(couponBox.getChildren().contains(discountBox)) {
-						couponBox.getChildren().remove(discountBox);
-					} else {
-						couponBox.getChildren().add(discountBox);
-						
-					}
-				}			
-				
-			});
-
-			elementsVBox.getChildren().add(couponBox);
-		}*/
 	}
 	
 	public void updateDescription() {
@@ -401,21 +324,12 @@ public class CreateActivityView implements Initializable{
 					plInfo.getStyleClass().add("placeInfo");
 					plInfo.setStrokeWidth(1);
 					plInfo.setStroke(Paint.valueOf("000000"));
-			/*		eventInfo.setTextAlignment(TextAlignment.LEFT);
-					eventInfo.setFont(Font.font("Monserrat-Black", FontWeight.EXTRA_LIGHT, 12));
-					eventInfo.setFill(Paint.valueOf("#ffffff"));
-					eventInfo.setStrokeWidth(0.3);
-					eventInfo.setStroke(Paint.valueOf("#000000"));
-			*/		
+			
 					plName.setId("placeName");
 					plName.getStyleClass().add("placeName");
 					plName.setStrokeWidth(1);
 					plName.setStroke(Paint.valueOf("000000"));
-			/*		eventName.setFont(Font.font("Monserrat-Black", FontWeight.BLACK, 20));
-					eventName.setFill(Paint.valueOf("#ffffff"));
-					eventName.setStrokeWidth(0.3);
-					eventName.setStroke(Paint.valueOf("#000000"));
-				*/	
+		
 					VBox eventText = new VBox(plName,plInfo);
 					eventText.setAlignment(Pos.CENTER);
 					eventText.getStyleClass().add("eventTextVbox");
@@ -581,35 +495,12 @@ public class CreateActivityView implements Initializable{
 		Log.getInstance().getLogger().info("Attivit� non aggiunta alla persistenza");
 		}
 		
-		//SE L'UTENTE CHE CREA L'ATTIVITA' E' UN PARTNER LA SUA ATTIVITA' SARA' CERTIFICATA DALLA 
-		//NASCITA.
-		
-		/*if(Navbar.getUser() instanceof Partner) {
+		if(Navbar.getUser() instanceof Partner) {
 			caBean.setOwner(Navbar.getUser().getUserID().intValue());
-			caBean.setPrice("200");
-			if(addCoupons.isSelected()) {
-				Discount disc = new Discount(Integer.valueOf(discountPercentage.getValue()),true,Integer.valueOf(discountPercentage.getValue())*10);
-				
-			}
-			
-		}*/
+			//TODO::Prezzo per ora scelto fisso
+			caBean.setPrice("200");	
+		}
 		
-		
-//		SuperActivity act = null;
-//		if(cadBox.getValue().equals(CADENCEKEY[0]) && (sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
-//			 act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime);
-//		} 
-//		else if(cadBox.getValue().equals(CADENCEKEY[0]) && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
-//			act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime,openingDate,closingDate);
-//		}
-//		else if(!cadBox.getValue().equals(CADENCEKEY[0]) && !(sDate.getValue().toString().isEmpty() && eDate.getValue().toString().isEmpty())) {
-//			act = new NormalActivity(activityName,Navbar.getUser(),placeSelected,openingTime,closingTime,openingDate,closingDate);
-//		}
-//		else {
-//			return false;
-//		}
-		
-
 		//--------------------------------------------------------------------------------------------
 				//DA AGGIUNGERE UNA LISTA DI BOTTONI DA CUI SCEGLIERE LA PREFERENZA DELL'ATTIVITA'
 		//--------------------------------------------------------------------------------------------
