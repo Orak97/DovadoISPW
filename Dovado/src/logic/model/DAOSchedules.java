@@ -17,25 +17,15 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class DAOSchedules {
+public class DAOSchedules extends DAO{
 	private static DAOSchedules INSTANCE;
 
 	//----------database--------------------------------------
 
-	private static final String USER = "dovado"; //DA CAMBIARE
-	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
-
-	private static final String LOGDBCONN = "Connected database successfully...";
-	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
 	private static final DateTimeFormatter formatterDB = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
 	//------------------------------------------------------------
 	
-	private  Connection conn ;
-	private  CallableStatement stmt;
-
 	private DAOSchedules() {
 	}
 
@@ -44,15 +34,6 @@ public class DAOSchedules {
 		return INSTANCE;
 	}
 
-	private void resetConnection() throws ClassNotFoundException, SQLException {
-		conn = null;
-		stmt = null;
-		Class.forName(DRIVER_CLASS_NAME);
-
-        // STEP 3: apertura connessione
-        conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-        Log.getInstance().getLogger().info(LOGDBCONN);
-	}
 	public Schedule getSchedule(Long idUser) throws SQLException, ClassNotFoundException {
 		//metodo per prendere dal db lo schedulo di un utente
 		
@@ -209,25 +190,5 @@ public class DAOSchedules {
 				    disconnRoutine();
 				}
 		
-	}
-	
-	private void disconnRoutine() throws SQLException {
-		try {
-	        if (stmt != null)
-	            stmt.close();
-	    } catch (SQLException se2) {
-	    	Log.getInstance().getLogger().warning(String.valueOf( se2.getErrorCode()));
-	    	se2.printStackTrace();
-	    	throw se2;
-	    }
-	    try {
-	        if (conn != null)
-	            conn.close();
-	        	Log.getInstance().getLogger().info(LOGDBDISCONN);
-
-	    } catch (SQLException se) {
-	        Log.getInstance().getLogger().warning( String.valueOf(se.getErrorCode()));
-	    	se.printStackTrace();
-	    }
 	}
 }

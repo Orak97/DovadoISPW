@@ -26,19 +26,6 @@ public class DAOActivity extends DAO{
 	
 	private static DAOActivity INSTANCE;
 	
-	//----------database--------------------------------------
-	
-	private static final String USER = "dovado"; //DA CAMBIARE
-	private static final String PASSWORD = "dovadogang"; //DA CAMBIARE
-	private static final String DB_URL = "jdbc:mariadb://localhost:3306/dovado";
-	private static final String DRIVER_CLASS_NAME = "org.mariadb.jdbc.Driver";
-			
-	//----------log message-----------------------------------------------
-	private static final String LOGDBCONN = "Connected database successfully...";
-	private static final String LOGDBDISCONN = "Disconnetted database successfully...";
-	
-
-	
 	private DAOActivity() {
 	}
 	
