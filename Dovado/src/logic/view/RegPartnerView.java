@@ -28,7 +28,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.RegPartnerController;
 import logic.model.Log;
-import logic.model.RegBean;
+import logic.model.RegPartnerBean;
 
 public class RegPartnerView implements Initializable{
 	
@@ -92,7 +92,7 @@ public class RegPartnerView implements Initializable{
 		}
 		
 		RegPartnerController controller = new RegPartnerController();
-		RegBean regBean = new RegBean();
+		RegPartnerBean regBean = new RegPartnerBean();
 		
 		regBean.setUsername(username);
 		regBean.setEmail(email);

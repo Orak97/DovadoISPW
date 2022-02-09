@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import = "java.io.*,java.util.*, logic.controller.RegPartnerController, logic.model.DAOActivity, logic.model.SuperActivity,logic.model.Log" %>
 
-<jsp:useBean id ="regBean" scope="request" class="logic.model.RegBean" />
+<jsp:useBean id ="regBean" scope="request" class="logic.model.RegPartnerBean" />
 <jsp:setProperty name="regBean" property="*" />
 
 <!DOCTYPE html>
