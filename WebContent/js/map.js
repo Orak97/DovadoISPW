@@ -105,7 +105,8 @@ function removeAllMarkers(){
 //								 inizio codice per andrea
 //-------------------------------------------------------------------------------------------//
 	
-	let desktopLatLng;
+	var latDesk;
+	var longDesk;
 	
 	//chiama prima questa
   	function retrieveLatLng(civicoTxt,indirizzoTxt,cittaTxt,regioneTxt,capTxt){
@@ -125,17 +126,18 @@ function removeAllMarkers(){
 	  		  //let latitude = results.results[0].latlng.lat;
 	  		  //let longitude = results.results[0].latlng.lng
 	  		  //console.log(results.results[0].latlng);
-	  		  desktopLatLng = results.results[0].latlng;
+	  		  latDesk = results.results[0].latlng.lat;
+	  		  longDesk = results.results[0].latlng.lnt;
   		  }
   		});
   	}
   	
   	//e poi queste
   	function getDesktopLatitude(){
-		return desktopLatLng.lat;
+		return latDesk;
 	}
 	
 	//e poi questa
   	function getDesktopLongitude(){
-		return desktopLatLng.lng;
+		return longDesk;
 	}
