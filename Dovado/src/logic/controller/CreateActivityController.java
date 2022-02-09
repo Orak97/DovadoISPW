@@ -81,6 +81,7 @@ public class CreateActivityController {
 		this.parseId();
 		this.createChannel();
 		
+		
 		if(!this.isCertified()) {
 			newActivity=Factory.createNormalActivity(idActivity, bean, place); 
 		}
@@ -142,11 +143,13 @@ public class CreateActivityController {
 		}
 	}
 	
-	public void saveActivity() throws SQLException, ClassNotFoundException {
+	public void saveActivity() throws SQLException, ClassNotFoundException , IllegalArgumentException{
 		/*
 		 * Medoto per chiamare il DAO, quello che controllo è che qua il tipo sia continua, periodica o a scadenza
 		 * 
 		 * */
+		if(bean.getClosingLocalTime().compareTo(bean.getOpeningLocalTime()) < 0) throw new IllegalArgumentException("L\'orario di apertura non può essere prima dell\'orario di chiusura");
+
 		daoAc.createNormalActivity(bean);
 
 	}
