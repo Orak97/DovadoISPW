@@ -1,4 +1,5 @@
 
+<%@page import="logic.controller.NoPartnerException"%>
 <%@page import="java.security.InvalidParameterException"%>
 <%@page import="logic.controller.UpdateCertActController"%>
 <%@ page import = "java.io.*,java.util.*,logic.model.SuperUser, logic.controller.SpotPlaceController, logic.model.User, logic.controller.CreateActivityController, logic.model.Place, logic.model.DAOPlace, logic.model.Partner, logic.model.DAOActivity, logic.model.Activity, logic.model.CertifiedActivity, logic.model.FrequencyOfRepeat, logic.model.ContinuosActivity, logic.model.PeriodicActivity, logic.model.ExpiringActivity, logic.model.Preferences " %>
@@ -60,7 +61,7 @@
 			UpdateCertActController uc;
 			try{
 				uc = new UpdateCertActController(createActivityBean, u);
-			} catch (InvalidParameterException e){
+			} catch (NoPartnerException e){
 				%>
 					<script>alert('SOLO I PARTNER POSSONO MODIFICARE LE ATTIVITA!!!!!')</script>
 				<%

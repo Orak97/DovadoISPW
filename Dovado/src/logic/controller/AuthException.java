@@ -27,7 +27,7 @@ public class AuthException extends Exception{
 		String excep = super.getMessage();
 		if(errorSQL !=null && errorSQL.getErrorCode() == 1062) {
 			// Qui isoliamo e individuiamo la specifica eccezione
-			 excep = errorSQL.getMessage().split(" ")[6];
+			excep = errorSQL.getMessage().split(" ")[6];
 			
 			switch (excep) {
 			case "'email_UNIQUE'":

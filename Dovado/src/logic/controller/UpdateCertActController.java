@@ -45,14 +45,14 @@ public class UpdateCertActController {
 		daoAc = DAOActivity.getInstance();
 	}
 	
-	public UpdateCertActController(CreateActivityBean bean, SuperUser session) {
+	public UpdateCertActController(CreateActivityBean bean, SuperUser session) throws NoPartnerException {
 		if(session instanceof Partner) {
 			this.session = (Partner)session;
 			this.bean = bean;
 			bean.setOwner(this.session.getUserID().intValue());
 			daoAc = DAOActivity.getInstance();
 		} else {
-			throw new InvalidParameterException("Si accettano solo partner");
+			throw new NoPartnerException("Devi essere un partner per poter aggiornare le attività");
 		}
 	}
 	
