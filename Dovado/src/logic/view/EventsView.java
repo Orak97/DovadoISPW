@@ -363,6 +363,7 @@ public class EventsView implements Initializable{
 		}
 	}
 	
+	
 	public void scheduledActSelected() {
 
 		daoAct = DAOActivity.getInstance();

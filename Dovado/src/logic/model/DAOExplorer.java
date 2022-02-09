@@ -49,7 +49,7 @@ public class DAOExplorer {
             stmt.setString(2, password);
             
             if(!stmt.execute()) {
-            	System.out.println("user non trovato");
+            	Log.getInstance().getLogger().warning("user non trovato");
             }
             
             

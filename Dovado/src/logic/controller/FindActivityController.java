@@ -54,8 +54,8 @@ public class FindActivityController {
 		ArrayList<Activity> searchedActivities = dao.findActivitiesByZone(beanFind.getZone());
 		
 		//to remove
-		System.out.println("dopo find activities by zone");
-		for(Activity a : searchedActivities) System.out.println(a.getName());
+		Log.getInstance().getLogger().info("dopo find activities by zone");
+		for(Activity a : searchedActivities) Log.getInstance().getLogger().info(a.getName());
 		
 		
 		if(keywords != null) searchedActivities = filterActivitiesByKeyWords(searchedActivities, keywords);
@@ -65,14 +65,14 @@ public class FindActivityController {
 		searchedActivities = filterActivitiesByPreferences(searchedActivities,p);
 		
 		//to remove
-		System.out.println("dopo find activities by preferences");
-		for(Activity a : searchedActivities) System.out.println(a.getName());
+		Log.getInstance().getLogger().info("dopo find activities by preferences");
+		for(Activity a : searchedActivities) Log.getInstance().getLogger().info(a.getName());
 		
 		searchedActivities = filterActivitiesByDate(searchedActivities,date);
 		
 		//to remove
-		System.out.println("dopo find activities by date");
-		for(Activity a : searchedActivities) System.out.println(a.getName());
+		Log.getInstance().getLogger().info("dopo find activities by date");
+		for(Activity a : searchedActivities) Log.getInstance().getLogger().info(a.getName());
 		
 		return searchedActivities;
 	}

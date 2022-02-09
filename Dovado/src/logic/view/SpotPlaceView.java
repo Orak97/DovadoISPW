@@ -156,7 +156,7 @@ public class SpotPlaceView implements Initializable{
 		spotCivico = civicoText.getText();
 		spotCity = cityText.getText();
 	
-		System.out.println(placeName+'\n'+spotRegion+'\n'+spotAddress+'\n'+spotCity+'\n'+spotCivico);
+		Log.getInstance().getLogger().info(placeName+'\n'+spotRegion+'\n'+spotAddress+'\n'+spotCity+'\n'+spotCivico);
 				
 		//Forse va cambiato e aggiunto anche il civico per
 		//distinguere con precisione posti nuovi da alcuni

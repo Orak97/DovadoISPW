@@ -9,7 +9,7 @@
 		boolean logged = true;
 		
 		String titolo = (String) application.getAttribute("titolo");
-		System.out.println(System.getProperty("user.dir"));
+		Log.getInstance().getLogger().info(System.getProperty("user.dir"));
 		Log.getInstance().getLogger().info(titolo);
 		
 		//TODO Modificare qui dopo aver creato una nuova Navbar		

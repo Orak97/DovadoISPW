@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
  
 
-<%@ page import = "java.io.*,java.util.*, logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Channel, logic.model.Message, logic.controller.ChannelController, logic.model.Activity, logic.model.DAOChannel ,org.json.simple.JSONObject, org.json.simple.JSONArray" %>
+<%@ page import = "java.io.*,java.util.*, logic.model.Log ,logic.model.DAOPreferences, logic.model.DAOActivity, logic.model.SuperActivity, logic.model.SuperUser, logic.model.User, logic.model.Channel, logic.model.Message, logic.controller.ChannelController, logic.model.Activity, logic.model.DAOChannel ,org.json.simple.JSONObject, org.json.simple.JSONArray" %>
 
 		<%	
 		
@@ -31,7 +31,7 @@
   						//TODO: magari ci mettiamo un'eccezione che è meno incasinato così 
 						ChannelController c = new ChannelController(u, activity.getId());
 						c.sendMessage(textMsg);
-						System.out.println(textMsg);
+						Log.getInstance().getLogger().info(textMsg);
   					
   					}
   					

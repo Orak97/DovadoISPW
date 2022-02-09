@@ -51,7 +51,7 @@ public class DAOSchedules {
 
         // STEP 3: apertura connessione
         conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-        System.out.println(LOGDBCONN);
+        Log.getInstance().getLogger().info(LOGDBCONN);
 	}
 	public Schedule getSchedule(Long idUser) throws SQLException, ClassNotFoundException {
 		//metodo per prendere dal db lo schedulo di un utente
@@ -216,17 +216,17 @@ public class DAOSchedules {
 	        if (stmt != null)
 	            stmt.close();
 	    } catch (SQLException se2) {
-	    	System.out.println( se2.getErrorCode());
+	    	Log.getInstance().getLogger().warning(String.valueOf( se2.getErrorCode()));
 	    	se2.printStackTrace();
 	    	throw se2;
 	    }
 	    try {
 	        if (conn != null)
 	            conn.close();
-	        	System.out.println(LOGDBDISCONN);
+	        	Log.getInstance().getLogger().info(LOGDBDISCONN);
 
 	    } catch (SQLException se) {
-	        System.out.println( se.getErrorCode());
+	        Log.getInstance().getLogger().warning( String.valueOf(se.getErrorCode()));
 	    	se.printStackTrace();
 	    }
 	}

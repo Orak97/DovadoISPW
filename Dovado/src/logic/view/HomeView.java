@@ -176,7 +176,7 @@ public class HomeView implements Initializable{
 		
 		usrLat = 41.952928;
 		usrLon = 12.518342;
-        System.out.println("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
+        Log.getInstance().getLogger().info("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
 
         preference1.getStyleClass().add(BTNPREFKEY);
         preference1.setText("By preferences");
@@ -1043,7 +1043,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			chatMss.getChildren().add(chatContainer);
 			chatMss.autosize();
 			
-			System.out.println("Messaggi ricevuti: "+chatMss);
+			Log.getInstance().getLogger().info("Messaggi ricevuti: "+chatMss);
 			
 			if(user.getUsername().equals(usernameMss)) {
 				CornerRadii cr = new CornerRadii(8);

@@ -44,7 +44,7 @@
 				<%
 			}
 		} else{
-			System.out.println(regBean.getError());
+			Log.getInstance().getLogger().warning(regBean.getError());
 %>
 	
 		<p style="color:red;"> ${regBean.getError()}</p>

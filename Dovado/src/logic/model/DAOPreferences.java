@@ -50,7 +50,7 @@ public class DAOPreferences {
             
             // STEP 3: apertura connessione
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            System.out.println("Connected database successfully...");
+            Log.getInstance().getLogger().info("Connected database successfully...");
             
             //STEP4.1: preparo la stored procedure
             String call =  "{call update_user_Preferences(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
@@ -75,7 +75,7 @@ public class DAOPreferences {
             try {
                 if (conn != null)
                     conn.close();
-                	System.out.println("Disconnetted database successfully...");
+                	Log.getInstance().getLogger().info("Disconnetted database successfully...");
                 	
             } catch (SQLException se) {
                 se.printStackTrace();
