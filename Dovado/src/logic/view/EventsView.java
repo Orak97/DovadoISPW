@@ -66,6 +66,9 @@ import logic.model.User;
 
 public class EventsView implements Initializable{
 	
+	private static final  String BTNSRCKEY = "src-btn";
+
+	
 	private ArrayList<ScheduledActivity> schedActivities;
 	private ArrayList<Activity> activities;
     private DAOActivity daoAct;
@@ -123,58 +126,45 @@ public class EventsView implements Initializable{
     
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		Thread newThread = null;
 		daoAct = DAOActivity.getInstance();
 		daoSch = DAOSchedules.getInstance();
 		
 		schedActivities = new ArrayList<>();
     	activities = new ArrayList<>();
 		
-    	searchBtn.getStyleClass().add("src-btn");    	
+    	searchBtn.getStyleClass().add(BTNSRCKEY);    	
     	
     	user = Navbar.getUser();
-    	
-    	if (user instanceof User) {
-	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
-			try{
+    	try{
+    		if (user instanceof User) {
+    			Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
 				//Apro di default la lista di attività schedulate.
 				
 				initUser();
-				
-				Thread newThread = new Thread(() -> {
-					fillEventsListUser();
-				});
-				
-				newThread.start();
-				eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-				newThread.join();
-			}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				Log.getInstance().getLogger().info(e.getMessage());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    }else{
-	    	try {
-	    		initPartner();
-				
-	    		Thread newThread = new Thread(() -> {
-						fillEventsListPartner();
-				});
-				
-				newThread.start();
-				eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-				newThread.join();
-			}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				Log.getInstance().getLogger().info(e.getMessage());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    }
+				newThread = new Thread(() -> fillEventsListUser());
+					
+			
+    		}else{
+    			initPartner();
+    			newThread = new Thread(() -> fillEventsListPartner());
+	    	
+    		}
+    	}catch(Error e) {	
+			Log.getInstance().getLogger().warning(e.getMessage());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	try {		
+    		newThread.start();
+    		eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+    		newThread.join();
+    		
+    	} catch (InterruptedException e) {
+			e.printStackTrace();
+			Log.getInstance().getLogger().info(e.getMessage());
+		}
 	}
 	private void initUser() throws ClassNotFoundException,SQLException{
 		schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
@@ -447,14 +437,10 @@ public class EventsView implements Initializable{
 					
 					ChoiceBox<String> clhourBox = new ChoiceBox<>();
 					ChoiceBox<String> clminBox = new ChoiceBox<>();
-
-					int upperLimit, lowerLimit, upperLimMin, lowerLimMin;
 					
-					lowerLimit = 0;
-					upperLimit = 23;
-					
-					lowerLimMin = 0;
-					upperLimMin = 60;
+					int lowerLimit = 0;
+					int upperLimit = 23;
+			
 
 					for(int i=lowerLimit;i<=upperLimit;i++) {
 						String hr = Integer.toString(i);
@@ -499,7 +485,7 @@ public class EventsView implements Initializable{
 					
 					VBox dateBox = new VBox();
 					ok.setText("Ok");
-					ok.getStyleClass().add("src-btn");
+					ok.getStyleClass().add(BTNSRCKEY);
 					
 					HBox buttonBox = new HBox();
 					HBox pickTimeOpBox = new HBox();
@@ -515,7 +501,7 @@ public class EventsView implements Initializable{
 					pickTimeClBox.getChildren().addAll(clhourBox,columnsCl,clminBox);
 					
 					if(activitySelected.getFrequency() instanceof PeriodicActivity) {
-						pickCadence = new ChoiceBox<String>();
+						pickCadence = new ChoiceBox<>();
 						pickCadence.getItems().addAll(Cadence.WEEKLY.toString(),Cadence.MONTHLY.toString(),Cadence.ANNUALLY.toString());
 						
 						txtCadence = new Text("Select new cadence");
@@ -543,7 +529,7 @@ public class EventsView implements Initializable{
 					selectedBox.getChildren().add(dateBox);
 					
 					close.setText("Close");
-					close.getStyleClass().add("src-btn");					
+					close.getStyleClass().add(BTNSRCKEY);					
 					
 					close.setOnAction(new EventHandler<ActionEvent>(){
 						@Override public void handle(ActionEvent e) {
