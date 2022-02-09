@@ -166,12 +166,12 @@
 			  
 			  <div class="col-md-12">
 			    <label for="name" class="form-label">Nome attività:</label>
-			    <input type="text" class="form-control" id="name" name="activityName" placeholder="Inserisci il nome dell'attività" required>
+			    <input type="text" class="form-control" id="name" name="activityName" placeholder="Inserisci il nome dell'attività" maxlength="80" required>
 			  </div>
 			  
 			  <div class="col-md-12">
 				<label for="description" class="form-label">Descrizione attività:</label>
-				<textarea class="form-control" aria-label="With textarea" name="activityDescription" placeholder="inserisci una breve descrizione dell'attività" required></textarea>
+				<textarea class="form-control" aria-label="With textarea" name="activityDescription" placeholder="inserisci una breve descrizione dell'attività" maxlength="400" required></textarea>
 			  </div>
 			  
 			  <h4 class="intermezzo text-center">Di che tipo è l'attività?</h4>
@@ -180,9 +180,14 @@
 			  	<div class="col">
 				    <div class="card border-primary mb-3 places-cards shadow h-100 kind-cards pressed" onclick="changedKind('CONTINUA')" id="cardsContinua">
 				      <div class="card-body">
+				      <div style="min-height:13em">
 				        <h5 class="card-title text-center">Attività Continua</h5>
 				        <p class="text-center icon-kind"><i class="bi bi-calendar-check"></i></p>
-				        <p class="card-text text-center">Attività aperte tutti i giorni, eg: escursione in villa Borghese </p>
+				        <p class="card-text text-center">Attività che è possibile fare tutti i giorni</p>
+				      </div>  
+				        <hr>
+				        <p class="form-label text-center" style="argin-bottom: 0.3em;">Esempio:</p>
+				        <p class="text-center" id="escursione">Escursione in villa Borghese</p>
 				      </div>
 				    </div>
 				</div>
@@ -192,7 +197,10 @@
 				      <div class="card-body">
 				        <h5 class="card-title text-center">Attività Periodica</h5>
 				        <p class="text-center icon-kind"><i class="bi bi-calendar-range"></i></p>
-				        <p class="card-text text-center">Attività che si ripetono con determinata frequenza, per un periodo di tempo --da aggiustare </p>
+				        <p class="card-text text-center">Attività che è possibile fare con determinata frequenza</p>
+				        <hr>
+				        <p class="form-label text-center" style="argin-bottom: 0.3em;">Esempio:</p>
+				        <p class="text-center">Concerto del primo maggio</p>
 				      </div>
 				    </div>
 				</div>
@@ -202,7 +210,10 @@
 				      <div class="card-body">
 				        <h5 class="card-title text-center">Attività a scadenza</h5>
 				        <p class="text-center icon-kind"><i class="bi bi-calendar-event"></i></p>
-				        <p class="card-text text-center">Attività che si ripetono una sola volta </p>
+				        <p class="card-text text-center">Attività che è possibile fare una sola volta, in una data specifica </p>
+				        <hr>
+				        <p class="form-label text-center" style="argin-bottom: 0.3em;">Esempio:</p>
+				        <p class="text-center">Festa da Davide</p>
 				      </div>
 				    </div>
 				</div>
@@ -650,6 +661,29 @@
   		}
   	}
   	
+  	//--------------------------------------------------------------------------------
+  	//									controlli
+  	//--------------------------------------------------------------------------------
+  	
+  	document.querySelector('[name=openingTime]').addEventListener('change',setMinClosingTime)
+  	
+  	function setMinClosingTime(){
+  		let opening = document.querySelector('[name=openingTime]').value;
+  		document.querySelector('[name=closingTime]').min = opening;
+  	}
+  	
+  	let checkboxes = document.querySelectorAll('.form-switch [type=checkbox]')
+  	checkboxes.forEach(checkbox => {checkbox.addEventListener('change',disableIfEmpty)})
+  	
+  	function disableIfEmpty(){
+  		let count = 0;
+  		checkboxes.forEach(checkbox => { if(checkbox.checked == true) count++})
+  		if(count <= 0) document.querySelector('[type=submit].create-activity').disabled = true;
+  		else document.querySelector('[type=submit].create-activity').disabled = false;
+  	}
+  	
+  	
+  	//--------------------------------------------------------------------------------
   	<%if(editActivity != null){%>
   		setPlace(null,<%=editActivity.getPlace().getId()%>)
   		document.querySelector('[name=idActivity]').disabled = false
@@ -716,6 +750,7 @@
   		%>
   		
   	<%}%>
+  	
   </script>
   
   <%} %>
