@@ -378,20 +378,16 @@ public class HomeView implements Initializable{
 
 					@Override
 					public void handle(ActionEvent event) {
-						final Popup popup;
 						if(!searchByPreference) {
 							searchByPreference=true;
-							popup = popupGen(wPopup,hPopup,"Your searched activities will be filtered by preference!");
+							popupGen(wPopup,hPopup,"Your searched activities will be filtered by preference!");
 							
 						}
 						else {
 							searchByPreference=false;
-							popup = popupGen(wPopup,hPopup,"Your searched activities will not be filtered by preference!");
+							popupGen(wPopup,hPopup,"Your searched activities will not be filtered by preference!");
 						}
-						popup.centerOnScreen();
 						
-						popup.setHideOnEscape(true);
-						popup.show(curr);
 					}
 					
 				});
@@ -660,11 +656,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							try {
 								c.sendMessage(mss.getText());
 							} catch (ClassNotFoundException | SQLException e1) {
-								final Popup popup = popupGen(wPopup,hPopup,"Message not sent due to DB error");
-								popup.centerOnScreen(); 
-							    
-							    popup.show(curr);
-							    popup.setAutoHide(true);
+								popupGen(wPopup,hPopup,"Message not sent due to DB error");
+							
 								
 								e1.printStackTrace();
 								return;
@@ -915,11 +908,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 							@Override public void handle(ActionEvent e) {
 								if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
 									Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche.");
-									final Popup popup = popupGen(wPopup,hPopup,"You haven't specified enough info."); 
-									popup.centerOnScreen(); 
-								    
-								    popup.show(curr);
-								    popup.setAutoHide(true);
+									popupGen(wPopup,hPopup,"You haven't specified enough info."); 
+								
 								}
 							    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 								String dayStringed = day.format(pickDate.getValue());
@@ -935,11 +925,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									hourReminder = Integer.toString(hourReminderInt-1);
 							
 									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");
-									final Popup popup = popupGen(wPopup,hPopup,"You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
-									popup.centerOnScreen(); 
-								    
-								    popup.show(curr);
-								    popup.setAutoHide(true);
+									popupGen(wPopup,hPopup,"You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
+									
 									
 									if(hourReminderInt-1<10) {
 										hourReminder = "0"+hourReminder;
@@ -951,11 +938,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								if(pickDateReminder.getValue().toString().isBlank()) {
 									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
 									dateReminderChosen=dayStringed;
-									final Popup popup = popupGen(wPopup,hPopup,"You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
-									popup.centerOnScreen(); 
-								    
-								    popup.show(curr);
-								    popup.setAutoHide(true);
+									popupGen(wPopup,hPopup,"You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
+									
 								} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
 								String dateChosen = dayStringed;
 
@@ -970,11 +954,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									
 									if(pricePayed > ((User)user).getBalance()) {
 										Log.getInstance().getLogger().info("Not enough dovado $ for payment");
-										final Popup popup = popupGen(wPopup,hPopup,"Not enough Dovado $ for payment"); 
-										popup.centerOnScreen(); 
-									    
-									    popup.show(curr);
-									    popup.setAutoHide(true);
+										popupGen(wPopup,hPopup,"Not enough Dovado $ for payment"); 
+									
 										return;
 									} else {
 										sb.setSelectedCoupon(percRequested);
@@ -1002,11 +983,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 										e1.printStackTrace();
 									}
 								}
-								final Popup popup = popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
-								popup.centerOnScreen(); 
-							    
-							    popup.show(curr);
-							    popup.setAutoHide(true);
+								popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
+							
 				                
 							}
 						});
@@ -1024,11 +1002,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			deleteActivity.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					final Popup popup = popupGen(wPopup,hPopup,"Activity deleted correctly!"); 
-					popup.centerOnScreen();
-						 
-				    popup.show(curr);
-				    popup.setAutoHide(true);
+					popupGen(wPopup,hPopup,"Activity deleted correctly!"); 
 					    
 					Log.getInstance().getLogger().info("Attivit\u00E0 cancellata dalla persistenza");
 					activityDeselected(lastEventBoxSelected,true);
@@ -1046,12 +1020,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		try {
 			ch = daoCH.getChannel(ch.getActivityReferenced());
 		} catch (ClassNotFoundException | SQLException e) {
-			final Popup popup = popupGen(wPopup,hPopup,"Unable to get chat.");
-			popup.centerOnScreen(); 
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
-		    
+			popupGen(wPopup,hPopup,"Unable to get chat.");
+			
 			e.printStackTrace();
 			return;
 		}
@@ -1142,49 +1112,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		daoAct = DAOActivity.getInstance();
 
 		if(Navbar.getUser() instanceof Partner) {
-			int couponCode;
-			try {
-			couponCode = Integer.parseInt(searchBar.getText());
-			} catch(NumberFormatException ne) {
-				final Popup popup = popupGen(wPopup,hPopup,"Insert a 6 digit NUMBER");
-				popup.centerOnScreen(); 
-			    
-			    popup.show(curr);
-			    popup.setAutoHide(true);
-			    return;
-			}
-			try{ 
-				//Con il metodo sottostante mi assicuro della presenza del coupon.
-				if((DAOCoupon.getInstance().findCouponPartner(couponCode))==null) {
-					final Popup popup = popupGen(wPopup,hPopup,"No such coupon found!");
-					popup.centerOnScreen(); 
-				    
-				    popup.show(curr);
-				    popup.setAutoHide(true);
-				    return;
-				}
-				//Una volta trovato eseguo il codice necessario a redimerlo.
-				AddActivityToScheduleController actSched = new AddActivityToScheduleController((Partner)(Navbar.getUser()), searchBar.getText());
-				actSched.redeemCoupon();
-			} 
-			catch(Exception e){
-				//Si cattura un'eccezione se trovata e si avverte l'utente				
-				final Popup popup = popupGen(wPopup,hPopup,"Due to an issue the coupon was not redeemed.");
-				popup.centerOnScreen(); 
-			    
-			    popup.show(curr);
-			    popup.setAutoHide(true);
-			    e.printStackTrace();
-			    return;
-			}
-			final Popup popup = popupGen(wPopup,hPopup,"Coupon redeemed correctly");
-			popup.centerOnScreen(); 
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
-		    searchBar.setText("");
-		    searchBar.setPromptText("Insert a 6 digit coupon code");
-		    return;
+			filterActPartner();
 		} else {
 			searchBar.setPromptText("Search activities");
 		}
@@ -1208,11 +1136,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			FindActivityController.filterActivitiesByKeyWords(activities, keywords);
 			if(activities.isEmpty() ) {
 				Log.getInstance().getLogger().info("Nothing was found!");
-				final Popup popup = popupGen(wPopup,hPopup,"Nothing has been found"); 
-				popup.centerOnScreen(); 
-			    
-			    popup.show(curr);
-			    popup.setAutoHide(true);
+				popupGen(wPopup,hPopup,"Nothing has been found"); 
 				return;
 			}
 			
@@ -1225,92 +1149,130 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		
 		int i;
 		for(i=0;i<activities.size();i++) {
-			if(!(activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
-				continue;
-			}
-			
-			ImageView eventImage = new ImageView();
-			Text eventName = new Text(activities.get(i).getName()+"\n");
-			Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-			Text eventInfo;
+				filterActUserSupport(activities, i);
+		}
+	}
 	
-			if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
-				eventInfo = new Text(activities.get(i).getPlace().getName()+
-						"\nExpiring activity"+
-						"\n"+activities.get(i).getFrequency().getOpeningTime()+
-						"-"+activities.get(i).getFrequency().getClosingTime());
+	private void filterActPartner() {
+		int couponCode;
+		try {
+		couponCode = Integer.parseInt(searchBar.getText());
+		} catch(NumberFormatException ne) {
+			popupGen(wPopup,hPopup,"Insert a 6 digit NUMBER");
+			
+		    return;
+		}
+		try{ 
+			//Con il metodo sottostante mi assicuro della presenza del coupon.
+			if((DAOCoupon.getInstance().findCouponPartner(couponCode))==null) {
+				popupGen(wPopup,hPopup,"No such coupon found!");
+			    return;
 			}
-			else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
-				eventInfo = new Text(activities.get(i).getPlace().getName()+
-						"\nPeriodic activity"+
-						"\n"+activities.get(i).getFrequency().getOpeningTime()+
-						"-"+activities.get(i).getFrequency().getClosingTime());
-			}
-			else{
-				eventInfo = new Text(activities.get(i).getPlace().getName()+
-					"\n Continuos activity"+
+			//Una volta trovato eseguo il codice necessario a redimerlo.
+			AddActivityToScheduleController actSched = new AddActivityToScheduleController((Partner)(Navbar.getUser()), searchBar.getText());
+			actSched.redeemCoupon();
+		} 
+		catch(Exception e){
+			//Si cattura un'eccezione se trovata e si avverte l'utente				
+			popupGen(wPopup,hPopup,"Due to an issue the coupon was not redeemed.");
+			
+		    e.printStackTrace();
+		    return;
+		}
+		popupGen(wPopup,hPopup,"Coupon redeemed correctly");
+
+	    searchBar.setText("");
+	    searchBar.setPromptText("Insert a 6 digit coupon code");
+	    return;
+	}
+	
+	private void filterActUserSupport(ArrayList<Activity> activities, int i) {
+
+		if(!(activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
+			return;
+		}
+		
+		ImageView eventImage = new ImageView();
+		Text eventName = new Text(activities.get(i).getName()+"\n");
+		Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+		Text eventInfo;
+
+		if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
+			eventInfo = new Text(activities.get(i).getPlace().getName()+
+					"\nExpiring activity"+
 					"\n"+activities.get(i).getFrequency().getOpeningTime()+
 					"-"+activities.get(i).getFrequency().getClosingTime());
-			}
-			eventImage.setImage(new Image(IMAGES));
-	
-			eventInfo.setId(EVENTINFO);
-			eventInfo.getStyleClass().add(STYLEINFO);
-			eventInfo.setWrappingWidth(280);
-
-			eventName.setId(EVENTNAME);
-			eventName.getStyleClass().add(STYLENAME);
-			eventName.setWrappingWidth(280);
-			
-			VBox eventText = new VBox(eventName,eventInfo);
-			eventText.setAlignment(Pos.CENTER_LEFT);
-			
-			//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-			StackPane eventBox = new StackPane();
-			Text eventId = new Text();
-			Text placeId = new Text();
-			
-			eventId.setId(activities.get(i).getId().toString());
-			placeId.setId(activities.get(i).getPlace().getId().toString());
-			
-			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-			//dell'evento ed infine il testo dell'evento.
-			eventBox.getChildren().add(eventId);
-			eventBox.getChildren().add(placeId);
-			eventBox.getChildren().add(eventImage);		
-			eventBox.getChildren().add(eventText);
-			//Se l'attivit� � certificata aggiungo un logo in alto a
-			//destra per indicarlo.
-			if(activities.get(i) instanceof CertifiedActivity) {
-	
-				eventName.getStyleClass().clear();
-				eventName.getStyleClass().add(CERTEVENTNAME);
-				eventName.setText(eventName.getText()+'\n'+CERTIFIED);
-				
-			}	
-			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-			eventBox.setAlignment(Pos.CENTER);
-			if(activities.get(i) instanceof NormalActivity){
-				if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
-					eventBox.setOpacity(0.4);
-					Text closed = new Text(CLOSEDKEY);
-					closed.getStyleClass().add(STYLEINFO);
-					closed.setTextAlignment(TextAlignment.CENTER);
-					eventBox.getChildren().add(closed);
-				}
-			} else {
-				if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
-					eventBox.setOpacity(0.4);
-					Text closed = new Text(CLOSEDKEY);
-					closed.getStyleClass().add(STYLEINFO);
-					closed.setTextAlignment(TextAlignment.CENTER);
-					eventBox.getChildren().add(closed);
-				}
-			}
-			eng.executeScript(SPOTPLACESCRIPT+"("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")");
-			eventsList.getItems().add(eventBox);
 		}
+		else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
+			eventInfo = new Text(activities.get(i).getPlace().getName()+
+					"\nPeriodic activity"+
+					"\n"+activities.get(i).getFrequency().getOpeningTime()+
+					"-"+activities.get(i).getFrequency().getClosingTime());
+		}
+		else{
+			eventInfo = new Text(activities.get(i).getPlace().getName()+
+				"\n Continuos activity"+
+				"\n"+activities.get(i).getFrequency().getOpeningTime()+
+				"-"+activities.get(i).getFrequency().getClosingTime());
+		}
+		eventImage.setImage(new Image(IMAGES));
+
+		eventInfo.setId(EVENTINFO);
+		eventInfo.getStyleClass().add(STYLEINFO);
+		eventInfo.setWrappingWidth(280);
+
+		eventName.setId(EVENTNAME);
+		eventName.getStyleClass().add(STYLENAME);
+		eventName.setWrappingWidth(280);
+		
+		VBox eventText = new VBox(eventName,eventInfo);
+		eventText.setAlignment(Pos.CENTER_LEFT);
+		
+		//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+		//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+		StackPane eventBox = new StackPane();
+		Text eventId = new Text();
+		Text placeId = new Text();
+		
+		eventId.setId(activities.get(i).getId().toString());
+		placeId.setId(activities.get(i).getPlace().getId().toString());
+		
+		//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+		//dell'evento ed infine il testo dell'evento.
+		eventBox.getChildren().add(eventId);
+		eventBox.getChildren().add(placeId);
+		eventBox.getChildren().add(eventImage);		
+		eventBox.getChildren().add(eventText);
+		//Se l'attivit� � certificata aggiungo un logo in alto a
+		//destra per indicarlo.
+		if(activities.get(i) instanceof CertifiedActivity) {
+
+			eventName.getStyleClass().clear();
+			eventName.getStyleClass().add(CERTEVENTNAME);
+			eventName.setText(eventName.getText()+'\n'+CERTIFIED);
+			
+		}	
+		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+		eventBox.setAlignment(Pos.CENTER);
+		if(activities.get(i) instanceof NormalActivity){
+			if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+				eventBox.setOpacity(0.4);
+				Text closed = new Text(CLOSEDKEY);
+				closed.getStyleClass().add(STYLEINFO);
+				closed.setTextAlignment(TextAlignment.CENTER);
+				eventBox.getChildren().add(closed);
+			}
+		} else {
+			if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+				eventBox.setOpacity(0.4);
+				Text closed = new Text(CLOSEDKEY);
+				closed.getStyleClass().add(STYLEINFO);
+				closed.setTextAlignment(TextAlignment.CENTER);
+				eventBox.getChildren().add(closed);
+			}
+		}
+		eng.executeScript(SPOTPLACESCRIPT+"("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")");
+		eventsList.getItems().add(eventBox);
 	}
 	
 	public Popup popupGen(double width, double height, String error) {
@@ -1330,6 +1292,10 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 	    r.setStroke(Paint.valueOf(BGCOLORKEY));
 	    
 	    popup.getContent().add(popupContent);
+	    popup.centerOnScreen(); 
+	    
+	    popup.show(curr);
+	    popup.setAutoHide(true);
 	    return popup;
 	}
 }
