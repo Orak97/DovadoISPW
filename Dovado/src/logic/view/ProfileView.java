@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,6 +25,10 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import logic.controller.FindActivityController;
+import logic.model.Coupon;
+import logic.model.DAOActivity;
+import logic.model.DAOCoupon;
 import logic.model.DAOPreferences;
 import logic.model.Log;
 import logic.model.Preferences;
@@ -52,7 +57,7 @@ public class ProfileView implements Initializable{
 	@FXML
 	private HBox currencyHBox;
 	
-	
+
 	private DAOPreferences daoPr;
 	private static Stage curr;
 	
@@ -81,13 +86,13 @@ public class ProfileView implements Initializable{
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		String styleTextInfo = "textEventInfo";
+		String styleTextInfo = "textEventName";
 		setEmail.getStyleClass().add(styleTextInfo);
 		setUsr.getStyleClass().add(styleTextInfo);
 		currency.getStyleClass().add(styleTextInfo);
 		
 		if(Navbar.getUser() instanceof User) {
-			currency.setText(((User)Navbar.getUser()).getBalance()+" ï¿½");
+			currency.setText(((User)Navbar.getUser()).getBalance()+" $");
 		}
 		setEmail.setText(Navbar.getUser().getEmail());
 		setUsr.setText(Navbar.getUser().getUsername());
@@ -120,8 +125,36 @@ public class ProfileView implements Initializable{
 			}
 			((VBox)root.getChildren().get(1)).setAlignment(Pos.CENTER);
 		} else {
-			root.getChildren().remove(prefVBox);
-			((VBox)root.getChildren().get(0)).setAlignment(Pos.CENTER);
+			
+			prefVBox.getChildren().clear();
+			Text partActivities = new Text("Activities under management:");
+			Text numPAct = new Text();
+			Text usersTouched = new Text("Users reached:");
+			Text numusers = new Text("133");
+			Text coupGenerated = new Text("CouponsGenerated:");
+			Text numCoup = new Text("30");
+			
+			usersTouched.getStyleClass().add(styleTextInfo);
+			partActivities.getStyleClass().add(styleTextInfo);
+			coupGenerated.getStyleClass().add(styleTextInfo);
+			numPAct.getStyleClass().add("textEventName");
+			numCoup.getStyleClass().add("textEventName");
+			numusers.getStyleClass().add("textEventName");
+			
+			try {
+				numPAct.setText(String.valueOf(DAOActivity.getInstance().getPartnerActivities(Navbar.getUser().getUserID()).size()));
+			} catch (ClassNotFoundException e) {		
+				e.printStackTrace();
+			} catch (SQLException e) {
+				Log.getInstance().getLogger().info("Errore dal DB; non trovo il numero di attività del partner");
+				e.printStackTrace();
+				numPAct.setText("0");
+			}
+			
+			VBox infoPartner = new VBox();
+			infoPartner.setPadding(new Insets(20));
+			infoPartner.getChildren().addAll(partActivities,numPAct,usersTouched,numusers,coupGenerated,numCoup);
+			prefVBox.getChildren().addAll(infoPartner);
 			((VBox)root.getChildren().get(0)).getChildren().remove(currencyHBox);
 		}
 	}

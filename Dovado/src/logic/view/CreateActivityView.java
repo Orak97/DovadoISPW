@@ -35,16 +35,23 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.ActivityType;
+import logic.controller.ClaimActivityController;
 import logic.controller.CreateActivityController;
+import logic.controller.FindActivityController;
 import logic.controller.SpotPlaceController;
+import logic.model.Activity;
+import logic.model.NormalActivity;
 import logic.model.Cadence;
+import logic.model.CertifiedActivity;
 import logic.model.CreateActivityBean;
+import logic.model.DAOActivity;
 import logic.model.DAOPlace;
 import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
 import logic.model.Preferences;
 import logic.model.SpotPlaceBean;
+import logic.model.SuperActivity;
 
 public class CreateActivityView implements Initializable{
 
@@ -80,6 +87,8 @@ public class CreateActivityView implements Initializable{
 
 	@FXML
 	private Button searchBtn;
+	@FXML
+	private Button searchActs;
 	
 	@FXML
 	private Button spotPlace;
@@ -109,11 +118,27 @@ public class CreateActivityView implements Initializable{
 	private VBox boxSpot;
 	
 	@FXML
+	private Button spotActs;
+	
+	@FXML
+	private TextField searchActivities;
+	
+	@FXML
+	private ListView<Object> actsList;
+	
+	@FXML
+	private Button reclaim;	
+	
+	@FXML
+	private Button createNew;
+	
+	@FXML
 	private ChoiceBox<String> regionBox;
 	
 	private static final  String[] CADENCEKEY = {"Weekly","Monthly","Annually"};
-	
+
 	private static ListView<Object> pList;
+	private static ListView<Object> aList;
 	private static ChoiceBox<String> typeBox;
 	private static ChoiceBox<String> cadBox;
 	private static TextField clTime;
@@ -128,7 +153,10 @@ public class CreateActivityView implements Initializable{
 	private DAOPlace daoPl;
 	private static Place placeSelected;
 	private ArrayList<Place> placesFound;
+	private ArrayList<Activity> actsFound;
+	private static Activity actSelected;
 	private StackPane lastPlaceBoxSelected;
+	private StackPane lastActBoxSelected;
 	private static Text cadenceSelText;
 	private static HBox pHBox;
 	private static VBox periodicBox;
@@ -191,12 +219,15 @@ public class CreateActivityView implements Initializable{
 		
 		daoPl = DAOPlace.getInstance();
 		placeSelected = null;
+		actSelected = null;
 		placesFound = new ArrayList<>();
+		actsFound = new ArrayList<>();
 		
 		actNameField=actNameTF;
 		clTime=closingTime;
 		opTime=openingTime;
 		pList=placesList;
+		aList=actsList;
 		rt=root;
 		typeBox = tBox;
 		actDescriptionText = activityDescriptionText;
@@ -265,28 +296,79 @@ public class CreateActivityView implements Initializable{
 				}
 			}
 		});
+		if(Navbar.getUser() instanceof Partner) {
 
-		boxSpot.setManaged(false);
-		boxSpot.setVisible(false);
-		
-		spotPlace.setText("Spot your place");
-		spotPlace.getStyleClass().add("src-btn");
-		spotPlace1.getStyleClass().add("src-btn");
-		spotPlace.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				if(boxSpot.isManaged()) {
-					boxSpot.setManaged(false);
-					boxSpot.setVisible(false);
-				} else {
-					boxSpot.setManaged(true);
-					boxSpot.setVisible(true);
-				}
+			for(int i=1;i<elementsVBox.getChildren().size();i++) {
+				elementsVBox.getChildren().get(i).setManaged(false);
+				elementsVBox.getChildren().get(i).setVisible(false);
 			}
+			createNew.getStyleClass().add("src-btn");
+			searchActs.getStyleClass().add("src-btn");
+			searchActs.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					String[] searchTerm = searchBar.getText().split(";");
+					try {
+						actsFound  =  (ArrayList<Activity>) DAOActivity.getInstance().getNearbyActivities(42.19832, 12.34515,100);
+						actsFound = (ArrayList<Activity>)FindActivityController.filterActivitiesByKeyWords(actsFound, searchTerm);
+						if( (actsFound)==null){
+							
+								popupGen(wPopup,hPopup,"No activity found for "+searchTerm); 
+								
+								
+							}
+						} catch (Exception e1) {
+							Log.getInstance().getLogger().info("Due to DB errors places were not fetched.");
+							e1.printStackTrace();
+							return;
+					}
+
+					updateActs();
+				}
+			});
+			createNew.setOnAction(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					VBox partBox = (VBox)elementsVBox.getChildren().get(0);
+					partBox.setManaged(false);
+					partBox.setVisible(false);
+					
+					for(int i=1;i<elementsVBox.getChildren().size();i++) {
+						elementsVBox.getChildren().get(i).setManaged(true);
+						elementsVBox.getChildren().get(i).setVisible(true);
+					}
+					
+				}
+				
+			});
+
+			reclaim.getStyleClass().add("src-btn");
+			boxSpot.setManaged(false);
+			boxSpot.setVisible(false);
 			
-		});
-		
+			spotPlace.setText("Spot your place");
+			spotPlace.getStyleClass().add("src-btn");
+			spotPlace1.getStyleClass().add("src-btn");
+			spotPlace.setOnAction(new EventHandler<ActionEvent>() {
+	
+				@Override
+				public void handle(ActionEvent event) {
+					if(boxSpot.isManaged()) {
+						boxSpot.setManaged(false);
+						boxSpot.setVisible(false);
+					} else {
+						boxSpot.setManaged(true);
+						boxSpot.setVisible(true);
+					}
+				}
+				
+			});
+		}
+		else {
+			elementsVBox.getChildren().get(0).setManaged(false);
+			elementsVBox.getChildren().get(0).setVisible(false);
+		}
 		searchBtn.setText("Search");
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
@@ -485,6 +567,128 @@ public class CreateActivityView implements Initializable{
 		eventImage.setScaleY(1);
 	}
 	
+//--------------------------------------INIZIO PARTE DI RECLAIM ACTIVITY----------------------
+	
+	public void updateActs() {
+		aList.getItems().clear();
+		
+		for(int j=0;j<actsFound.size();j++) {
+					if(actsFound.get(j) instanceof CertifiedActivity) continue;
+					ImageView acImage = new ImageView();
+					Text acName = new Text(actsFound.get(j).getName()+"\n");
+					Log.getInstance().getLogger().info("\n\n"+actsFound.get(j).getName()+"\n\n");
+					Text acInfo = new Text(actsFound.get(j).getPlayabilityInfo()+
+							"\n"+actsFound.get(j).getDescription());
+
+					acImage.setImage(new Image("https://source.unsplash.com/user/erondu/310x180"));
+					acImage.getStyleClass().add("place-image");
+					
+					acInfo.setId("placeInfo");
+					acInfo.getStyleClass().add("placeInfo");
+					acInfo.setStrokeWidth(1);
+					acInfo.setStroke(Paint.valueOf("000000"));
+			
+					acName.setId("placeName");
+					acName.getStyleClass().add("placeName");
+					acName.setStrokeWidth(1);
+					acName.setStroke(Paint.valueOf("000000"));
+		
+					VBox eventText = new VBox(acName,acInfo);
+					eventText.setAlignment(Pos.CENTER);
+					acName.setWrappingWidth(300);
+					acInfo.setWrappingWidth(300);
+					eventText.getStyleClass().add("eventTextVbox");
+					//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+					//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+					StackPane eventBox = new StackPane();
+					eventBox.getStyleClass().add("eventBox");
+					
+					
+					Text actId = new Text();
+					
+					Long aID = actsFound.get(j).getId();
+					Log.getInstance().getLogger().info("ID ATTIVITA': "+aID);
+					actId.setId(aID.toString());
+					
+					//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+					//dell'evento ed infine il testo dell'evento.
+					eventBox.getChildren().add(actId);
+					eventBox.getChildren().add(acImage);
+					eventBox.getChildren().add(eventText);
+					
+					//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+					eventBox.setAlignment(Pos.CENTER_LEFT);
+					
+					eventBox.setMinWidth(rt.getWidth()/2);
+					eventBox.setMaxWidth(rt.getWidth()/2);
+					aList.getItems().add(eventBox);
+			}
+		
+	}
+	
+	
+	public synchronized void selectedActivity() {
+		
+		int lastActSelected=-1;
+		
+		StackPane actBox = null;
+		try {
+			actBox = (StackPane) aList.getSelectionModel().getSelectedItem();
+		} catch(ClassCastException ce) {
+			Log.getInstance().getLogger().info(ce.getMessage());
+			return;
+		}
+
+		if(lastActBoxSelected == actBox) return;
+		
+		if(lastActBoxSelected!=null) placeDeselected(lastActBoxSelected);
+		
+		int itemNumber = aList.getSelectionModel().getSelectedIndex();
+		
+		lastActSelected = itemNumber;
+		Log.getInstance().getLogger().info(String.valueOf(lastActSelected));
+		
+		//La prossima volta che selezioner� un altro evento oltre questo si resetta il suo eventBox.
+		lastActBoxSelected = actBox;
+		long aID = Long.parseLong(((Text)actBox.getChildren().get(0)).getId());
+		try {
+			actSelected = DAOActivity.getInstance().getActivityById(aID);
+			Log.getInstance().getLogger().info("ATTIVITA' SELEZIONATA: "+actSelected.getName());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		ImageView actImage = (ImageView) actBox.getChildren().get(1);
+
+		actImage.setScaleX(1.25);
+		actImage.setScaleY(1.25);
+		
+		Log.getInstance().getLogger().info("Activity id found: "+aID+" "+actSelected.getName());
+			
+	}
+	
+	public void activityDeselected(StackPane lastActBoxSelected) {
+		
+		ImageView eventImage = (ImageView) lastActBoxSelected.getChildren().get(1);
+		
+		eventImage.setScaleX(1);
+		eventImage.setScaleY(1);
+	}
+	
+	public void reclaimActivity() {
+		if(actSelected==null) popupGen(wPopup,hPopup,"Chose an activity first");
+		ClaimActivityController cac = new ClaimActivityController();
+		if(cac.claimActivityOwnership((Partner)Navbar.getUser(),((SuperActivity)actSelected))) {
+			popupGen(wPopup,hPopup,"Activity succesfully claimed!");
+		} else {
+			popupGen(wPopup,hPopup,"Activity not claimed!");
+		}
+		
+	}
+	
+//------------------------- FINE PARTE INERENTE AL RECLAIM ----------------------
+	
 	public boolean createActivity() {
 		
 		String activityName;
@@ -601,8 +805,10 @@ public class CreateActivityView implements Initializable{
 		}
 		return activityPrefSet;
 	}
+
 // ----------------------- Metodo di supporto per createActivity() ------------------------------
 
+	
 	private static boolean prevCheck() {
 	
 		if(placeSelected==null) {

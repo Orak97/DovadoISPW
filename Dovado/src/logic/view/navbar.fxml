@@ -17,7 +17,6 @@
             <MenuButton id="myProfile" fx:id="menuButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" styleClass="navbar-item" text="My profile" textFill="WHITE">
               <items>
                 <MenuItem id="profile" mnemonicParsing="false" onAction="#goProfile" styleClass="navbar-item" text="Profile" />
-                <MenuItem id="preferences" mnemonicParsing="false" onAction="#goPreferences" styleClass="navbar-item" text="Preferences" />
                 <MenuItem id="logout" fx:id="logout_input" mnemonicParsing="false" onAction="#Logout" styleClass="logout" text="Logout" />
               </items>
             </MenuButton>

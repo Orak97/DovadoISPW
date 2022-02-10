@@ -28,6 +28,49 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </VBox.margin>
                                        <children>
+                                          <TextField fx:id="searchActivites" promptText="Search your activity">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Button fx:id="searchActs" mnemonicParsing="false" text="Search">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <ListView fx:id="actsList" minHeight="-Infinity" onMouseClicked="#selectedActivity" orientation="HORIZONTAL" prefHeight="210.0" prefWidth="320.0" style="-fx-background-color: #212121;" VBox.vgrow="ALWAYS" />
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Button fx:id="createNew" mnemonicParsing="false" text="Create new activity">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                          <Button fx:id="reclaim" mnemonicParsing="false" onAction="#reclaimActivity" text="Reclaim your activity">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <VBox alignment="CENTER" style="-fx-background-color: #212121;">
+                                 <children>
+                                    <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </VBox.margin>
+                                       <children>
                                           <TextField fx:id="searchBar" promptText="Place city, place region, place name">
                                              <HBox.margin>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
