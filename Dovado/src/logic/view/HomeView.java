@@ -572,7 +572,7 @@ public class HomeView implements Initializable{
 		
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-					eng.executeScript("moveView("+activitySelected.getPlace().getLatitudine()+","+activitySelected.getPlace().getLongitudine()+","+activitySelected.getId()+")");	
+					eng.executeScript("moveViewDesktop("+activitySelected.getPlace().getLatitudine()+","+activitySelected.getPlace().getLongitudine()+","+activitySelected.getId()+")");	
 				}
 		});
 		
