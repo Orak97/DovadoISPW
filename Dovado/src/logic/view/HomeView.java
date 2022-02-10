@@ -322,13 +322,6 @@ public class HomeView implements Initializable{
 				
 				StackPane eventBox = setView(eventInfo, eventName, true , i, null, activitiesPartn);
 				
-				if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
-					eventBox.setOpacity(0.4);
-					Text closed = new Text(CLOSEDKEY);
-					closed.getStyleClass().add(STYLEINFO);
-					closed.setTextAlignment(TextAlignment.CENTER);
-					eventBox.getChildren().add(closed);
-				}
 				eventsList.getItems().add(eventBox);
 				
 			}
@@ -375,35 +368,10 @@ public class HomeView implements Initializable{
 				
 				Text eventName = new Text(activities.get(i).getName()+"\n");
 				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-				//////DA QUIIIIII 
 				
 				StackPane eventBox = setView(eventInfo, eventName, searchByPreference, i, activities, null);
 				
-				if(activities.get(i) instanceof CertifiedActivity) {
-					eventName.getStyleClass().clear();
-					eventName.getStyleClass().add(CERTEVENTNAME);
-					eventName.setText(eventName.getText()+'\n'+CERTIFIED);
-				}
-				
-				if(activities.get(i) instanceof NormalActivity){
-					if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
-						eventBox.setOpacity(0.4);
-						Text closed = new Text(CLOSEDKEY);
-						closed.getStyleClass().add(STYLEINFO);
-						closed.setTextAlignment(TextAlignment.CENTER);
-						eventBox.getChildren().add(closed);
-					}
-					eventsList.getItems().add(eventBox);
-				} else {
-					if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
-						eventBox.setOpacity(0.4);
-						Text closed = new Text(CLOSEDKEY);
-						closed.getStyleClass().add(STYLEINFO);
-						closed.setTextAlignment(TextAlignment.CENTER);
-						eventBox.getChildren().add(closed);
-					}
-					eventsList.getItems().add(eventBox);
-				}
+				eventsList.getItems().add(eventBox);
 			}
 		});
 		newThread.start();
@@ -440,6 +408,8 @@ public class HomeView implements Initializable{
 		if(isPartner) {
 			eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
 			placeId.setId(((SuperActivity)activitiesPartn.get(i)).getPlace().getId().toString());
+			
+			
 		} else {
 			eventId.setId(activities.get(i).getId().toString());
 			placeId.setId(activities.get(i).getPlace().getId().toString());
@@ -450,7 +420,41 @@ public class HomeView implements Initializable{
 		eventBox.getChildren().add(placeId);
 		eventBox.getChildren().add(eventImage);
 		eventBox.getChildren().add(eventText);
+		
+		if(isPartner) {
+			if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
+				eventBox.setOpacity(0.4);
+				Text closed = new Text(CLOSEDKEY);
+				closed.getStyleClass().add(STYLEINFO);
+				closed.setTextAlignment(TextAlignment.CENTER);
+				eventBox.getChildren().add(closed);
+			}
+		} else {
+			if(activities.get(i) instanceof CertifiedActivity) {
+				eventName.getStyleClass().clear();
+				eventName.getStyleClass().add(CERTEVENTNAME);
+				eventName.setText(eventName.getText()+'\n'+CERTIFIED);
+			}
 			
+			if(activities.get(i) instanceof NormalActivity){
+				if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+					eventBox.setOpacity(0.4);
+					Text closed = new Text(CLOSEDKEY);
+					closed.getStyleClass().add(STYLEINFO);
+					closed.setTextAlignment(TextAlignment.CENTER);
+					eventBox.getChildren().add(closed);
+				}
+				
+			} else {
+				if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+					eventBox.setOpacity(0.4);
+					Text closed = new Text(CLOSEDKEY);
+					closed.getStyleClass().add(STYLEINFO);
+					closed.setTextAlignment(TextAlignment.CENTER);
+					eventBox.getChildren().add(closed);
+				}
+			}
+		}
 		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 		eventBox.setAlignment(Pos.CENTER);
 		return eventBox;
