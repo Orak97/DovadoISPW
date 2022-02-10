@@ -36,6 +36,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.ActivityType;
 import logic.controller.CreateActivityController;
+import logic.controller.SpotPlaceController;
 import logic.model.Cadence;
 import logic.model.CreateActivityBean;
 import logic.model.DAOPlace;
@@ -43,6 +44,7 @@ import logic.model.Log;
 import logic.model.Partner;
 import logic.model.Place;
 import logic.model.Preferences;
+import logic.model.SpotPlaceBean;
 
 public class CreateActivityView implements Initializable{
 
@@ -75,9 +77,15 @@ public class CreateActivityView implements Initializable{
 	
 	@FXML
 	private Text cadenceDescription;
-	
+
 	@FXML
 	private Button searchBtn;
+	
+	@FXML
+	private Button spotPlace;
+	
+	@FXML
+	private Button spotPlace1;
 
 	@FXML
 	private TextField activityDescriptionText;
@@ -85,6 +93,23 @@ public class CreateActivityView implements Initializable{
 	private ChoiceBox<String> tBox;
 	@FXML
 	private HBox prefHBox;
+	@FXML
+	private TextField addressTF;
+
+	@FXML
+	private TextField civicoTF;
+
+	@FXML
+	private TextField cityNameTF;
+
+	@FXML
+	private TextField placeNameTF;
+	
+	@FXML
+	private VBox boxSpot;
+	
+	@FXML
+	private ChoiceBox<String> regionBox;
 	
 	private static final  String[] CADENCEKEY = {"Weekly","Monthly","Annually"};
 	
@@ -112,6 +137,28 @@ public class CreateActivityView implements Initializable{
 	private static long wPopup = 500;
 	private static long hPopup = 50;
 	private static final String BGCOLORKEY = "ffffff";
+	private static final  String[] REGIONSKEY = {
+			"Abruzzo"
+			,"Basilicata"
+			,"Calabria"
+			,"Campania"
+			,"Emilia-Romagna"
+			,"Friuli Venezia Giulia"
+			,"Lazio"
+			,"Liguria"
+			,"Lombardia"
+			,"Marche"
+			,"Molise"
+			,"Piemonte"
+			,"Puglia"
+			,"Sardegna"
+			,"Sicilia"
+			,"Toscana"
+			,"Trentino-Alto Adige"
+			,"Umbria"
+			,"Valle d'Aosta"
+			,"Veneto"
+	};
 		
 	public static void render(Stage current) {
 		try {
@@ -186,6 +233,8 @@ public class CreateActivityView implements Initializable{
 		periodicBox.getChildren().addAll(cadenceText,cadBox,sDate2Text,sDate2,eDate2Text,eDate2);
 		expiringBox.getChildren().addAll(sDateText,sDate,eDateText,eDate);
 		
+		regionBox.getItems().addAll(REGIONSKEY);
+		
 		cadBox.getItems().addAll(CADENCEKEY[0],CADENCEKEY[1],CADENCEKEY[2]);
 		typeBox.getItems().addAll("Continua","Periodica","Scadenza");
 		
@@ -222,6 +271,28 @@ public class CreateActivityView implements Initializable{
 				}
 			}
 		});
+
+		boxSpot.setManaged(false);
+		boxSpot.setVisible(false);
+		
+		spotPlace.setText("Spot your place");
+		spotPlace.getStyleClass().add("src-btn");
+		spotPlace1.getStyleClass().add("src-btn");
+		spotPlace.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(boxSpot.isManaged()) {
+					boxSpot.setManaged(false);
+					boxSpot.setVisible(false);
+				} else {
+					boxSpot.setManaged(true);
+					boxSpot.setVisible(true);
+				}
+			}
+			
+		});
+		
 		searchBtn.setText("Search");
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
@@ -344,6 +415,39 @@ public class CreateActivityView implements Initializable{
 					pList.getItems().add(eventBox);
 			}
 		
+	}
+	
+	public void spotPlaceConfirm() {
+		
+		String placeName = placeNameTF.getText();
+		String spotRegion = regionBox.getSelectionModel().getSelectedItem().toString();
+		String spotAddress = addressTF.getText();
+		String spotCivico = civicoTF.getText();
+		String spotCity = cityNameTF.getText();
+		
+		Log.getInstance().getLogger().info(placeName+'\n'+spotRegion+'\n'+spotAddress+'\n'+spotCity+'\n'+spotCivico);
+		
+		if(placeName.isEmpty() || spotRegion.isEmpty() || spotAddress.isEmpty() || spotCity.isEmpty() || spotCivico.isEmpty()) {
+			popupGen(wPopup, hPopup, "Not enough info about the place have been inserted");
+			return;
+		}
+		SpotPlaceBean spBean = new SpotPlaceBean();
+		spBean.setAddress(spotAddress);
+		spBean.setCity(spotCity);
+		spBean.setPlaceName(placeName);
+		spBean.setRegion(spotRegion);
+		spBean.setStreetNumber(spotCivico);
+		final Popup popup;
+		SpotPlaceController spc = new SpotPlaceController(spBean);
+		if(spc.spotPlace()) {
+			popup = popupGen(wPopup,hPopup,"Place spotted correctly, search it and select it to continue");
+
+		} else {
+			popup = popupGen(wPopup,hPopup,"Place not spotted");
+		}
+
+	    popup.show(curr);
+	    popup.setAutoHide(true);
 	}
 	
 	public synchronized void selectedPlace() {
