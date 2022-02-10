@@ -283,8 +283,14 @@
 		      	</div>
 		      </div>
 		      <div class="row">
+		      	<div class="col-12 col-sm-6">
 			      <label for="playabilityInfo" class="col-form-label label-activity">Puoi fare questa attività:</label>
 			      <p id="playabilityInfo" class="lead"><p>
+		      	</div>
+		      	<div class="col-12 col-sm-6 rewards">
+			      <label for="rewards" class="col-form-label label-activity">Quante caravelle guadagnerai:</label>
+			      <p id="rewards" class="lead"><span class="percentage">50</span><p>
+		      	</div>
 		      </div>
 		      <hr>
 		      <form action="Home.jsp" name="myform" method="GET">
@@ -364,7 +370,13 @@
 				    </h2>
 				    <div id="spiegazione" class="accordion-collapse collapse show" aria-labelledby="come-funziona" data-bs-parent="#infoCoupon">
 				      <div class="accordion-body">
-				        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+					      <p><strong>Dovado ti permette di generare codici sconto per risparmiare mentre ti diverti!</strong> vuoi sapere come?</p>
+					      	<ol class="list-group list-group-flush list-group-numbered">
+					        	<li class="list-group-item">Prenotandoti per un'attività <em>certificata</em> ti sarà dato <strong>un codice e un QR Code</strong></li>
+					        	<li class="list-group-item"><strong>Mostralo al gestore</strong> o a chi è presente all'accoglienza per certificare che hai fatto quell'attività e riscattare lo sconto (se lo hai inserito)</li>
+					        	<li class="list-group-item">Una volta che lui inserirà a sistema il tuo codice sarà stata <strong>certificata la tua partecipazione</strong></li>
+					        	<li class="list-group-item">A questo punto, sul tuo <b>conto esploratore verranno accreditati i $soldi</b> che potrai usare per generare altri coupon in modo da <b>risparimare per le prossime attività!</b></li>
+				      	</ol>
 				      </div>
 				    </div>
 				  </div>
@@ -670,6 +682,8 @@
 				   
 				   //disabilito il campo di testo del coupon
 				   exampleModal.querySelector('#selectedCoupon').disabled=false;
+				   
+				   exampleModal.querySelector('.rewards').classList.remove('visually-hidden');
 			   	   
 			   }else{
 				   //l'attività non è certificata
@@ -684,6 +698,7 @@
 			   		
 				   exampleModal.querySelector('#selectedCoupon').disabled=true;
 			   
+				   exampleModal.querySelector('.rewards').classList.add('visually-hidden');
 			   }
 			})
 		
