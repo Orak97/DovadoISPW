@@ -219,22 +219,8 @@ public class HomeView implements Initializable{
     			preference1.setVisible(false);
     			preference1.setManaged(false);
     			
-    			if(!activitiesPartn.isEmpty()){
-    				    				
-    				suppInitPartAct(activitiesPartn);
-    				
-    				} else {
-    				StackPane infoBox = new StackPane();
-    				Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!");
-    				noPrefs.setTextAlignment(TextAlignment.CENTER);
-    				
-    				infoBox.getChildren().add(noPrefs);
-    				noPrefs.getStyleClass().add(STYLENAME);
-    				
-    				eventsList.getItems().add(infoBox);
-    			}
-    		}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
-    		
+    			suppInitAct(null, null, activitiesPartn, true);
+    			
     		} catch (InterruptedException e) {
     			Thread.currentThread().interrupt();
     			e.printStackTrace();
@@ -284,22 +270,9 @@ public class HomeView implements Initializable{
 				
 				Preferences preferences = ((User)Navbar.getUser()).getPreferences();
 			
-				if(preferences!=null){
-					activities.addAll(daoAct.getNearbyActivities(usrLat,usrLon,100));
-					suppInitUserAct(activities);
-					
-				} else {
-					StackPane infoBox = new StackPane();
-					Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!");
-					noPrefs.setTextAlignment(TextAlignment.CENTER);
-					
-					infoBox.getChildren().add(noPrefs);
-					noPrefs.getStyleClass().add(STYLENAME);
-					
-					eventsList.getItems().add(infoBox);
-				}
-			}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
-				} catch (InterruptedException e) {
+				suppInitAct(preferences, activities, null, false);
+				
+			} catch (InterruptedException e) {
     				Thread.currentThread().interrupt();
 					e.printStackTrace();
 					Log.getInstance().getLogger().info(e.getMessage());
@@ -308,6 +281,27 @@ public class HomeView implements Initializable{
 				}
     	}
     }
+	
+	private void suppInitAct(Preferences preferences , ArrayList<Activity> activities,ArrayList<CertifiedActivity> activitiesPartn, boolean isPartner) throws InterruptedException, ClassNotFoundException, SQLException {
+		if(isPartner && !activitiesPartn.isEmpty()){
+			suppInitPartAct(activitiesPartn);
+
+		} else if(preferences!=null){
+			activities.addAll(daoAct.getNearbyActivities(usrLat,usrLon,100));
+			suppInitUserAct(activities);
+			
+		} else {
+			StackPane infoBox = new StackPane();
+			Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!");
+			noPrefs.setTextAlignment(TextAlignment.CENTER);
+			
+			infoBox.getChildren().add(noPrefs);
+			noPrefs.getStyleClass().add(STYLENAME);
+			
+			eventsList.getItems().add(infoBox);
+		}
+	}
+	
 	private void suppInitPartAct(ArrayList<CertifiedActivity> activitiesPartn) throws InterruptedException {
 		Thread newThread = new Thread(() -> {
 			int j;
