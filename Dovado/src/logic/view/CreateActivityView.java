@@ -254,19 +254,13 @@ public class CreateActivityView implements Initializable{
 			@Override public void handle(ActionEvent e) {
 				if(!createActivity()) {
 					
-					final Popup popup = popupGen(wPopup,hPopup,"Activity not created:\nInsert all informations"); 
-					popup.centerOnScreen(); 
-				    
-				    popup.show(curr);
-				    popup.setAutoHide(true);
+					popupGen(wPopup,hPopup,"Activity not created:\nInsert all informations"); 
+					
 					
 				} else {
 					
-					final Popup popup = popupGen(wPopup,hPopup,"Activity created successfully"); 
-					popup.centerOnScreen(); 
-				    
-				    popup.show(curr);
-				    popup.setAutoHide(true);
+					popupGen(wPopup,hPopup,"Activity created successfully"); 
+					
 					
 				}
 			}
@@ -303,11 +297,8 @@ public class CreateActivityView implements Initializable{
 				
 					if( (placesFound)==null){
 						
-							final Popup popup = popupGen(wPopup,hPopup,"No place found in "+searchTerm); 
-							popup.centerOnScreen(); 
-						    
-						    popup.show(curr);
-						    popup.setAutoHide(true);
+							popupGen(wPopup,hPopup,"No place found in "+searchTerm); 
+							
 							
 						}
 					} catch (Exception e1) {
@@ -437,17 +428,13 @@ public class CreateActivityView implements Initializable{
 		spBean.setPlaceName(placeName);
 		spBean.setRegion(spotRegion);
 		spBean.setStreetNumber(spotCivico);
-		final Popup popup;
 		SpotPlaceController spc = new SpotPlaceController(spBean);
 		if(spc.spotPlace()) {
-			popup = popupGen(wPopup,hPopup,"Place spotted correctly, search it and select it to continue");
+			popupGen(wPopup,hPopup,"Place spotted correctly, search it and select it to continue");
 
 		} else {
-			popup = popupGen(wPopup,hPopup,"Place not spotted");
+			 popupGen(wPopup,hPopup,"Place not spotted");
 		}
-
-	    popup.show(curr);
-	    popup.setAutoHide(true);
 	}
 	
 	public synchronized void selectedPlace() {
@@ -498,7 +485,7 @@ public class CreateActivityView implements Initializable{
 		eventImage.setScaleY(1);
 	}
 	
-	public static boolean createActivity() {
+	public boolean createActivity() {
 		
 		String activityName;
 		String openingTime;
@@ -562,24 +549,8 @@ public class CreateActivityView implements Initializable{
 		}
 		
 		else {
-			final Popup popup = new Popup(); popup.centerOnScreen();
-			 
-		    Text popupText = new Text("Activity"+'\n'+"type not"+'\n'+"selected yet");
-		    popupText.getStyleClass().add("textEventInfo");
-		    popupText.setTextAlignment(TextAlignment.CENTER);
+			popupGen(wPopup,hPopup,"Activity type not selected yet");
 		    
-		    Circle c = new Circle(0, 0, 50, Color.valueOf("212121"));
-		    
-		    StackPane popupContent = new StackPane(c,popupText); 
-		    
-		    c.setStrokeType(StrokeType.OUTSIDE);
-		    c.setStrokeWidth(0.3);
-		    c.setStroke(Paint.valueOf(BGCOLORKEY));
-		    
-		    popup.getContent().add(popupContent);
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
 		    
 		    Log.getInstance().getLogger().info("Attivit� non aggiunta alla persistenza");
 		}
@@ -672,6 +643,10 @@ public class CreateActivityView implements Initializable{
 	    r.setStroke(Paint.valueOf(BGCOLORKEY));
 	    
 	    popup.getContent().add(popupContent);
+	    popup.centerOnScreen(); 
+	    
+	    popup.show(curr);
+	    popup.setAutoHide(true);
 	    return popup;
 	}
 	
