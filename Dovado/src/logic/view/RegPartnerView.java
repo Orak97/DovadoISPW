@@ -103,9 +103,9 @@ public class RegPartnerView implements Initializable{
 		regBean.setCompName(compNameTField.getText());
 		
 		try {
-			regBean = controller.validateForm(regBean);
+			controller.validateForm(regBean);
 		
-			regBean = controller.addPartner(regBean);
+			controller.addPartner(regBean);
 		}catch (AuthException e) {
 			popupGen(wErrPopup,hErrPopup, e.getMessage());
 		}catch (Exception e) {

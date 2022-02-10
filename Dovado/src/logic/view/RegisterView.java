@@ -154,9 +154,9 @@ public class RegisterView implements Initializable{
 		regBean.setIstruzione(btIstruzione.isSelected());
 		
 		try {
-			regBean = controller.validateForm(regBean);
+			controller.validateForm(regBean);
 
-			regBean = controller.addExplorer(regBean);
+			controller.addExplorer(regBean);
 		}catch (AuthException e) {
 			popupGen(wErrPopup,hErrPopup, e.getMessage());
 		} catch (Exception e) {

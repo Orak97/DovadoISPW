@@ -82,6 +82,7 @@ public class HomeView implements Initializable{
 	private static final  String CERTEVENTNAME = "certEventName";
 	private static final  String CLOSEDKEY = "CLOSED NOW";
 	private static final  String SPOTPLACESCRIPT = "spotPlace";
+	private static final  String CERTIFIED = "CERTIFICATA";
 
 
 	
@@ -92,9 +93,9 @@ public class HomeView implements Initializable{
 	private static long wPopup = 500;
 	private static long hPopup = 50;
 	
-	private static StackPane lastEventBoxSelected;
+	private StackPane lastEventBoxSelected;
 
-	private static VBox chatContainer;
+	private VBox chatContainer;
 	
 	private static Stage curr;
 	@FXML
@@ -293,7 +294,7 @@ public class HomeView implements Initializable{
     						if(activitiesPartn.get(i) instanceof CertifiedActivity) {
     							eventName.getStyleClass().clear();
     							eventName.getStyleClass().add(CERTEVENTNAME);
-    							eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+    							eventName.setText(eventName.getText()+'\n'+CERTIFIED);
     						}	
     						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
     						eventBox.setAlignment(Pos.CENTER);
@@ -411,15 +412,10 @@ public class HomeView implements Initializable{
 					Thread newThread = new Thread(() -> {
 						int i;
 						for(i=0;i<activities.size();i++) {
-							if(activities.get(i) instanceof NormalActivity) {
-								if(!((NormalActivity)activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
+							if(!(activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
 	    							continue;
 	    						}
-							} else {
-								if(!((CertifiedActivity)activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
-	    							continue;
-	    						}
-							}
+							
 							ImageView eventImage = new ImageView();
 							Text eventName = new Text(activities.get(i).getName()+"\n");
 							Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
@@ -478,7 +474,7 @@ public class HomeView implements Initializable{
 							if(activities.get(i) instanceof CertifiedActivity) {
 								eventName.getStyleClass().clear();
 								eventName.getStyleClass().add(CERTEVENTNAME);
-								eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+								eventName.setText(eventName.getText()+'\n'+CERTIFIED);
 							}	
 							//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 							eventBox.setAlignment(Pos.CENTER);
@@ -708,13 +704,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					chatRefreshTimer.scheduleAtFixedRate(new TimerTask() {
 						@Override
 						public void run() {
-							Platform.runLater(new Runnable() {
-								@Override
-								public void run() {
-									Log.getInstance().getLogger().info("Refreshing messages...");
-									updateChat(chat,activitySelected.getChannel());
-								}
-							});
+							Platform.runLater(()->{Log.getInstance().getLogger().info("Refreshing messages...");updateChat(chat,activitySelected.getChannel());});
 						}
 						
 					},0, 10000);
@@ -893,12 +883,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								}else {
 									discountDescription = new Text("Pick a discount if you want.");
 								}
-								percDiscount.getItems().add("0% - 0�");
+								percDiscount.getItems().add("0% - 0$");
 								for(int i=0;i<discList.size();i++) {
-									percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"�");
+									percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"$");
 								}
 								dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);		
-								percDiscount.setValue("0% - 0�");
+								percDiscount.setValue("0% - 0$");
 							
 							}catch(NullPointerException exc){
 								Log.getInstance().getLogger().info("discList.file() ha fatto partire il null");
@@ -975,7 +965,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									String[] percPrice = percDiscount.getValue().split("% - ");
 									int percRequested = Integer.parseInt(percPrice[0]);
 									
-									String priceString = (percPrice[1].split("�"))[0];
+									String priceString = (percPrice[1].split("$"))[0];
 									int pricePayed = Integer.parseInt(priceString);
 									
 									if(pricePayed > ((User)user).getBalance()) {
@@ -1040,7 +1030,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 				    popup.show(curr);
 				    popup.setAutoHide(true);
 					    
-					Log.getInstance().getLogger().info("Attivit\u00A0 cancellata dalla persistenza");
+					Log.getInstance().getLogger().info("Attivit\u00E0 cancellata dalla persistenza");
 					activityDeselected(lastEventBoxSelected,true);
 				}
 			});
@@ -1069,8 +1059,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		//UPDATED.
 		activitySelected.setChannel(ch);
 		for(i=0;i<ch.getChat().size();i++) {
-			//TODO qui posso nominarla in altro modo la VBOX?
-			VBox chatContainer = new VBox();
+			VBox chatChContainer = new VBox();
 			VBox chatMss = new VBox();
 			Text msstxt = new Text();
 			Text username = new Text();
@@ -1092,10 +1081,10 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			msstxt.getStyleClass().add("msstxt");
 			dateSent.getStyleClass().add("msssent");
 			
-			chatContainer.getChildren().addAll(username,msstxt,dateSent);
-			chatContainer.setMaxWidth(root.getWidth()/2);
+			chatChContainer.getChildren().addAll(username,msstxt,dateSent);
+			chatChContainer.setMaxWidth(root.getWidth()/2);
 			
-			chatMss.getChildren().add(chatContainer);
+			chatMss.getChildren().add(chatChContainer);
 			chatMss.autosize();
 			
 			Log.getInstance().getLogger().info("Messaggi ricevuti: "+chatMss);
@@ -1106,8 +1095,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 				BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGUCOLORKEY ), cr, null);
 				Background b = new Background(bf);
 				
-				chatContainer.setBackground(b);
-				chatContainer.setAlignment(Pos.CENTER_RIGHT);
+				chatChContainer.setBackground(b);
+				chatChContainer.setAlignment(Pos.CENTER_RIGHT);
 				
 				chatMss.setAlignment(Pos.CENTER_RIGHT);
 			}
@@ -1116,7 +1105,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 				BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
 				Background b = new Background(bf);
 				
-				chatContainer.setBackground(b);
+				chatChContainer.setBackground(b);
 				chatMss.setAlignment(Pos.CENTER_LEFT);
 			}
 			chat.getItems().add(chatMss);
@@ -1203,7 +1192,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		lastActivitySelected = -1;
 		String searchItem = null;
 		
-		ArrayList<Activity> activities = new ArrayList<>();
+		ArrayList<Activity> activities = null;
 		if((searchItem = searchBar.getText())==null) return; 
 
 		eng.executeScript("removeAllMarkers()");
@@ -1228,7 +1217,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			}
 			
 		} catch (Exception e) {
-			Log.getInstance().getLogger().info("La ricerca delle attività non \u00A0 andata a buon fine. \n per colpa di un errore nel metodo del DB.");
+			Log.getInstance().getLogger().info("La ricerca delle attivita non \u00E8 andata a buon fine. \n per colpa di un errore nel metodo del DB.");
 			e.printStackTrace();
 			return;
 		}
@@ -1297,7 +1286,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 	
 				eventName.getStyleClass().clear();
 				eventName.getStyleClass().add(CERTEVENTNAME);
-				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+				eventName.setText(eventName.getText()+'\n'+CERTIFIED);
 				
 			}	
 			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.

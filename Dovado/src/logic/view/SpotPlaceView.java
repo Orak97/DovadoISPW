@@ -202,7 +202,7 @@ public class SpotPlaceView implements Initializable{
 			return false;
 		try {
 			String[] splitLatLng = latLngStr.split(";");
-			System.out.println(splitLatLng[0]+" "+splitLatLng[1]);
+			Log.getInstance().getLogger().info(splitLatLng[0]+" "+splitLatLng[1]);
 			latLng[0] = Double.parseDouble(splitLatLng[0]);
 			latLng[1] = Double.parseDouble(splitLatLng[1]);
 			if(daoPl.spotPlace(spotAddress, placeName, spotCity, spotRegion, spotCivico, null,latLng)<0) {
@@ -225,7 +225,7 @@ public class SpotPlaceView implements Initializable{
 		String[] latLn = alert.split(";");
 		latLng[0] = Double.parseDouble(latLn[0]);
 		latLng[1] = Double.parseDouble(latLn[1]);
-		System.out.println("latlong vale "+latLng[0]+" "+latLng[1]);
+		Log.getInstance().getLogger().info("latlong vale "+latLng[0]+" "+latLng[1]);
 	}
 
 // ----------------------- Metodo di supporto per createActivity() ------------------------------
