@@ -250,11 +250,10 @@ public class EventsView implements Initializable{
 			eventBox.getStyleClass().add("eventBox");
 			
 			Text eventId = new Text();
-			Text schedId = new Text();
 			
 			eventId.setId(activities.get(i).getId().toString());
 		
-			schedId = superID(i);
+			Text schedId = superID(i);
 			
 			
 			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine

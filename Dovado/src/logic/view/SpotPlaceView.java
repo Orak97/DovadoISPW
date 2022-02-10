@@ -71,8 +71,7 @@ public class SpotPlaceView implements Initializable{
 	private long wPopup = 500;
 	private long hPopup = 50;
 	private WebEngine we;
-	private static double[] latLng = {0,0};
-	private static String latLngStr;
+	private double[] latLng = {0,0};
 	
 	private static final  String[] REGIONSKEY = {
 			"Abruzzo"
@@ -190,16 +189,15 @@ public class SpotPlaceView implements Initializable{
 		spBean.setStreetNumber(spotCivico);
 
 
-		we.setOnAlert(event -> System.out.println(event.getData()) );
-		int i=0;
+		we.setOnAlert(event -> Log.getInstance().getLogger().info(event.getData()) );
 			
 		we.executeScript("retrieveLatLng('"+spotCivico+"',\""+spotAddress+"\",\""+spotCity+"\",\""+spotRegion+"\")");
 		
 		//Non funzionando per ora si aggiungono coordinate presettate
-		latLngStr="41.93231;12.5167";
+		String latLngStr="41.93231;12.5167";
 		
 		
-		System.out.println("Lat long string: "+latLngStr);
+		Log.getInstance().getLogger().info("Lat long string: "+latLngStr);
 		if (latLngStr.equals("undefined") || latLngStr.equals(";") || latLngStr.isEmpty())
 			return false;
 		try {
