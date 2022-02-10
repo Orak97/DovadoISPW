@@ -145,12 +145,12 @@ public class EventsView implements Initializable{
 				//Apro di default la lista di attività schedulate.
 				
 				initUser();
-				newThread = new Thread(() -> fillEventsListUser());
+				newThread = new Thread(this::fillEventsListUser);
 					
 			
     		}else{
     			initPartner();
-    			newThread = new Thread(() -> fillEventsListPartner());
+    			newThread = new Thread(this::fillEventsListPartner);
 	    	
     		}
     	}catch(Error e) {	
@@ -362,7 +362,215 @@ public class EventsView implements Initializable{
 			eventsList.getItems().add(eventBox);
 		}
 	}
-	
+	private void modifyEventeHandle(ActionEvent event) {
+		
+
+		HBox selectedBox = (HBox)eventsList.getItems().get(lastActivitySelected+1);			
+		
+		if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
+			return;
+		}
+		//Apro un pop up in cui si può scegliere una
+		//Data in cui svolgere l'attività
+		
+		ChoiceBox<String> hourBox = new ChoiceBox<>();
+		Text columnsOp = new Text(":");
+		Text columnsCl = new Text(":");
+		ChoiceBox<String> minBox = new ChoiceBox<>();
+		
+		ChoiceBox<String> clhourBox = new ChoiceBox<>();
+		ChoiceBox<String> clminBox = new ChoiceBox<>();
+		
+		int lowerLimit = 0;
+		int upperLimit = 23;
+
+
+		for(int i=lowerLimit;i<=upperLimit;i++) {
+			String hr = Integer.toString(i);
+			if(i<10) {
+				hr = "0"+hr;
+			}
+			hourBox.getItems().add(hr);
+		}
+		
+		for(int i=lowerLimit;i<=upperLimit;i++) {
+			String hr = Integer.toString(i);
+			if(i<10) {
+				hr = "0"+hr;
+			}
+			clhourBox.getItems().add(hr);
+		}
+		
+		minBox.getItems().clear();
+				
+		for(int j=0;j<60;j++) {
+				String min = Integer.toString(j);
+				if(j<10) {
+					min = "0"+min;
+				}
+				minBox.getItems().add(min);
+		}
+				
+		clminBox.getItems().clear();
+		for(int j=0;j<60;j++) {
+			String min = Integer.toString(j);
+			if(j<10) {
+				min = "0"+min;
+			}
+			clminBox.getItems().add(min);
+		}
+				
+
+		Text txtOp = new Text("Select opening time");
+		Text txtCl = new Text("Select closing time");
+		Button ok = new Button();
+		Button close = new Button();
+		
+		VBox dateBox = new VBox();
+		ok.setText("Ok");
+		ok.getStyleClass().add(BTNSRCKEY);
+		
+		HBox buttonBox = new HBox();
+		HBox pickTimeOpBox = new HBox();
+		HBox pickTimeClBox = new HBox();
+		
+		buttonBox.getChildren().addAll(close,ok);
+		
+		CornerRadii cr = new CornerRadii(4);
+		BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+		Background b = new Background(bf);
+		
+		pickTimeOpBox.getChildren().addAll(hourBox,columnsOp,minBox);
+		pickTimeClBox.getChildren().addAll(clhourBox,columnsCl,clminBox);
+		
+		if(activitySelected.getFrequency() instanceof PeriodicActivity) {
+			pickCadence = new ChoiceBox<>();
+			pickCadence.getItems().addAll(Cadence.WEEKLY.toString(),Cadence.MONTHLY.toString(),Cadence.ANNUALLY.toString());
+			
+			txtCadence = new Text("Select new cadence");
+			txtCadence.getStyleClass().add(STYLETXT);
+			
+			dateBox.getChildren().addAll(txtCadence,pickCadence);			
+			
+		}
+		if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
+			pickDateOp = new DatePicker();
+			pickDateCl = new DatePicker();
+			
+			txtDateOp = new Text("Select opening date");
+			txtDateCl = new Text("Select closing date");
+			
+			txtDateOp.getStyleClass().add(STYLETXT);
+			txtDateCl.getStyleClass().add(STYLETXT);
+			
+			dateBox.getChildren().addAll(txtDateOp,pickDateOp,txtDateCl,pickDateCl);						
+		}
+		dateBox.setBackground(b);
+		dateBox.getChildren().addAll(txtOp,pickTimeOpBox,txtCl,pickTimeClBox,buttonBox);
+		dateBox.setId("dateBox");
+		
+		selectedBox.getChildren().add(dateBox);
+		
+		close.setText("Close");
+		close.getStyleClass().add(BTNSRCKEY);					
+		
+		close.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent e) {
+				selectedBox.getChildren().remove(dateBox);
+			}
+		});
+		
+		ok.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent e) {
+				
+				String ophourChosen = hourBox.getValue();
+				String opminChosen = minBox.getValue();
+				String clhourChosen = clhourBox.getValue();
+				String clminChosen = clminBox.getValue();
+				
+				
+				String openingTimeChosen = ophourChosen+':'+opminChosen;
+				String closingTimeChosen = clhourChosen+':'+clminChosen;
+				//AGGIUNGERE UN METODO CHE AGGIORNI L'ATTIVITA' NEL DATABASE.
+				
+				//TODO:: CAPIRE SE SERVE MODIFICARE ANCHE LA DESCRIZIONE
+				// O IL NOME DELL'ATTIVITA' O IL POSTO.
+				CreateActivityBean cab = new CreateActivityBean();
+				
+				cab.setActivityDescription(activitySelected.getDescription());
+				cab.setActivityName(activitySelected.getName());
+				cab.setPlace(activitySelected.getPlace().getId().intValue());
+				cab.setOwner(((CertifiedActivity)(activitySelected)).getOwner().getUserID().intValue());
+				cab.setIdActivity(activitySelected.getId().intValue());
+				
+				cab.setInterestedCategories(activitySelected.getIntrestedCategories().getSetPreferences());
+				if(activitySelected.getFrequency() instanceof PeriodicActivity) {
+					cab.setType(ActivityType.PERIODICA);
+
+					DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
+					String dayStringed = day.format(pickDateOp.getValue());
+
+					DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
+					String dayStringedCl = dayCl.format(pickDateCl.getValue());
+					//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
+					//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
+					//DATA DI FINE ED INFINE LA CADENZA PERTANTO:
+					cab.setEndDate(dayStringedCl);
+					cab.setOpeningDate(dayStringed);
+					cab.setCadence(((PeriodicActivity)(activitySelected.getFrequency())).getCadence());
+				}
+				if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
+					cab.setType(ActivityType.SCADENZA);
+
+					DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
+					String dayStringed = day.format(pickDateOp.getValue());
+
+					DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
+					String dayStringedCl = dayCl.format(pickDateCl.getValue());
+					//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
+					//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
+					//E DATA DI FINE PERTANTO:
+					cab.setEndDate(dayStringedCl);
+					cab.setOpeningDate(dayStringed);
+				}
+				else if(activitySelected.getFrequency() instanceof ContinuosActivity) {
+					cab.setType(ActivityType.CONTINUA);
+					//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
+					//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA, PERTANTO:	
+				}
+				cab.setOpeningTime(openingTimeChosen);
+				cab.setClosingTime(closingTimeChosen);
+				
+				
+				UpdateCertActController updateController = new UpdateCertActController(cab,(CertifiedActivity)activitySelected);
+				
+				try {
+					if(updateController.updateActivity()) {
+						
+						final Popup popup = popupGen(wPopup,hPopup,"Activity successfully modified"); 
+						popup.centerOnScreen(); 
+					    
+					    popup.show(curr);
+					    popup.setAutoHide(true);
+						
+					} else {
+						final Popup popup = popupGen(wPopup,hPopup,"Activity not modified"); 
+						popup.centerOnScreen(); 
+					    
+					    popup.show(curr);
+					    popup.setAutoHide(true);
+			
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					Log.getInstance().getLogger().info("Database access was not obtained");
+					
+				}
+				
+
+			}
+		});
+	}
 	
 	public void scheduledActSelected() {
 
@@ -416,7 +624,6 @@ public class EventsView implements Initializable{
 			try {
 				activitySelected = (CertifiedActivity) daoAct.getActivityById(activities.get(itemNumber).getId());
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			
@@ -430,211 +637,7 @@ public class EventsView implements Initializable{
 
 				@Override
 				public void handle(ActionEvent event) {
-					HBox selectedBox = (HBox)eventsList.getItems().get(lastActivitySelected+1);			
-					
-					if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
-						return;
-					}
-					//Apro un pop up in cui si può scegliere una
-					//Data in cui svolgere l'attività
-					
-					ChoiceBox<String> hourBox = new ChoiceBox<>();
-					Text columnsOp = new Text(":");
-					Text columnsCl = new Text(":");
-					ChoiceBox<String> minBox = new ChoiceBox<>();
-					
-					ChoiceBox<String> clhourBox = new ChoiceBox<>();
-					ChoiceBox<String> clminBox = new ChoiceBox<>();
-					
-					int lowerLimit = 0;
-					int upperLimit = 23;
-			
-
-					for(int i=lowerLimit;i<=upperLimit;i++) {
-						String hr = Integer.toString(i);
-						if(i<10) {
-							hr = "0"+hr;
-						}
-						hourBox.getItems().add(hr);
-					}
-					
-					for(int i=lowerLimit;i<=upperLimit;i++) {
-						String hr = Integer.toString(i);
-						if(i<10) {
-							hr = "0"+hr;
-						}
-						clhourBox.getItems().add(hr);
-					}
-					
-					minBox.getItems().clear();
-							
-					for(int j=0;j<60;j++) {
-							String min = Integer.toString(j);
-							if(j<10) {
-								min = "0"+min;
-							}
-							minBox.getItems().add(min);
-					}
-							
-					clminBox.getItems().clear();
-					for(int j=0;j<60;j++) {
-						String min = Integer.toString(j);
-						if(j<10) {
-							min = "0"+min;
-						}
-						clminBox.getItems().add(min);
-					}
-							
-			
-					Text txtOp = new Text("Select opening time");
-					Text txtCl = new Text("Select closing time");
-					Button ok = new Button();
-					Button close = new Button();
-					
-					VBox dateBox = new VBox();
-					ok.setText("Ok");
-					ok.getStyleClass().add(BTNSRCKEY);
-					
-					HBox buttonBox = new HBox();
-					HBox pickTimeOpBox = new HBox();
-					HBox pickTimeClBox = new HBox();
-					
-					buttonBox.getChildren().addAll(close,ok);
-					
-					CornerRadii cr = new CornerRadii(4);
-					BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
-					Background b = new Background(bf);
-					
-					pickTimeOpBox.getChildren().addAll(hourBox,columnsOp,minBox);
-					pickTimeClBox.getChildren().addAll(clhourBox,columnsCl,clminBox);
-					
-					if(activitySelected.getFrequency() instanceof PeriodicActivity) {
-						pickCadence = new ChoiceBox<>();
-						pickCadence.getItems().addAll(Cadence.WEEKLY.toString(),Cadence.MONTHLY.toString(),Cadence.ANNUALLY.toString());
-						
-						txtCadence = new Text("Select new cadence");
-						txtCadence.getStyleClass().add(STYLETXT);
-						
-						dateBox.getChildren().addAll(txtCadence,pickCadence);			
-						
-					}
-					if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
-						pickDateOp = new DatePicker();
-						pickDateCl = new DatePicker();
-						
-						txtDateOp = new Text("Select opening date");
-						txtDateCl = new Text("Select closing date");
-						
-						txtDateOp.getStyleClass().add(STYLETXT);
-						txtDateCl.getStyleClass().add(STYLETXT);
-						
-						dateBox.getChildren().addAll(txtDateOp,pickDateOp,txtDateCl,pickDateCl);						
-					}
-					dateBox.setBackground(b);
-					dateBox.getChildren().addAll(txtOp,pickTimeOpBox,txtCl,pickTimeClBox,buttonBox);
-					dateBox.setId("dateBox");
-					
-					selectedBox.getChildren().add(dateBox);
-					
-					close.setText("Close");
-					close.getStyleClass().add(BTNSRCKEY);					
-					
-					close.setOnAction(new EventHandler<ActionEvent>(){
-						@Override public void handle(ActionEvent e) {
-							selectedBox.getChildren().remove(dateBox);
-						}
-					});
-					
-					ok.setOnAction(new EventHandler<ActionEvent>(){
-						@Override public void handle(ActionEvent e) {
-							
-							String ophourChosen = hourBox.getValue();
-							String opminChosen = minBox.getValue();
-							String clhourChosen = clhourBox.getValue();
-							String clminChosen = clminBox.getValue();
-							
-							
-							String openingTimeChosen = ophourChosen+':'+opminChosen;
-							String closingTimeChosen = clhourChosen+':'+clminChosen;
-							//AGGIUNGERE UN METODO CHE AGGIORNI L'ATTIVITA' NEL DATABASE.
-							
-							//TODO:: CAPIRE SE SERVE MODIFICARE ANCHE LA DESCRIZIONE
-							// O IL NOME DELL'ATTIVITA' O IL POSTO.
-							CreateActivityBean cab = new CreateActivityBean();
-							
-							cab.setActivityDescription(activitySelected.getDescription());
-							cab.setActivityName(activitySelected.getName());
-							cab.setPlace(activitySelected.getPlace().getId().intValue());
-							cab.setOwner(((CertifiedActivity)(activitySelected)).getOwner().getUserID().intValue());
-							cab.setIdActivity(activitySelected.getId().intValue());
-							
-							cab.setInterestedCategories(activitySelected.getIntrestedCategories().getSetPreferences());
-							if(activitySelected.getFrequency() instanceof PeriodicActivity) {
-								cab.setType(ActivityType.PERIODICA);
-
-								DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
-								String dayStringed = day.format(pickDateOp.getValue());
-
-								DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
-								String dayStringedCl = dayCl.format(pickDateCl.getValue());
-								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
-								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
-								//DATA DI FINE ED INFINE LA CADENZA PERTANTO:
-								cab.setEndDate(dayStringedCl);
-								cab.setOpeningDate(dayStringed);
-								cab.setCadence(((PeriodicActivity)(activitySelected.getFrequency())).getCadence());
-							}
-							if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
-								cab.setType(ActivityType.SCADENZA);
-
-								DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
-								String dayStringed = day.format(pickDateOp.getValue());
-
-								DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
-								String dayStringedCl = dayCl.format(pickDateCl.getValue());
-								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
-								//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
-								//E DATA DI FINE PERTANTO:
-								cab.setEndDate(dayStringedCl);
-								cab.setOpeningDate(dayStringed);
-							}
-							else if(activitySelected.getFrequency() instanceof ContinuosActivity) {
-								cab.setType(ActivityType.CONTINUA);
-								//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
-								//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA, PERTANTO:	
-							}
-							cab.setOpeningTime(openingTimeChosen);
-							cab.setClosingTime(closingTimeChosen);
-							
-							
-							UpdateCertActController updateController = new UpdateCertActController(cab,(CertifiedActivity)activitySelected);
-							
-							try {
-								if(updateController.updateActivity()) {
-									
-									final Popup popup = popupGen(wPopup,hPopup,"Activity successfully modified"); 
-									popup.centerOnScreen(); 
-								    
-								    popup.show(curr);
-								    popup.setAutoHide(true);
-									
-								} else {
-									final Popup popup = popupGen(wPopup,hPopup,"Activity not modified"); 
-									popup.centerOnScreen(); 
-								    
-								    popup.show(curr);
-								    popup.setAutoHide(true);
-						
-								}
-							} catch (Exception e1) {
-								e1.printStackTrace();
-								Log.getInstance().getLogger().info("Database access was not obtained");
-								
-							}
-							
-
-						}
-					});
+					modifyEventeHandle(event);
 				}
 				
 			});
