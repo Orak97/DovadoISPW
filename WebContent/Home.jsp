@@ -370,13 +370,13 @@
 				    </h2>
 				    <div id="spiegazione" class="accordion-collapse collapse show" aria-labelledby="come-funziona" data-bs-parent="#infoCoupon">
 				      <div class="accordion-body">
-					      <p><strong>Dovado ti permette di generare codici sconto per risparmiare mentre ti diverti!</strong> vuoi sapere come?</p>
-					      	<ol class="list-group list-group-flush list-group-numbered">
-					        	<li class="list-group-item">Prenotandoti per un'attività <em>certificata</em> ti sarà dato <strong>un codice e un QR Code</strong></li>
-					        	<li class="list-group-item"><strong>Mostralo al gestore</strong> o a chi è presente all'accoglienza per certificare che hai fatto quell'attività e riscattare lo sconto (se lo hai inserito)</li>
-					        	<li class="list-group-item">Una volta che lui inserirà a sistema il tuo codice sarà stata <strong>certificata la tua partecipazione</strong></li>
-					        	<li class="list-group-item">A questo punto, sul tuo <b>conto esploratore verranno accreditati i $soldi</b> che potrai usare per generare altri coupon in modo da <b>risparimare per le prossime attività!</b></li>
-				      	</ol>
+					    <p><strong>Dovado ti permette di generare codici sconto per risparmiare mentre ti diverti!</strong> vuoi sapere come?</p>
+				      	<ol class="list-group list-group-flush list-group-numbered">
+				        	<li class="list-group-item">Prenotandoti per un'attività <em>certificata</em> ti sarà dato <strong>un codice e un QR Code</strong></li>
+				        	<li class="list-group-item"><strong>Mostralo al gestore</strong> o a chi è presente all'accoglienza per certificare che hai fatto quell'attività e riscattare lo sconto (se lo hai inserito)</li>
+				        	<li class="list-group-item">Una volta che lui inserirà a sistema il tuo codice sarà stata <strong>certificata la tua partecipazione</strong></li>
+				        	<li class="list-group-item">A questo punto, sul tuo <b>conto esploratore verranno accreditati i $soldi</b> che potrai usare per generare altri coupon in modo da <b>risparimare per le prossime attività!</b></li>
+			      		</ol>
 				      </div>
 				    </div>
 				  </div>

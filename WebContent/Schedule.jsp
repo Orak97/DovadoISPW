@@ -110,7 +110,7 @@
 				    	
 				    	<div class="card border-success mb-3">
 						  <div class="card-body text-success">
-						    <h5 class="card-title">Mostra questo coupon al gestore dell'attività per ottenere `soldi` <span class="sconto"> e uno sconto del <span class="percentage"></span>%</span></h5>
+						    <h5 class="card-title">Mostra questo coupon al gestore dell'attività per ottenere <strong>50</strong> `soldi` <span class="sconto"> e uno sconto del <span class="percentage"></span>%</span></h5>
 						  </div>
 						</div>
 				    
