@@ -3,6 +3,12 @@ package logic.view;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import javafx.application.Platform;
+import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -23,6 +29,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.model.DAOPlace;
@@ -64,6 +71,8 @@ public class SpotPlaceView implements Initializable{
 	private long wPopup = 500;
 	private long hPopup = 50;
 	private WebEngine we;
+	private static double[] latLng = {0,0};
+	private static String latLngStr;
 	
 	private static final  String[] REGIONSKEY = {
 			"Abruzzo"
@@ -102,7 +111,8 @@ public class SpotPlaceView implements Initializable{
 		civicoText = civico;
 		cityText = city;
 		
-		we = new WebEngine();
+		WebView wv = new WebView();
+		we = wv.getEngine();
 		we.load("http://localhost:8080/Dovado/MapView.html");
 		we.setJavaScriptEnabled(true);
 		
@@ -179,14 +189,25 @@ public class SpotPlaceView implements Initializable{
 		spBean.setRegion(spotRegion);
 		spBean.setStreetNumber(spotCivico);
 
-        
-		we.executeScript("retrieveLatLng('"+spotCivico+"',\""+spotAddress+"\",\""+spotCity+"\",\""+spotRegion+"\",'null')");
-		double[] coord = {0,0};
-		coord[0] = (double) we.executeScript("getDesktopLatitude()");
-		coord[1] = (double) we.executeScript("getDesktopLongitude()");
+
+		we.setOnAlert(event -> System.out.println(event.getData()) );
+		int i=0;
+			
+		we.executeScript("retrieveLatLng('"+spotCivico+"',\""+spotAddress+"\",\""+spotCity+"\",\""+spotRegion+"\")");
 		
+		//Non funzionando per ora si aggiungono coordinate presettate
+		latLngStr="41.93231;12.5167";
+		
+		
+		System.out.println("Lat long string: "+latLngStr);
+		if (latLngStr.equals("undefined") || latLngStr.equals(";") || latLngStr.isEmpty())
+			return false;
 		try {
-			if(daoPl.spotPlace(spotAddress, placeName, spotCity, spotRegion, spotCivico, spotCity,coord)<0) {
+			String[] splitLatLng = latLngStr.split(";");
+			System.out.println(splitLatLng[0]+" "+splitLatLng[1]);
+			latLng[0] = Double.parseDouble(splitLatLng[0]);
+			latLng[1] = Double.parseDouble(splitLatLng[1]);
+			if(daoPl.spotPlace(spotAddress, placeName, spotCity, spotRegion, spotCivico, null,latLng)<0) {
 				popupGen(wPopup,hPopup,"Error: place not spotted!"); 
 			    
 				
@@ -202,6 +223,12 @@ public class SpotPlaceView implements Initializable{
 		return true;
 	}
 
+	public void setLatLng(String alert) {
+		String[] latLn = alert.split(";");
+		latLng[0] = Double.parseDouble(latLn[0]);
+		latLng[1] = Double.parseDouble(latLn[1]);
+		System.out.println("latlong vale "+latLng[0]+" "+latLng[1]);
+	}
 
 // ----------------------- Metodo di supporto per createActivity() ------------------------------
 
