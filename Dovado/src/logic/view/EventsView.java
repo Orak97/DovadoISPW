@@ -269,17 +269,18 @@ public class EventsView implements Initializable{
 				eventName.getStyleClass().clear();
 				eventName.getStyleClass().add("certEventName");
 				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
-				if(user instanceof User) {
-
 				try {
+					if(user instanceof User) {
+
+				
 					eventInfo.setText(eventInfo.getText()+
 						"\nPrice set is: "+((CertifiedActivity)activities.get(i)).getPrice()+
 						"\nYour Coupon ID: "+schedActivities.get(i).getCoupon().getCouponCode()+
 						"\nYour Discount: "+schedActivities.get(i).getCoupon().getDiscount());
-				} catch(NullPointerException e) {
+				}} catch(NullPointerException e) {
 					eventInfo.setText(eventInfo.getText()+
 							"\nPrice set is: "+((CertifiedActivity)activities.get(i)).getPrice());
-				}}
+				}
 			}	
 			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 			eventBox.setAlignment(Pos.CENTER_LEFT);
