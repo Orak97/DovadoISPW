@@ -486,13 +486,7 @@ public class HomeView implements Initializable{
 
 		if(user instanceof User) {
 			if(lastEventBoxSelected==null) {
-				for(Activity current:activitiesToSpotUsr) {
-					eng.executeScript(SPOTPLACESCRIPT+"("
-						+ ""+(current.getPlace().getLatitudine())+""
-						+ ","+(current.getPlace().getLongitudine())+", "
-						+ "\""+current.getPlace().getName()+"\","
-						+ ""+(current.getPlace().getId())+")");
-				}
+				engExecActSel();
 				eng.executeScript("setUser("+usrLat+","+usrLon+")");	
 			}
 		}
@@ -616,6 +610,19 @@ public class HomeView implements Initializable{
 			
 		}
 	}
+	
+	
+	private void engExecActSel() {
+		for(Activity current:activitiesToSpotUsr) {
+			eng.executeScript(SPOTPLACESCRIPT+"("
+				+ ""+(current.getPlace().getLatitudine())+""
+				+ ","+(current.getPlace().getLongitudine())+", "
+				+ "\""+current.getPlace().getName()+"\","
+				+ ""+(current.getPlace().getId())+")");
+		}
+	}
+	
+	
 	private void handleJoinChActUp() {
 
 		if(root.getChildren().get(root.getChildren().size()-1).getId()=="activityCh") {
