@@ -70,7 +70,7 @@ import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
 
-public class HomeView implements Initializable{
+public class HomeView extends SuperView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
 	private static final  String BGUCOLORKEY = "BC9416";
 	private static final  String MAPPATHKEY = "http://localhost:8080/Dovado/MapView.html";
@@ -97,7 +97,6 @@ public class HomeView implements Initializable{
 
 	private VBox chatContainer;
 	
-	private static Stage curr;
 	@FXML
 	private TextField searchBar;
 	
@@ -150,9 +149,10 @@ public class HomeView implements Initializable{
 	
 	private ChoiceBox<String> hourBox2;
 	private ChoiceBox<String> minBox2;
-
     
-    public static void render(Stage current) {
+    
+    //---------------------- INIZIO Metodo Initialize e relativi metodi di supporto ---------------------------
+	public static void render(Stage current) {
 		try {
 			VBox root = new VBox();
 			BorderPane navbar = Navbar.getNavbar();
@@ -175,11 +175,7 @@ public class HomeView implements Initializable{
 			e.printStackTrace();
 		}
 	}
-    
-    
-    //---------------------- INIZIO Metodo Initialize e relativi metodi di supporto ---------------------------
-    
-    	
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		lastEventBoxSelected = null;
@@ -1199,29 +1195,5 @@ public class HomeView implements Initializable{
 			
 		eng.executeScript(SPOTPLACESCRIPT+"("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")");
 		eventsList.getItems().add(eventBox);
-	}
-	
-	public Popup popupGen(double width, double height, String error) {
-		Popup popup = new Popup(); 
-		popup.centerOnScreen();
-		
-		Text errorTxt = new Text(error);
-		errorTxt.getStyleClass().add(STYLENAME);
-		errorTxt.setTextAlignment(TextAlignment.CENTER);
-		errorTxt.setWrappingWidth(480);
-	    
-	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
-	    StackPane popupContent = new StackPane(r,errorTxt); 
-	    
-	    r.setStrokeType(StrokeType.OUTSIDE);
-	    r.setStrokeWidth(0.3);
-	    r.setStroke(Paint.valueOf(BGCOLORKEY));
-	    
-	    popup.getContent().add(popupContent);
-	    popup.centerOnScreen(); 
-	    
-	    popup.show(curr);
-	    popup.setAutoHide(true);
-	    return popup;
 	}
 }
