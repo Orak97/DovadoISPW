@@ -737,9 +737,7 @@ public class HomeView implements Initializable{
 		
 		for(int i=lowerLimit;i<=upperLimit;i++) {
 			String hr = Integer.toString(i);
-			if(i<10) {
-				hr = "0"+hr;
-			}
+			minCheckHandleHour(hr, i);
 			hourBox.getItems().add(hr);
 		}
 		
@@ -751,9 +749,7 @@ public class HomeView implements Initializable{
 		
 		for(int i=lowerLimit;i<=upperLimit;i++) {
 			String hr = Integer.toString(i);
-			if(i<10) {
-				hr = "0"+hr;
-			}
+			minCheckHandleHour(hr, i);
 			hourBox2.getItems().add(hr);
 		}
 		
@@ -976,6 +972,12 @@ public class HomeView implements Initializable{
 		
 		AddActivityToScheduleController sc = new AddActivityToScheduleController((User) user, sb);
 		
+		checkActivity(sc);
+		
+		popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
+	}
+	
+	private void checkActivity(AddActivityToScheduleController sc) {
 		if(activitySelected instanceof CertifiedActivity) {
 			try {
 				sc.addCertifiedActivityToSchedule();
@@ -989,10 +991,6 @@ public class HomeView implements Initializable{
 				e1.printStackTrace();
 			}
 		}
-		popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
-	
-        
-	
 	}
 	
 	//-------------------------------Fine                            -----------------------------------------
