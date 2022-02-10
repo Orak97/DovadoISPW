@@ -178,7 +178,7 @@
       <div class="modal-body modal-coupon">
       	<%-- roba che fa vedere il saldo disponibile --%>
       	<div class="row text-center sticky-top saldo shadow-sm">
-      		<input type="text" class="form-control search-input" id="SearchActivities" name="zone" placeholder="nome attività" list="places-available" <%= isSearch ? "value="+findBean.getZone() : "" %>>
+      		<input type="text" class="form-control search-input" id="SearchActivities" name="zone" placeholder="Inserisci la via, Città o Regione ..." list="places-available" <%= isSearch ? "value="+findBean.getZone() : "" %>>
       	</div>
       	<%if(isSearch){ %> 
       		<h2 class="text-center pt-3">Ecco le attività trovate:</h2>

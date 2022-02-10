@@ -114,7 +114,7 @@
 		<div class="search-place justify-content-center">
 			<h2 class="text-center text-white"><i class="bi bi-pin-map"></i> Dove vuoi spottare l'attività? <i class="bi bi-pin-map"></i></h2>
 			<div class="d-flex justify-content-center pt-1">
-				<input type="text" class="form-control" id="placeField" name="src" placeholder="Nome,Luogo,Regione o via">
+				<input type="text" class="form-control" id="placeField" name="src" placeholder="Nome,Luogo,Regione o via" <%= request.getParameter("zone") != null ? "value=\""+request.getParameter("zone")+"\"" : ""  %>>
 				<button type="submit" class="btn btn-success search-btn" id="search-btn"><i class="bi bi-search"></i></button>
 			</div>
 		</div>
