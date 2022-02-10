@@ -562,7 +562,13 @@ if(partner != null){
 				    </h2>
 				    <div id="spiegazione" class="accordion-collapse collapse show" aria-labelledby="come-funziona" data-bs-parent="#infoCoupon">
 				      <div class="accordion-body">
-				        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+				        <p><strong>Dovado ti permette di aumentare i tuoi clienti!</strong> vuoi sapere come?</p>
+				      	<ol class="list-group list-group-flush list-group-numbered">
+				        	<li class="list-group-item">Puoi decidere di <strong>selezionare degli sconti</strong> dalla lista sottostante</li>
+				        	<li class="list-group-item">I tuoi clienti, che <u>vogliono risparmiare</u> saranno attirati dagli sconti e <strong>preferiranno la tua attività</strong> rispetto a simili senza sconto!</li>
+				        	<li class="list-group-item">Gli utenti che decidono di generare un coupon pagheranno dei soldi in una valuta in-game e otterranno un <strong>codice che ti mostreranno</strong></li>
+				        	<li class="list-group-item"><strong>Scannarizzalo o inseririscilo nel box apposito su <a href="HomePartner.jsp">questa pagina</a></strong> per vedere i dettagli della prenotazione e vedere quanto sconto gli spetta</li>
+			      		</ol>
 				      </div>
 				    </div>
 				  </div>
