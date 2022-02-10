@@ -897,7 +897,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								for(int i=0;i<discList.size();i++) {
 									percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"�");
 								}
-								dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);								
+								dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);		
+								percDiscount.setValue("0% - 0�");
 							
 							}catch(NullPointerException exc){
 								Log.getInstance().getLogger().info("discList.file() ha fatto partire il null");

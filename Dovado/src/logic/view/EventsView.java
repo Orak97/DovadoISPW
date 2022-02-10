@@ -152,7 +152,7 @@ public class EventsView implements Initializable{
 			
     		}else{
     			initPartner();
-    			newThread = new Thread(this::fillEventsListPartner);
+    			newThread = new Thread(this::fillEventsListUser);
 	    	
     		}
     	}catch(Error e) {	
@@ -249,13 +249,15 @@ public class EventsView implements Initializable{
 			StackPane eventBox = new StackPane();
 			eventBox.getStyleClass().add("eventBox");
 			
-			
 			Text eventId = new Text();
 			Text schedId = new Text();
 			
 			eventId.setId(activities.get(i).getId().toString());
-			schedId.setId(schedActivities.get(i).getId().toString());
-			
+			if(user instanceof User) {
+				schedId.setId(schedActivities.get(i).getId().toString());
+			} else {
+				schedId.setId(Integer.toString(i));
+			}
 			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 			//dell'evento ed infine il testo dell'evento.
 			eventBox.getChildren().add(eventId);
@@ -267,15 +269,17 @@ public class EventsView implements Initializable{
 				eventName.getStyleClass().clear();
 				eventName.getStyleClass().add("certEventName");
 				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
+				if(user instanceof User) {
+
 				try {
-				eventInfo.setText(eventInfo.getText()+
+					eventInfo.setText(eventInfo.getText()+
 						"\nPrice set is: "+((CertifiedActivity)activities.get(i)).getPrice()+
 						"\nYour Coupon ID: "+schedActivities.get(i).getCoupon().getCouponCode()+
 						"\nYour Discount: "+schedActivities.get(i).getCoupon().getDiscount());
 				} catch(NullPointerException e) {
 					eventInfo.setText(eventInfo.getText()+
 							"\nPrice set is: "+((CertifiedActivity)activities.get(i)).getPrice());
-				}
+				}}
 			}	
 			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 			eventBox.setAlignment(Pos.CENTER_LEFT);
@@ -284,87 +288,7 @@ public class EventsView implements Initializable{
 		}
 	}
 
-	private void fillEventsListPartner() {
-		int i;
-		for(i=0;i<activities.size();i++) {
-			ImageView eventImage = new ImageView();
-			Text eventName = new Text(activities.get(i).getName()+"\n");
-			Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-			Text eventInfo;
-			
-			if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
-				eventInfo = new Text(activities.get(i).getPlace().getName()+
-						"\n Expiring activity"+
-						"\n"+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
-						"\n"+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
-						"\n"+activities.get(i).getFrequency().getOpeningTime()+
-						"-"+activities.get(i).getFrequency().getClosingTime());
-			}
-			else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
-				eventInfo = new Text(activities.get(i).getPlace().getName()+
-						"\n Periodic activity"+
-						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
-						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
-						"\n"+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
-						"\n"+activities.get(i).getFrequency().getOpeningTime()+
-						"-"+activities.get(i).getFrequency().getClosingTime());
-			}
-			else{
-				eventInfo = new Text(activities.get(i).getPlace().getName()+
-					"\n Continuos activity"+
-					"\n"+activities.get(i).getFrequency().getOpeningTime()+
-					"-"+activities.get(i).getFrequency().getClosingTime());
-			}
 
-			eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/500x200"));
-			eventImage.getStyleClass().add("event-image");
-			
-			eventInfo.setId("eventInfo");
-			eventInfo.getStyleClass().add(STYLEINFO);
-			eventInfo.setTextAlignment(TextAlignment.LEFT);
-			eventInfo.setWrappingWidth(480);
-		
-			eventName.setId("eventName");
-			eventName.getStyleClass().add(STYLENAME);
-			eventName.setTextAlignment(TextAlignment.LEFT);
-			eventName.setWrappingWidth(480);
-		
-			VBox eventText = new VBox(eventName,eventInfo);
-			eventText.setAlignment(Pos.CENTER_LEFT);
-			eventText.getStyleClass().add("eventTextVbox");
-			//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-			//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-			StackPane eventBox = new StackPane();
-			eventBox.getStyleClass().add("eventBox");
-			if(activities.get(i) instanceof CertifiedActivity) {
-
-				eventName.getStyleClass().clear();
-				eventName.getStyleClass().add("certEventName");
-				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
-
-			}	
-			
-			
-			Text eventId = new Text();
-			Text schedId = new Text();
-			
-			eventId.setId(activities.get(i).getId().toString());
-			schedId.setId(Integer.toString(i));
-			
-			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-			//dell'evento ed infine il testo dell'evento.
-			eventBox.getChildren().add(eventId);
-			eventBox.getChildren().add(schedId);
-			eventBox.getChildren().add(eventImage);
-			eventBox.getChildren().add(eventText);
-			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-			eventBox.setAlignment(Pos.CENTER_LEFT);
-			
-			eventsList.getItems().add(eventBox);
-		}
-	}
-	
-	
 	public void scheduledActSelected() {
 
 		daoAct = DAOActivity.getInstance();
@@ -771,7 +695,7 @@ public class EventsView implements Initializable{
 				ArrayList<CertifiedActivity> activitiesP = (ArrayList<CertifiedActivity>) daoAct.getPartnerActivities(user.getUserID());
 				for(CertifiedActivity act:activitiesP)
 					activities.add((Activity)act);
-				fillEventsListPartner();
+				fillEventsListUser();
 			} else {
 				schedActivities = (ArrayList<ScheduledActivity>) (daoSch.getSchedule(user.getUserID())).getScheduledActivities();
 				for(int j=0;j<schedActivities.size();j++) {
