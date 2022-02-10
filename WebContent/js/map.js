@@ -133,23 +133,19 @@ function removeAllMarkers(){
   			 latLng = null
 				 longDesk = null
   		  }else{
-
-					let latStr = (results.results[0].latlng.lat).toString()
-					let lonStr = (results.results[0].latlng.lng).toString()
-
-					stringedLatLng = latStr.concat(";",lonStr)
-
-
-	  		  //let latitude = results.results[0].latlng.lat;
-	  		  //let longitude = results.results[0].latlng.lng
-	  		  //console.log(results.results[0].latlng);
+					var latStr = results.results[0].latlng.lat
+					document.querySelector('#latFieldDesktop').value = latStr;
+					
+					var lonStr = results.results[0].latlng.lng
+					document.querySelector('#longFieldDesktop').value = lonStr;
+				
   		  }
   		});
   	}
 
   	//e poi queste
   	function getStringedLatLng(){
-		return stringedLatLng;
+		return document.querySelector('#latFieldDesktop').value+';'+document.querySelector('#longFieldDesktop').value;
 	}
 	
 	
