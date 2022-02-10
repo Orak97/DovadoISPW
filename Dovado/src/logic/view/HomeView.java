@@ -313,53 +313,15 @@ public class HomeView implements Initializable{
 				if(!activitiesPartn.get(i).isPlayableOnThisDate(LocalDate.now())) {
 					continue;
 				}
-				ImageView eventImage = new ImageView();
-				Text eventName = new Text(((SuperActivity)activitiesPartn.get(i)).getName()+"\n");
-				Log.getInstance().getLogger().info("\n\n"+((SuperActivity)activitiesPartn.get(i)).getName()+"\n\n");
 				Text eventInfo = new Text(((SuperActivity)activitiesPartn.get(i)).getPlace().getName()+
 						"\n"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getOpeningTime()+
 						"-"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getClosingTime());
-				eventImage.setImage(new Image(IMAGES));
-				eventImage.getStyleClass().add("event-image");
+				Text eventName = new Text(((SuperActivity)activitiesPartn.get(i)).getName()+"\n");
+				Log.getInstance().getLogger().info("\n\n"+((SuperActivity)activitiesPartn.get(i)).getName()+"\n\n");
 				
-				eventInfo.setId(EVENTINFO);
-				eventInfo.getStyleClass().add(STYLEINFO);
-				eventInfo.setWrappingWidth(280);
-
-				eventName.setId(EVENTNAME);
-				eventName.getStyleClass().add(STYLENAME);
-				eventName.setWrappingWidth(280);
-
-				VBox eventText = new VBox(eventName,eventInfo);
-				eventText.setAlignment(Pos.CENTER_LEFT);
-				eventText.getStyleClass().add("eventTextVbox");
-				//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-				//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-				StackPane eventBox = new StackPane();
-				eventBox.getStyleClass().add("eventBox");
 				
-				Text eventId = new Text();
-				Text placeId = new Text();
+				StackPane eventBox = setView(eventInfo, eventName, true , i, null, activitiesPartn);
 				
-				eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
-				placeId.setId(((SuperActivity)activitiesPartn.get(i)).getPlace().getId().toString());
-				
-				//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-				//dell'evento ed infine il testo dell'evento.
-				eventBox.getChildren().add(eventId);
-				eventBox.getChildren().add(placeId);
-				eventBox.getChildren().add(eventImage);
-				eventBox.getChildren().add(eventText);
-				//Se l'attivit� � certificata aggiungo un logo in alto a
-				//destra per indicarlo.
-				if(activitiesPartn.get(i) instanceof CertifiedActivity) {
-					eventName.getStyleClass().clear();
-					eventName.getStyleClass().add(CERTEVENTNAME);
-					eventName.setText(eventName.getText()+'\n'+CERTIFIED);
-				}	
-				//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-				eventBox.setAlignment(Pos.CENTER);
-
 				if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
 					eventBox.setOpacity(0.4);
 					Text closed = new Text(CLOSEDKEY);
@@ -389,10 +351,6 @@ public class HomeView implements Initializable{
 				if(!(activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
 						continue;
 					}
-				
-				ImageView eventImage = new ImageView();
-				Text eventName = new Text(activities.get(i).getName()+"\n");
-				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
 				Text eventInfo;
 
 				if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
@@ -414,44 +372,19 @@ public class HomeView implements Initializable{
 						"-"+activities.get(i).getFrequency().getClosingTime());
 				}
 				
-				eventImage.setImage(new Image(IMAGES));
-				eventImage.getStyleClass().add("event-image");
 				
-				eventInfo.setId(EVENTINFO);
-				eventInfo.getStyleClass().add(STYLEINFO);
-				eventInfo.setWrappingWidth(280);
-		
-				eventName.setId(EVENTNAME);
-				eventName.getStyleClass().add(STYLENAME);
-				eventName.setWrappingWidth(280);
-		
-				VBox eventText = new VBox(eventName,eventInfo);
-				eventText.setAlignment(Pos.CENTER_LEFT);
-				eventText.getStyleClass().add("eventTextVbox");
-				//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-				//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-				StackPane eventBox = new StackPane();
-				eventBox.getStyleClass().add("eventBox");
+				Text eventName = new Text(activities.get(i).getName()+"\n");
+				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+				//////DA QUIIIIII 
 				
-				Text eventId = new Text();
-				Text placeId = new Text();
+				StackPane eventBox = setView(eventInfo, eventName, searchByPreference, i, activities, null);
 				
-				eventId.setId(activities.get(i).getId().toString());
-				placeId.setId(activities.get(i).getPlace().getId().toString());
-				
-				//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-				//dell'evento ed infine il testo dell'evento.
-				eventBox.getChildren().add(eventId);
-				eventBox.getChildren().add(placeId);
-				eventBox.getChildren().add(eventImage);
-				eventBox.getChildren().add(eventText);
 				if(activities.get(i) instanceof CertifiedActivity) {
 					eventName.getStyleClass().clear();
 					eventName.getStyleClass().add(CERTEVENTNAME);
 					eventName.setText(eventName.getText()+'\n'+CERTIFIED);
-				}	
-				//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-				eventBox.setAlignment(Pos.CENTER);
+				}
+				
 				if(activities.get(i) instanceof NormalActivity){
 					if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
 						eventBox.setOpacity(0.4);
@@ -479,7 +412,50 @@ public class HomeView implements Initializable{
 	
 	}
 	
-	
+	private StackPane setView(Text eventInfo, Text eventName, boolean isPartner, int i, ArrayList<Activity> activities, ArrayList<CertifiedActivity> activitiesPartn) {
+		
+		ImageView eventImage = new ImageView();
+		eventImage.setImage(new Image(IMAGES));
+		eventImage.getStyleClass().add("event-image");
+		
+		eventInfo.setId(EVENTINFO);
+		eventInfo.getStyleClass().add(STYLEINFO);
+		eventInfo.setWrappingWidth(280);
+
+		eventName.setId(EVENTNAME);
+		eventName.getStyleClass().add(STYLENAME);
+		eventName.setWrappingWidth(280);
+
+		VBox eventText = new VBox(eventName,eventInfo);
+		eventText.setAlignment(Pos.CENTER_LEFT);
+		eventText.getStyleClass().add("eventTextVbox");
+		//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+		//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+		StackPane eventBox = new StackPane();
+		eventBox.getStyleClass().add("eventBox");
+		
+		Text eventId = new Text();
+		Text placeId = new Text();
+		
+		if(isPartner) {
+			eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
+			placeId.setId(((SuperActivity)activitiesPartn.get(i)).getPlace().getId().toString());
+		} else {
+			eventId.setId(activities.get(i).getId().toString());
+			placeId.setId(activities.get(i).getPlace().getId().toString());
+		}
+		//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+		//dell'evento ed infine il testo dell'evento.
+		eventBox.getChildren().add(eventId);
+		eventBox.getChildren().add(placeId);
+		eventBox.getChildren().add(eventImage);
+		eventBox.getChildren().add(eventText);
+			
+		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+		eventBox.setAlignment(Pos.CENTER);
+		return eventBox;
+			
+	}
 	
 	//--------------------------FINE METODO Initialize e funzioni di supporto relative----------------------------
 	
