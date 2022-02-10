@@ -18,7 +18,7 @@
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Text fx:id="emailTxt" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Your e-mail">
+                        <Text fx:id="emailTxt" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="e-mail">
                            <VBox.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
@@ -30,11 +30,6 @@
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </HBox.margin>
                               </Text>
-                              <Button fx:id="emailModifyBtn" mnemonicParsing="false" onAction="#modifyEmail" text="Modify" HBox.hgrow="ALWAYS">
-                                 <HBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </HBox.margin>
-                              </Button>
                            </children>
                         </HBox>
                      </children>
@@ -57,11 +52,6 @@
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </HBox.margin>
                               </Text>
-                              <Button fx:id="usrModifyBtn" mnemonicParsing="false" onAction="#modifyUsrname" text="Modify" HBox.hgrow="ALWAYS">
-                                 <HBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </HBox.margin>
-                              </Button>
                            </children>
                         </HBox>
                      </children>
@@ -71,27 +61,33 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #212121;">
+            <HBox fx:id="currencyHBox" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #212121;">
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Want to modify your password?">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Your wallet">
                            <VBox.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
                         </Text>
-                        <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #212121;" VBox.vgrow="ALWAYS">
+                        <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #212121;" VBox.vgrow="ALWAYS">
                            <children>
-                              <Button fx:id="modifyPsw" mnemonicParsing="false" onAction="#modifyPassword" text="Modify" HBox.hgrow="ALWAYS">
+                              <Text fx:id="currency" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
                                  <HBox.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </HBox.margin>
-                              </Button>
+                              </Text>
                            </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                         </HBox>
                      </children>
                   </VBox>
                </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
             </HBox>
          </children>
       </VBox>

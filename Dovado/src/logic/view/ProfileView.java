@@ -2,8 +2,6 @@ package logic.view;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -12,8 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -25,15 +22,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.model.DAOPreferences;
-import logic.model.DAOSuperUser;
 import logic.model.Log;
 import logic.model.Preferences;
 import logic.model.User;
-import javafx.scene.control.CheckBox;
 
 public class ProfileView implements Initializable{
 
@@ -44,21 +38,19 @@ public class ProfileView implements Initializable{
 	@FXML
 	private HBox root;
 	@FXML
-	private Button emailModifyBtn;
-	@FXML
-	private Button usrModifyBtn;
-	@FXML
-	private Button modifyPsw;
-	@FXML
 	private Button preferencesSet;
 	@FXML
 	private Text setUsr;
+	@FXML
+	private Text currency;
 	@FXML
 	private Text setEmail;
 	@FXML
 	private HBox prefHBox;
 	@FXML
 	private VBox prefVBox;
+	@FXML
+	private HBox currencyHBox;
 	
 	
 	private static DAOPreferences daoPr;
@@ -93,18 +85,17 @@ public class ProfileView implements Initializable{
 	public void initialize(URL location, ResourceBundle resources) {
 		setEmail.getStyleClass().add("textEventInfo");
 		setUsr.getStyleClass().add("textEventInfo");
-
+		currency.getStyleClass().add("textEventInfo");
+		
+		currency.setText(((User)Navbar.getUser()).getBalance()+" £");
 		setEmail.setText(Navbar.getUser().getEmail());
 		setUsr.setText(Navbar.getUser().getUsername());
 		
 		daoPr = DAOPreferences.getInstance();
 
-		emailModifyBtn.getStyleClass().add("src-btn");
-		usrModifyBtn.getStyleClass().add("src-btn");
-		modifyPsw.getStyleClass().add("src-btn");
 		preferencesSet.getStyleClass().add("src-btn");
 
-		
+		((VBox)root.getChildren().get(0)).setAlignment(Pos.CENTER);
 		if(Navbar.getUser() instanceof User) {
 			Preferences preferences = ((User)Navbar.getUser()).getPreferences();
 			
@@ -123,28 +114,15 @@ public class ProfileView implements Initializable{
 					if(allPrefsSet[pset]==true) {
 						((CheckBox)(prefVBox.getChildren().get(j))).setSelected(true);
 					}
-					System.out.println(allPrefsSet[pset]+" = ");
 					pset++;
 				}
 			}
+			((VBox)root.getChildren().get(1)).setAlignment(Pos.CENTER);
 		} else {
 			root.getChildren().remove(prefVBox);
 			((VBox)root.getChildren().get(0)).setAlignment(Pos.CENTER);
+			((VBox)root.getChildren().get(0)).getChildren().remove(currencyHBox);
 		}
-	}
-
-	public void modifyEmail() {
-		
-		TextField newEmail = new TextField();
-		
-	}
-
-	public void modifyUsrname() {
-		
-	}
-	
-	public void modifyPassword() {
-		
 	}
 	
 	public void updateUserPreferences() {

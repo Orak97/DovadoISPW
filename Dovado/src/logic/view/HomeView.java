@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -54,6 +55,7 @@ import logic.controller.AddActivityToScheduleController;
 import logic.controller.FindActivityController;
 import logic.model.Activity;
 import logic.model.CertifiedActivity;
+import logic.model.NormalActivity;
 import logic.model.Channel;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
@@ -193,6 +195,7 @@ public class HomeView implements Initializable{
         
         ArrayList<Activity> activitiesUsr = new ArrayList<Activity>();
         ArrayList<CertifiedActivity> activitiesP = new ArrayList<CertifiedActivity>();
+        
         user = Navbar.getUser();
     	if(user instanceof Partner) {
     		
@@ -220,6 +223,9 @@ public class HomeView implements Initializable{
     				Thread newThread = new Thread(() -> {
     					int i;
     					for(i=0;i<activitiesPartn.size();i++) {
+    						if(!activitiesPartn.get(i).isPlayableOnThisDate(LocalDate.now())) {
+    							continue;
+    						}
     						ImageView eventImage = new ImageView();
     						Text eventName = new Text(((SuperActivity)activitiesPartn.get(i)).getName()+"\n");
     						Log.getInstance().getLogger().info("\n\n"+((SuperActivity)activitiesPartn.get(i)).getName()+"\n\n");
@@ -274,7 +280,14 @@ public class HomeView implements Initializable{
     						}	
     						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
     						eventBox.setAlignment(Pos.CENTER);
-    						
+
+    						if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
+    							eventBox.setOpacity(0.4);
+    							Text closed = new Text("CLOSED NOW");
+    							closed.getStyleClass().add("textEventInfo");
+    							closed.setTextAlignment(TextAlignment.CENTER);
+    							eventBox.getChildren().add(closed);
+    						}
     						eventsList.getItems().add(eventBox);
     						
     						//eng.executeScript("");
@@ -324,7 +337,7 @@ public class HomeView implements Initializable{
 			
 				if(preferences!=null){
 						
-					activities.addAll(daoAct.getNearbyActivities(41.952928,12.518342,50));
+					activities.addAll(daoAct.getNearbyActivities(usrLat,usrLon,50));
 					
 					int j;
 					for(j=0;j<activities.size();j++)
@@ -333,6 +346,15 @@ public class HomeView implements Initializable{
 					Thread newThread = new Thread(() -> {
 						int i;
 						for(i=0;i<activities.size();i++) {
+							if(activities.get(i) instanceof NormalActivity) {
+								if(!((NormalActivity)activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
+	    							continue;
+	    						}
+							} else {
+								if(!((CertifiedActivity)activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
+	    							continue;
+	    						}
+							}
 							ImageView eventImage = new ImageView();
 							Text eventName = new Text(activities.get(i).getName()+"\n");
 							Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
@@ -341,17 +363,12 @@ public class HomeView implements Initializable{
 							if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
 								eventInfo = new Text(activities.get(i).getPlace().getName()+
 										"\n Expiring activity"+
-										"- From: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
-										"- To: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
 										"\n"+activities.get(i).getFrequency().getOpeningTime()+
 										"-"+activities.get(i).getFrequency().getClosingTime());
 							}
 							else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
 								eventInfo = new Text(activities.get(i).getPlace().getName()+
 										"\n Periodic activity"+
-										"-"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
-										"- From: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
-										"- To: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
 										"\n"+activities.get(i).getFrequency().getOpeningTime()+
 										"-"+activities.get(i).getFrequency().getClosingTime());
 							}
@@ -409,8 +426,25 @@ public class HomeView implements Initializable{
 							}	
 							//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 							eventBox.setAlignment(Pos.CENTER);
-							
-							eventsList.getItems().add(eventBox);
+							if(activities.get(i) instanceof NormalActivity){
+								if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+									eventBox.setOpacity(0.4);
+	    							Text closed = new Text("CLOSED NOW");
+	    							closed.getStyleClass().add("textEventInfo");
+	    							closed.setTextAlignment(TextAlignment.CENTER);
+	    							eventBox.getChildren().add(closed);
+	    						}
+								eventsList.getItems().add(eventBox);
+							} else {
+								if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+									eventBox.setOpacity(0.4);
+	    							Text closed = new Text("CLOSED NOW");
+	    							closed.getStyleClass().add("textEventInfo");
+	    							closed.setTextAlignment(TextAlignment.CENTER);
+	    							eventBox.getChildren().add(closed);
+								}
+								eventsList.getItems().add(eventBox);
+							}
 						}
 					});
 					newThread.start();
@@ -508,7 +542,24 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		} 
 		Log.getInstance().getLogger().info("Attivit� trovata: "+activitySelected);
 
-		activityDescription.setText(activitySelected.getDescription());
+		if(activitySelected.getFrequency() instanceof PeriodicActivity) {
+			activityDescription.setText("A periodic activity with a: "+
+		((PeriodicActivity)(activitySelected.getFrequency())).getCadence().toString()+
+			" cadence\n\nOpen from the date:\n"+((PeriodicActivity)(activitySelected.getFrequency())).getFormattedStartDate()+
+			"\nTo the date:\n"+((PeriodicActivity)(activitySelected.getFrequency())).getFormattedEndDate()+"\n\n");
+
+			activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription());
+		} 
+		else if(activitySelected.getFrequency() instanceof ExpiringActivity) {
+				activityDescription.setText("An expiring activity that goes from the date:\n"+
+						((ExpiringActivity)(activitySelected.getFrequency())).getFormattedStartDate()+
+				"\nTo the date:\n"+((ExpiringActivity)(activitySelected.getFrequency())).getFormattedEndDate()+"\n\n");
+
+				activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription());
+		}
+		else {
+			activityDescription.setText(activitySelected.getDescription());
+		}
 		activityDescription.setWrappingWidth(280);
 		activityDescription.getStyleClass().add("textEventInfo");
 		
@@ -1093,6 +1144,15 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		
 		int i;
 		for(i=0;i<activities.size();i++) {
+			if(activities.get(i) instanceof NormalActivity) {
+				if(!((NormalActivity)activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
+					continue;
+				}
+			} else {
+				if(!((CertifiedActivity)activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
+					continue;
+				}
+			}
 			ImageView eventImage = new ImageView();
 			Text eventName = new Text(activities.get(i).getName()+"\n");
 			Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
@@ -1101,17 +1161,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
 				eventInfo = new Text(activities.get(i).getPlace().getName()+
 						"\nExpiring activity"+
-						"- From: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
-						"- To: "+((ExpiringActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
 						"\n"+activities.get(i).getFrequency().getOpeningTime()+
 						"-"+activities.get(i).getFrequency().getClosingTime());
 			}
 			else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
 				eventInfo = new Text(activities.get(i).getPlace().getName()+
 						"\nPeriodic activity"+
-						"-"+((PeriodicActivity)(activities.get(i).getFrequency())).getCadence().toString()+
-						"- From: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedStartDate()+
-						"- To: "+((PeriodicActivity)(activities.get(i).getFrequency())).getFormattedEndDate()+
 						"\n"+activities.get(i).getFrequency().getOpeningTime()+
 						"-"+activities.get(i).getFrequency().getClosingTime());
 			}
@@ -1166,6 +1221,25 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			}	
 			//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
 			eventBox.setAlignment(Pos.CENTER);
+			if(activities.get(i) instanceof NormalActivity){
+				if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+					eventBox.setOpacity(0.4);
+					Text closed = new Text("CLOSED NOW");
+					closed.getStyleClass().add("textEventInfo");
+					closed.setTextAlignment(TextAlignment.CENTER);
+					eventBox.getChildren().add(closed);
+				}
+				eventsList.getItems().add(eventBox);
+			} else {
+				if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+					eventBox.setOpacity(0.4);
+					Text closed = new Text("CLOSED NOW");
+					closed.getStyleClass().add("textEventInfo");
+					closed.setTextAlignment(TextAlignment.CENTER);
+					eventBox.getChildren().add(closed);
+				}
+				eventsList.getItems().add(eventBox);
+			}
 			eng.executeScript("spotPlace("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", '"+activities.get(i).getPlace().getName()+"',"+activities.get(i).getPlace().getId()+"))");;
 			eventsList.getItems().add(eventBox);
 		}
