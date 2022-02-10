@@ -91,7 +91,7 @@ function setUser(latitude,longitude){
 }
 
 function moveView(latitude,longitude,id){
-	var activity = markersOnMap.find(element => id);
+	var activity = markersOnMap.find(element => element.id == id);
 	mymap.setView([latitude,longitude],zoom+15);
 	activity.marker.openPopup();
 }
@@ -104,6 +104,19 @@ function removeAllMarkers(){
 //------------------------------------------------------------------------------------------_//
 //								 inizio codice per andrea
 //-------------------------------------------------------------------------------------------//
+	function moveViewDesktop(latitude,longitude,id){
+		var activity = null;
+		for(let i= 0; i< markersOnMap.length; i++){
+			if(markersOnMap[i].id == id) {
+				activity = markersOnMap[i];
+				break;	
+			}
+		}
+		mymap.setView([latitude,longitude],zoom+15);
+		if(activity != null)
+			activity.marker.openPopup();
+	}
+
 
 	var stringedLatLng
 
@@ -138,3 +151,5 @@ function removeAllMarkers(){
   	function getStringedLatLng(){
 		return stringedLatLng;
 	}
+	
+	
