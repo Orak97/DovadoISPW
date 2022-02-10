@@ -405,23 +405,19 @@ public class HomeView implements Initializable{
 		Text eventId = new Text();
 		Text placeId = new Text();
 		
-		if(isPartner) {
-			eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
-			placeId.setId(((SuperActivity)activitiesPartn.get(i)).getPlace().getId().toString());
-			
-			
-		} else {
-			eventId.setId(activities.get(i).getId().toString());
-			placeId.setId(activities.get(i).getPlace().getId().toString());
-		}
 		//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 		//dell'evento ed infine il testo dell'evento.
-		eventBox.getChildren().add(eventId);
-		eventBox.getChildren().add(placeId);
+		
 		eventBox.getChildren().add(eventImage);
 		eventBox.getChildren().add(eventText);
 		
 		if(isPartner) {
+			eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
+			placeId.setId(((SuperActivity)activitiesPartn.get(i)).getPlace().getId().toString());
+			
+			eventBox.getChildren().add(eventId);
+			eventBox.getChildren().add(placeId);
+		
 			if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
 				eventBox.setOpacity(0.4);
 				Text closed = new Text(CLOSEDKEY);
@@ -430,6 +426,12 @@ public class HomeView implements Initializable{
 				eventBox.getChildren().add(closed);
 			}
 		} else {
+			eventId.setId(activities.get(i).getId().toString());
+			placeId.setId(activities.get(i).getPlace().getId().toString());
+			
+			eventBox.getChildren().add(eventId);
+			eventBox.getChildren().add(placeId);
+			
 			if(activities.get(i) instanceof CertifiedActivity) {
 				eventName.getStyleClass().clear();
 				eventName.getStyleClass().add(CERTEVENTNAME);
@@ -1136,7 +1138,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			return;
 		}
 		
-		ImageView eventImage = new ImageView();
+		
 		Text eventName = new Text(activities.get(i).getName()+"\n");
 		Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
 		Text eventInfo;
@@ -1159,62 +1161,9 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 				"\n"+activities.get(i).getFrequency().getOpeningTime()+
 				"-"+activities.get(i).getFrequency().getClosingTime());
 		}
-		eventImage.setImage(new Image(IMAGES));
-
-		eventInfo.setId(EVENTINFO);
-		eventInfo.getStyleClass().add(STYLEINFO);
-		eventInfo.setWrappingWidth(280);
-
-		eventName.setId(EVENTNAME);
-		eventName.getStyleClass().add(STYLENAME);
-		eventName.setWrappingWidth(280);
-		
-		VBox eventText = new VBox(eventName,eventInfo);
-		eventText.setAlignment(Pos.CENTER_LEFT);
-		
-		//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-		//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-		StackPane eventBox = new StackPane();
-		Text eventId = new Text();
-		Text placeId = new Text();
-		
-		eventId.setId(activities.get(i).getId().toString());
-		placeId.setId(activities.get(i).getPlace().getId().toString());
-		
-		//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-		//dell'evento ed infine il testo dell'evento.
-		eventBox.getChildren().add(eventId);
-		eventBox.getChildren().add(placeId);
-		eventBox.getChildren().add(eventImage);		
-		eventBox.getChildren().add(eventText);
-		//Se l'attivit� � certificata aggiungo un logo in alto a
-		//destra per indicarlo.
-		if(activities.get(i) instanceof CertifiedActivity) {
-
-			eventName.getStyleClass().clear();
-			eventName.getStyleClass().add(CERTEVENTNAME);
-			eventName.setText(eventName.getText()+'\n'+CERTIFIED);
+		///////////////////////////////////////////////////////////////////////////////////////////
+			StackPane eventBox = setView(eventInfo, eventName, false, i, activities, null);
 			
-		}	
-		//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-		eventBox.setAlignment(Pos.CENTER);
-		if(activities.get(i) instanceof NormalActivity){
-			if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
-				eventBox.setOpacity(0.4);
-				Text closed = new Text(CLOSEDKEY);
-				closed.getStyleClass().add(STYLEINFO);
-				closed.setTextAlignment(TextAlignment.CENTER);
-				eventBox.getChildren().add(closed);
-			}
-		} else {
-			if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
-				eventBox.setOpacity(0.4);
-				Text closed = new Text(CLOSEDKEY);
-				closed.getStyleClass().add(STYLEINFO);
-				closed.setTextAlignment(TextAlignment.CENTER);
-				eventBox.getChildren().add(closed);
-			}
-		}
 		eng.executeScript(SPOTPLACESCRIPT+"("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")");
 		eventsList.getItems().add(eventBox);
 	}
