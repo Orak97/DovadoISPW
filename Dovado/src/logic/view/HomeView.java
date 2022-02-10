@@ -171,6 +171,9 @@ public class HomeView implements Initializable{
 		}
 	}
     
+    
+    //---------------------- INIZIO Metodo Initialize e relativi metodi di supporto ---------------------------
+    
     	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -199,31 +202,7 @@ public class HomeView implements Initializable{
 	    		activitiesToSpotPart = activitiesPartn;
     			eng = map.getEngine();
     			eng.setJavaScriptEnabled(true);
-    	        eng.getLoadWorker().stateProperty().addListener(
-    					  new ChangeListener<Worker.State>() {
-    						    @Override
-    						    public void changed(
-    						                ObservableValue<? extends Worker.State> observable,
-    						                Worker.State oldValue, Worker.State newValue) {
-    						      switch (newValue) {
-    						        case SUCCEEDED:
-    						        case FAILED:
-    						        case CANCELLED:
-    						          eng
-    						            .getLoadWorker()
-    						            .stateProperty()
-    						            .removeListener(this);
-    						      }
-
-
-    						      if (newValue != Worker.State.SUCCEEDED) {
-    						        return;
-    						      }
-
-    						      // Your logic here
-    						      Log.getInstance().getLogger().info("page loaded");
-    						    }
-    			} );
+    	        
     	        eng.load(MAPPATHKEY);
     			
     			// Setting permissions to interact with Js
@@ -241,79 +220,10 @@ public class HomeView implements Initializable{
     			preference1.setManaged(false);
     			
     			if(!activitiesPartn.isEmpty()){
+    				    				
+    				suppInitPartAct(activitiesPartn);
     				
-    				int j;
-    				for(j=0;j<activitiesPartn.size();j++)
-    					Log.getInstance().getLogger().info("tutte le attivit� "+((SuperActivity)activitiesPartn.get(j)).getId());
-    				
-    				Thread newThread = new Thread(() -> {
-    					int i;
-    					for(i=0;i<activitiesPartn.size();i++) {
-    						if(!activitiesPartn.get(i).isPlayableOnThisDate(LocalDate.now())) {
-    							continue;
-    						}
-    						ImageView eventImage = new ImageView();
-    						Text eventName = new Text(((SuperActivity)activitiesPartn.get(i)).getName()+"\n");
-    						Log.getInstance().getLogger().info("\n\n"+((SuperActivity)activitiesPartn.get(i)).getName()+"\n\n");
-    						Text eventInfo = new Text(((SuperActivity)activitiesPartn.get(i)).getPlace().getName()+
-    								"\n"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getOpeningTime()+
-    								"-"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getClosingTime());
-    						eventImage.setImage(new Image(IMAGES));
-    						eventImage.getStyleClass().add("event-image");
-    						
-    						eventInfo.setId(EVENTINFO);
-    						eventInfo.getStyleClass().add(STYLEINFO);
-    						eventInfo.setWrappingWidth(280);
-	
-    						eventName.setId(EVENTNAME);
-    						eventName.getStyleClass().add(STYLENAME);
-    						eventName.setWrappingWidth(280);
-
-    						VBox eventText = new VBox(eventName,eventInfo);
-    						eventText.setAlignment(Pos.CENTER_LEFT);
-    						eventText.getStyleClass().add("eventTextVbox");
-    						//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-    						//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-    						StackPane eventBox = new StackPane();
-    						eventBox.getStyleClass().add("eventBox");
-    						
-    						Text eventId = new Text();
-    						Text placeId = new Text();
-    						
-    						eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
-    						placeId.setId(((SuperActivity)activitiesPartn.get(i)).getPlace().getId().toString());
-    						
-    						//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-    						//dell'evento ed infine il testo dell'evento.
-    						eventBox.getChildren().add(eventId);
-    						eventBox.getChildren().add(placeId);
-    						eventBox.getChildren().add(eventImage);
-    						eventBox.getChildren().add(eventText);
-    						//Se l'attivit� � certificata aggiungo un logo in alto a
-    						//destra per indicarlo.
-    						if(activitiesPartn.get(i) instanceof CertifiedActivity) {
-    							eventName.getStyleClass().clear();
-    							eventName.getStyleClass().add(CERTEVENTNAME);
-    							eventName.setText(eventName.getText()+'\n'+CERTIFIED);
-    						}	
-    						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-    						eventBox.setAlignment(Pos.CENTER);
-
-    						if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
-    							eventBox.setOpacity(0.4);
-    							Text closed = new Text(CLOSEDKEY);
-    							closed.getStyleClass().add(STYLEINFO);
-    							closed.setTextAlignment(TextAlignment.CENTER);
-    							eventBox.getChildren().add(closed);
-    						}
-    						eventsList.getItems().add(eventBox);
-    						
-    					}
-    				});
-    				newThread.start();
-    				eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-    				newThread.join();
-    			} else {
+    				} else {
     				StackPane infoBox = new StackPane();
     				Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!");
     				noPrefs.setTextAlignment(TextAlignment.CENTER);
@@ -324,13 +234,14 @@ public class HomeView implements Initializable{
     				eventsList.getItems().add(infoBox);
     			}
     		}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
-    			} catch (InterruptedException e) {
-    				Thread.currentThread().interrupt();
-    				e.printStackTrace();
-    				Log.getInstance().getLogger().info(e.getMessage());
-    			} catch (Exception e) {
-					e.printStackTrace();
-				}
+    		
+    		} catch (InterruptedException e) {
+    			Thread.currentThread().interrupt();
+    			e.printStackTrace();
+    			Log.getInstance().getLogger().info(e.getMessage());
+    		} catch (Exception e) {
+				e.printStackTrace();
+			}
     	}
     	else {
 	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
@@ -341,31 +252,7 @@ public class HomeView implements Initializable{
 				
 				// Setting permissions to interact with Js
 		        eng.setJavaScriptEnabled(true);
-		        eng.getLoadWorker().stateProperty().addListener(
-  					  new ChangeListener<Worker.State>() {
-  						    @Override
-  						    public void changed(
-  						                ObservableValue<? extends Worker.State> observable,
-  						                Worker.State oldValue, Worker.State newValue) {
-  						      switch (newValue) {
-  						        case SUCCEEDED:
-  						        case FAILED:
-  						        case CANCELLED:
-  						          eng
-  						            .getLoadWorker()
-  						            .stateProperty()
-  						            .removeListener(this);
-  						      }
-
-
-  						      if (newValue != Worker.State.SUCCEEDED) {
-  						        return;
-  						      }
-
-  						      // Your logic here
-  						      Log.getInstance().getLogger().info("page loaded");
-  						    }
-  				} );
+		        
 		        eng.load(MAPPATHKEY);
 		        
 		        searchButton.setText("SEARCH");
@@ -398,106 +285,9 @@ public class HomeView implements Initializable{
 				Preferences preferences = ((User)Navbar.getUser()).getPreferences();
 			
 				if(preferences!=null){
-						
 					activities.addAll(daoAct.getNearbyActivities(usrLat,usrLon,100));
+					suppInitUserAct(activities);
 					
-					int j;
-					for(j=0;j<activities.size();j++)
-						Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
-					
-					Thread newThread = new Thread(() -> {
-						int i;
-						for(i=0;i<activities.size();i++) {
-							if(!(activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
-	    							continue;
-	    						}
-							
-							ImageView eventImage = new ImageView();
-							Text eventName = new Text(activities.get(i).getName()+"\n");
-							Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
-							Text eventInfo;
-
-							if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
-								eventInfo = new Text(activities.get(i).getPlace().getName()+
-										"\n Expiring activity"+
-										"\n"+activities.get(i).getFrequency().getOpeningTime()+
-										"-"+activities.get(i).getFrequency().getClosingTime());
-							}
-							else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
-								eventInfo = new Text(activities.get(i).getPlace().getName()+
-										"\n Periodic activity"+
-										"\n"+activities.get(i).getFrequency().getOpeningTime()+
-										"-"+activities.get(i).getFrequency().getClosingTime());
-							}
-							else{
-								eventInfo = new Text(activities.get(i).getPlace().getName()+
-									"\n Continuos activity"+
-									"\n"+activities.get(i).getFrequency().getOpeningTime()+
-									"-"+activities.get(i).getFrequency().getClosingTime());
-							}
-							
-							eventImage.setImage(new Image(IMAGES));
-							eventImage.getStyleClass().add("event-image");
-							
-							eventInfo.setId(EVENTINFO);
-							eventInfo.getStyleClass().add(STYLEINFO);
-							eventInfo.setWrappingWidth(280);
-					
-							eventName.setId(EVENTNAME);
-							eventName.getStyleClass().add(STYLENAME);
-							eventName.setWrappingWidth(280);
-					
-							VBox eventText = new VBox(eventName,eventInfo);
-							eventText.setAlignment(Pos.CENTER_LEFT);
-							eventText.getStyleClass().add("eventTextVbox");
-							//Preparo un box in cui contenere il nome dell'attivit� e altre sue
-							//informazioni; uso uno StackPane per poter mettere scritte su immagini.
-							StackPane eventBox = new StackPane();
-							eventBox.getStyleClass().add("eventBox");
-							
-							Text eventId = new Text();
-							Text placeId = new Text();
-							
-							eventId.setId(activities.get(i).getId().toString());
-							placeId.setId(activities.get(i).getPlace().getId().toString());
-							
-							//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
-							//dell'evento ed infine il testo dell'evento.
-							eventBox.getChildren().add(eventId);
-							eventBox.getChildren().add(placeId);
-							eventBox.getChildren().add(eventImage);
-							eventBox.getChildren().add(eventText);
-							if(activities.get(i) instanceof CertifiedActivity) {
-								eventName.getStyleClass().clear();
-								eventName.getStyleClass().add(CERTEVENTNAME);
-								eventName.setText(eventName.getText()+'\n'+CERTIFIED);
-							}	
-							//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
-							eventBox.setAlignment(Pos.CENTER);
-							if(activities.get(i) instanceof NormalActivity){
-								if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
-									eventBox.setOpacity(0.4);
-	    							Text closed = new Text(CLOSEDKEY);
-	    							closed.getStyleClass().add(STYLEINFO);
-	    							closed.setTextAlignment(TextAlignment.CENTER);
-	    							eventBox.getChildren().add(closed);
-	    						}
-								eventsList.getItems().add(eventBox);
-							} else {
-								if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
-									eventBox.setOpacity(0.4);
-	    							Text closed = new Text(CLOSEDKEY);
-	    							closed.getStyleClass().add(STYLEINFO);
-	    							closed.setTextAlignment(TextAlignment.CENTER);
-	    							eventBox.getChildren().add(closed);
-								}
-								eventsList.getItems().add(eventBox);
-							}
-						}
-					});
-					newThread.start();
-					eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-					newThread.join();
 				} else {
 					StackPane infoBox = new StackPane();
 					Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!");
@@ -518,7 +308,188 @@ public class HomeView implements Initializable{
 				}
     	}
     }
+	private void suppInitPartAct(ArrayList<CertifiedActivity> activitiesPartn) throws InterruptedException {
+		Thread newThread = new Thread(() -> {
+			int j;
+			for(j=0;j<activitiesPartn.size();j++)
+				Log.getInstance().getLogger().info("tutte le attivit� "+((SuperActivity)activitiesPartn.get(j)).getId());
+			
+			int i;
+			for(i=0;i<activitiesPartn.size();i++) {
+				if(!activitiesPartn.get(i).isPlayableOnThisDate(LocalDate.now())) {
+					continue;
+				}
+				ImageView eventImage = new ImageView();
+				Text eventName = new Text(((SuperActivity)activitiesPartn.get(i)).getName()+"\n");
+				Log.getInstance().getLogger().info("\n\n"+((SuperActivity)activitiesPartn.get(i)).getName()+"\n\n");
+				Text eventInfo = new Text(((SuperActivity)activitiesPartn.get(i)).getPlace().getName()+
+						"\n"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getOpeningTime()+
+						"-"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getClosingTime());
+				eventImage.setImage(new Image(IMAGES));
+				eventImage.getStyleClass().add("event-image");
+				
+				eventInfo.setId(EVENTINFO);
+				eventInfo.getStyleClass().add(STYLEINFO);
+				eventInfo.setWrappingWidth(280);
 
+				eventName.setId(EVENTNAME);
+				eventName.getStyleClass().add(STYLENAME);
+				eventName.setWrappingWidth(280);
+
+				VBox eventText = new VBox(eventName,eventInfo);
+				eventText.setAlignment(Pos.CENTER_LEFT);
+				eventText.getStyleClass().add("eventTextVbox");
+				//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+				//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+				StackPane eventBox = new StackPane();
+				eventBox.getStyleClass().add("eventBox");
+				
+				Text eventId = new Text();
+				Text placeId = new Text();
+				
+				eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
+				placeId.setId(((SuperActivity)activitiesPartn.get(i)).getPlace().getId().toString());
+				
+				//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+				//dell'evento ed infine il testo dell'evento.
+				eventBox.getChildren().add(eventId);
+				eventBox.getChildren().add(placeId);
+				eventBox.getChildren().add(eventImage);
+				eventBox.getChildren().add(eventText);
+				//Se l'attivit� � certificata aggiungo un logo in alto a
+				//destra per indicarlo.
+				if(activitiesPartn.get(i) instanceof CertifiedActivity) {
+					eventName.getStyleClass().clear();
+					eventName.getStyleClass().add(CERTEVENTNAME);
+					eventName.setText(eventName.getText()+'\n'+CERTIFIED);
+				}	
+				//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+				eventBox.setAlignment(Pos.CENTER);
+
+				if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
+					eventBox.setOpacity(0.4);
+					Text closed = new Text(CLOSEDKEY);
+					closed.getStyleClass().add(STYLEINFO);
+					closed.setTextAlignment(TextAlignment.CENTER);
+					eventBox.getChildren().add(closed);
+				}
+				eventsList.getItems().add(eventBox);
+				
+			}
+		});
+		newThread.start();
+		eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		newThread.join();
+	
+	}
+	
+	private void suppInitUserAct(ArrayList<Activity> activities) throws InterruptedException {		
+		
+		int j;
+		for(j=0;j<activities.size();j++)
+			Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+		
+		Thread newThread = new Thread(() -> {
+			int i;
+			for(i=0;i<activities.size();i++) {
+				if(!(activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
+						continue;
+					}
+				
+				ImageView eventImage = new ImageView();
+				Text eventName = new Text(activities.get(i).getName()+"\n");
+				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+				Text eventInfo;
+
+				if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
+					eventInfo = new Text(activities.get(i).getPlace().getName()+
+							"\n Expiring activity"+
+							"\n"+activities.get(i).getFrequency().getOpeningTime()+
+							"-"+activities.get(i).getFrequency().getClosingTime());
+				}
+				else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
+					eventInfo = new Text(activities.get(i).getPlace().getName()+
+							"\n Periodic activity"+
+							"\n"+activities.get(i).getFrequency().getOpeningTime()+
+							"-"+activities.get(i).getFrequency().getClosingTime());
+				}
+				else{
+					eventInfo = new Text(activities.get(i).getPlace().getName()+
+						"\n Continuos activity"+
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+
+						"-"+activities.get(i).getFrequency().getClosingTime());
+				}
+				
+				eventImage.setImage(new Image(IMAGES));
+				eventImage.getStyleClass().add("event-image");
+				
+				eventInfo.setId(EVENTINFO);
+				eventInfo.getStyleClass().add(STYLEINFO);
+				eventInfo.setWrappingWidth(280);
+		
+				eventName.setId(EVENTNAME);
+				eventName.getStyleClass().add(STYLENAME);
+				eventName.setWrappingWidth(280);
+		
+				VBox eventText = new VBox(eventName,eventInfo);
+				eventText.setAlignment(Pos.CENTER_LEFT);
+				eventText.getStyleClass().add("eventTextVbox");
+				//Preparo un box in cui contenere il nome dell'attivit� e altre sue
+				//informazioni; uso uno StackPane per poter mettere scritte su immagini.
+				StackPane eventBox = new StackPane();
+				eventBox.getStyleClass().add("eventBox");
+				
+				Text eventId = new Text();
+				Text placeId = new Text();
+				
+				eventId.setId(activities.get(i).getId().toString());
+				placeId.setId(activities.get(i).getPlace().getId().toString());
+				
+				//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
+				//dell'evento ed infine il testo dell'evento.
+				eventBox.getChildren().add(eventId);
+				eventBox.getChildren().add(placeId);
+				eventBox.getChildren().add(eventImage);
+				eventBox.getChildren().add(eventText);
+				if(activities.get(i) instanceof CertifiedActivity) {
+					eventName.getStyleClass().clear();
+					eventName.getStyleClass().add(CERTEVENTNAME);
+					eventName.setText(eventName.getText()+'\n'+CERTIFIED);
+				}	
+				//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
+				eventBox.setAlignment(Pos.CENTER);
+				if(activities.get(i) instanceof NormalActivity){
+					if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+						eventBox.setOpacity(0.4);
+						Text closed = new Text(CLOSEDKEY);
+						closed.getStyleClass().add(STYLEINFO);
+						closed.setTextAlignment(TextAlignment.CENTER);
+						eventBox.getChildren().add(closed);
+					}
+					eventsList.getItems().add(eventBox);
+				} else {
+					if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
+						eventBox.setOpacity(0.4);
+						Text closed = new Text(CLOSEDKEY);
+						closed.getStyleClass().add(STYLEINFO);
+						closed.setTextAlignment(TextAlignment.CENTER);
+						eventBox.getChildren().add(closed);
+					}
+					eventsList.getItems().add(eventBox);
+				}
+			}
+		});
+		newThread.start();
+		eventsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		newThread.join();
+	
+	}
+	
+	
+	
+	//--------------------------FINE METODO Initialize e funzioni di supporto relative----------------------------
+	
+	
 	public void updateDistance() {
 		
 		int dist = (int) Math.round(distanceSelector.getValue());
@@ -1183,7 +1154,6 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 
 	    searchBar.setText("");
 	    searchBar.setPromptText("Insert a 6 digit coupon code");
-	    return;
 	}
 	
 	private void filterActUserSupport(ArrayList<Activity> activities, int i) {
