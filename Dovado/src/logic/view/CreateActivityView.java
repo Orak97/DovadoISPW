@@ -1,8 +1,10 @@
 package logic.view;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -39,6 +41,7 @@ import logic.controller.ClaimActivityController;
 import logic.controller.CreateActivityController;
 import logic.controller.FindActivityController;
 import logic.controller.SpotPlaceController;
+import logic.controller.UpdateCertActController;
 import logic.model.Activity;
 import logic.model.NormalActivity;
 import logic.model.Cadence;
@@ -121,7 +124,7 @@ public class CreateActivityView implements Initializable{
 	private Button spotActs;
 	
 	@FXML
-	private TextField searchActivities;
+	private TextField searchActivites;
 	
 	@FXML
 	private ListView<Object> actsList;
@@ -307,11 +310,12 @@ public class CreateActivityView implements Initializable{
 			searchActs.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					String[] searchTerm = searchBar.getText().split(";");
+					String[] searchTerm = searchActivites.getText().split(" ");
+					System.out.println(searchTerm[0]);
 					try {
 						actsFound  =  (ArrayList<Activity>) DAOActivity.getInstance().getNearbyActivities(42.19832, 12.34515,100);
-						actsFound = (ArrayList<Activity>)FindActivityController.filterActivitiesByKeyWords(actsFound, searchTerm);
-						if( (actsFound)==null){
+						actsFound = (ArrayList<Activity>)FindActivityController.filterActivitiesByKeyWords((List<Activity>)actsFound, searchTerm);
+						if( (actsFound.isEmpty())){
 							
 								popupGen(wPopup,hPopup,"No activity found for "+searchTerm); 
 								
@@ -322,7 +326,7 @@ public class CreateActivityView implements Initializable{
 							e1.printStackTrace();
 							return;
 					}
-
+					searchActivites.setText("");
 					updateActs();
 				}
 			});
@@ -678,12 +682,17 @@ public class CreateActivityView implements Initializable{
 	
 	public void reclaimActivity() {
 		if(actSelected==null) popupGen(wPopup,hPopup,"Chose an activity first");
-		ClaimActivityController cac = new ClaimActivityController();
-		if(cac.claimActivityOwnership((Partner)Navbar.getUser(),((SuperActivity)actSelected))) {
-			popupGen(wPopup,hPopup,"Activity succesfully claimed!");
-		} else {
-			popupGen(wPopup,hPopup,"Activity not claimed!");
+		CreateActivityBean cab = new CreateActivityBean();
+		cab.fillBean(cab,(SuperActivity)actSelected,(Partner)Navbar.getUser());
+		UpdateCertActController upCac = new UpdateCertActController(cab,(Partner)Navbar.getUser());
+		try {
+			upCac.claimActivity();
+		} catch (ClassNotFoundException | SQLException e) {
+			popupGen(wPopup,hPopup,"Due to issues your Activity wasn't claimed!");
+			e.printStackTrace();
+			return;
 		}
+		popupGen(wPopup,hPopup,"Your activity was succesfully claimed!");
 		
 	}
 	

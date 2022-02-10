@@ -1107,9 +1107,9 @@ public class HomeView extends SuperView implements Initializable{
 			//segnalo l'errore e esco dal metodo.
 			activities = (ArrayList<Activity>) daoAct.getNearbyActivities(usrLat, usrLon, Float.parseFloat(distanceSelected.getText()));
 			if(searchByPreference) {
-				FindActivityController.filterActivitiesByPreferences(activities,((User)user).getPreferences());
+				activities = (ArrayList<Activity>) FindActivityController.filterActivitiesByPreferences(activities,((User)user).getPreferences());
 			}
-			FindActivityController.filterActivitiesByKeyWords(activities, keywords);
+			activities = (ArrayList<Activity>) FindActivityController.filterActivitiesByKeyWords(activities, keywords);
 			if(activities.isEmpty() ) {
 				Log.getInstance().getLogger().info("Nothing was found!");
 				popupGen(wPopup,hPopup,"Nothing has been found"); 
