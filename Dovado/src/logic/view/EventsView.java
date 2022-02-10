@@ -81,13 +81,12 @@ public class EventsView implements Initializable{
     private SuperUser user;
     private DatePicker pickDateOp = null;
     private DatePicker pickDateCl = null;
-	private ChoiceBox<String> pickCadence = null;
-	private Text txtCadence = null;
-	private Text txtDateOp = null;
-	private Text txtDateCl = null;
 	private long wPopup = 500;
 	private long hPopup = 50;
-    
+	private HBox selection;
+	private Button deleteSched;
+	
+	
     private static Stage curr;
     
     private int lastActivitySelected = -1;
@@ -156,7 +155,6 @@ public class EventsView implements Initializable{
     	}catch(Error e) {	
 			Log.getInstance().getLogger().warning(e.getMessage());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	try {		
@@ -362,215 +360,7 @@ public class EventsView implements Initializable{
 			eventsList.getItems().add(eventBox);
 		}
 	}
-	private void modifyEventeHandle(ActionEvent event) {
-		
-
-		HBox selectedBox = (HBox)eventsList.getItems().get(lastActivitySelected+1);			
-		
-		if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
-			return;
-		}
-		//Apro un pop up in cui si può scegliere una
-		//Data in cui svolgere l'attività
-		
-		ChoiceBox<String> hourBox = new ChoiceBox<>();
-		Text columnsOp = new Text(":");
-		Text columnsCl = new Text(":");
-		ChoiceBox<String> minBox = new ChoiceBox<>();
-		
-		ChoiceBox<String> clhourBox = new ChoiceBox<>();
-		ChoiceBox<String> clminBox = new ChoiceBox<>();
-		
-		int lowerLimit = 0;
-		int upperLimit = 23;
-
-
-		for(int i=lowerLimit;i<=upperLimit;i++) {
-			String hr = Integer.toString(i);
-			if(i<10) {
-				hr = "0"+hr;
-			}
-			hourBox.getItems().add(hr);
-		}
-		
-		for(int i=lowerLimit;i<=upperLimit;i++) {
-			String hr = Integer.toString(i);
-			if(i<10) {
-				hr = "0"+hr;
-			}
-			clhourBox.getItems().add(hr);
-		}
-		
-		minBox.getItems().clear();
-				
-		for(int j=0;j<60;j++) {
-				String min = Integer.toString(j);
-				if(j<10) {
-					min = "0"+min;
-				}
-				minBox.getItems().add(min);
-		}
-				
-		clminBox.getItems().clear();
-		for(int j=0;j<60;j++) {
-			String min = Integer.toString(j);
-			if(j<10) {
-				min = "0"+min;
-			}
-			clminBox.getItems().add(min);
-		}
-				
-
-		Text txtOp = new Text("Select opening time");
-		Text txtCl = new Text("Select closing time");
-		Button ok = new Button();
-		Button close = new Button();
-		
-		VBox dateBox = new VBox();
-		ok.setText("Ok");
-		ok.getStyleClass().add(BTNSRCKEY);
-		
-		HBox buttonBox = new HBox();
-		HBox pickTimeOpBox = new HBox();
-		HBox pickTimeClBox = new HBox();
-		
-		buttonBox.getChildren().addAll(close,ok);
-		
-		CornerRadii cr = new CornerRadii(4);
-		BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
-		Background b = new Background(bf);
-		
-		pickTimeOpBox.getChildren().addAll(hourBox,columnsOp,minBox);
-		pickTimeClBox.getChildren().addAll(clhourBox,columnsCl,clminBox);
-		
-		if(activitySelected.getFrequency() instanceof PeriodicActivity) {
-			pickCadence = new ChoiceBox<>();
-			pickCadence.getItems().addAll(Cadence.WEEKLY.toString(),Cadence.MONTHLY.toString(),Cadence.ANNUALLY.toString());
-			
-			txtCadence = new Text("Select new cadence");
-			txtCadence.getStyleClass().add(STYLETXT);
-			
-			dateBox.getChildren().addAll(txtCadence,pickCadence);			
-			
-		}
-		if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
-			pickDateOp = new DatePicker();
-			pickDateCl = new DatePicker();
-			
-			txtDateOp = new Text("Select opening date");
-			txtDateCl = new Text("Select closing date");
-			
-			txtDateOp.getStyleClass().add(STYLETXT);
-			txtDateCl.getStyleClass().add(STYLETXT);
-			
-			dateBox.getChildren().addAll(txtDateOp,pickDateOp,txtDateCl,pickDateCl);						
-		}
-		dateBox.setBackground(b);
-		dateBox.getChildren().addAll(txtOp,pickTimeOpBox,txtCl,pickTimeClBox,buttonBox);
-		dateBox.setId("dateBox");
-		
-		selectedBox.getChildren().add(dateBox);
-		
-		close.setText("Close");
-		close.getStyleClass().add(BTNSRCKEY);					
-		
-		close.setOnAction(new EventHandler<ActionEvent>(){
-			@Override public void handle(ActionEvent e) {
-				selectedBox.getChildren().remove(dateBox);
-			}
-		});
-		
-		ok.setOnAction(new EventHandler<ActionEvent>(){
-			@Override public void handle(ActionEvent e) {
-				
-				String ophourChosen = hourBox.getValue();
-				String opminChosen = minBox.getValue();
-				String clhourChosen = clhourBox.getValue();
-				String clminChosen = clminBox.getValue();
-				
-				
-				String openingTimeChosen = ophourChosen+':'+opminChosen;
-				String closingTimeChosen = clhourChosen+':'+clminChosen;
-				//AGGIUNGERE UN METODO CHE AGGIORNI L'ATTIVITA' NEL DATABASE.
-				
-				//TODO:: CAPIRE SE SERVE MODIFICARE ANCHE LA DESCRIZIONE
-				// O IL NOME DELL'ATTIVITA' O IL POSTO.
-				CreateActivityBean cab = new CreateActivityBean();
-				
-				cab.setActivityDescription(activitySelected.getDescription());
-				cab.setActivityName(activitySelected.getName());
-				cab.setPlace(activitySelected.getPlace().getId().intValue());
-				cab.setOwner(((CertifiedActivity)(activitySelected)).getOwner().getUserID().intValue());
-				cab.setIdActivity(activitySelected.getId().intValue());
-				
-				cab.setInterestedCategories(activitySelected.getIntrestedCategories().getSetPreferences());
-				if(activitySelected.getFrequency() instanceof PeriodicActivity) {
-					cab.setType(ActivityType.PERIODICA);
-
-					DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
-					String dayStringed = day.format(pickDateOp.getValue());
-
-					DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
-					String dayStringedCl = dayCl.format(pickDateCl.getValue());
-					//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
-					//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
-					//DATA DI FINE ED INFINE LA CADENZA PERTANTO:
-					cab.setEndDate(dayStringedCl);
-					cab.setOpeningDate(dayStringed);
-					cab.setCadence(((PeriodicActivity)(activitySelected.getFrequency())).getCadence());
-				}
-				if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
-					cab.setType(ActivityType.SCADENZA);
-
-					DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
-					String dayStringed = day.format(pickDateOp.getValue());
-
-					DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
-					String dayStringedCl = dayCl.format(pickDateCl.getValue());
-					//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
-					//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
-					//E DATA DI FINE PERTANTO:
-					cab.setEndDate(dayStringedCl);
-					cab.setOpeningDate(dayStringed);
-				}
-				else if(activitySelected.getFrequency() instanceof ContinuosActivity) {
-					cab.setType(ActivityType.CONTINUA);
-					//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
-					//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA, PERTANTO:	
-				}
-				cab.setOpeningTime(openingTimeChosen);
-				cab.setClosingTime(closingTimeChosen);
-				
-				
-				UpdateCertActController updateController = new UpdateCertActController(cab,(CertifiedActivity)activitySelected);
-				
-				try {
-					if(updateController.updateActivity()) {
-						
-						final Popup popup = popupGen(wPopup,hPopup,"Activity successfully modified"); 
-						popup.centerOnScreen(); 
-					    
-					    popup.show(curr);
-					    popup.setAutoHide(true);
-						
-					} else {
-						final Popup popup = popupGen(wPopup,hPopup,"Activity not modified"); 
-						popup.centerOnScreen(); 
-					    
-					    popup.show(curr);
-					    popup.setAutoHide(true);
-			
-					}
-				} catch (Exception e1) {
-					e1.printStackTrace();
-					Log.getInstance().getLogger().info("Database access was not obtained");
-					
-				}
-				
-
-			}
-		});
-	}
+	
 	
 	public void scheduledActSelected() {
 
@@ -608,8 +398,8 @@ public class EventsView implements Initializable{
 		
 		Log.getInstance().getLogger().info(eventName+" "+eventDetails);
 
-		HBox selection = new HBox();
-		Button deleteSched = new Button();
+		selection = new HBox();
+		deleteSched = new Button();
 		if(user instanceof User)
 			deleteSched.setText("Delete from schedule");
 		else
@@ -637,68 +427,17 @@ public class EventsView implements Initializable{
 
 				@Override
 				public void handle(ActionEvent event) {
-					modifyEventeHandle(event);
+					modifyEventeHandle();
 				}
 				
 			});
 		}
 		
 		if(user instanceof User) {
-			String remind = schedActivities.get(itemNumber).getReminderTime().toString().replace('T', ' ');
-			String sched = schedActivities.get(itemNumber).getScheduledTime().toString().replace('T', ' ');
-
-			Text reminderTime = new Text("Activity reminder at: "+remind);
-			Text scheduledTime = new Text("Activity scheduled for: "+sched);
-			
-			reminderTime.getStyleClass().add(STYLEINFO);
-			scheduledTime.getStyleClass().add(STYLENAME);
-			
-			VBox schedInfo = new VBox();
-			
-			schedInfo.setAlignment(Pos.CENTER_RIGHT);
-			schedInfo.getChildren().addAll(scheduledTime,reminderTime);
-			if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
-				Text startDate = new Text("Activity will start from: "+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
-				Text endDate = new Text("Activity will end: "+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
-				schedInfo.getChildren().addAll(startDate,endDate);
-			}
-			else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
-				Text startDate = new Text("Activity will start from: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
-				Text endDate = new Text("Activity will end: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
-				Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
-				schedInfo.getChildren().addAll(cadence,startDate,endDate);
-			}
-
-			selection.getChildren().addAll(deleteSched,schedInfo);
+			userSchedAct(itemNumber);
 				
 		} else {
-			String remind = activities.get(itemNumber).getFrequency().getOpeningTime().toString().replace('T', ' ');
-			String sched = activities.get(itemNumber).getFrequency().getClosingTime().toString().replace('T', ' ');
-			
-			Text reminderTime = new Text("Activity opening at: "+remind);
-			Text scheduledTime = new Text("Activity closing at: "+sched);
-			
-			reminderTime.getStyleClass().add(STYLEINFO);
-			scheduledTime.getStyleClass().add(STYLEINFO);
-			
-			VBox eventsInfo = new VBox();
-			
-			eventsInfo.setAlignment(Pos.TOP_LEFT);
-			eventsInfo.getChildren().addAll(scheduledTime,reminderTime);
-			if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
-				Text startDate = new Text("Activity will start from: "+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
-				Text endDate = new Text("Activity will end: "+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
-				eventsInfo.getChildren().addAll(startDate,endDate);
-			}
-			else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
-				Text startDate = new Text("Activity will start from: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
-				Text endDate = new Text("Activity will end: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
-				Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
-				eventsInfo.getChildren().addAll(cadence,startDate,endDate);
-			}
-			selection.getChildren().addAll(eventsInfo,modifyEvent,deleteSched);
-			
-			
+			partnerSchedAct(itemNumber,modifyEvent);
 		}
 		
 		eventsList.getItems().add(itemNumber+1, selection);
@@ -710,31 +449,286 @@ public class EventsView implements Initializable{
 
 		deleteSched.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-													
-					final Popup popup; 
-				
-					if(deleteScheduledEvent(schedEventID)) {
-						eventsList.getItems().remove(itemNumber+1);
-						eventsList.getItems().remove(itemNumber);
-						lastActivitySelected= -1;
-						lastEventBoxSelected= null;
-						//Messaggio per il dialog box
-						popup = popupGen(wPopup,hPopup,"Scheduled activity successfully deleted"); 
-						popup.centerOnScreen(); 
-					    
-					    popup.show(curr);
-					    popup.setAutoHide(true);
-			        }
-			        else {
-			        	popup = popupGen(wPopup,hPopup,"Scheduled activity unsuccessfully deleted"); 
-						popup.centerOnScreen(); 
-					    
-					    popup.show(curr);
-					    popup.setAutoHide(true);
-				      }
+					popupHandle(schedEventID, itemNumber);								
+					
 				}
 			});
 		
+	}
+	
+	private void modifyEventeHandle() {
+		
+
+		HBox selectedBox = (HBox)eventsList.getItems().get(lastActivitySelected+1);			
+		
+		if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
+			return;
+		}
+		//Apro un pop up in cui si può scegliere una
+		//Data in cui svolgere l'attività
+		
+		
+		Text columnsOp = new Text(":");
+		Text columnsCl = new Text(":");
+		ChoiceBox<String> minBox = new ChoiceBox<>();
+		ChoiceBox<String> hourBox = new ChoiceBox<>();
+		ChoiceBox<String> clhourBox = new ChoiceBox<>();
+		ChoiceBox<String> clminBox = new ChoiceBox<>();
+		
+		int lowerLimit = 0;
+		int upperLimit = 23;
+
+
+		for(int i=lowerLimit;i<=upperLimit;i++) {
+			String hr = Integer.toString(i);
+			if(i<10) {
+				hr = "0"+hr;
+			}			
+
+			hourBox.getItems().add(hr);
+			clhourBox.getItems().add(hr);
+		}
+		
+		minBox.getItems().clear();
+		clminBox.getItems().clear();
+		
+		for(int j=0;j<60;j++) {
+				String min = Integer.toString(j);
+				if(j<10) {
+					min = "0"+min;
+				}
+				minBox.getItems().add(min);
+				clminBox.getItems().add(min);
+		}
+				
+
+		Text txtOp = new Text("Select opening time");
+		Text txtCl = new Text("Select closing time");
+		Button ok = new Button();
+		Button close = new Button();
+		
+		VBox dateBox = new VBox();
+		ok.setText("Ok");
+		ok.getStyleClass().add(BTNSRCKEY);
+		
+		HBox buttonBox = new HBox();
+		HBox pickTimeOpBox = new HBox();
+		HBox pickTimeClBox = new HBox();
+		
+		buttonBox.getChildren().addAll(close,ok);
+		
+		CornerRadii cr = new CornerRadii(4);
+		BackgroundFill bf = new BackgroundFill(Paint.valueOf("ffffff"), cr, null);
+		Background b = new Background(bf);
+		
+		pickTimeOpBox.getChildren().addAll(hourBox,columnsOp,minBox);
+		pickTimeClBox.getChildren().addAll(clhourBox,columnsCl,clminBox);
+		
+		if(activitySelected.getFrequency() instanceof PeriodicActivity) {
+			ChoiceBox<String> pickCadence = new ChoiceBox<>();
+			pickCadence.getItems().addAll(Cadence.WEEKLY.toString(),Cadence.MONTHLY.toString(),Cadence.ANNUALLY.toString());
+			
+			Text txtCadence = new Text("Select new cadence");
+			txtCadence.getStyleClass().add(STYLETXT);
+			
+			dateBox.getChildren().addAll(txtCadence,pickCadence);			
+			
+		}
+		if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
+			pickDateOp = new DatePicker();
+			pickDateCl = new DatePicker();
+			
+			Text txtDateOp = new Text("Select opening date");
+			Text txtDateCl = new Text("Select closing date");
+			
+			txtDateOp.getStyleClass().add(STYLETXT);
+			txtDateCl.getStyleClass().add(STYLETXT);
+			
+			dateBox.getChildren().addAll(txtDateOp,pickDateOp,txtDateCl,pickDateCl);						
+		}
+		dateBox.setBackground(b);
+		dateBox.getChildren().addAll(txtOp,pickTimeOpBox,txtCl,pickTimeClBox,buttonBox);
+		dateBox.setId("dateBox");
+		
+		selectedBox.getChildren().add(dateBox);
+		
+		close.setText("Close");
+		close.getStyleClass().add(BTNSRCKEY);					
+		
+		close.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent e) {
+				selectedBox.getChildren().remove(dateBox);
+			}
+		});
+		
+		ok.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent e) {
+				suppSchedModify( minBox, clminBox, hourBox, clhourBox);
+			}
+		});
+	}
+	private void suppSchedModify(ChoiceBox<String> minBox,ChoiceBox<String> clminBox,ChoiceBox<String> hourBox,ChoiceBox<String> clhourBox) {
+
+		
+		String ophourChosen = hourBox.getValue();
+		String opminChosen = minBox.getValue();
+		String clhourChosen = clhourBox.getValue();
+		String clminChosen = clminBox.getValue();
+		
+		
+		String openingTimeChosen = ophourChosen+':'+opminChosen;
+		String closingTimeChosen = clhourChosen+':'+clminChosen;
+		//AGGIUNGERE UN METODO CHE AGGIORNI L'ATTIVITA' NEL DATABASE.
+		
+		// CAPIRE SE SERVE MODIFICARE ANCHE LA DESCRIZIONE
+		// O IL NOME DELL'ATTIVITA' O IL POSTO.
+		CreateActivityBean cab = new CreateActivityBean();
+		
+		cab.setActivityDescription(activitySelected.getDescription());
+		cab.setActivityName(activitySelected.getName());
+		cab.setPlace(activitySelected.getPlace().getId().intValue());
+		cab.setOwner(((CertifiedActivity)(activitySelected)).getOwner().getUserID().intValue());
+		cab.setIdActivity(activitySelected.getId().intValue());
+		
+		cab.setInterestedCategories(activitySelected.getIntrestedCategories().getSetPreferences());
+		if(activitySelected.getFrequency() instanceof PeriodicActivity) {
+			cab.setType(ActivityType.PERIODICA);
+
+			DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
+			String dayStringed = day.format(pickDateOp.getValue());
+
+			DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
+			String dayStringedCl = dayCl.format(pickDateCl.getValue());
+			//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO PERIODICO, ALLORA
+			//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO,
+			//DATA DI FINE ED INFINE LA CADENZA PERTANTO:
+			cab.setEndDate(dayStringedCl);
+			cab.setOpeningDate(dayStringed);
+			cab.setCadence(((PeriodicActivity)(activitySelected.getFrequency())).getCadence());
+		}
+		if(activitySelected.getFrequency() instanceof ExpiringActivity || activitySelected.getFrequency() instanceof PeriodicActivity) {
+			cab.setType(ActivityType.SCADENZA);
+
+			DateTimeFormatter day = DateTimeFormatter.ofPattern(DATEPATTERN);
+			String dayStringed = day.format(pickDateOp.getValue());
+
+			DateTimeFormatter dayCl = DateTimeFormatter.ofPattern(DATEPATTERN);
+			String dayStringedCl = dayCl.format(pickDateCl.getValue());
+			//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
+			//AVRA' ORARIO DI APERTURA, ORARIO DI CHIUSURA, DATA DI INIZIO
+			//E DATA DI FINE PERTANTO:
+			cab.setEndDate(dayStringedCl);
+			cab.setOpeningDate(dayStringed);
+		}
+		else if(activitySelected.getFrequency() instanceof ContinuosActivity) {
+			cab.setType(ActivityType.CONTINUA);
+			//SE L'ATTIVITA' HA UNA FREQUENZA DI TIPO CONTINUO, ALLORA
+			//AVRA' SOLO ORARIO DI APERTURA E ORARIO DI CHIUSURA, PERTANTO:	
+		}
+		cab.setOpeningTime(openingTimeChosen);
+		cab.setClosingTime(closingTimeChosen);
+		
+		
+		UpdateCertActController updateController = new UpdateCertActController(cab,(CertifiedActivity)activitySelected);
+		
+		try {
+			if(updateController.updateActivity()) {
+				
+				final Popup popup = popupGen(wPopup,hPopup,"Activity successfully modified"); 
+				popup.centerOnScreen(); 
+			    
+			    popup.show(curr);
+			    popup.setAutoHide(true);
+				
+			} else {
+				final Popup popup = popupGen(wPopup,hPopup,"Activity not modified"); 
+				popup.centerOnScreen(); 
+			    
+			    popup.show(curr);
+			    popup.setAutoHide(true);
+	
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			Log.getInstance().getLogger().info("Database access was not obtained");
+			
+		}
+		
+	}
+	
+	private void userSchedAct(int itemNumber) {
+		String remind = schedActivities.get(itemNumber).getReminderTime().toString().replace('T', ' ');
+		String sched = schedActivities.get(itemNumber).getScheduledTime().toString().replace('T', ' ');
+
+		Text reminderTime = new Text("Activity reminder at: "+remind);
+		Text scheduledTime = new Text("Activity scheduled for: "+sched);
+		
+		reminderTime.getStyleClass().add(STYLEINFO);
+		scheduledTime.getStyleClass().add(STYLENAME);
+		
+		VBox schedInfo = new VBox();
+		
+		schedInfo.setAlignment(Pos.CENTER_RIGHT);
+		schedInfo.getChildren().addAll(scheduledTime,reminderTime);
+		if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
+			Text startDate = new Text("Activity will start from: "+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+			Text endDate = new Text("Activity will end: "+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
+			schedInfo.getChildren().addAll(startDate,endDate);
+		}
+		else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
+			Text startDate = new Text("Activity will start from: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+			Text endDate = new Text("Activity will end: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
+			Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
+			schedInfo.getChildren().addAll(cadence,startDate,endDate);
+		}
+
+		selection.getChildren().addAll(deleteSched,schedInfo);
+	}
+	
+	private void partnerSchedAct(int itemNumber,Button modifyEvent) {
+		String remind = activities.get(itemNumber).getFrequency().getOpeningTime().toString().replace('T', ' ');
+		String sched = activities.get(itemNumber).getFrequency().getClosingTime().toString().replace('T', ' ');
+		
+		Text reminderTime = new Text("Activity opening at: "+remind);
+		Text scheduledTime = new Text("Activity closing at: "+sched);
+		
+		reminderTime.getStyleClass().add(STYLEINFO);
+		scheduledTime.getStyleClass().add(STYLEINFO);
+		
+		VBox eventsInfo = new VBox();
+		
+		eventsInfo.setAlignment(Pos.TOP_LEFT);
+		eventsInfo.getChildren().addAll(scheduledTime,reminderTime);
+		if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
+			Text startDate = new Text("Activity will start from: "+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+			Text endDate = new Text("Activity will end: "+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
+			eventsInfo.getChildren().addAll(startDate,endDate);
+		}
+		else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
+			Text startDate = new Text("Activity will start from: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+			Text endDate = new Text("Activity will end: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
+			Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
+			eventsInfo.getChildren().addAll(cadence,startDate,endDate);
+		}
+		selection.getChildren().addAll(eventsInfo,modifyEvent,deleteSched);
+		
+		
+	}
+	
+	
+	private void popupHandle(long schedEventID, int itemNumber) {
+		if(deleteScheduledEvent(schedEventID)) {
+			eventsList.getItems().remove(itemNumber+1);
+			eventsList.getItems().remove(itemNumber);
+			lastActivitySelected= -1;
+			lastEventBoxSelected= null;
+			//Messaggio per il dialog box
+			popupGen(wPopup,hPopup,"Scheduled activity successfully deleted"); 
+			
+        }
+        else {
+        	popupGen(wPopup,hPopup,"Scheduled activity unsuccessfully deleted"); 
+	      }
 	}
 	
 	public void activityDeselected(StackPane lastEventBoxSelected2) {
@@ -789,7 +783,8 @@ public class EventsView implements Initializable{
 			e.printStackTrace();
 		}		
 	}
-
+	
+	
 	public Popup popupGen(double width, double height, String error) {
 		Popup popup = new Popup(); 
 		popup.centerOnScreen();
@@ -807,6 +802,10 @@ public class EventsView implements Initializable{
 	    r.setStroke(Paint.valueOf("ffffff"));
 	    
 	    popup.getContent().add(popupContent);
+	    popup.centerOnScreen(); 
+	    
+	    popup.show(curr);
+	    popup.setAutoHide(true);
 	    return popup;
 	}
 }
