@@ -369,7 +369,7 @@ public class HomeView implements Initializable{
 				Text eventName = new Text(activities.get(i).getName()+"\n");
 				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
 				
-				StackPane eventBox = setView(eventInfo, eventName, searchByPreference, i, activities, null);
+				StackPane eventBox = setView(eventInfo, eventName, false, i, activities, null);
 				
 				eventsList.getItems().add(eventBox);
 			}
@@ -408,8 +408,7 @@ public class HomeView implements Initializable{
 		//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 		//dell'evento ed infine il testo dell'evento.
 		
-		eventBox.getChildren().add(eventImage);
-		eventBox.getChildren().add(eventText);
+		
 		
 		if(isPartner) {
 			eventId.setId(((SuperActivity)activitiesPartn.get(i)).getId().toString());
@@ -417,7 +416,9 @@ public class HomeView implements Initializable{
 			
 			eventBox.getChildren().add(eventId);
 			eventBox.getChildren().add(placeId);
-		
+			eventBox.getChildren().add(eventImage);
+			eventBox.getChildren().add(eventText);
+			
 			if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
 				eventBox.setOpacity(0.4);
 				Text closed = new Text(CLOSEDKEY);
@@ -431,6 +432,8 @@ public class HomeView implements Initializable{
 			
 			eventBox.getChildren().add(eventId);
 			eventBox.getChildren().add(placeId);
+			eventBox.getChildren().add(eventImage);
+			eventBox.getChildren().add(eventText);
 			
 			if(activities.get(i) instanceof CertifiedActivity) {
 				eventName.getStyleClass().clear();
@@ -498,7 +501,7 @@ public class HomeView implements Initializable{
 				eng.executeScript("spotPlace("+cAct.getPlace().getLatitudine()+","+cAct.getPlace().getLongitudine()+", \""+cAct.getPlace().getName()+"\","+cAct.getPlace().getId()+")");
 			}	
 		}
-Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
+		Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 
 		if(lastEventBoxSelected == eventBox) return;
 		
@@ -510,6 +513,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		lastEventBoxSelected = eventBox;
 		
 		Long activityId = Long.parseLong(eventBox.getChildren().get(0).getId());
+		
 		Long.parseLong(eventBox.getChildren().get(1).getId());
 		ImageView eventImage = (ImageView) eventBox.getChildren().get(2);
 		VBox eventInfo = (VBox) eventBox.getChildren().get(3);
@@ -575,80 +579,8 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		
 		joinActivityChannel.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-					if(root.getChildren().get(root.getChildren().size()-1).getId()=="activityCh") {
-						return;
-					}
-				//Cliccato il pulsante si deve aprire una chat e comparire 
-				//tutto ciò che è stato scritto.
-					daoCH = DAOChannel.getInstance();
-					chatContainer = new VBox();
-					Button send = new Button();
-					Button close = new Button();
-					ListView chat = new ListView();
-					HBox textAndSend = new HBox();
-					TextField mss = new TextField();
-					
-					updateChat(chat,activitySelected.getChannel());
-					
-					send.setOnAction(new EventHandler<ActionEvent>() {
-						@Override public void handle(ActionEvent e) {
-							Log.getInstance().getLogger().info("\n\nInviando un messaggio...\n");
-							Log.getInstance().getLogger().info("\nMessaggi prima dell'invio:\n");
-							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
-								Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
-							}
-							activitySelected.getChannel().addMsg(user.getUsername(), mss.getText());
-							
-							ChannelController c = new ChannelController(user, activitySelected.getId());
-							try {
-								c.sendMessage(mss.getText());
-							} catch (ClassNotFoundException | SQLException e1) {
-								popupGen(wPopup,hPopup,"Message not sent due to DB error");
-							
-								
-								e1.printStackTrace();
-								return;
-							}
-							Log.getInstance().getLogger().info("\nMessaggi dopo l'invio:\n");
-
-							for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
-								Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
-							}
-							updateChat(chat,activitySelected.getChannel());
-							mss.clear();
-						}
-					});
-					
-					send.setText("Send");
-					send.getStyleClass().add(BTNSRCKEY);
-					
-					close.setText("x");
-					close.getStyleClass().add(BTNSRCKEY);					
-					close.setAlignment(Pos.TOP_RIGHT);
-					
-					textAndSend.getChildren().addAll(mss,send);
-					chatContainer.getChildren().addAll(close,chat,textAndSend);
-					chatContainer.setAlignment(Pos.BOTTOM_RIGHT);
-					chatContainer.setId("activityCh");
-					root.getChildren().add(chatContainer);
-					Timer chatRefreshTimer = new Timer();
-					
-					close.setOnAction(new EventHandler<ActionEvent>(){
-						@Override public void handle(ActionEvent e) {
-							root.getChildren().remove(chatContainer);
-							chatRefreshTimer.cancel();
-						}
-					});
-					
-					
-					chatRefreshTimer.scheduleAtFixedRate(new TimerTask() {
-						@Override
-						public void run() {
-							Platform.runLater(()->{Log.getInstance().getLogger().info("Refreshing messages...");updateChat(chat,activitySelected.getChannel());});
-						}
-						
-					},0, 10000);
-				}
+						handleJoinChActUp();
+			}
 		});
 		
 		if(user instanceof User) {
@@ -660,283 +592,9 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			
 			playActivity.setOnAction(new EventHandler<ActionEvent>() {
 				@Override public void handle(ActionEvent e) {
-						VBox selectedBox = (VBox)eventsList.getItems().get(lastActivitySelected+1);			
-						
-						if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
-							return;
-						}
-						//Apro un pop up in cui si può scegliere una
-						//Data in cui svolgere l'attività
-						DatePicker pickDate = new DatePicker();
-						DatePicker pickDateReminder = new DatePicker();
-						ChoiceBox<String> hourBox = new ChoiceBox<>();
-						ChoiceBox<String> minBox = new ChoiceBox<>();
-						
-						ChoiceBox<String> hourBox2 = new ChoiceBox<>();
-						ChoiceBox<String> minBox2 = new ChoiceBox<>();
-	
-						int upperLimit;
-						int lowerLimit;
-						int upperLimMin;
-						int lowerLimMin;
-						
-						lowerLimit = activitySelected.getFrequency().getOpeningTime().getHour();
-						upperLimit = activitySelected.getFrequency().getClosingTime().getHour();
-						
-						lowerLimMin = activitySelected.getFrequency().getOpeningTime().getMinute();
-						upperLimMin = activitySelected.getFrequency().getClosingTime().getMinute();
-						
-						for(int i=lowerLimit;i<=upperLimit;i++) {
-							String hr = Integer.toString(i);
-							if(i<10) {
-								hr = "0"+hr;
-							}
-							hourBox.getItems().add(hr);
-						}
-						
-						hourBox.setOnAction(new EventHandler<ActionEvent>() {
-							@Override public void handle(ActionEvent e) {
-								minBox.getItems().clear();
-								int selectedHour = Integer.parseInt(hourBox.getValue());
-								if(selectedHour==lowerLimit) {
-									for(int j=lowerLimMin;j<61;j++) {
-										String min = Integer.toString(j);
-										if(j<10) {
-											min = "0"+min;
-										}
-										minBox.getItems().add(min);
-										
-									}
-									return;
-								}
-								if(selectedHour==upperLimit) {
-									for(int j=0;j<=upperLimMin;j++) {
-										String min = Integer.toString(j);
-										if(j<10) {
-											min = "0"+min;
-										}
-										minBox.getItems().add(min);
-									}
-									
-								}
-								else {
-									for(int j=0;j<61;j++) {
-										String min = Integer.toString(j);
-										if(j<10) {
-											min = "0"+min;
-										}
-										minBox.getItems().add(min);
-									}
-									
-								}
-									
-							}
-						});
-						
-						for(int i=lowerLimit;i<=upperLimit;i++) {
-							String hr = Integer.toString(i);
-							if(i<10) {
-								hr = "0"+hr;
-							}
-							hourBox2.getItems().add(hr);
-						}
-						
-						hourBox2.setOnAction(new EventHandler<ActionEvent>() {
-							@Override public void handle(ActionEvent e) {
-								minBox2.getItems().clear();
-								int selectedHour = Integer.parseInt(hourBox.getValue());
-								if(selectedHour==lowerLimit) {
-									for(int j=lowerLimMin;j<61;j++) {
-										String min = Integer.toString(j);
-										if(j<10) {
-											min = "0"+min;
-										}
-										minBox2.getItems().add(min);
-										
-									}
-									return;
-								}
-								if(selectedHour==upperLimit) {
-									for(int j=0;j<=upperLimMin;j++) {
-										String min = Integer.toString(j);
-										if(j<10) {
-											min = "0"+min;
-										}
-										minBox2.getItems().add(min);
-									}
-									
-								}
-								else {
-									for(int j=0;j<61;j++) {
-										String min = Integer.toString(j);
-										if(j<10) {
-											min = "0"+min;
-										}
-										minBox2.getItems().add(min);
-									}
-									
-								}
-									
-							}
-						});
-						
-						Text txt = new Text("Select date");
-						Button ok = new Button();
-						Button close = new Button();
-						
-						VBox dateBox = new VBox();
-						ok.setText("Ok");
-						ok.getStyleClass().add(BTNSRCKEY);
-						
-						HBox buttonBox = new HBox();
-						HBox pickTimeBox = new HBox();
-						HBox pickReminderBox = new HBox();
-						
-						Text txtTime = new Text("Select scheduled time!");
-						Text txtReminder = new Text("|OPTIONAL|"+'\n'+"Select a time reminder"+'\n'+"for the day scheduled or specify the"+'\n'+"day we should remind you.");
-						
-						buttonBox.getChildren().addAll(close,ok);
-						
-						CornerRadii cr = new CornerRadii(4);
-						BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
-						Background b = new Background(bf);
-						
-						txt.getStyleClass().add("msstxt");
-						
-						pickReminderBox.getChildren().addAll(hourBox2,minBox2);
-						pickTimeBox.getChildren().addAll(hourBox,minBox);
-						
-						dateBox.setBackground(b);
-						dateBox.getChildren().addAll(txt,pickDate,txtTime,pickTimeBox,txtReminder,pickDateReminder,pickReminderBox);
-						dateBox.setId("dateBox");
-						
-						ChoiceBox<String> percDiscount = new ChoiceBox<>();
-						
-						if(activitySelected instanceof CertifiedActivity) {
-							Text activityPrice = new Text(((CertifiedActivity)activitySelected).getPrice());
-							Text discountDescription;
-							try {
-								
-								ArrayList<Discount> discList = (ArrayList<Discount>) daoAct.viewDiscounts(activityId);
-								if (discList==null || discList.isEmpty()) {
-									discountDescription = new Text("No discount available"+'\n'+" for this activity.");
-								}else {
-									discountDescription = new Text("Pick a discount if you want.");
-								}
-								percDiscount.getItems().add("0% - 0$");
-								for(int i=0;i<discList.size();i++) {
-									percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"$");
-								}
-								dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);		
-								percDiscount.setValue("0% - 0$");
-							
-							}catch(NullPointerException exc){
-								Log.getInstance().getLogger().info("discList.file() ha fatto partire il null");
-								exc.printStackTrace();
-							}
-							catch(Exception e2) {
-								Log.getInstance().getLogger().info("Database error, discounts not found.");
-								e2.printStackTrace();
-							}
-						}
-						dateBox.getChildren().add(buttonBox);
-						selectedBox.getChildren().add(dateBox);
-						
-						close.setText("Close");
-						close.getStyleClass().add(BTNSRCKEY);					
-						
-						close.setOnAction(new EventHandler<ActionEvent>(){
-							@Override public void handle(ActionEvent e) {
-								selectedBox.getChildren().remove(dateBox);
-							}
-						});
-						
-						ok.setOnAction(new EventHandler<ActionEvent>(){
-							@Override public void handle(ActionEvent e) {
-								if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
-									Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche.");
-									popupGen(wPopup,hPopup,"You haven't specified enough info."); 
-								
-								}
-							    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-								String dayStringed = day.format(pickDate.getValue());
-																								
-								dayStringed.split("-");
-								
-								String hourChosen = hourBox.getValue();
-								String minChosen = minBox.getValue();
-								String dateReminderChosen;
-								String hourReminder;
-								if (hourBox2.getValue()==null || minBox2.getValue()==null) {
-									int hourReminderInt = Integer.parseInt(hourChosen);
-									hourReminder = Integer.toString(hourReminderInt-1);
-							
-									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");
-									popupGen(wPopup,hPopup,"You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
-									
-									
-									if(hourReminderInt-1<10) {
-										hourReminder = "0"+hourReminder;
-									}
-								} else {
-									hourReminder = hourBox2.getValue();
-									minBox2.getValue();
-								}
-								if(pickDateReminder.getValue().toString().isBlank()) {
-									Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
-									dateReminderChosen=dayStringed;
-									popupGen(wPopup,hPopup,"You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
-									
-								} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
-								String dateChosen = dayStringed;
-
-								ScheduleBean sb = new ScheduleBean();
-								
-								if(dateBox.getChildren().contains(percDiscount)) {
-									String[] percPrice = percDiscount.getValue().split("% - ");
-									int percRequested = Integer.parseInt(percPrice[0]);
-									
-									String priceString = (percPrice[1].split("$"))[0];
-									int pricePayed = Integer.parseInt(priceString);
-									
-									if(pricePayed > ((User)user).getBalance()) {
-										Log.getInstance().getLogger().info("Not enough dovado $ for payment");
-										popupGen(wPopup,hPopup,"Not enough Dovado $ for payment"); 
-									
-										return;
-									} else {
-										sb.setSelectedCoupon(percRequested);
-									}
-								}
-												
-								sb.setIdActivity(activityId);
-								sb.setScheduledDate(dateChosen);
-								sb.setScheduledTime(hourChosen+':'+minChosen);
-								sb.setReminderDate(dateReminderChosen);
-								sb.setReminderTime(hourReminder+':'+minChosen);
-								
-								AddActivityToScheduleController sc = new AddActivityToScheduleController((User) user, sb);
-								
-								if(activitySelected instanceof CertifiedActivity) {
-									try {
-										sc.addCertifiedActivityToSchedule();
-									} catch (Exception e1) {
-										e1.printStackTrace();
-									}
-								}else {
-									try {
-										sc.addActivityToSchedule();
-									} catch (Exception e1) {
-										e1.printStackTrace();
-									}
-								}
-								popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
-							
-				                
-							}
-						});
-						
-					}
+					
+						handlePlayAct(activityId);			
+				}
 			});
 		}
 		else {
@@ -958,9 +616,369 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			
 		}
 	}
+	private void handleJoinChActUp() {
 
+		if(root.getChildren().get(root.getChildren().size()-1).getId()=="activityCh") {
+			return;
+		}
+	//Cliccato il pulsante si deve aprire una chat e comparire 
+	//tutto ciò che è stato scritto.
+		daoCH = DAOChannel.getInstance();
+		chatContainer = new VBox();
+		Button send = new Button();
+		Button close = new Button();
+		ListView chat = new ListView();
+		HBox textAndSend = new HBox();
+		TextField mss = new TextField();
+		
+		updateChat(chat,activitySelected.getChannel());
+		
+		send.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				Log.getInstance().getLogger().info("\n\nInviando un messaggio...\n");
+				Log.getInstance().getLogger().info("\nMessaggi prima dell'invio:\n");
+				for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
+					Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
+				}
+				activitySelected.getChannel().addMsg(user.getUsername(), mss.getText());
+				
+				ChannelController c = new ChannelController(user, activitySelected.getId());
+				try {
+					c.sendMessage(mss.getText());
+				} catch (ClassNotFoundException | SQLException e1) {
+					popupGen(wPopup,hPopup,"Message not sent due to DB error");
+				
+					
+					e1.printStackTrace();
+					return;
+				}
+				Log.getInstance().getLogger().info("\nMessaggi dopo l'invio:\n");
+
+				for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
+					Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
+				}
+				updateChat(chat,activitySelected.getChannel());
+				mss.clear();
+			}
+		});
+		
+		send.setText("Send");
+		send.getStyleClass().add(BTNSRCKEY);
+		
+		close.setText("x");
+		close.getStyleClass().add(BTNSRCKEY);					
+		close.setAlignment(Pos.TOP_RIGHT);
+		
+		textAndSend.getChildren().addAll(mss,send);
+		chatContainer.getChildren().addAll(close,chat,textAndSend);
+		chatContainer.setAlignment(Pos.BOTTOM_RIGHT);
+		chatContainer.setId("activityCh");
+		root.getChildren().add(chatContainer);
+		Timer chatRefreshTimer = new Timer();
+		
+		close.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent e) {
+				root.getChildren().remove(chatContainer);
+				chatRefreshTimer.cancel();
+			}
+		});
+		
+		
+		chatRefreshTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				Platform.runLater(()->{Log.getInstance().getLogger().info("Refreshing messages...");updateChat(chat,activitySelected.getChannel());});
+			}
+			
+		},0, 10000);
+	
+	}
 	
 	
+	private void handlePlayAct(Long activityId) {
+
+		VBox selectedBox = (VBox)eventsList.getItems().get(lastActivitySelected+1);			
+		
+		if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
+			return;
+		}
+		//Apro un pop up in cui si può scegliere una
+		//Data in cui svolgere l'attività
+		DatePicker pickDate = new DatePicker();
+		DatePicker pickDateReminder = new DatePicker();
+		ChoiceBox<String> hourBox = new ChoiceBox<>();
+		ChoiceBox<String> minBox = new ChoiceBox<>();
+		
+		ChoiceBox<String> hourBox2 = new ChoiceBox<>();
+		ChoiceBox<String> minBox2 = new ChoiceBox<>();
+
+		int upperLimit;
+		int lowerLimit;
+		int upperLimMin;
+		int lowerLimMin;
+		
+		lowerLimit = activitySelected.getFrequency().getOpeningTime().getHour();
+		upperLimit = activitySelected.getFrequency().getClosingTime().getHour();
+		
+		lowerLimMin = activitySelected.getFrequency().getOpeningTime().getMinute();
+		upperLimMin = activitySelected.getFrequency().getClosingTime().getMinute();
+		
+		for(int i=lowerLimit;i<=upperLimit;i++) {
+			String hr = Integer.toString(i);
+			if(i<10) {
+				hr = "0"+hr;
+			}
+			hourBox.getItems().add(hr);
+		}
+		
+		hourBox.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				minBox.getItems().clear();
+				int selectedHour = Integer.parseInt(hourBox.getValue());
+				if(selectedHour==lowerLimit) {
+					for(int j=lowerLimMin;j<61;j++) {
+						String min = Integer.toString(j);
+						if(j<10) {
+							min = "0"+min;
+						}
+						minBox.getItems().add(min);
+						
+					}
+					return;
+				}
+				if(selectedHour==upperLimit) {
+					for(int j=0;j<=upperLimMin;j++) {
+						String min = Integer.toString(j);
+						if(j<10) {
+							min = "0"+min;
+						}
+						minBox.getItems().add(min);
+					}
+					
+				}
+				else {
+					for(int j=0;j<61;j++) {
+						String min = Integer.toString(j);
+						if(j<10) {
+							min = "0"+min;
+						}
+						minBox.getItems().add(min);
+					}
+					
+				}
+					
+			}
+		});
+		
+		for(int i=lowerLimit;i<=upperLimit;i++) {
+			String hr = Integer.toString(i);
+			if(i<10) {
+				hr = "0"+hr;
+			}
+			hourBox2.getItems().add(hr);
+		}
+		
+		hourBox2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				minBox2.getItems().clear();
+				int selectedHour = Integer.parseInt(hourBox.getValue());
+				if(selectedHour==lowerLimit) {
+					for(int j=lowerLimMin;j<61;j++) {
+						String min = Integer.toString(j);
+						if(j<10) {
+							min = "0"+min;
+						}
+						minBox2.getItems().add(min);
+						
+					}
+					return;
+				}
+				if(selectedHour==upperLimit) {
+					for(int j=0;j<=upperLimMin;j++) {
+						String min = Integer.toString(j);
+						if(j<10) {
+							min = "0"+min;
+						}
+						minBox2.getItems().add(min);
+					}
+					
+				}
+				else {
+					for(int j=0;j<61;j++) {
+						String min = Integer.toString(j);
+						if(j<10) {
+							min = "0"+min;
+						}
+						minBox2.getItems().add(min);
+					}
+					
+				}
+					
+			}
+		});
+		
+		Text txt = new Text("Select date");
+		Button ok = new Button();
+		Button close = new Button();
+		
+		VBox dateBox = new VBox();
+		ok.setText("Ok");
+		ok.getStyleClass().add(BTNSRCKEY);
+		
+		HBox buttonBox = new HBox();
+		HBox pickTimeBox = new HBox();
+		HBox pickReminderBox = new HBox();
+		
+		Text txtTime = new Text("Select scheduled time!");
+		Text txtReminder = new Text("|OPTIONAL|"+'\n'+"Select a time reminder"+'\n'+"for the day scheduled or specify the"+'\n'+"day we should remind you.");
+		
+		buttonBox.getChildren().addAll(close,ok);
+		
+		CornerRadii cr = new CornerRadii(4);
+		BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
+		Background b = new Background(bf);
+		
+		txt.getStyleClass().add("msstxt");
+		
+		pickReminderBox.getChildren().addAll(hourBox2,minBox2);
+		pickTimeBox.getChildren().addAll(hourBox,minBox);
+		
+		dateBox.setBackground(b);
+		dateBox.getChildren().addAll(txt,pickDate,txtTime,pickTimeBox,txtReminder,pickDateReminder,pickReminderBox);
+		dateBox.setId("dateBox");
+		
+		ChoiceBox<String> percDiscount = new ChoiceBox<>();
+		
+		if(activitySelected instanceof CertifiedActivity) {
+			Text activityPrice = new Text(((CertifiedActivity)activitySelected).getPrice());
+			Text discountDescription;
+			try {
+				
+				ArrayList<Discount> discList = (ArrayList<Discount>) daoAct.viewDiscounts(activityId);
+				if (discList==null || discList.isEmpty()) {
+					discountDescription = new Text("No discount available"+'\n'+" for this activity.");
+				}else {
+					discountDescription = new Text("Pick a discount if you want.");
+				}
+				percDiscount.getItems().add("0% - 0$");
+				for(int i=0;i<discList.size();i++) {
+					percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"$");
+				}
+				dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);		
+				percDiscount.setValue("0% - 0$");
+			
+			}catch(NullPointerException exc){
+				Log.getInstance().getLogger().info("discList.file() ha fatto partire il null");
+				exc.printStackTrace();
+			}
+			catch(Exception e2) {
+				Log.getInstance().getLogger().info("Database error, discounts not found.");
+				e2.printStackTrace();
+			}
+		}
+		dateBox.getChildren().add(buttonBox);
+		selectedBox.getChildren().add(dateBox);
+		
+		close.setText("Close");
+		close.getStyleClass().add(BTNSRCKEY);					
+		
+		close.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent e) {
+				selectedBox.getChildren().remove(dateBox);
+			}
+		});
+		
+		ok.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent e) {
+				if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
+					Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche.");
+					popupGen(wPopup,hPopup,"You haven't specified enough info."); 
+				
+				}
+			    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String dayStringed = day.format(pickDate.getValue());
+																				
+				dayStringed.split("-");
+				
+				String hourChosen = hourBox.getValue();
+				String minChosen = minBox.getValue();
+				String dateReminderChosen;
+				String hourReminder;
+				if (hourBox2.getValue()==null || minBox2.getValue()==null) {
+					int hourReminderInt = Integer.parseInt(hourChosen);
+					hourReminder = Integer.toString(hourReminderInt-1);
+			
+					Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");
+					popupGen(wPopup,hPopup,"You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
+					
+					
+					if(hourReminderInt-1<10) {
+						hourReminder = "0"+hourReminder;
+					}
+				} else {
+					hourReminder = hourBox2.getValue();
+					minBox2.getValue();
+				}
+				if(pickDateReminder.getValue().toString().isBlank()) {
+					Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
+					dateReminderChosen=dayStringed;
+					popupGen(wPopup,hPopup,"You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
+					
+				} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
+				String dateChosen = dayStringed;
+
+				ScheduleBean sb = new ScheduleBean();
+				
+				if(dateBox.getChildren().contains(percDiscount)) {
+					String[] percPrice = percDiscount.getValue().split("% - ");
+					int percRequested = Integer.parseInt(percPrice[0]);
+					
+					String priceString = (percPrice[1].split("$"))[0];
+					int pricePayed = Integer.parseInt(priceString);
+					
+					if(pricePayed > ((User)user).getBalance()) {
+						Log.getInstance().getLogger().info("Not enough dovado $ for payment");
+						popupGen(wPopup,hPopup,"Not enough Dovado $ for payment"); 
+					
+						return;
+					} else {
+						sb.setSelectedCoupon(percRequested);
+					}
+				}
+								
+				sb.setIdActivity(activityId);
+				sb.setScheduledDate(dateChosen);
+				sb.setScheduledTime(hourChosen+':'+minChosen);
+				sb.setReminderDate(dateReminderChosen);
+				sb.setReminderTime(hourReminder+':'+minChosen);
+				
+				AddActivityToScheduleController sc = new AddActivityToScheduleController((User) user, sb);
+				
+				if(activitySelected instanceof CertifiedActivity) {
+					try {
+						sc.addCertifiedActivityToSchedule();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}else {
+					try {
+						sc.addActivityToSchedule();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
+			
+                
+			}
+		});
+		
+	
+	}
+	
+	
+	
+	//-------------------------------Fine                            -----------------------------------------
 	private void updateChat(ListView chat, Channel ch) {
 		int i;
 		chat.getItems().clear();
