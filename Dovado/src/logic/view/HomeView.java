@@ -145,6 +145,11 @@ public class HomeView implements Initializable{
     private ArrayList<Activity> activitiesToSpotUsr;
     private ArrayList<CertifiedActivity> activitiesToSpotPart;
     private boolean searchByPreference;
+    private ChoiceBox<String> hourBox;
+	private ChoiceBox<String> minBox;
+	
+	private ChoiceBox<String> hourBox2;
+	private ChoiceBox<String> minBox2;
 
     
     public static void render(Stage current) {
@@ -713,11 +718,11 @@ public class HomeView implements Initializable{
 		//Data in cui svolgere l'attività
 		DatePicker pickDate = new DatePicker();
 		DatePicker pickDateReminder = new DatePicker();
-		ChoiceBox<String> hourBox = new ChoiceBox<>();
-		ChoiceBox<String> minBox = new ChoiceBox<>();
+		hourBox = new ChoiceBox<>();
+		minBox = new ChoiceBox<>();
 		
-		ChoiceBox<String> hourBox2 = new ChoiceBox<>();
-		ChoiceBox<String> minBox2 = new ChoiceBox<>();
+		hourBox2 = new ChoiceBox<>();
+		minBox2 = new ChoiceBox<>();
 
 		int upperLimit;
 		int lowerLimit;
@@ -740,40 +745,7 @@ public class HomeView implements Initializable{
 		
 		hourBox.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				minBox.getItems().clear();
-				int selectedHour = Integer.parseInt(hourBox.getValue());
-				if(selectedHour==lowerLimit) {
-					for(int j=lowerLimMin;j<61;j++) {
-						String min = Integer.toString(j);
-						if(j<10) {
-							min = "0"+min;
-						}
-						minBox.getItems().add(min);
-						
-					}
-					return;
-				}
-				if(selectedHour==upperLimit) {
-					for(int j=0;j<=upperLimMin;j++) {
-						String min = Integer.toString(j);
-						if(j<10) {
-							min = "0"+min;
-						}
-						minBox.getItems().add(min);
-					}
-					
-				}
-				else {
-					for(int j=0;j<61;j++) {
-						String min = Integer.toString(j);
-						if(j<10) {
-							min = "0"+min;
-						}
-						minBox.getItems().add(min);
-					}
-					
-				}
-					
+				handle2HourBox(lowerLimit, lowerLimMin, upperLimit, upperLimMin);
 			}
 		});
 		
@@ -787,40 +759,7 @@ public class HomeView implements Initializable{
 		
 		hourBox2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				minBox2.getItems().clear();
-				int selectedHour = Integer.parseInt(hourBox.getValue());
-				if(selectedHour==lowerLimit) {
-					for(int j=lowerLimMin;j<61;j++) {
-						String min = Integer.toString(j);
-						if(j<10) {
-							min = "0"+min;
-						}
-						minBox2.getItems().add(min);
-						
-					}
-					return;
-				}
-				if(selectedHour==upperLimit) {
-					for(int j=0;j<=upperLimMin;j++) {
-						String min = Integer.toString(j);
-						if(j<10) {
-							min = "0"+min;
-						}
-						minBox2.getItems().add(min);
-					}
-					
-				}
-				else {
-					for(int j=0;j<61;j++) {
-						String min = Integer.toString(j);
-						if(j<10) {
-							min = "0"+min;
-						}
-						minBox2.getItems().add(min);
-					}
-					
-				}
-					
+				handle2HourBox2( lowerLimit, lowerLimMin, upperLimit,  upperLimMin);
 			}
 		});
 		
@@ -982,8 +921,81 @@ public class HomeView implements Initializable{
 		
 	
 	}
+	private void handle2HourBox(int lowerLimit, int lowerLimMin,int upperLimit, int upperLimMin) {
+
+		minBox.getItems().clear();
+		int selectedHour = Integer.parseInt(hourBox.getValue());
+		if(selectedHour==lowerLimit) {
+			for(int j=lowerLimMin;j<61;j++) {
+				String min = Integer.toString(j);
+				if(j<10) {
+					min = "0"+min;
+				}
+				minBox.getItems().add(min);
+				
+			}
+			return;
+		}
+		if(selectedHour==upperLimit) {
+			for(int j=0;j<=upperLimMin;j++) {
+				String min = Integer.toString(j);
+				if(j<10) {
+					min = "0"+min;
+				}
+				minBox.getItems().add(min);
+			}
+			
+		}
+		else {
+			for(int j=0;j<61;j++) {
+				String min = Integer.toString(j);
+				if(j<10) {
+					min = "0"+min;
+				}
+				minBox.getItems().add(min);
+			}
+		}
+	}
 	
+	private void handle2HourBox2(int lowerLimit, int lowerLimMin,int upperLimit, int upperLimMin) {
+
+		minBox2.getItems().clear();
+		int selectedHour = Integer.parseInt(hourBox.getValue());
+		if(selectedHour==lowerLimit) {
+			for(int j=lowerLimMin;j<61;j++) {
+				String min = Integer.toString(j);
+				if(j<10) {
+					min = "0"+min;
+				}
+				minBox2.getItems().add(min);
+				
+			}
+			return;
+		}
+		if(selectedHour==upperLimit) {
+			for(int j=0;j<=upperLimMin;j++) {
+				String min = Integer.toString(j);
+				if(j<10) {
+					min = "0"+min;
+				}
+				minBox2.getItems().add(min);
+			}
+			
+		}
+		else {
+			for(int j=0;j<61;j++) {
+				String min = Integer.toString(j);
+				if(j<10) {
+					min = "0"+min;
+				}
+				minBox2.getItems().add(min);
+			}
+			
+		}
+			
 	
+		
+	}
 	
 	//-------------------------------Fine                            -----------------------------------------
 	private void updateChat(ListView chat, Channel ch) {
