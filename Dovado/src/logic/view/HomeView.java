@@ -836,86 +836,8 @@ public class HomeView implements Initializable{
 		
 		ok.setOnAction(new EventHandler<ActionEvent>(){
 			@Override public void handle(ActionEvent e) {
-				if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
-					Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche.");
-					popupGen(wPopup,hPopup,"You haven't specified enough info."); 
+				handle2Ok(pickDate,pickDateReminder, dateBox, percDiscount,  activityId);
 				
-				}
-			    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				String dayStringed = day.format(pickDate.getValue());
-																				
-				dayStringed.split("-");
-				
-				String hourChosen = hourBox.getValue();
-				String minChosen = minBox.getValue();
-				String dateReminderChosen;
-				String hourReminder;
-				if (hourBox2.getValue()==null || minBox2.getValue()==null) {
-					int hourReminderInt = Integer.parseInt(hourChosen);
-					hourReminder = Integer.toString(hourReminderInt-1);
-			
-					Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");
-					popupGen(wPopup,hPopup,"You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
-					
-					
-					if(hourReminderInt-1<10) {
-						hourReminder = "0"+hourReminder;
-					}
-				} else {
-					hourReminder = hourBox2.getValue();
-					minBox2.getValue();
-				}
-				if(pickDateReminder.getValue().toString().isBlank()) {
-					Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
-					dateReminderChosen=dayStringed;
-					popupGen(wPopup,hPopup,"You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
-					
-				} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
-				String dateChosen = dayStringed;
-
-				ScheduleBean sb = new ScheduleBean();
-				
-				if(dateBox.getChildren().contains(percDiscount)) {
-					String[] percPrice = percDiscount.getValue().split("% - ");
-					int percRequested = Integer.parseInt(percPrice[0]);
-					
-					String priceString = (percPrice[1].split("$"))[0];
-					int pricePayed = Integer.parseInt(priceString);
-					
-					if(pricePayed > ((User)user).getBalance()) {
-						Log.getInstance().getLogger().info("Not enough dovado $ for payment");
-						popupGen(wPopup,hPopup,"Not enough Dovado $ for payment"); 
-					
-						return;
-					} else {
-						sb.setSelectedCoupon(percRequested);
-					}
-				}
-								
-				sb.setIdActivity(activityId);
-				sb.setScheduledDate(dateChosen);
-				sb.setScheduledTime(hourChosen+':'+minChosen);
-				sb.setReminderDate(dateReminderChosen);
-				sb.setReminderTime(hourReminder+':'+minChosen);
-				
-				AddActivityToScheduleController sc = new AddActivityToScheduleController((User) user, sb);
-				
-				if(activitySelected instanceof CertifiedActivity) {
-					try {
-						sc.addCertifiedActivityToSchedule();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}else {
-					try {
-						sc.addActivityToSchedule();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}
-				popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
-			
-                
 			}
 		});
 		
@@ -928,9 +850,7 @@ public class HomeView implements Initializable{
 		if(selectedHour==lowerLimit) {
 			for(int j=lowerLimMin;j<61;j++) {
 				String min = Integer.toString(j);
-				if(j<10) {
-					min = "0"+min;
-				}
+				min = minCheckHandleHour( min, j);
 				minBox.getItems().add(min);
 				
 			}
@@ -939,9 +859,7 @@ public class HomeView implements Initializable{
 		if(selectedHour==upperLimit) {
 			for(int j=0;j<=upperLimMin;j++) {
 				String min = Integer.toString(j);
-				if(j<10) {
-					min = "0"+min;
-				}
+				min = minCheckHandleHour( min, j);
 				minBox.getItems().add(min);
 			}
 			
@@ -949,9 +867,7 @@ public class HomeView implements Initializable{
 		else {
 			for(int j=0;j<61;j++) {
 				String min = Integer.toString(j);
-				if(j<10) {
-					min = "0"+min;
-				}
+				min = minCheckHandleHour( min, j);
 				minBox.getItems().add(min);
 			}
 		}
@@ -964,9 +880,7 @@ public class HomeView implements Initializable{
 		if(selectedHour==lowerLimit) {
 			for(int j=lowerLimMin;j<61;j++) {
 				String min = Integer.toString(j);
-				if(j<10) {
-					min = "0"+min;
-				}
+				min = minCheckHandleHour( min, j);
 				minBox2.getItems().add(min);
 				
 			}
@@ -975,9 +889,7 @@ public class HomeView implements Initializable{
 		if(selectedHour==upperLimit) {
 			for(int j=0;j<=upperLimMin;j++) {
 				String min = Integer.toString(j);
-				if(j<10) {
-					min = "0"+min;
-				}
+				min = minCheckHandleHour( min, j);
 				minBox2.getItems().add(min);
 			}
 			
@@ -985,16 +897,102 @@ public class HomeView implements Initializable{
 		else {
 			for(int j=0;j<61;j++) {
 				String min = Integer.toString(j);
-				if(j<10) {
-					min = "0"+min;
-				}
+				min = minCheckHandleHour( min, j);
 				minBox2.getItems().add(min);
 			}
-			
 		}
-			
-	
+	}
+	private String minCheckHandleHour(String min, int j) {
+		if(j<10) {
+			min = "0"+min;
+		}
+		return min;
 		
+	}
+	
+	private void handle2Ok(DatePicker pickDate,DatePicker pickDateReminder, VBox dateBox, ChoiceBox<String> percDiscount, Long activityId) {
+
+		if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
+			Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche.");
+			popupGen(wPopup,hPopup,"You haven't specified enough info."); 
+		
+		}
+	    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String dayStringed = day.format(pickDate.getValue());
+																		
+		dayStringed.split("-");
+		
+		String hourChosen = hourBox.getValue();
+		String minChosen = minBox.getValue();
+		String dateReminderChosen;
+		String hourReminder;
+		if (hourBox2.getValue()==null || minBox2.getValue()==null) {
+			int hourReminderInt = Integer.parseInt(hourChosen);
+			hourReminder = Integer.toString(hourReminderInt-1);
+	
+			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");
+			popupGen(wPopup,hPopup,"You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
+			
+			
+			if(hourReminderInt-1<10) {
+				hourReminder = "0"+hourReminder;
+			}
+		} else {
+			hourReminder = hourBox2.getValue();
+			minBox2.getValue();
+		}
+		if(pickDateReminder.getValue().toString().isBlank()) {
+			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
+			dateReminderChosen=dayStringed;
+			popupGen(wPopup,hPopup,"You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
+			
+		} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
+		String dateChosen = dayStringed;
+
+		ScheduleBean sb = new ScheduleBean();
+		
+		if(dateBox.getChildren().contains(percDiscount)) {
+			String[] percPrice = percDiscount.getValue().split("% - ");
+			int percRequested = Integer.parseInt(percPrice[0]);
+			
+			String priceString = (percPrice[1].split("$"))[0];
+			int pricePayed = Integer.parseInt(priceString);
+			
+			if(pricePayed > ((User)user).getBalance()) {
+				Log.getInstance().getLogger().info("Not enough dovado $ for payment");
+				popupGen(wPopup,hPopup,"Not enough Dovado $ for payment"); 
+			
+				return;
+			} else {
+				sb.setSelectedCoupon(percRequested);
+			}
+		}
+						
+		sb.setIdActivity(activityId);
+		sb.setScheduledDate(dateChosen);
+		sb.setScheduledTime(hourChosen+':'+minChosen);
+		sb.setReminderDate(dateReminderChosen);
+		sb.setReminderTime(hourReminder+':'+minChosen);
+		
+		AddActivityToScheduleController sc = new AddActivityToScheduleController((User) user, sb);
+		
+		if(activitySelected instanceof CertifiedActivity) {
+			try {
+				sc.addCertifiedActivityToSchedule();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}else {
+			try {
+				sc.addActivityToSchedule();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+		popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
+	
+        
+	
 	}
 	
 	//-------------------------------Fine                            -----------------------------------------
