@@ -253,11 +253,10 @@ public class EventsView implements Initializable{
 			Text schedId = new Text();
 			
 			eventId.setId(activities.get(i).getId().toString());
-			if(user instanceof User) {
-				schedId.setId(schedActivities.get(i).getId().toString());
-			} else {
-				schedId.setId(Integer.toString(i));
-			}
+		
+			schedId = superID(i);
+			
+			
 			//Aggiungo allo stack pane l'id dell'evento, quello del posto, l'immagine
 			//dell'evento ed infine il testo dell'evento.
 			eventBox.getChildren().add(eventId);
@@ -287,8 +286,17 @@ public class EventsView implements Initializable{
 			
 			eventsList.getItems().add(eventBox);
 		}
+	}	
+	
+	private Text superID(int i) {
+		Text schedId = new Text();
+		if(user instanceof User) {
+			schedId.setId(schedActivities.get(i).getId().toString());
+		} else {
+			schedId.setId(Integer.toString(i));
+		}
+		return schedId;
 	}
-
 
 	public void scheduledActSelected() {
 
