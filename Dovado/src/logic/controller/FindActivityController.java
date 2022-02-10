@@ -87,7 +87,7 @@ public class FindActivityController {
 	}	
 	
 
-	public static List<Activity> filterActivitiesByKeyWords(ArrayList<Activity> activities,String[] keywords){
+	public static List<Activity> filterActivitiesByKeyWords(List<Activity> activities,String[] keywords){
 		//metodo per filtrare una lista di attività in base alle parole chiave
 		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {
@@ -102,7 +102,7 @@ public class FindActivityController {
 		return filteredActivities;
 	}
 	
-	public static List<Activity> filterActivitiesByDate(ArrayList<Activity> activities, LocalDate date){
+	public static List<Activity> filterActivitiesByDate(List<Activity> activities, LocalDate date){
 		//metodo per filtrare una lista di attività in base alla data (se è aperta in giorno "date" allora è ok)
 		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {
@@ -111,7 +111,7 @@ public class FindActivityController {
 		return filteredActivities;
 	}
 	
-	public static List<Activity> filterActivitiesByPreferences(ArrayList<Activity> activities, Preferences preferences){
+	public static List<Activity> filterActivitiesByPreferences(List<Activity> activities, Preferences preferences){
 		//metodo per filtrare una lista di attività in base alle preferenze		
 		ArrayList<Activity> filteredActivities = new ArrayList<>();
 		for(Activity curr : activities) {

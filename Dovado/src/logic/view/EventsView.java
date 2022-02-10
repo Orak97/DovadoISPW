@@ -71,6 +71,9 @@ public class EventsView implements Initializable{
 	private static final  String STYLENAME = "textEventName";
 	private static final  String STYLETXT = "msstxt";
 	private static final  String DATEPATTERN = "yyyy-MM-dd";
+	private static final String STARTINFO = "Activity will start from:";
+	private static final String ENDINFO = "Activity will end: ";
+
 
 	private ArrayList<ScheduledActivity> schedActivities;
 	private ArrayList<Activity> activities;
@@ -671,13 +674,13 @@ public class EventsView implements Initializable{
 		schedInfo.setAlignment(Pos.CENTER_RIGHT);
 		schedInfo.getChildren().addAll(scheduledTime,reminderTime);
 		if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
-			Text startDate = new Text("Activity will start from: "+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
-			Text endDate = new Text("Activity will end: "+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
+			Text startDate = new Text(STARTINFO+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+			Text endDate = new Text(ENDINFO+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
 			schedInfo.getChildren().addAll(startDate,endDate);
 		}
 		else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
-			Text startDate = new Text("Activity will start from: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
-			Text endDate = new Text("Activity will end: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
+			Text startDate = new Text(STARTINFO+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+			Text endDate = new Text(ENDINFO+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
 			Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
 			schedInfo.getChildren().addAll(cadence,startDate,endDate);
 		}
@@ -700,13 +703,13 @@ public class EventsView implements Initializable{
 		eventsInfo.setAlignment(Pos.TOP_LEFT);
 		eventsInfo.getChildren().addAll(scheduledTime,reminderTime);
 		if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
-			Text startDate = new Text("Activity will start from: "+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
-			Text endDate = new Text("Activity will end: "+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
+			Text startDate = new Text(STARTINFO+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+			Text endDate = new Text(ENDINFO+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
 			eventsInfo.getChildren().addAll(startDate,endDate);
 		}
 		else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
-			Text startDate = new Text("Activity will start from: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
-			Text endDate = new Text("Activity will end: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
+			Text startDate = new Text(STARTINFO+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
+			Text endDate = new Text(ENDINFO+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
 			Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
 			eventsInfo.getChildren().addAll(cadence,startDate,endDate);
 		}
@@ -748,7 +751,6 @@ public class EventsView implements Initializable{
 		try {
 			result = daoSch.removeActFromSchedule(idSched,Navbar.getUser().getUserID());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return result;
 		}

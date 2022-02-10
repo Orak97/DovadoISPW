@@ -14,10 +14,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 
-//import org.openstreetmap.gui.jmapviewer.JMapViewer;
-//import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
-//import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -52,7 +48,6 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import jdk.nashorn.api.scripting.JSObject;
 import logic.controller.AddActivityToScheduleController;
 import logic.controller.ChannelController;
 import logic.controller.FindActivityController;
@@ -79,6 +74,17 @@ public class HomeView implements Initializable{
 	private static final  String BGCOLORKEY = "ffffff";
 	private static final  String BGUCOLORKEY = "BC9416";
 	private static final  String MAPPATHKEY = "http://localhost:8080/Dovado/MapView.html";
+	private static final  String IMAGES = "https://source.unsplash.com/user/erondu/290x120";
+	private static final  String STYLEINFO = "textEventInfo";
+	private static final  String STYLENAME = "textEventName";
+	private static final  String EVENTINFO = "eventInfo";
+	private static final  String EVENTNAME = "eventName";
+	private static final  String CERTEVENTNAME = "certEventName";
+	private static final  String CLOSEDKEY = "CLOSED NOW";
+	private static final  String SPOTPLACESCRIPT = "spotPlace";
+
+
+	
 	//botton KEYS
 	private static final  String BTNPREFKEY = "pref-btn";
 	private static final  String BTNSRCKEY = "src-btn";
@@ -125,19 +131,19 @@ public class HomeView implements Initializable{
     private WebView map;
 	
     @FXML
-    private static WebEngine eng;
+    private WebEngine eng;
 	
-    private static int lastActivitySelected = -1;
+    private int lastActivitySelected = -1;
 
-    private static DAOActivity daoAct;
-    private static DAOChannel daoCH;
-    private static SuperActivity activitySelected;
-    private static SuperUser user;
-    private static double usrLat;
-    private static double usrLon;
-    private static ArrayList<Activity> activitiesToSpotUsr;
+    private DAOActivity daoAct;
+    private DAOChannel daoCH;
+    private SuperActivity activitySelected;
+    private SuperUser user;
+    private double usrLat;
+    private double usrLon;
+    private ArrayList<Activity> activitiesToSpotUsr;
     private ArrayList<CertifiedActivity> activitiesToSpotPart;
-    private static boolean searchByPreference;
+    private boolean searchByPreference;
 
     
     public static void render(Stage current) {
@@ -146,18 +152,15 @@ public class HomeView implements Initializable{
 			BorderPane navbar = Navbar.getNavbar();
 			Navbar.authenticatedSetup();
 			
-			VBox home = new VBox();
 			
 			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
 			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
 			current.setTitle("Dovado - home");
 			current.setScene(scene);
-			home = FXMLLoader.load(Main.class.getResource("home.fxml"));
+			VBox home = FXMLLoader.load(Main.class.getResource("home.fxml"));
 			VBox.setVgrow(home, Priority.SOMETIMES);
 		
 			root.getChildren().addAll(navbar,home);
-			
-			user=Navbar.getUser();
 			curr=current;
 			
 			current.show();	
@@ -166,8 +169,8 @@ public class HomeView implements Initializable{
 			e.printStackTrace();
 		}
 	}
-
-	
+    
+    	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		lastEventBoxSelected = null;
@@ -217,7 +220,7 @@ public class HomeView implements Initializable{
     						      }
 
     						      // Your logic here
-    						      System.out.println("page loaded");
+    						      Log.getInstance().getLogger().info("page loaded");
     						    }
     			} );
     	        eng.load(MAPPATHKEY);
@@ -240,7 +243,7 @@ public class HomeView implements Initializable{
     				
     				int j;
     				for(j=0;j<activitiesPartn.size();j++)
-    				Log.getInstance().getLogger().info("tutte le attivit� "+((SuperActivity)activitiesPartn.get(j)).getId());
+    					Log.getInstance().getLogger().info("tutte le attivit� "+((SuperActivity)activitiesPartn.get(j)).getId());
     				
     				Thread newThread = new Thread(() -> {
     					int i;
@@ -254,15 +257,15 @@ public class HomeView implements Initializable{
     						Text eventInfo = new Text(((SuperActivity)activitiesPartn.get(i)).getPlace().getName()+
     								"\n"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getOpeningTime()+
     								"-"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getClosingTime());
-    						eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/290x120"));
+    						eventImage.setImage(new Image(IMAGES));
     						eventImage.getStyleClass().add("event-image");
     						
-    						eventInfo.setId("eventInfo");
-    						eventInfo.getStyleClass().add("textEventInfo");
+    						eventInfo.setId(EVENTINFO);
+    						eventInfo.getStyleClass().add(STYLEINFO);
     						eventInfo.setWrappingWidth(280);
 	
-    						eventName.setId("eventName");
-    						eventName.getStyleClass().add("textEventName");
+    						eventName.setId(EVENTNAME);
+    						eventName.getStyleClass().add(STYLENAME);
     						eventName.setWrappingWidth(280);
 
     						VBox eventText = new VBox(eventName,eventInfo);
@@ -289,7 +292,7 @@ public class HomeView implements Initializable{
     						//destra per indicarlo.
     						if(activitiesPartn.get(i) instanceof CertifiedActivity) {
     							eventName.getStyleClass().clear();
-    							eventName.getStyleClass().add("certEventName");
+    							eventName.getStyleClass().add(CERTEVENTNAME);
     							eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
     						}	
     						//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
@@ -297,8 +300,8 @@ public class HomeView implements Initializable{
 
     						if(!activitiesPartn.get(i).isOpenOnThisTime(LocalTime.now())) {
     							eventBox.setOpacity(0.4);
-    							Text closed = new Text("CLOSED NOW");
-    							closed.getStyleClass().add("textEventInfo");
+    							Text closed = new Text(CLOSEDKEY);
+    							closed.getStyleClass().add(STYLEINFO);
     							closed.setTextAlignment(TextAlignment.CENTER);
     							eventBox.getChildren().add(closed);
     						}
@@ -315,16 +318,16 @@ public class HomeView implements Initializable{
     				noPrefs.setTextAlignment(TextAlignment.CENTER);
     				
     				infoBox.getChildren().add(noPrefs);
-    				noPrefs.getStyleClass().add("textEventName");
+    				noPrefs.getStyleClass().add(STYLENAME);
     				
     				eventsList.getItems().add(infoBox);
     			}
     		}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
     			} catch (InterruptedException e) {
+    				Thread.currentThread().interrupt();
     				e.printStackTrace();
     				Log.getInstance().getLogger().info(e.getMessage());
     			} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
     	}
@@ -359,7 +362,7 @@ public class HomeView implements Initializable{
   						      }
 
   						      // Your logic here
-  						      System.out.println("page loaded");
+  						      Log.getInstance().getLogger().info("page loaded");
   						    }
   				} );
 		        eng.load(MAPPATHKEY);
@@ -375,7 +378,7 @@ public class HomeView implements Initializable{
 					@Override
 					public void handle(ActionEvent event) {
 						final Popup popup;
-						if(searchByPreference==false) {
+						if(!searchByPreference) {
 							searchByPreference=true;
 							popup = popupGen(wPopup,hPopup,"Your searched activities will be filtered by preference!");
 							
@@ -403,7 +406,7 @@ public class HomeView implements Initializable{
 					
 					int j;
 					for(j=0;j<activities.size();j++)
-					Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+						Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
 					
 					Thread newThread = new Thread(() -> {
 						int i;
@@ -441,15 +444,15 @@ public class HomeView implements Initializable{
 									"-"+activities.get(i).getFrequency().getClosingTime());
 							}
 							
-							eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/290x120"));
+							eventImage.setImage(new Image(IMAGES));
 							eventImage.getStyleClass().add("event-image");
 							
-							eventInfo.setId("eventInfo");
-							eventInfo.getStyleClass().add("textEventInfo");
+							eventInfo.setId(EVENTINFO);
+							eventInfo.getStyleClass().add(STYLEINFO);
 							eventInfo.setWrappingWidth(280);
 					
-							eventName.setId("eventName");
-							eventName.getStyleClass().add("textEventName");
+							eventName.setId(EVENTNAME);
+							eventName.getStyleClass().add(STYLENAME);
 							eventName.setWrappingWidth(280);
 					
 							VBox eventText = new VBox(eventName,eventInfo);
@@ -474,7 +477,7 @@ public class HomeView implements Initializable{
 							eventBox.getChildren().add(eventText);
 							if(activities.get(i) instanceof CertifiedActivity) {
 								eventName.getStyleClass().clear();
-								eventName.getStyleClass().add("certEventName");
+								eventName.getStyleClass().add(CERTEVENTNAME);
 								eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
 							}	
 							//Stabilisco l'allineamento ed in seguito lo aggiungo alla lista di eventi.
@@ -482,8 +485,8 @@ public class HomeView implements Initializable{
 							if(activities.get(i) instanceof NormalActivity){
 								if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
 									eventBox.setOpacity(0.4);
-	    							Text closed = new Text("CLOSED NOW");
-	    							closed.getStyleClass().add("textEventInfo");
+	    							Text closed = new Text(CLOSEDKEY);
+	    							closed.getStyleClass().add(STYLEINFO);
 	    							closed.setTextAlignment(TextAlignment.CENTER);
 	    							eventBox.getChildren().add(closed);
 	    						}
@@ -491,8 +494,8 @@ public class HomeView implements Initializable{
 							} else {
 								if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
 									eventBox.setOpacity(0.4);
-	    							Text closed = new Text("CLOSED NOW");
-	    							closed.getStyleClass().add("textEventInfo");
+	    							Text closed = new Text(CLOSEDKEY);
+	    							closed.getStyleClass().add(STYLEINFO);
 	    							closed.setTextAlignment(TextAlignment.CENTER);
 	    							eventBox.getChildren().add(closed);
 								}
@@ -509,16 +512,16 @@ public class HomeView implements Initializable{
 					noPrefs.setTextAlignment(TextAlignment.CENTER);
 					
 					infoBox.getChildren().add(noPrefs);
-					noPrefs.getStyleClass().add("textEventName");
+					noPrefs.getStyleClass().add(STYLENAME);
 					
 					eventsList.getItems().add(infoBox);
 				}
 			}catch(Error e) {	Log.getInstance().getLogger().warning(e.getMessage());
 				} catch (InterruptedException e) {
+    				Thread.currentThread().interrupt();
 					e.printStackTrace();
 					Log.getInstance().getLogger().info(e.getMessage());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
     	}
@@ -542,7 +545,7 @@ public class HomeView implements Initializable{
 		if(user instanceof User) {
 			if(lastEventBoxSelected==null) {
 				for(Activity current:activitiesToSpotUsr) {
-					eng.executeScript("spotPlace("
+					eng.executeScript(SPOTPLACESCRIPT+"("
 						+ ""+(current.getPlace().getLatitudine())+""
 						+ ","+(current.getPlace().getLongitudine())+", "
 						+ "\""+current.getPlace().getName()+"\","
@@ -552,8 +555,8 @@ public class HomeView implements Initializable{
 			}
 		}
 		else {
-			for(CertifiedActivity curr:activitiesToSpotPart) {
-				eng.executeScript("spotPlace("+curr.getPlace().getLatitudine()+","+curr.getPlace().getLongitudine()+", \""+curr.getPlace().getName()+"\","+curr.getPlace().getId()+")");
+			for(CertifiedActivity cAct:activitiesToSpotPart) {
+				eng.executeScript("spotPlace("+cAct.getPlace().getLatitudine()+","+cAct.getPlace().getLongitudine()+", \""+cAct.getPlace().getName()+"\","+cAct.getPlace().getId()+")");
 			}	
 		}
 Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
@@ -598,7 +601,6 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		try {
 			activitySelected = (SuperActivity) daoAct.getActivityById(activityId);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} 
 		Log.getInstance().getLogger().info("Attivit� trovata: "+activitySelected);
@@ -878,7 +880,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 						dateBox.getChildren().addAll(txt,pickDate,txtTime,pickTimeBox,txtReminder,pickDateReminder,pickReminderBox);
 						dateBox.setId("dateBox");
 						
-						ChoiceBox<String> percDiscount = new ChoiceBox<String>();
+						ChoiceBox<String> percDiscount = new ChoiceBox<>();
 						
 						if(activitySelected instanceof CertifiedActivity) {
 							Text activityPrice = new Text(((CertifiedActivity)activitySelected).getPrice());
@@ -897,6 +899,9 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								}
 								dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);								
 							
+							}catch(NullPointerException exc){
+								Log.getInstance().getLogger().info("discList.file() ha fatto partire il null");
+								exc.printStackTrace();
 							}
 							catch(Exception e2) {
 								Log.getInstance().getLogger().info("Database error, discounts not found.");
@@ -967,10 +972,10 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 								
 								if(dateBox.getChildren().contains(percDiscount)) {
 									String[] percPrice = percDiscount.getValue().split("% - ");
-									int percRequested = Integer.valueOf(percPrice[0]);
+									int percRequested = Integer.parseInt(percPrice[0]);
 									
 									String priceString = (percPrice[1].split("�"))[0];
-									int pricePayed = Integer.valueOf(priceString);
+									int pricePayed = Integer.parseInt(priceString);
 									
 									if(pricePayed > ((User)user).getBalance()) {
 										Log.getInstance().getLogger().info("Not enough dovado $ for payment");
@@ -997,14 +1002,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 									try {
 										sc.addCertifiedActivityToSchedule();
 									} catch (Exception e1) {
-										// TODO Auto-generated catch block
 										e1.printStackTrace();
 									}
 								}else {
 									try {
 										sc.addActivityToSchedule();
 									} catch (Exception e1) {
-										// TODO Auto-generated catch block
 										e1.printStackTrace();
 									}
 								}
@@ -1036,7 +1039,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 				    popup.show(curr);
 				    popup.setAutoHide(true);
 					    
-					Log.getInstance().getLogger().info("Attività cancellata dalla persistenza");
+					Log.getInstance().getLogger().info("Attivit\u00A0 cancellata dalla persistenza");
 					activityDeselected(lastEventBoxSelected,true);
 				}
 			});
@@ -1130,7 +1133,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		if(lastActivitySelected>=0) {
 			eventsList.getItems().remove(lastActivitySelected+1);
 		}
-		if(delete==true) {
+		if(delete) {
 			eventsList.getItems().remove(lastEventBoxSelected);
 		
 			lastEventBoxSelected=null;
@@ -1162,8 +1165,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			}
 			try{ 
 				//Con il metodo sottostante mi assicuro della presenza del coupon.
-				Coupon cToRedeem;
-				if((cToRedeem = DAOCoupon.getInstance().findCouponPartner(couponCode))==null) {
+				if((DAOCoupon.getInstance().findCouponPartner(couponCode))==null) {
 					final Popup popup = popupGen(wPopup,hPopup,"No such coupon found!");
 					popup.centerOnScreen(); 
 				    
@@ -1200,12 +1202,12 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		lastActivitySelected = -1;
 		String searchItem = null;
 		
-		ArrayList<Activity> activities = new ArrayList<Activity>();
+		ArrayList<Activity> activities = new ArrayList<>();
 		if((searchItem = searchBar.getText())==null) return; 
 
 		eng.executeScript("removeAllMarkers()");
 		String[] keywords = searchItem.split(";");
-		activities = new ArrayList<>();
+		
 		try {
 			//Eseguo un controllo sulla ricerca delle attività; se il risultato è un'arraylist vuoto, allora
 			//segnalo l'errore e esco dal metodo.
@@ -1225,7 +1227,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			}
 			
 		} catch (Exception e) {
-			Log.getInstance().getLogger().info("La ricerca delle attività non è andata a buon fine. \n per colpa di un errore nel metodo del DB.");
+			Log.getInstance().getLogger().info("La ricerca delle attività non \u00A0 andata a buon fine. \n per colpa di un errore nel metodo del DB.");
 			e.printStackTrace();
 			return;
 		}
@@ -1233,15 +1235,10 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		
 		int i;
 		for(i=0;i<activities.size();i++) {
-			if(activities.get(i) instanceof NormalActivity) {
-				if(!((NormalActivity)activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
-					continue;
-				}
-			} else {
-				if(!((CertifiedActivity)activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
-					continue;
-				}
+			if(!(activities.get(i)).isPlayableOnThisDate(LocalDate.now())) {
+				continue;
 			}
+			
 			ImageView eventImage = new ImageView();
 			Text eventName = new Text(activities.get(i).getName()+"\n");
 			Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
@@ -1265,14 +1262,14 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 					"\n"+activities.get(i).getFrequency().getOpeningTime()+
 					"-"+activities.get(i).getFrequency().getClosingTime());
 			}
-			eventImage.setImage(new Image("https://source.unsplash.com/user/erondu/290x120"));
+			eventImage.setImage(new Image(IMAGES));
 	
-			eventInfo.setId("eventInfo");
-			eventInfo.getStyleClass().add("textEventInfo");
+			eventInfo.setId(EVENTINFO);
+			eventInfo.getStyleClass().add(STYLEINFO);
 			eventInfo.setWrappingWidth(280);
 
-			eventName.setId("eventName");
-			eventName.getStyleClass().add("textEventName");
+			eventName.setId(EVENTNAME);
+			eventName.getStyleClass().add(STYLENAME);
 			eventName.setWrappingWidth(280);
 			
 			VBox eventText = new VBox(eventName,eventInfo);
@@ -1298,7 +1295,7 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			if(activities.get(i) instanceof CertifiedActivity) {
 	
 				eventName.getStyleClass().clear();
-				eventName.getStyleClass().add("certEventName");
+				eventName.getStyleClass().add(CERTEVENTNAME);
 				eventName.setText(eventName.getText()+'\n'+"CERTIFICATA");
 				
 			}	
@@ -1307,21 +1304,21 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 			if(activities.get(i) instanceof NormalActivity){
 				if(!((NormalActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
 					eventBox.setOpacity(0.4);
-					Text closed = new Text("CLOSED NOW");
-					closed.getStyleClass().add("textEventInfo");
+					Text closed = new Text(CLOSEDKEY);
+					closed.getStyleClass().add(STYLEINFO);
 					closed.setTextAlignment(TextAlignment.CENTER);
 					eventBox.getChildren().add(closed);
 				}
 			} else {
 				if(!((CertifiedActivity)(activities.get(i))).isOpenOnThisTime(LocalTime.now())) {
 					eventBox.setOpacity(0.4);
-					Text closed = new Text("CLOSED NOW");
-					closed.getStyleClass().add("textEventInfo");
+					Text closed = new Text(CLOSEDKEY);
+					closed.getStyleClass().add(STYLEINFO);
 					closed.setTextAlignment(TextAlignment.CENTER);
 					eventBox.getChildren().add(closed);
 				}
 			}
-			eng.executeScript("spotPlace("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")");;
+			eng.executeScript(SPOTPLACESCRIPT+"("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")");
 			eventsList.getItems().add(eventBox);
 		}
 	}
@@ -1331,11 +1328,10 @@ Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
 		popup.centerOnScreen();
 		
 		Text errorTxt = new Text(error);
-		errorTxt.getStyleClass().add("textEventName");
+		errorTxt.getStyleClass().add(STYLENAME);
 		errorTxt.setTextAlignment(TextAlignment.CENTER);
 		errorTxt.setWrappingWidth(480);
 	    
-	    //Circle c = new Circle(0, 0, diameter, Color.valueOf("212121"));
 	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
 	    StackPane popupContent = new StackPane(r,errorTxt); 
 	    
