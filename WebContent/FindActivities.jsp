@@ -55,7 +55,7 @@ boolean displayForm = true;
 				  %>
 				  <div class="col">
 				    <div class="card h-100 scheduledActivityCards shadow" data-bs-date="<%=findBean.getDate()%>" data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>" data-bs-playabilityInfo="<%= curr.getPlayabilityInfo()%>" data-bs-address="<%= curr.getPlace().getFormattedAddr()%>" <%if(isCertified){%> data-bs-certified="true" <%}%>>
-				      <% if(isCertified){ %><span class="badge bg-certified text-white position-absolute top-0 end-0 mt-4">Certificata <i class="bi bi-patch-check-fill"></i></span> <%}%>
+				      <% if(isCertified){ %><span class="badge bg-certified text-white position-absolute top-0 end-0 mt-4">Certificata <em class="bi bi-patch-check-fill"></em></span> <%}%>
 				      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 				      <div class="card-body">
 				        <h5 class="card-title"><%= curr.getName() %></h5>
@@ -82,7 +82,7 @@ boolean displayForm = true;
 	<h2 class="text-center">Trova attività di tuo interesse tramite la ricerca avanzata:</h2>
 	<form method="GET" action="FindActivities.jsp">
 	<div class="select-zone">
-		<h4 class="text-center"><i class="bi bi-pin-map"></i> Dove vuoi cercare l'attività? <i class="bi bi-pin-map"></i></h4>
+		<h4 class="text-center"><em class="bi bi-pin-map"></em> Dove vuoi cercare l'attività? <em class="bi bi-pin-map"></em></h4>
 		<hr class="separator-places">
 		<div class="d-flex justify-content-center pt-1">
 			<input type="text" class="form-control search-input" id="zone" name="zone" placeholder="Città,regione,cap...">
@@ -91,7 +91,7 @@ boolean displayForm = true;
 	</div>
 	
 	<div class="select-date visually-hidden">
-		<h4 class="text-center"><i class="bi bi-calendar-date"></i> Quando vuoi fare l'attività? <i class="bi bi-calendar-date"></i></h4>
+		<h4 class="text-center"><em class="bi bi-calendar-date"></em> Quando vuoi fare l'attività? <em class="bi bi-calendar-date"></em></h4>
 		<hr class="separator-places">
 		<div class="d-flex justify-content-center pt-1">
 			<input type="date" class="form-control search-input" id="datePicker" name="date">
@@ -112,7 +112,7 @@ boolean displayForm = true;
 	Preferences pref = utente.getPreferences();
 	%>
 	<div class ="select-preferences visually-hidden">
-		<h4 class="text-center"><i class="bi bi-tags"></i> A quale categoria sei interessato? <i class="bi bi-tags"></i></h4>
+		<h4 class="text-center"><em class="bi bi-tags"></em> A quale categoria sei interessato? <em class="bi bi-tags"></em></h4>
 		<hr class="separator-places">
 		<div class="row">
 			<div class="col">
@@ -202,7 +202,7 @@ boolean displayForm = true;
 		
 	</div>
 	<div class="select-keywords visually-hidden">
-		<h4 class="text-center"><i class="bi bi-search"></i> Vuoi effettuare la ricerca anche per parole chiave? <i class="bi bi-search"></i></h4>
+		<h4 class="text-center"><em class="bi bi-search"></em> Vuoi effettuare la ricerca anche per parole chiave? <em class="bi bi-search"></em></h4>
 		<hr class="separator-places">
 			
 	<div class="d-flex justify-content-center pt-1" id="researchBox">

@@ -36,7 +36,7 @@ if(partner != null){
 		        			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      			</div>
 		      			<div class="modal-body">
-		        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><i class="bi bi-check-circle-fill"></i> <%}else{%> ><i class="bi bi-x-circle-fill"></i> <%} %></p>
+		        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><em class="bi bi-check-circle-fill"></em> <%}else{%> ><em class="bi bi-x-circle-fill"></em> <%} %></p>
 		        			<h5 class="text-center irreversible-process"><%= success ? "Un'altro cliente che vi raggiunge tramite Dovado!" : "C'è stato un errore nella riscossione dello schedulo"%></h5>
 		      			</div>
 		      			<div class="modal-footer">
@@ -76,7 +76,7 @@ if(partner != null){
 	        			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      			</div>
 	      			<div class="modal-body">
-	        			<p class="delete-icon-schedule text-center" <%if(!success){ %>style="color:#198754"><i class="bi bi-check-circle-fill"></i> <%}else{%> ><i class="bi bi-x-circle-fill"></i> <%} %></p>
+	        			<p class="delete-icon-schedule text-center" <%if(!success){ %>style="color:#198754"><em class="bi bi-check-circle-fill"></em> <%}else{%> ><em class="bi bi-x-circle-fill"></em> <%} %></p>
 	        			<h5 class="text-center irreversible-process"><%= serverResponse  %></h5>
 	      			</div>
 	      			<div class="modal-footer">
@@ -125,7 +125,7 @@ if(partner != null){
 		  	<%for(CertifiedActivity curr:foundActivities){ %>
 			  <div class="col">
 			    <div class="card h-100 scheduledActivityCards shadow"  data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>" data-bs-playabilityInfo="<%= curr.getPlayabilityInfo()%>" data-bs-address="<%= curr.getPlace().getFormattedAddr()%>" >
-			      <span class="badge bg-certified text-white position-absolute top-0 end-0 mt-4">Certificata <i class="bi bi-patch-check-fill"></i></span>
+			      <span class="badge bg-certified text-white position-absolute top-0 end-0 mt-4">Certificata <em class="bi bi-patch-check-fill"></em></span>
 			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 			      <div class="card-body">
 			        <h5 class="card-title"><%= curr.getName() %></h5>
@@ -140,7 +140,7 @@ if(partner != null){
 			  <div class="card h-100 border-dark scheduledActivityCards shadow">
 				  <div class="card-body text-dark">
 				    <h5 class="card-title text-center">Aggiungi Attività</h5>
-				    <p class="card-text text-center addActivity position-absolute top-50 start-50 translate-middle"><i class="bi bi-plus-circle"></i></p>
+				    <p class="card-text text-center addActivity position-absolute top-50 start-50 translate-middle"><em class="bi bi-plus-circle"></em></p>
 				  </div>
 			  </div>
 			</a>
@@ -189,7 +189,7 @@ if(partner != null){
 			</div>
 	     </div>
 	     <div class="coupon-error visually-hidden">
-	     	<p class="delete-icon-schedule text-center"><i class="bi bi-x-circle-fill"></i></p>
+	     	<p class="delete-icon-schedule text-center"><em class="bi bi-x-circle-fill"></em></p>
         	<h5 class="text-center irreversible-process">Il coupon non esiste o il valore inserito non è corretto</h5>
 	     </div>
       </div>
@@ -272,9 +272,9 @@ if(partner != null){
 		      <div class="modal-footer d-flex justify-content-center">
   			    
 	      	  		<input type="number" id="idActivity" name="idActivity" class="visually-hidden">
-		        	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#couponModal">Modifica Sconti disponibili <i class="bi bi-tag"></i></button>
-		        	<button type="button" class="btn btn-primary"  id="open-chat" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#chat-modal" >Apri la chat della attività <i class="bi bi-chat-dots"></i></button>
-		        	<a role="button" class="btn btn-success"  id="edit-activity">Modifica i dettagli dell'attività <i class="bi bi-gear-wide-connected"></i></a>
+		        	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#couponModal">Modifica Sconti disponibili <em class="bi bi-tag"></em></button>
+		        	<button type="button" class="btn btn-primary"  id="open-chat" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#chat-modal" >Apri la chat della attività <em class="bi bi-chat-dots"></em></button>
+		        	<a role="button" class="btn btn-success"  id="edit-activity">Modifica i dettagli dell'attività <em class="bi bi-gear-wide-connected"></em></a>
 		      	
 		      </div>
 		    </div>
@@ -344,7 +344,7 @@ if(partner != null){
       </div>
       <div class="modal-footer chat-bar bg-white">
 		<input type="text" class="form-control flex-grow-1 col" id="chatField" placeholder="scrivi qualcosa"> 
-		<button type="button" class="btn btn-outline-dark send-btn disabled" id="send-btn" onclick="sendMsg()"> <i class="bi bi-send"></i> </button>
+		<button type="button" class="btn btn-outline-dark send-btn disabled" id="send-btn" onclick="sendMsg()"> <em class="bi bi-send"></em> </button>
       </div>
     </div>
   </div>

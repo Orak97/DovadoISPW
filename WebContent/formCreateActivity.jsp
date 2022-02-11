@@ -112,10 +112,10 @@
 		<form action="<%= isUser ? "CreateActivity.jsp" : "CreateActivityPartner.jsp" %>" method="GET">
 		
 		<div class="search-place justify-content-center">
-			<h2 class="text-center text-white"><i class="bi bi-pin-map"></i> Dove vuoi spottare l'attività? <i class="bi bi-pin-map"></i></h2>
+			<h2 class="text-center text-white"><em class="bi bi-pin-map"></em> Dove vuoi spottare l'attività? <em class="bi bi-pin-map"></em></h2>
 			<div class="d-flex justify-content-center pt-1">
 				<input type="text" class="form-control" id="placeField" name="src" placeholder="Nome,Luogo,Regione o via" <%= request.getParameter("zone") != null ? "value=\""+request.getParameter("zone")+"\"" : ""  %>>
-				<button type="submit" class="btn btn-success search-btn" id="search-btn"><i class="bi bi-search"></i></button>
+				<button type="submit" class="btn btn-success search-btn" id="search-btn"><em class="bi bi-search"></em></button>
 			</div>
 		</div>
 		</form>	
@@ -125,7 +125,7 @@
 		%>
 		
 		<div class= "row select-place p-3">
-		<h2 class="text-center"><i class="bi bi-pin-map"></i> Dove vuoi spottare l'attività? <i class="bi bi-pin-map"></i></h2>
+		<h2 class="text-center"><em class="bi bi-pin-map"></em> Dove vuoi spottare l'attività? <em class="bi bi-pin-map"></em></h2>
 		<hr class="separator-places">
 		<div class ="row"> <h3>Posti trovati per "<%= request.getParameter("src") %>":</h2> </div>
 		<p class="lead text-center">Seleziona il posto in cui vuoi creare l'attività</p>
@@ -161,7 +161,7 @@
 	    	
     	<div class="form-create-activity p-3 visually-hidden">
 		    <%-- sezione per nome e descrizione etc etc --%>
-		    <h2 class="text-center"><i class="bi bi-compass"></i> Di che attività si tratta? <i class="bi bi-compass"></i></h2>
+		    <h2 class="text-center"><em class="bi bi-compass"></em> Di che attività si tratta? <em class="bi bi-compass"></em></h2>
 		    <hr class="separator-places">
 			<!-- da qui inizia il vecchi form -->
 			<form class="row g-3" name="createActivityForm" action="<%= isUser ? "CreateActivity.jsp" : "CreateActivityPartner.jsp" %>" method="GET">
@@ -189,7 +189,7 @@
 				      <div class="card-body">
 				      <div style="min-height:13em">
 				        <h5 class="card-title text-center">Attività Continua</h5>
-				        <p class="text-center icon-kind"><i class="bi bi-calendar-check"></i></p>
+				        <p class="text-center icon-kind"><em class="bi bi-calendar-check"></em></p>
 				        <p class="card-text text-center">Attività che è possibile fare tutti i giorni</p>
 				      </div>  
 				        <hr>
@@ -203,7 +203,7 @@
 				    <div class=" card border-primary mb-3 places-cards shadow h-100 kind-cards" onclick="changedKind('PERIODICA')" id="cardsPeriodica">
 				      <div class="card-body">
 				        <h5 class="card-title text-center">Attività Periodica</h5>
-				        <p class="text-center icon-kind"><i class="bi bi-calendar-range"></i></p>
+				        <p class="text-center icon-kind"><em class="bi bi-calendar-range"></em></p>
 				        <p class="card-text text-center">Attività che è possibile fare con determinata frequenza</p>
 				        <hr>
 				        <p class="form-label text-center" style="argin-bottom: 0.3em;">Esempio:</p>
@@ -216,7 +216,7 @@
 				    <div class="card border-primary mb-3 places-cards shadow h-100 kind-cards" onclick="changedKind('SCADENZA')" id="cardsScadenza">
 				      <div class="card-body">
 				        <h5 class="card-title text-center">Attività a scadenza</h5>
-				        <p class="text-center icon-kind"><i class="bi bi-calendar-event"></i></p>
+				        <p class="text-center icon-kind"><em class="bi bi-calendar-event"></em></p>
 				        <p class="card-text text-center">Attività che è possibile fare una sola volta, in una data specifica </p>
 				        <hr>
 				        <p class="form-label text-center" style="argin-bottom: 0.3em;">Esempio:</p>

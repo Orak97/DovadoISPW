@@ -33,7 +33,7 @@
 <div class="container-fluid home">
 	
 	<div class="search-place justify-content-center">
-				<p class="text-center icon-kind text-white"><i class="bi bi-pin-map"></i></p> 
+				<p class="text-center icon-kind text-white"><em class="bi bi-pin-map"></em></p> 
 				<h2 class="text-center text-white" id="headerLoc">Attiva la geolocalizzazione</h2>
 				<h4 class="text-center text-white" id="explanationLoc"> per funzionare, questa applicazione ha bisogno della tua posizione, ti preghiamo di attivarla accettando il box in alto a destra!</h4>
 				
@@ -50,11 +50,11 @@
 			
 			<h5 class="text-center text-white visually-hidden mt-3" id="retrievedAddress"></h5>
 			<div class="d-flex justify-content-center pt-1 visually-hidden" id="confirmButton">
-				<button type="button" class="btn btn-danger btn-lg reposition-btn" id="reposition-btn"><i class="bi bi-map"></i> No, fammi riposizionare</button>				
+				<button type="button" class="btn btn-danger btn-lg reposition-btn" id="reposition-btn"><em class="bi bi-map"></em> No, fammi riposizionare</button>				
 				<form action="localization.jsp" method="GET">
 					<input type="text" class="visually-hidden" name="latitude" id="latField">
 					<input type="text" class="visually-hidden" name="longitude" id="longField">
-					<button type="submit" class="btn btn-success btn-lg lesgo-btn" id="lesgo-btn"><i class="bi bi-signpost-2"></i> Si, Dovado?</button>			
+					<button type="submit" class="btn btn-success btn-lg lesgo-btn" id="lesgo-btn"><em class="bi bi-signpost-2"></em> Si, Dovado?</button>			
 				</form>
 			</div>
 			

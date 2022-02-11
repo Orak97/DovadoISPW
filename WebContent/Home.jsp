@@ -52,7 +52,7 @@
 			        			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			      			</div>
 			      			<div class="modal-body">
-			        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><i class="bi bi-check-circle-fill"></i> <%}else{%> ><i class="bi bi-x-circle-fill"></i> <%} %></p>
+			        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><em class="bi bi-check-circle-fill"></em>  <%}else{%> ><em class="bi bi-x-circle-fill"></em>  <%} %></p>
 			        			<h5 class="text-center irreversible-process"><%= success ? "Visualizzala nello schedulo!" : "C'è stato un errore nell'aggiunta dell'attività nel tuo schedulo"%></h5>
 			      			</div>
 			      			<div class="modal-footer">
@@ -149,7 +149,7 @@
 			  %>
 			  <div class="col col-cards" >
 			    <div class="card card-dark text-white" data-bs-toggle="collapse" href="#collapse<%= curr.getId() %>" aria-expanded="false" aria-controls="collapse<%= curr.getId() %>">
-			      <% if(isCertified){ %><span class="badge bg-certified text-white position-absolute top-0 end-0">Certificata <i class="bi bi-patch-check-fill"></i></span> <%}%>
+			      <% if(isCertified){ %><span class="badge bg-certified text-white position-absolute top-0 end-0">Certificata <em class="bi bi-patch-check-fill"></em> </span> <%}%>
 			      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 			      <div class="card-body">
 			        <h5 class="card-title"><% out.println(curr.getName()); %></h5>
@@ -180,7 +180,7 @@
 					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#preferencesModal">Categorie</button>
 					<button type="button" class="btn btn-filters" data-bs-toggle="modal" data-bs-target="#dateModal">Data</button>
 					<% if(areFiltersOn) { %><a href="Home.jsp" class="btn btn-filters" role="button">Pulisci filtri</a> <% } %>
-					<a href="FindActivities.jsp" class="btn btn-filters" role="button">Ricerca avanzata <i class="bi bi-search"></i></a>									
+					<a href="FindActivities.jsp" class="btn btn-filters" role="button">Ricerca avanzata <em class="bi bi-search"></em> </a>									
 				</div>
 				<div id="Map" class="homeMap"></div>
 			</div>
@@ -219,7 +219,7 @@
 				</div>
 				<div class="d-flex msg-bar">
 					<input type="text" class="form-control flex-grow-1" id="chatField" placeholder="scrivi qualcosa"> 
-					<button type="button" class="btn btn-outline-light send-btn disabled" id="send-btn" onclick="sendMsg()"> <i class="bi bi-send"></i> </button>
+					<button type="button" class="btn btn-outline-light send-btn disabled" id="send-btn" onclick="sendMsg()"> <em class="bi bi-send"></em>  </button>
 				</div>
 			</div>
 			

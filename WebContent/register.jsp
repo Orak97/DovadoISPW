@@ -68,7 +68,7 @@ if(request.getParameter("regForm")!= null){
     		</div>    		    
     		
     			<div class ="select-preferences">
-					<h4 class="text-center"><i class="bi bi-tags"></i> A quale categoria sei interessato? <i class="bi bi-tags"></i></h4>
+					<h4 class="text-center"><em class="bi bi-tags"></em>  A quale categoria sei interessato? <em class="bi bi-tags"></em> </h4>
 					<hr class="separator-places">
 					<div class="row">
 						<div class="col">

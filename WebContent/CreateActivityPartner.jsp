@@ -56,7 +56,7 @@
 		        			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      			</div>
 		      			<div class="modal-body">
-		        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><i class="bi bi-check-circle-fill"></i> <%}else{%> ><i class="bi bi-x-circle-fill"></i> <%} %></p>
+		        			<p class="delete-icon-schedule text-center" <%if(success){ %>style="color:#198754"><em class="bi bi-check-circle-fill"></em> <%}else{%> ><em class="bi bi-x-circle-fill"></em> <%} %></p>
 		        			<h5 class="text-center irreversible-process"><%= success ? "Visualizzala nella tua home!" : "C'è stato un errore nella reclamazione dell'attività"%></h5>
 		      			</div>
 		      			<div class="modal-footer">
@@ -191,7 +191,7 @@
 				  %>
 				  <div class="col">
 				    <div class="card h-100 scheduledActivityCards shadow" data-bs-toggle="modal" data-bs-target="#activityModal" data-bs-titolo="<%=curr.getName() %>" data-bs-luogo="<%=curr.getPlace().getName()%>" data-bs-id="<%=curr.getId() %>" data-bs-description="<%= curr.getDescription() %>" data-bs-playabilityInfo="<%= curr.getPlayabilityInfo()%>" data-bs-address="<%= curr.getPlace().getFormattedAddr()%>" <%if(isCertified){%> data-bs-certified="true" <%}%> data-bs-dismiss="modal">
-				      <% if(isCertified){ %><span class="badge bg-certified text-white position-absolute top-0 end-0 mt-4">Certificata <i class="bi bi-patch-check-fill"></i></span> <%}%>
+				      <% if(isCertified){ %><span class="badge bg-certified text-white position-absolute top-0 end-0 mt-4">Certificata <em class="bi bi-patch-check-fill"></em></span> <%}%>
 				      <img src="https://source.unsplash.com/random" class="card-img-top" alt="...">
 				      <div class="card-body">
 				        <h5 class="card-title"><%= curr.getName() %></h5>

@@ -7,6 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import javax.annotation.processing.FilerException;
+
 public class Log {
 	private static Log INSTANCE;
 	private static final String LOGLEVEL = "INFO"; //Qui alternare INFO o WARNING a seconda di ci� che si vuole intercettare
@@ -28,7 +30,9 @@ public class Log {
 		try {
 			File fileLog = new File(fileName);
 				if (!fileLog.exists()) {
-					fileLog.createNewFile();
+					if(!fileLog.createNewFile()) {
+						throw new FilerException("file non creato");
+					}
 				}
 		
 		

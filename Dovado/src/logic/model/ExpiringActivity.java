@@ -43,12 +43,12 @@ public class ExpiringActivity extends FrequencyOfRepeat {
 	}
 	
 	public String getFormattedStartDate() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		return startDate.format(formatter);
 	}
 	
 	public String getFormattedEndDate() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		return endDate.format(formatter);
 	}
 
