@@ -5,16 +5,12 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -25,6 +21,8 @@ import logic.model.Preferences;
 import logic.model.User;
 
 public class ProfileView extends SuperView implements Initializable{
+	private static final String TITLE = "Dovado - Profile";
+	private static final String FILEFXML = "Profile.fxml";
 
 	@FXML
 	private HBox emailHbox;
@@ -51,26 +49,7 @@ public class ProfileView extends SuperView implements Initializable{
 	private DAOPreferences daoPr;
 	
 	public static void render(Stage current) {
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
-			
-			curr=current;
-			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			current.setTitle("Dovado - events");
-			current.setScene(scene);
-			HBox profileView = FXMLLoader.load(Main.class.getResource("Profile.fxml"));
-			VBox.setVgrow(profileView, Priority.SOMETIMES);
-			
-			root.getChildren().addAll(navbar,profileView);
-			
-			current.show();	
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		SuperView.render(current, TITLE, FILEFXML, false, true);
 	}
 	
 	@Override

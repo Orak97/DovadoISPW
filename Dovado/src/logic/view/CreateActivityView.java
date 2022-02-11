@@ -10,10 +10,8 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -22,9 +20,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -131,7 +127,9 @@ public class CreateActivityView extends SuperView implements Initializable{
 	private ChoiceBox<String> regionBox;
 	
 	private static final  String[] CADENCEKEY = {"Weekly","Monthly","Annually"};
-
+	private static final String TITLE = "Dovado - events";
+	private static final String FILEFXML = "createActivity.fxml";
+	
 	private static ListView<Object> pList;
 	private static ListView<Object> aList;
 	private static ChoiceBox<String> typeBox;
@@ -186,27 +184,8 @@ public class CreateActivityView extends SuperView implements Initializable{
 	};
 		
 	public static void render(Stage current) {
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
-			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			current.setTitle("Dovado - events");
-			current.setScene(scene);
-			VBox createActivity = FXMLLoader.load(Main.class.getResource("createActivity.fxml"));
-			VBox.setVgrow(createActivity, Priority.SOMETIMES);
-			
-			curr=current;
-			
-			root.getChildren().addAll(navbar,createActivity);
-			
-			current.show();	
-		} catch(Exception e) {
-			e.printStackTrace();
+		SuperView.render(current, TITLE, FILEFXML,true, true);	
 		}
-	}
 	
 	@Override
 	public synchronized void initialize(URL arg0, ResourceBundle arg1) {

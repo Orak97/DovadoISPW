@@ -24,7 +24,9 @@ import logic.model.Log;
 import logic.model.RegExpBean;
 
 public class RegisterView extends SuperView implements Initializable{
-
+	private static final String TITLE = "Dovado - Register";
+	private static final String FILEFXML = "Register.fxml";
+	
     @FXML
     private TextField usrnameTField;
 
@@ -82,8 +84,10 @@ public class RegisterView extends SuperView implements Initializable{
 	
 	//------------------------ FINE PREFERENZE -----------------------------------------------------
 	
+	public static void render(Stage current) {
+		SuperView.render(current, TITLE, FILEFXML, true, false);
+	}
 	
-
     @FXML
     void login(ActionEvent event) {
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -145,26 +149,6 @@ public class RegisterView extends SuperView implements Initializable{
     	
     }
     
-    public static void render(Stage current) {
-		Stage primaryStage = current;
-
-		curr=current;
-		
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			primaryStage.setTitle("Dovado - Register");
-			primaryStage.setScene(scene);
-			VBox home = FXMLLoader.load(Main.class.getResource("Register.fxml"));
-			
-			root.getChildren().addAll(navbar,home);
-			primaryStage.show();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
 
     @Override
 	public void initialize(URL location, ResourceBundle resources) {

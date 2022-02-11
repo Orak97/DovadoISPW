@@ -24,6 +24,8 @@ import logic.model.RegPartnerBean;
 
 public class RegPartnerView extends SuperView implements Initializable{
 	
+	private static final String TITLE = "Dovado - PartnerRegister";
+	private static final String FILEFXML = "RegPartner.fxml";
 	
 	
     @FXML
@@ -65,7 +67,11 @@ public class RegPartnerView extends SuperView implements Initializable{
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
     	LoginView.render(current);
     }
-
+    
+    public static void render(Stage current) {
+		SuperView.render(current, TITLE, FILEFXML, true, false);
+	}
+    
     public void register() {
     	
     	String password = pswField.getText();
@@ -103,25 +109,7 @@ public class RegPartnerView extends SuperView implements Initializable{
     	
     }
     
-    public static void render(Stage current) {
-		Stage primaryStage = current;
-		curr=current;
-		
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			primaryStage.setTitle("Dovado - PartnerRegister");
-			primaryStage.setScene(scene);
-			VBox home = FXMLLoader.load(Main.class.getResource("RegPartner.fxml"));
-			
-			root.getChildren().addAll(navbar,home);
-			primaryStage.show();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
+    
 
     @Override
 	public void initialize(URL location, ResourceBundle resources) {

@@ -9,10 +9,8 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
@@ -23,10 +21,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -53,6 +49,9 @@ import logic.model.SuperUser;
 import logic.model.User;
 
 public class EventsView extends SuperView implements Initializable{
+	
+	private static final String TITLE = "Dovado - events";
+	private static final String FILEFXML = "events.fxml";
 	
 	private static final  String BTNSRCKEY = "src-btn";
 	private static final  String STYLEINFO = "textEventInfo";
@@ -92,26 +91,7 @@ public class EventsView extends SuperView implements Initializable{
     private Button searchBtn;
     
     public static void render(Stage current) {
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();			
-			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			current.setTitle("Dovado - events");
-			current.setScene(scene);
-			VBox eventSchedule = FXMLLoader.load(Main.class.getResource("events.fxml"));
-			VBox.setVgrow(eventSchedule, Priority.SOMETIMES);
-			
-			curr=current;
-
-			root.getChildren().addAll(navbar,eventSchedule);
-			
-			current.show();	
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		SuperView.render(current, TITLE, FILEFXML, true, true);
 	}
     
 	@Override

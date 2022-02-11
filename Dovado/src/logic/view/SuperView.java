@@ -1,6 +1,12 @@
 package logic.view;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -23,6 +29,39 @@ public abstract class SuperView {
 
 	protected static Stage curr;
 
+	
+	
+	
+	public static void render(Stage current,String title, String fileFXML, boolean isVertical, boolean isAuth) {
+		try {
+			VBox root = new VBox();
+			BorderPane navbar = Navbar.getNavbar();
+			
+			if(isAuth)Navbar.authenticatedSetup();
+			
+			curr=current;
+			
+			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
+			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
+			current.setTitle(title);
+			current.setScene(scene);
+			if(isVertical) {
+				VBox view = FXMLLoader.load(Main.class.getResource(fileFXML));
+				VBox.setVgrow(view, Priority.SOMETIMES);
+				root.getChildren().addAll(navbar,view);
+				
+			} else {
+				HBox view = FXMLLoader.load(Main.class.getResource(fileFXML));
+				VBox.setVgrow(view, Priority.SOMETIMES);
+				root.getChildren().addAll(navbar,view);
+			}
+			
+			
+			current.show();	
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public Popup popupGen(String error) {
 		return popupGen(WPOPUP, HPOPUP, error);

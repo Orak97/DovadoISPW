@@ -6,14 +6,10 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -46,6 +42,9 @@ public class SpotPlaceView extends SuperView implements Initializable{
 	@FXML
 	private ChoiceBox<String> region;
 
+	private static final String TITLE = "Dovado - Spot a place";
+	private static final String FILEFXML = "spotPlace.fxml";
+	
 	private TextField placeNameText;
 	private ChoiceBox<String> regionText;
 	private TextField cityText;
@@ -79,6 +78,10 @@ public class SpotPlaceView extends SuperView implements Initializable{
 			,"Valle d'Aosta"
 			,"Veneto"
 	};
+	
+	public static void render(Stage current) {
+		SuperView.render(current, TITLE, FILEFXML, true, true);
+	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -232,26 +235,5 @@ public class SpotPlaceView extends SuperView implements Initializable{
 	}
 
 	
-	public static void render(Stage current) {
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
-			
-			curr=current;
-			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			current.setTitle("Dovado - Spot a place");
-			current.setScene(scene);
-			VBox spotPlace = FXMLLoader.load(Main.class.getResource("spotPlace.fxml"));
-			VBox.setVgrow(spotPlace, Priority.SOMETIMES);
-			
-			root.getChildren().addAll(navbar,spotPlace);
-			
-			current.show();	
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
+	
 }

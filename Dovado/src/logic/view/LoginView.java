@@ -23,9 +23,8 @@ import logic.model.SuperUser;
 
 public class LoginView extends SuperView {
 	
-	private static long wErrPopup = 500;
-	private static long hErrPopup = 50;
-	
+	private static final String TITLE = "Dovado - login";
+	private static final String FILEFXML = "Login.fxml";
 
     @FXML
     private Button loginInput;
@@ -50,7 +49,12 @@ public class LoginView extends SuperView {
 
     @FXML
     private Label labelRegister;
-
+    
+    public static void render(Stage current) {
+		SuperView.render(current, TITLE, FILEFXML, true, false);
+	}
+    
+    
     @FXML
     void login(ActionEvent event) {
     	Log.getInstance().getLogger().info("Clicked login");
@@ -59,10 +63,8 @@ public class LoginView extends SuperView {
     	String email = username.getText();
     	if(passw.isEmpty() || email.isEmpty() ) {
 			Log.getInstance().getLogger().info("One of the fields is empty!");
-			final Popup popup = popupGen(wErrPopup,hErrPopup, "One of the fields is empty!");
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
+			popupGen( "One of the fields is empty!");
+		   
 			return;
 		}
     	if(radioPartner.isSelected()) {
@@ -75,10 +77,8 @@ public class LoginView extends SuperView {
     		user = logAppend(null,logExp);
 			Log.getInstance().getLogger().info("voglio accedere come explorer");
     	} else {
-    		final Popup popup = popupGen(wErrPopup,hErrPopup, "Select Partner or Explorer");
-		    
-		    popup.show(curr);
-		    popup.setAutoHide(true);
+    		popupGen("Select Partner or Explorer");
+		   
     	}
     	if (user != null) {
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -100,11 +100,7 @@ public class LoginView extends SuperView {
     		}
     		
 			if(user == null) {
-				final Popup popup = popupGen(wErrPopup,hErrPopup, "Wrong email or password");
-			    
-			    popup.show(curr);
-			    popup.setAutoHide(true);
-	    		
+				popupGen("Wrong email or password");
 				Log.getInstance().getLogger().info("Email o password incorrette.");
 				return user;
 			}
@@ -125,26 +121,6 @@ public class LoginView extends SuperView {
     	TotemView.render(current);
     }
     
-    public static void render(Stage current) {
-		Stage primaryStage = current;
-		
-		curr = current;
-		
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			primaryStage.setTitle("Dovado - login");
-			primaryStage.setScene(scene);
-			GridPane login = FXMLLoader.load(Main.class.getResource("Login.fxml"));
-			
-			root.getChildren().addAll(navbar,login);
-			primaryStage.show();
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		} 
-	}
+   
   	
 }

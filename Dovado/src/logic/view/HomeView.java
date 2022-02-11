@@ -14,10 +14,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
@@ -29,10 +27,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -63,18 +59,22 @@ import logic.model.SuperUser;
 import logic.model.User;
 
 public class HomeView extends SuperView implements Initializable{
-	private static final  String BGCOLORKEY = "ffffff";
-	private static final  String BGUCOLORKEY = "BC9416";
-	private static final  String MAPPATHKEY = "http://localhost:8080/Dovado/MapView.html";
-	private static final  String IMAGES = "https://source.unsplash.com/user/erondu/290x120";
-	private static final  String STYLEINFO = "textEventInfo";
-	private static final  String STYLENAME = "textEventName";
-	private static final  String EVENTINFO = "eventInfo";
-	private static final  String EVENTNAME = "eventName";
-	private static final  String CERTEVENTNAME = "certEventName";
-	private static final  String CLOSEDKEY = "CLOSED NOW";
-	private static final  String SPOTPLACESCRIPT = "spotPlace";
-	private static final  String CERTIFIED = "CERTIFICATA";
+	private static final String TITLE = "Dovado - home";
+	private static final String FILEFXML = "home.fxml";
+
+	
+	private static final  String BGCOLORKEY = "ffffff"; //$NON-NLS-1$
+	private static final  String BGUCOLORKEY = "BC9416"; //$NON-NLS-1$
+	private static final  String MAPPATHKEY = Messages.getString("HomeView.mapView"); //$NON-NLS-1$
+	private static final  String IMAGES = "https://source.unsplash.com/user/erondu/290x120"; //$NON-NLS-1$
+	private static final  String STYLEINFO = "textEventInfo"; //$NON-NLS-1$
+	private static final  String STYLENAME = "textEventName"; //$NON-NLS-1$
+	private static final  String EVENTINFO = "eventInfo"; //$NON-NLS-1$
+	private static final  String EVENTNAME = "eventName"; //$NON-NLS-1$
+	private static final  String CERTEVENTNAME = "certEventName"; //$NON-NLS-1$
+	private static final  String CLOSEDKEY = "CLOSED NOW"; //$NON-NLS-1$
+	private static final  String SPOTPLACESCRIPT = "spotPlace"; //$NON-NLS-1$
+	private static final  String CERTIFIED = "CERTIFICATA"; //$NON-NLS-1$
 
 	
 	private StackPane lastEventBoxSelected;
@@ -137,28 +137,9 @@ public class HomeView extends SuperView implements Initializable{
     
     //---------------------- INIZIO Metodo Initialize e relativi metodi di supporto ---------------------------
 	public static void render(Stage current) {
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Navbar.authenticatedSetup();
-			
-			
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			current.setTitle("Dovado - home");
-			current.setScene(scene);
-			VBox home = FXMLLoader.load(Main.class.getResource("home.fxml"));
-			VBox.setVgrow(home, Priority.SOMETIMES);
-		
-			root.getChildren().addAll(navbar,home);
-			curr=current;
-			
-			current.show();	
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		SuperView.render(current, TITLE, FILEFXML, true, true);
 	}
+	
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -167,10 +148,10 @@ public class HomeView extends SuperView implements Initializable{
 		
 		usrLat = 41.952928;
 		usrLon = 12.518342;
-        Log.getInstance().getLogger().info("Coordinate della posizione attuale: "+usrLat+" "+usrLon);
+        Log.getInstance().getLogger().info("Coordinate della posizione attuale: "+usrLat+" "+usrLon); //$NON-NLS-1$ //$NON-NLS-2$
 
         preference1.getStyleClass().add(BTNPREFKEY);
-        preference1.setText("By preferences");
+        preference1.setText("By preferences"); //$NON-NLS-1$
         
         new ArrayList<Activity>();
         new ArrayList<CertifiedActivity>();
@@ -191,10 +172,10 @@ public class HomeView extends SuperView implements Initializable{
     	        eng.load(MAPPATHKEY);
     			
     			// Setting permissions to interact with Js
-    	        searchButton.setText("SEARCH");
+    	        searchButton.setText("SEARCH"); //$NON-NLS-1$
     			searchButton.getStyleClass().add(BTNSRCKEY); 
-    			searchBar.setPromptText("Insert a 6 digit coupon code");    			
-    			sliderText.setText("You can validate any coupon up here\nor join a channel from your activities");
+    			searchBar.setPromptText("Insert a 6 digit coupon code");    			 //$NON-NLS-1$
+    			sliderText.setText("You can validate any coupon up here\nor join a channel from your activities"); //$NON-NLS-1$
     			
     			//Al partner non serve il distance selector, ne il filter by preference.
     			distanceSelected.setVisible(false);
@@ -215,7 +196,7 @@ public class HomeView extends SuperView implements Initializable{
 			}
     	}
     	else {
-	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		
+	    	Log.getInstance().getLogger().info("Ok \nWorking Directory = " + System.getProperty("user.dir"));		 //$NON-NLS-1$ //$NON-NLS-2$
 			try{
 				ArrayList<Activity> activities = new ArrayList<>();
 				activitiesToSpotUsr = activities;
@@ -226,9 +207,9 @@ public class HomeView extends SuperView implements Initializable{
 		        
 		        eng.load(MAPPATHKEY);
 		        
-		        searchButton.setText("SEARCH");
+		        searchButton.setText("SEARCH"); //$NON-NLS-1$
 				searchButton.getStyleClass().add(BTNSRCKEY);
-				searchBar.setPromptText("Search activities");
+				searchBar.setPromptText("Search activities"); //$NON-NLS-1$
 				int dist = (int) Math.round(distanceSelector.getMin());
 				distanceSelected.setText(Integer.toString(dist));
     			
@@ -238,12 +219,12 @@ public class HomeView extends SuperView implements Initializable{
 					public void handle(ActionEvent event) {
 						if(!searchByPreference) {
 							searchByPreference=true;
-							popupGen("Your searched activities will be filtered by preference!");
+							popupGen("Your searched activities will be filtered by preference!"); //$NON-NLS-1$
 							
 						}
 						else {
 							searchByPreference=false;
-							popupGen("Your searched activities will not be filtered by preference!");
+							popupGen("Your searched activities will not be filtered by preference!"); //$NON-NLS-1$
 						}
 						
 					}
@@ -277,7 +258,7 @@ public class HomeView extends SuperView implements Initializable{
 			
 		} else {
 			StackPane infoBox = new StackPane();
-			Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!");
+			Text noPrefs = new Text("You have not set"+'\n'+"any preferences yet!"); //$NON-NLS-1$ //$NON-NLS-2$
 			noPrefs.setTextAlignment(TextAlignment.CENTER);
 			
 			infoBox.getChildren().add(noPrefs);
@@ -291,7 +272,7 @@ public class HomeView extends SuperView implements Initializable{
 		Thread newThread = new Thread(() -> {
 			int j;
 			for(j=0;j<activitiesPartn.size();j++)
-				Log.getInstance().getLogger().info("tutte le attivit� "+((SuperActivity)activitiesPartn.get(j)).getId());
+				Log.getInstance().getLogger().info("tutte le attivit� "+((SuperActivity)activitiesPartn.get(j)).getId()); //$NON-NLS-1$
 			
 			int i;
 			for(i=0;i<activitiesPartn.size();i++) {
@@ -299,10 +280,10 @@ public class HomeView extends SuperView implements Initializable{
 					continue;
 				}
 				Text eventInfo = new Text(((SuperActivity)activitiesPartn.get(i)).getPlace().getName()+
-						"\n"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getOpeningTime()+
-						"-"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getClosingTime());
-				Text eventName = new Text(((SuperActivity)activitiesPartn.get(i)).getName()+"\n");
-				Log.getInstance().getLogger().info("\n\n"+((SuperActivity)activitiesPartn.get(i)).getName()+"\n\n");
+						"\n"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getOpeningTime()+ //$NON-NLS-1$
+						"-"+((SuperActivity)activitiesPartn.get(i)).getFrequency().getClosingTime()); //$NON-NLS-1$
+				Text eventName = new Text(((SuperActivity)activitiesPartn.get(i)).getName()+"\n"); //$NON-NLS-1$
+				Log.getInstance().getLogger().info("\n\n"+((SuperActivity)activitiesPartn.get(i)).getName()+"\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				
 				StackPane eventBox = setView(eventInfo, eventName, true , i, null, activitiesPartn);
@@ -321,7 +302,7 @@ public class HomeView extends SuperView implements Initializable{
 		
 		int j;
 		for(j=0;j<activities.size();j++)
-			Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId());
+			Log.getInstance().getLogger().info("tutte le attivit� "+activities.get(j).getId()); //$NON-NLS-1$
 		
 		Thread newThread = new Thread(() -> {
 			int i;
@@ -333,26 +314,26 @@ public class HomeView extends SuperView implements Initializable{
 
 				if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
 					eventInfo = new Text(activities.get(i).getPlace().getName()+
-							"\n Expiring activity"+
-							"\n"+activities.get(i).getFrequency().getOpeningTime()+
-							"-"+activities.get(i).getFrequency().getClosingTime());
+							"\n Expiring activity"+ //$NON-NLS-1$
+							"\n"+activities.get(i).getFrequency().getOpeningTime()+ //$NON-NLS-1$
+							"-"+activities.get(i).getFrequency().getClosingTime()); //$NON-NLS-1$
 				}
 				else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
 					eventInfo = new Text(activities.get(i).getPlace().getName()+
-							"\n Periodic activity"+
-							"\n"+activities.get(i).getFrequency().getOpeningTime()+
-							"-"+activities.get(i).getFrequency().getClosingTime());
+							"\n Periodic activity"+ //$NON-NLS-1$
+							"\n"+activities.get(i).getFrequency().getOpeningTime()+ //$NON-NLS-1$
+							"-"+activities.get(i).getFrequency().getClosingTime()); //$NON-NLS-1$
 				}
 				else{
 					eventInfo = new Text(activities.get(i).getPlace().getName()+
-						"\n Continuos activity"+
-						"\n"+activities.get(i).getFrequency().getOpeningTime()+
-						"-"+activities.get(i).getFrequency().getClosingTime());
+						"\n Continuos activity"+ //$NON-NLS-1$
+						"\n"+activities.get(i).getFrequency().getOpeningTime()+ //$NON-NLS-1$
+						"-"+activities.get(i).getFrequency().getClosingTime()); //$NON-NLS-1$
 				}
 				
 				
-				Text eventName = new Text(activities.get(i).getName()+"\n");
-				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+				Text eventName = new Text(activities.get(i).getName()+"\n"); //$NON-NLS-1$
+				Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				StackPane eventBox = setView(eventInfo, eventName, false, i, activities, null);
 				
@@ -369,7 +350,7 @@ public class HomeView extends SuperView implements Initializable{
 		
 		ImageView eventImage = new ImageView();
 		eventImage.setImage(new Image(IMAGES));
-		eventImage.getStyleClass().add("event-image");
+		eventImage.getStyleClass().add("event-image"); //$NON-NLS-1$
 		
 		eventInfo.setId(EVENTINFO);
 		eventInfo.getStyleClass().add(STYLEINFO);
@@ -381,11 +362,11 @@ public class HomeView extends SuperView implements Initializable{
 
 		VBox eventText = new VBox(eventName,eventInfo);
 		eventText.setAlignment(Pos.CENTER_LEFT);
-		eventText.getStyleClass().add("eventTextVbox");
+		eventText.getStyleClass().add("eventTextVbox"); //$NON-NLS-1$
 		//Preparo un box in cui contenere il nome dell'attivit� e altre sue
 		//informazioni; uso uno StackPane per poter mettere scritte su immagini.
 		StackPane eventBox = new StackPane();
-		eventBox.getStyleClass().add("eventBox");
+		eventBox.getStyleClass().add("eventBox"); //$NON-NLS-1$
 		
 		Text eventId = new Text();
 		Text placeId = new Text();
@@ -472,12 +453,12 @@ public class HomeView extends SuperView implements Initializable{
 		if(user instanceof User) {
 			if(lastEventBoxSelected==null) {
 				engExecActSel();
-				eng.executeScript("setUser("+usrLat+","+usrLon+")");	
+				eng.executeScript("setUser("+usrLat+","+usrLon+")");	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		else {
 			for(CertifiedActivity cAct:activitiesToSpotPart) {
-				eng.executeScript("spotPlace("+cAct.getPlace().getLatitudine()+","+cAct.getPlace().getLongitudine()+", \""+cAct.getPlace().getName()+"\","+cAct.getPlace().getId()+")");
+				eng.executeScript("spotPlace("+cAct.getPlace().getLatitudine()+","+cAct.getPlace().getLongitudine()+", \""+cAct.getPlace().getName()+"\","+cAct.getPlace().getId()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			}	
 		}
 		Log.getInstance().getLogger().info(String.valueOf(lastActivitySelected));
@@ -500,15 +481,15 @@ public class HomeView extends SuperView implements Initializable{
 		Text eventName = (Text) eventInfo.getChildren().get(0);
 		Text eventDetails = (Text) eventInfo.getChildren().get(1);
 		
-		Log.getInstance().getLogger().info(eventName+" "+eventDetails);
+		Log.getInstance().getLogger().info(eventName+" "+eventDetails); //$NON-NLS-1$
 		
 		Text activityDescription= new Text();
 		VBox selection = new VBox();
 		Button viewOnMap = new Button();
 		Button joinActivityChannel = new Button();
 		
-		viewOnMap.setText("View event");
-		joinActivityChannel.setText("Join channel");
+		viewOnMap.setText("View event"); //$NON-NLS-1$
+		joinActivityChannel.setText("Join channel"); //$NON-NLS-1$
 		
 		viewOnMap.getStyleClass().add(BTNEVNKEY);
 		joinActivityChannel.getStyleClass().add(BTNEVNKEY);
@@ -525,34 +506,34 @@ public class HomeView extends SuperView implements Initializable{
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		} 
-		Log.getInstance().getLogger().info("Attivit� trovata: "+activitySelected);
+		Log.getInstance().getLogger().info("Attivit� trovata: "+activitySelected); //$NON-NLS-1$
 
 		if(activitySelected.getFrequency() instanceof PeriodicActivity) {
-			activityDescription.setText("A periodic activity with a: "+
+			activityDescription.setText("A periodic activity with a: "+ //$NON-NLS-1$
 		((PeriodicActivity)(activitySelected.getFrequency())).getCadence().toString()+
-			" cadence\n\nOpen from the date:\n"+((PeriodicActivity)(activitySelected.getFrequency())).getFormattedStartDate()+
-			"\nTo the date:\n"+((PeriodicActivity)(activitySelected.getFrequency())).getFormattedEndDate()+"\n\n");
+			" cadence\n\nOpen from the date:\n"+((PeriodicActivity)(activitySelected.getFrequency())).getFormattedStartDate()+ //$NON-NLS-1$
+			"\nTo the date:\n"+((PeriodicActivity)(activitySelected.getFrequency())).getFormattedEndDate()+"\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription());
+			activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription()); //$NON-NLS-1$
 		} 
 		else if(activitySelected.getFrequency() instanceof ExpiringActivity) {
-				activityDescription.setText("An expiring activity that goes from the date:\n"+
+				activityDescription.setText("An expiring activity that goes from the date:\n"+ //$NON-NLS-1$
 						((ExpiringActivity)(activitySelected.getFrequency())).getFormattedStartDate()+
-				"\nTo the date:\n"+((ExpiringActivity)(activitySelected.getFrequency())).getFormattedEndDate()+"\n\n");
+				"\nTo the date:\n"+((ExpiringActivity)(activitySelected.getFrequency())).getFormattedEndDate()+"\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-				activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription());
+				activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription()); //$NON-NLS-1$
 		}
 		else {
 			activityDescription.setText(activitySelected.getDescription());
 		}
 		activityDescription.setWrappingWidth(280);
-		activityDescription.getStyleClass().add("actInfo");
+		activityDescription.getStyleClass().add("actInfo"); //$NON-NLS-1$
 		
 		selection.getChildren().add(0,activityDescription);
 		
 		viewOnMap.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-					eng.executeScript("moveViewDesktop("+activitySelected.getPlace().getLatitudine()+","+activitySelected.getPlace().getLongitudine()+","+activitySelected.getId()+")");	
+					eng.executeScript("moveViewDesktop("+activitySelected.getPlace().getLatitudine()+","+activitySelected.getPlace().getLongitudine()+","+activitySelected.getId()+")");	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 		});
 		
@@ -564,7 +545,7 @@ public class HomeView extends SuperView implements Initializable{
 		
 		if(user instanceof User) {
 			Button playActivity = new Button();
-			playActivity.setText("Play activity");
+			playActivity.setText("Play activity"); //$NON-NLS-1$
 			playActivity.getStyleClass().add(BTNEVNKEY);
 			
 			selection.getChildren().add(playActivity);
@@ -578,7 +559,7 @@ public class HomeView extends SuperView implements Initializable{
 		}
 		else {
 			Button deleteActivity = new Button();
-			deleteActivity.setText("Delete activity");
+			deleteActivity.setText("Delete activity"); //$NON-NLS-1$
 			deleteActivity.getStyleClass().add(BTNEVNKEY);
 			
 			selection.getChildren().add(deleteActivity);
@@ -586,9 +567,9 @@ public class HomeView extends SuperView implements Initializable{
 			deleteActivity.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					popupGen("Activity deleted correctly!"); 
+					popupGen("Activity deleted correctly!");  //$NON-NLS-1$
 					    
-					Log.getInstance().getLogger().info("Attivit\u00E0 cancellata dalla persistenza");
+					Log.getInstance().getLogger().info("Attivit\u00E0 cancellata dalla persistenza"); //$NON-NLS-1$
 					activityDeselected(lastEventBoxSelected,true);
 				}
 			});
@@ -599,18 +580,18 @@ public class HomeView extends SuperView implements Initializable{
 	
 	private void engExecActSel() {
 		for(Activity current:activitiesToSpotUsr) {
-			eng.executeScript(SPOTPLACESCRIPT+"("
-				+ ""+(current.getPlace().getLatitudine())+""
-				+ ","+(current.getPlace().getLongitudine())+", "
-				+ "\""+current.getPlace().getName()+"\","
-				+ ""+(current.getPlace().getId())+")");
+			eng.executeScript(SPOTPLACESCRIPT+"(" //$NON-NLS-1$
+				+ ""+(current.getPlace().getLatitudine())+"" //$NON-NLS-1$ //$NON-NLS-2$
+				+ ","+(current.getPlace().getLongitudine())+", " //$NON-NLS-1$ //$NON-NLS-2$
+				+ "\""+current.getPlace().getName()+"\"," //$NON-NLS-1$ //$NON-NLS-2$
+				+ ""+(current.getPlace().getId())+")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	
 	private void handleJoinChActUp() {
 
-		if(root.getChildren().get(root.getChildren().size()-1).getId()=="activityCh") {
+		if(root.getChildren().get(root.getChildren().size()-1).getId()=="activityCh") { //$NON-NLS-1$
 			return;
 		}
 	//Cliccato il pulsante si deve aprire una chat e comparire 
@@ -627,8 +608,8 @@ public class HomeView extends SuperView implements Initializable{
 		
 		send.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				Log.getInstance().getLogger().info("\n\nInviando un messaggio...\n");
-				Log.getInstance().getLogger().info("\nMessaggi prima dell'invio:\n");
+				Log.getInstance().getLogger().info("\n\nInviando un messaggio...\n"); //$NON-NLS-1$
+				Log.getInstance().getLogger().info("\nMessaggi prima dell'invio:\n"); //$NON-NLS-1$
 				for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
 					Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
 				}
@@ -638,13 +619,13 @@ public class HomeView extends SuperView implements Initializable{
 				try {
 					c.sendMessage(mss.getText());
 				} catch (ClassNotFoundException | SQLException e1) {
-					popupGen("Message not sent due to DB error");
+					popupGen("Message not sent due to DB error"); //$NON-NLS-1$
 				
 					
 					e1.printStackTrace();
 					return;
 				}
-				Log.getInstance().getLogger().info("\nMessaggi dopo l'invio:\n");
+				Log.getInstance().getLogger().info("\nMessaggi dopo l'invio:\n"); //$NON-NLS-1$
 
 				for(int j=0;j<activitySelected.getChannel().getChat().size();j++) {
 					Log.getInstance().getLogger().info(activitySelected.getChannel().getChat().get(j).getMsgText());
@@ -654,17 +635,17 @@ public class HomeView extends SuperView implements Initializable{
 			}
 		});
 		
-		send.setText("Send");
+		send.setText("Send"); //$NON-NLS-1$
 		send.getStyleClass().add(BTNSRCKEY);
 		
-		close.setText("x");
+		close.setText("x"); //$NON-NLS-1$
 		close.getStyleClass().add(BTNSRCKEY);					
 		close.setAlignment(Pos.TOP_RIGHT);
 		
 		textAndSend.getChildren().addAll(mss,send);
 		chatContainer.getChildren().addAll(close,chat,textAndSend);
 		chatContainer.setAlignment(Pos.BOTTOM_RIGHT);
-		chatContainer.setId("activityCh");
+		chatContainer.setId("activityCh"); //$NON-NLS-1$
 		root.getChildren().add(chatContainer);
 		Timer chatRefreshTimer = new Timer();
 		
@@ -679,7 +660,7 @@ public class HomeView extends SuperView implements Initializable{
 		chatRefreshTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				Platform.runLater(()->{Log.getInstance().getLogger().info("Refreshing messages...");updateChat(chat,activitySelected.getChannel());});
+				Platform.runLater(()->{Log.getInstance().getLogger().info("Refreshing messages...");updateChat(chat,activitySelected.getChannel());}); //$NON-NLS-1$
 			}
 			
 		},0, 10000);
@@ -691,7 +672,7 @@ public class HomeView extends SuperView implements Initializable{
 
 		VBox selectedBox = (VBox)eventsList.getItems().get(lastActivitySelected+1);			
 		
-		if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") {
+		if(selectedBox.getChildren().get(selectedBox.getChildren().size()-1).getId()=="dateBox") { //$NON-NLS-1$
 			return;
 		}
 		//Apro un pop up in cui si può scegliere una
@@ -739,20 +720,20 @@ public class HomeView extends SuperView implements Initializable{
 			}
 		});
 		
-		Text txt = new Text("Select date");
+		Text txt = new Text("Select date"); //$NON-NLS-1$
 		Button ok = new Button();
 		Button close = new Button();
 		
 		VBox dateBox = new VBox();
-		ok.setText("Ok");
+		ok.setText("Ok"); //$NON-NLS-1$
 		ok.getStyleClass().add(BTNSRCKEY);
 		
 		HBox buttonBox = new HBox();
 		HBox pickTimeBox = new HBox();
 		HBox pickReminderBox = new HBox();
 		
-		Text txtTime = new Text("Select scheduled time!");
-		Text txtReminder = new Text("|OPTIONAL|"+'\n'+"Select a time reminder"+'\n'+"for the day scheduled or specify the"+'\n'+"day we should remind you.");
+		Text txtTime = new Text("Select scheduled time!"); //$NON-NLS-1$
+		Text txtReminder = new Text("|OPTIONAL|"+'\n'+"Select a time reminder"+'\n'+"for the day scheduled or specify the"+'\n'+"day we should remind you."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		
 		buttonBox.getChildren().addAll(close,ok);
 		
@@ -760,14 +741,14 @@ public class HomeView extends SuperView implements Initializable{
 		BackgroundFill bf = new BackgroundFill(Paint.valueOf(BGCOLORKEY), cr, null);
 		Background b = new Background(bf);
 		
-		txt.getStyleClass().add("msstxt");
+		txt.getStyleClass().add("msstxt"); //$NON-NLS-1$
 		
 		pickReminderBox.getChildren().addAll(hourBox2,minBox2);
 		pickTimeBox.getChildren().addAll(hourBox,minBox);
 		
 		dateBox.setBackground(b);
 		dateBox.getChildren().addAll(txt,pickDate,txtTime,pickTimeBox,txtReminder,pickDateReminder,pickReminderBox);
-		dateBox.setId("dateBox");
+		dateBox.setId("dateBox"); //$NON-NLS-1$
 		
 		ChoiceBox<String> percDiscount = new ChoiceBox<>();
 		
@@ -778,30 +759,30 @@ public class HomeView extends SuperView implements Initializable{
 				
 				ArrayList<Discount> discList = (ArrayList<Discount>) daoAct.viewDiscounts(activityId);
 				if (discList==null || discList.isEmpty()) {
-					discountDescription = new Text("No discount available"+'\n'+" for this activity.");
+					discountDescription = new Text("No discount available"+'\n'+" for this activity."); //$NON-NLS-1$ //$NON-NLS-2$
 				}else {
-					discountDescription = new Text("Pick a discount if you want.");
+					discountDescription = new Text("Pick a discount if you want."); //$NON-NLS-1$
 				}
-				percDiscount.getItems().add("0% - 0$");
+				percDiscount.getItems().add("0% - 0$"); //$NON-NLS-1$
 				for(int i=0;i<discList.size();i++) {
-					percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"$");
+					percDiscount.getItems().add(Integer.toString(discList.get(i).getPercentuale())+"% - "+Integer.toString(discList.get(i).getPrice())+"$"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				dateBox.getChildren().addAll(activityPrice,discountDescription,percDiscount);		
-				percDiscount.setValue("0% - 0$");
+				percDiscount.setValue("0% - 0$"); //$NON-NLS-1$
 			
 			}catch(NullPointerException exc){
-				Log.getInstance().getLogger().info("discList.file() ha fatto partire il null");
+				Log.getInstance().getLogger().info("discList.file() ha fatto partire il null"); //$NON-NLS-1$
 				exc.printStackTrace();
 			}
 			catch(Exception e2) {
-				Log.getInstance().getLogger().info("Database error, discounts not found.");
+				Log.getInstance().getLogger().info("Database error, discounts not found."); //$NON-NLS-1$
 				e2.printStackTrace();
 			}
 		}
 		dateBox.getChildren().add(buttonBox);
 		selectedBox.getChildren().add(dateBox);
 		
-		close.setText("Close");
+		close.setText("Close"); //$NON-NLS-1$
 		close.getStyleClass().add(BTNSRCKEY);					
 		
 		close.setOnAction(new EventHandler<ActionEvent>(){
@@ -880,7 +861,7 @@ public class HomeView extends SuperView implements Initializable{
 	}
 	private String minCheckHandleHour(String min, int j) {
 		if(j<10) {
-			min = "0"+min;
+			min = "0"+min; //$NON-NLS-1$
 		}
 		return min;
 		
@@ -889,14 +870,14 @@ public class HomeView extends SuperView implements Initializable{
 	private void handle2Ok(DatePicker pickDate,DatePicker pickDateReminder, VBox dateBox, ChoiceBox<String> percDiscount, Long activityId) {
 
 		if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
-			Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche.");
-			popupGen("You haven't specified enough info."); 
+			Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche."); //$NON-NLS-1$
+			popupGen("You haven't specified enough info.");  //$NON-NLS-1$
 		
 		}
-	    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd"); //$NON-NLS-1$
 		String dayStringed = day.format(pickDate.getValue());
 																		
-		dayStringed.split("-");
+		dayStringed.split("-"); //$NON-NLS-1$
 		
 		String hourChosen = hourBox.getValue();
 		String minChosen = minBox.getValue();
@@ -906,21 +887,21 @@ public class HomeView extends SuperView implements Initializable{
 			int hourReminderInt = Integer.parseInt(hourChosen);
 			hourReminder = Integer.toString(hourReminderInt-1);
 	
-			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");
-			popupGen("You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
+			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione"); //$NON-NLS-1$
+			popupGen("You haven't specified a time for your reminder... setting to 1 hour before the scheduled event");  //$NON-NLS-1$
 			
 			
 			if(hourReminderInt-1<10) {
-				hourReminder = "0"+hourReminder;
+				hourReminder = "0"+hourReminder; //$NON-NLS-1$
 			}
 		} else {
 			hourReminder = hourBox2.getValue();
 			minBox2.getValue();
 		}
 		if(pickDateReminder.getValue().toString().isBlank()) {
-			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
+			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione"); //$NON-NLS-1$
 			dateReminderChosen=dayStringed;
-			popupGen("You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
+			popupGen("You haven't specified a day for your reminder... setting to 1 day before the scheduled event");  //$NON-NLS-1$
 			
 		} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
 		String dateChosen = dayStringed;
@@ -928,15 +909,15 @@ public class HomeView extends SuperView implements Initializable{
 		ScheduleBean sb = new ScheduleBean();
 		
 		if(dateBox.getChildren().contains(percDiscount)) {
-			String[] percPrice = percDiscount.getValue().split("% - ");
+			String[] percPrice = percDiscount.getValue().split("% - "); //$NON-NLS-1$
 			int percRequested = Integer.parseInt(percPrice[0]);
 			
-			String priceString = (percPrice[1].split("$"))[0];
+			String priceString = (percPrice[1].split("$"))[0]; //$NON-NLS-1$
 			int pricePayed = Integer.parseInt(priceString);
 			
 			if(pricePayed > ((User)user).getBalance()) {
-				Log.getInstance().getLogger().info("Not enough dovado $ for payment");
-				popupGen("Not enough Dovado $ for payment"); 
+				Log.getInstance().getLogger().info("Not enough dovado $ for payment"); //$NON-NLS-1$
+				popupGen("Not enough Dovado $ for payment");  //$NON-NLS-1$
 			
 				return;
 			} else {
@@ -954,7 +935,7 @@ public class HomeView extends SuperView implements Initializable{
 		
 		checkActivity(sc);
 		
-		popupGen("Activity successfully scheduled"); 
+		popupGen("Activity successfully scheduled");  //$NON-NLS-1$
 	}
 	
 	private void checkActivity(AddActivityToScheduleController sc) {
@@ -980,7 +961,7 @@ public class HomeView extends SuperView implements Initializable{
 		try {
 			ch = daoCH.getChannel(ch.getActivityReferenced());
 		} catch (ClassNotFoundException | SQLException e) {
-			popupGen("Unable to get chat.");
+			popupGen("Unable to get chat."); //$NON-NLS-1$
 			
 			e.printStackTrace();
 			return;
@@ -1007,9 +988,9 @@ public class HomeView extends SuperView implements Initializable{
 			msstxt.setTextAlignment(TextAlignment.LEFT);
 			dateSent.setTextAlignment(TextAlignment.RIGHT);
 			
-			username.getStyleClass().add("mssusr");
-			msstxt.getStyleClass().add("msstxt");
-			dateSent.getStyleClass().add("msssent");
+			username.getStyleClass().add("mssusr"); //$NON-NLS-1$
+			msstxt.getStyleClass().add("msstxt"); //$NON-NLS-1$
+			dateSent.getStyleClass().add("msssent"); //$NON-NLS-1$
 			
 			chatChContainer.getChildren().addAll(username,msstxt,dateSent);
 			chatChContainer.setMaxWidth(root.getWidth()/2);
@@ -1017,7 +998,7 @@ public class HomeView extends SuperView implements Initializable{
 			chatMss.getChildren().add(chatChContainer);
 			chatMss.autosize();
 			
-			Log.getInstance().getLogger().info("Messaggi ricevuti: "+chatMss);
+			Log.getInstance().getLogger().info("Messaggi ricevuti: "+chatMss); //$NON-NLS-1$
 			
 			if(user.getUsername().equals(usernameMss)) {
 				CornerRadii cr = new CornerRadii(8);
@@ -1074,7 +1055,7 @@ public class HomeView extends SuperView implements Initializable{
 		if(Navbar.getUser() instanceof Partner) {
 			filterActPartner();
 		} else {
-			searchBar.setPromptText("Search activities");
+			searchBar.setPromptText("Search activities"); //$NON-NLS-1$
 		}
 		
 		lastActivitySelected = -1;
@@ -1083,8 +1064,8 @@ public class HomeView extends SuperView implements Initializable{
 		ArrayList<Activity> activities = null;
 		if((searchItem = searchBar.getText())==null) return; 
 
-		eng.executeScript("removeAllMarkers()");
-		String[] keywords = searchItem.split(";");
+		eng.executeScript("removeAllMarkers()"); //$NON-NLS-1$
+		String[] keywords = searchItem.split(";"); //$NON-NLS-1$
 		
 		try {
 			//Eseguo un controllo sulla ricerca delle attività; se il risultato è un'arraylist vuoto, allora
@@ -1095,13 +1076,13 @@ public class HomeView extends SuperView implements Initializable{
 			}
 			activities = (ArrayList<Activity>) FindActivityController.filterActivitiesByKeyWords(activities, keywords);
 			if(activities.isEmpty() ) {
-				Log.getInstance().getLogger().info("Nothing was found!");
-				popupGen("Nothing has been found"); 
+				Log.getInstance().getLogger().info("Nothing was found!"); //$NON-NLS-1$
+				popupGen("Nothing has been found");  //$NON-NLS-1$
 				return;
 			}
 			
 		} catch (Exception e) {
-			Log.getInstance().getLogger().info("La ricerca delle attivita non \u00E8 andata a buon fine. \n per colpa di un errore nel metodo del DB.");
+			Log.getInstance().getLogger().info("La ricerca delle attivita non \u00E8 andata a buon fine. \n per colpa di un errore nel metodo del DB."); //$NON-NLS-1$
 			e.printStackTrace();
 			return;
 		}
@@ -1118,14 +1099,14 @@ public class HomeView extends SuperView implements Initializable{
 		try {
 		couponCode = Integer.parseInt(searchBar.getText());
 		} catch(NumberFormatException ne) {
-			popupGen("Insert a 6 digit NUMBER");
+			popupGen("Insert a 6 digit NUMBER"); //$NON-NLS-1$
 			
 		    return;
 		}
 		try{ 
 			//Con il metodo sottostante mi assicuro della presenza del coupon.
 			if((DAOCoupon.getInstance().findCouponPartner(couponCode))==null) {
-				popupGen("No such coupon found!");
+				popupGen("No such coupon found!"); //$NON-NLS-1$
 			    return;
 			}
 			//Una volta trovato eseguo il codice necessario a redimerlo.
@@ -1134,15 +1115,15 @@ public class HomeView extends SuperView implements Initializable{
 		} 
 		catch(Exception e){
 			//Si cattura un'eccezione se trovata e si avverte l'utente				
-			popupGen("Due to an issue the coupon was not redeemed.");
+			popupGen("Due to an issue the coupon was not redeemed."); //$NON-NLS-1$
 			
 		    e.printStackTrace();
 		    return;
 		}
-		popupGen("Coupon redeemed correctly");
+		popupGen("Coupon redeemed correctly"); //$NON-NLS-1$
 
-	    searchBar.setText("");
-	    searchBar.setPromptText("Insert a 6 digit coupon code");
+	    searchBar.setText(""); //$NON-NLS-1$
+	    searchBar.setPromptText("Insert a 6 digit coupon code"); //$NON-NLS-1$
 	}
 	
 	private void filterActUserSupport(ArrayList<Activity> activities, int i) {
@@ -1152,32 +1133,32 @@ public class HomeView extends SuperView implements Initializable{
 		}
 		
 		
-		Text eventName = new Text(activities.get(i).getName()+"\n");
-		Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n");
+		Text eventName = new Text(activities.get(i).getName()+"\n"); //$NON-NLS-1$
+		Log.getInstance().getLogger().info("\n\n"+activities.get(i).getName()+"\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		Text eventInfo;
 
 		if(activities.get(i).getFrequency() instanceof ExpiringActivity) {
 			eventInfo = new Text(activities.get(i).getPlace().getName()+
-					"\nExpiring activity"+
-					"\n"+activities.get(i).getFrequency().getOpeningTime()+
-					"-"+activities.get(i).getFrequency().getClosingTime());
+					"\nExpiring activity"+ //$NON-NLS-1$
+					"\n"+activities.get(i).getFrequency().getOpeningTime()+ //$NON-NLS-1$
+					"-"+activities.get(i).getFrequency().getClosingTime()); //$NON-NLS-1$
 		}
 		else if(activities.get(i).getFrequency() instanceof PeriodicActivity) {
 			eventInfo = new Text(activities.get(i).getPlace().getName()+
-					"\nPeriodic activity"+
-					"\n"+activities.get(i).getFrequency().getOpeningTime()+
-					"-"+activities.get(i).getFrequency().getClosingTime());
+					"\nPeriodic activity"+ //$NON-NLS-1$
+					"\n"+activities.get(i).getFrequency().getOpeningTime()+ //$NON-NLS-1$
+					"-"+activities.get(i).getFrequency().getClosingTime()); //$NON-NLS-1$
 		}
 		else{
 			eventInfo = new Text(activities.get(i).getPlace().getName()+
-				"\n Continuos activity"+
-				"\n"+activities.get(i).getFrequency().getOpeningTime()+
-				"-"+activities.get(i).getFrequency().getClosingTime());
+				"\n Continuos activity"+ //$NON-NLS-1$
+				"\n"+activities.get(i).getFrequency().getOpeningTime()+ //$NON-NLS-1$
+				"-"+activities.get(i).getFrequency().getClosingTime()); //$NON-NLS-1$
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////
 			StackPane eventBox = setView(eventInfo, eventName, false, i, activities, null);
 			
-		eng.executeScript(SPOTPLACESCRIPT+"("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")");
+		eng.executeScript(SPOTPLACESCRIPT+"("+activities.get(i).getPlace().getLatitudine()+","+activities.get(i).getPlace().getLongitudine()+", \""+activities.get(i).getPlace().getName()+"\","+activities.get(i).getPlace().getId()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		eventsList.getItems().add(eventBox);
 	}
 }

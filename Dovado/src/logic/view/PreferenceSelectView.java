@@ -18,12 +18,15 @@ import logic.model.Preferences;
 import logic.model.User;
 
 public class PreferenceSelectView extends SuperView implements Initializable{
-
+	
 	@FXML
 	private Button continueBtn;
 
 	@FXML
 	private HBox prefHBox;
+	
+	private static final String TITLE = "Dovado - Select preferences";
+	private static final String FILEFXML = "PreferenceSelect.fxml";
 	
 	private Preferences preferences;
 	private boolean[] preferencesChosen;
@@ -63,24 +66,7 @@ public class PreferenceSelectView extends SuperView implements Initializable{
 	}
 
 	public static void render(Stage current) {
-		Stage primaryStage = current;
-
-		curr=current;
-		
-		try {
-			VBox root = new VBox();
-			BorderPane navbar = Navbar.getNavbar();
-			Scene scene = new Scene(root,Navbar.getWidth(),Navbar.getHeight());
-			scene.getStylesheets().add(Main.class.getResource("Dovado.css").toExternalForm());
-			primaryStage.setTitle("Dovado - Select preferences");
-			primaryStage.setScene(scene);
-			VBox home = FXMLLoader.load(Main.class.getResource("PreferenceSelect.fxml"));
-			
-			root.getChildren().addAll(navbar,home);
-			primaryStage.show();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		SuperView.render(current, TITLE, FILEFXML, true, true);
 	}
 	
 }
