@@ -56,7 +56,7 @@ import logic.model.Preferences;
 import logic.model.SpotPlaceBean;
 import logic.model.SuperActivity;
 
-public class CreateActivityView implements Initializable{
+public class CreateActivityView extends SuperView implements Initializable{
 
 	@FXML
 	private Button createActBtn;
@@ -151,7 +151,6 @@ public class CreateActivityView implements Initializable{
 	private static DatePicker sDate2;
 	private static DatePicker eDate2;
 	private static TextField actNameField;
-	private static Stage curr;
 	private static VBox rt;
 	private DAOPlace daoPl;
 	private static Place placeSelected;
@@ -167,6 +166,9 @@ public class CreateActivityView implements Initializable{
 	private static TextField actDescriptionText;
 	private static long wPopup = 500;
 	private static long hPopup = 50;
+	private static final String COLORSTROKE = "000000";
+	private static final String PLINFOKEY = "placeInfo";
+	private static final String PLNAMEKEY = "placeName";
 	private static final String BGCOLORKEY = "ffffff";
 	private static final  String[] REGIONSKEY = {
 			"Abruzzo"
@@ -217,8 +219,8 @@ public class CreateActivityView implements Initializable{
 	@Override
 	public synchronized void initialize(URL arg0, ResourceBundle arg1) {
 
-		createActBtn.getStyleClass().add("src-btn");
-		searchBtn.getStyleClass().add("src-btn");
+		createActBtn.getStyleClass().add(BTNSRCKEY);
+		searchBtn.getStyleClass().add(BTNSRCKEY);
 		
 		daoPl = DAOPlace.getInstance();
 		placeSelected = null;
@@ -300,74 +302,8 @@ public class CreateActivityView implements Initializable{
 			}
 		});
 		if(Navbar.getUser() instanceof Partner) {
-
-			for(int i=1;i<elementsVBox.getChildren().size();i++) {
-				elementsVBox.getChildren().get(i).setManaged(false);
-				elementsVBox.getChildren().get(i).setVisible(false);
-			}
-			createNew.getStyleClass().add("src-btn");
-			searchActs.getStyleClass().add("src-btn");
-			searchActs.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					String[] searchTerm = searchActivites.getText().split(" ");
-					System.out.println(searchTerm[0]);
-					try {
-						actsFound  =  (ArrayList<Activity>) DAOActivity.getInstance().getNearbyActivities(42.19832, 12.34515,100);
-						actsFound = (ArrayList<Activity>)FindActivityController.filterActivitiesByKeyWords((List<Activity>)actsFound, searchTerm);
-						if( (actsFound.isEmpty())){
-							
-								popupGen(wPopup,hPopup,"No activity found for "+searchTerm); 
-								
-								
-							}
-						} catch (Exception e1) {
-							Log.getInstance().getLogger().info("Due to DB errors places were not fetched.");
-							e1.printStackTrace();
-							return;
-					}
-					searchActivites.setText("");
-					updateActs();
-				}
-			});
-			createNew.setOnAction(new EventHandler<ActionEvent>() {
-
-				@Override
-				public void handle(ActionEvent event) {
-					VBox partBox = (VBox)elementsVBox.getChildren().get(0);
-					partBox.setManaged(false);
-					partBox.setVisible(false);
-					
-					for(int i=1;i<elementsVBox.getChildren().size();i++) {
-						elementsVBox.getChildren().get(i).setManaged(true);
-						elementsVBox.getChildren().get(i).setVisible(true);
-					}
-					
-				}
-				
-			});
-
-			reclaim.getStyleClass().add("src-btn");
-			boxSpot.setManaged(false);
-			boxSpot.setVisible(false);
-			
-			spotPlace.setText("Spot your place");
-			spotPlace.getStyleClass().add("src-btn");
-			spotPlace1.getStyleClass().add("src-btn");
-			spotPlace.setOnAction(new EventHandler<ActionEvent>() {
-	
-				@Override
-				public void handle(ActionEvent event) {
-					if(boxSpot.isManaged()) {
-						boxSpot.setManaged(false);
-						boxSpot.setVisible(false);
-					} else {
-						boxSpot.setManaged(true);
-						boxSpot.setVisible(true);
-					}
-				}
-				
-			});
+		
+			initPartner();
 		}
 		else {
 			elementsVBox.getChildren().get(0).setManaged(false);
@@ -397,6 +333,77 @@ public class CreateActivityView implements Initializable{
 					
 			}
 		});
+	}
+	
+	private void initPartner() {
+		for(int i=1;i<elementsVBox.getChildren().size();i++) {
+			elementsVBox.getChildren().get(i).setManaged(false);
+			elementsVBox.getChildren().get(i).setVisible(false);
+		}
+		createNew.getStyleClass().add("src-btn");
+		searchActs.getStyleClass().add("src-btn");
+		searchActs.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				String[] searchTerm = searchActivites.getText().split(" ");
+
+				try {
+					actsFound  =  (ArrayList<Activity>) DAOActivity.getInstance().getNearbyActivities(42.19832, 12.34515,100);
+					actsFound = (ArrayList<Activity>)FindActivityController.filterActivitiesByKeyWords((List<Activity>)actsFound, searchTerm);
+					if( (actsFound.isEmpty())){
+						
+							popupGen(wPopup,hPopup,"No activity found for "+searchTerm); 
+							
+							
+						}
+					} catch (Exception e1) {
+						Log.getInstance().getLogger().info("Due to DB errors places were not fetched.");
+						e1.printStackTrace();
+						return;
+				}
+				searchActivites.setText("");
+				updateActs();
+			}
+		});
+		createNew.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				VBox partBox = (VBox)elementsVBox.getChildren().get(0);
+				partBox.setManaged(false);
+				partBox.setVisible(false);
+				
+				for(int i=1;i<elementsVBox.getChildren().size();i++) {
+					elementsVBox.getChildren().get(i).setManaged(true);
+					elementsVBox.getChildren().get(i).setVisible(true);
+				}
+				
+			}
+			
+		});
+
+		reclaim.getStyleClass().add(BTNSRCKEY);
+		boxSpot.setManaged(false);
+		boxSpot.setVisible(false);
+		
+		spotPlace.setText("Spot your place");
+		spotPlace.getStyleClass().add(BTNSRCKEY);
+		spotPlace1.getStyleClass().add(BTNSRCKEY);
+		spotPlace.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(boxSpot.isManaged()) {
+					boxSpot.setManaged(false);
+					boxSpot.setVisible(false);
+				} else {
+					boxSpot.setManaged(true);
+					boxSpot.setVisible(true);
+				}
+			}
+			
+		});
+	
 	}
 	
 	public void updateDescription() {
@@ -453,15 +460,15 @@ public class CreateActivityView implements Initializable{
 					plImage.setImage(new Image("https://source.unsplash.com/user/erondu/310x180"));
 					plImage.getStyleClass().add("place-image");
 					
-					plInfo.setId("placeInfo");
-					plInfo.getStyleClass().add("placeInfo");
+					plInfo.setId(PLINFOKEY);
+					plInfo.getStyleClass().add(PLINFOKEY);
 					plInfo.setStrokeWidth(1);
-					plInfo.setStroke(Paint.valueOf("000000"));
+					plInfo.setStroke(Paint.valueOf(COLORSTROKE));
 			
-					plName.setId("placeName");
-					plName.getStyleClass().add("placeName");
+					plName.setId(PLNAMEKEY);
+					plName.getStyleClass().add(PLNAMEKEY);
 					plName.setStrokeWidth(1);
-					plName.setStroke(Paint.valueOf("000000"));
+					plName.setStroke(Paint.valueOf(COLORSTROKE));
 		
 					VBox eventText = new VBox(plName,plInfo);
 					eventText.setAlignment(Pos.CENTER);
@@ -550,7 +557,6 @@ public class CreateActivityView implements Initializable{
 		try {
 			placeSelected = daoPl.getPlace(pID);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	
@@ -587,15 +593,15 @@ public class CreateActivityView implements Initializable{
 					acImage.setImage(new Image("https://source.unsplash.com/user/erondu/310x180"));
 					acImage.getStyleClass().add("place-image");
 					
-					acInfo.setId("placeInfo");
-					acInfo.getStyleClass().add("placeInfo");
+					acInfo.setId(PLINFOKEY);
+					acInfo.getStyleClass().add(PLINFOKEY);
 					acInfo.setStrokeWidth(1);
-					acInfo.setStroke(Paint.valueOf("000000"));
+					acInfo.setStroke(Paint.valueOf(COLORSTROKE));
 			
-					acName.setId("placeName");
-					acName.getStyleClass().add("placeName");
+					acName.setId(PLNAMEKEY);
+					acName.getStyleClass().add(PLNAMEKEY);
 					acName.setStrokeWidth(1);
-					acName.setStroke(Paint.valueOf("000000"));
+					acName.setStroke(Paint.valueOf(COLORSTROKE));
 		
 					VBox eventText = new VBox(acName,acInfo);
 					eventText.setAlignment(Pos.CENTER);
@@ -659,7 +665,6 @@ public class CreateActivityView implements Initializable{
 			actSelected = DAOActivity.getInstance().getActivityById(aID);
 			Log.getInstance().getLogger().info("ATTIVITA' SELEZIONATA: "+actSelected.getName());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	
@@ -701,8 +706,8 @@ public class CreateActivityView implements Initializable{
 	public boolean createActivity() {
 		
 		String activityName;
-		String openingTime;
-		String closingTime = null;
+		String cAOpeningTime;
+		String cAClosingTime = null;
 		LocalDate openingDate;
 		LocalDate closingDate;
 		
@@ -711,8 +716,8 @@ public class CreateActivityView implements Initializable{
 		}
 		
 		activityName = actNameField.getText();
-		openingTime = (opTime.getText());
-		closingTime = (clTime.getText());
+		cAOpeningTime = (opTime.getText());
+		cAClosingTime = (clTime.getText());
 		
 		CreateActivityBean caBean = new CreateActivityBean();
 		caBean.setActivityName(activityName);
@@ -723,8 +728,8 @@ public class CreateActivityView implements Initializable{
 				
 		if(ActivityType.valueOf(typeBox.getValue().toUpperCase()).equals(ActivityType.CONTINUA)) 
 		{
-			caBean.setOpeningTime(openingTime);
-			caBean.setClosingTime(closingTime);
+			caBean.setOpeningTime(cAOpeningTime);
+			caBean.setClosingTime(cAClosingTime);
 		}
 		
 		else if(ActivityType.valueOf(typeBox.getValue().toUpperCase()).equals(ActivityType.SCADENZA)) {
@@ -738,8 +743,8 @@ public class CreateActivityView implements Initializable{
 			
 			String closingDateString = closingDate.toString();
 			
-			caBean.setOpeningTime(openingTime);
-			caBean.setClosingTime(closingTime);
+			caBean.setOpeningTime(cAOpeningTime);
+			caBean.setClosingTime(cAClosingTime);
 			caBean.setOpeningDate(openingDateString);
 			caBean.setEndDate(closingDateString);
 			
@@ -754,8 +759,8 @@ public class CreateActivityView implements Initializable{
 			closingDate = eDate2.getValue();
 			
 			String closingDateString = closingDate.toString();
-			caBean.setOpeningTime(openingTime);
-			caBean.setClosingTime(closingTime);
+			caBean.setOpeningTime(cAOpeningTime);
+			caBean.setClosingTime(cAClosingTime);
 			caBean.setOpeningDate(openingDateString);
 			caBean.setEndDate(closingDateString);
 			caBean.setCadence(Cadence.valueOf(cadBox.getValue().toUpperCase()));
@@ -841,28 +846,5 @@ public class CreateActivityView implements Initializable{
 		return true;
 	}
 	
-	public Popup popupGen(double width, double height, String error) {
-		Popup popup = new Popup(); 
-		popup.centerOnScreen();
-		
-		Text errorTxt = new Text(error);
-		errorTxt.getStyleClass().add("textEventName");
-		errorTxt.setTextAlignment(TextAlignment.CENTER);
-		errorTxt.setWrappingWidth(480);
-	    
-	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
-	    StackPane popupContent = new StackPane(r,errorTxt); 
-	    
-	    r.setStrokeType(StrokeType.OUTSIDE);
-	    r.setStrokeWidth(0.3);
-	    r.setStroke(Paint.valueOf(BGCOLORKEY));
-	    
-	    popup.getContent().add(popupContent);
-	    popup.centerOnScreen(); 
-	    
-	    popup.show(curr);
-	    popup.setAutoHide(true);
-	    return popup;
-	}
 	
 }

@@ -87,9 +87,7 @@ public class HomeView extends SuperView implements Initializable{
 
 	
 	//botton KEYS
-	private static final  String BTNPREFKEY = "pref-btn";
-	private static final  String BTNSRCKEY = "src-btn";
-	private static final  String BTNEVNKEY = "evn-btn";
+	
 	private static long wPopup = 500;
 	private static long hPopup = 50;
 	

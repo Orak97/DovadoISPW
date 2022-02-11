@@ -17,8 +17,13 @@ import javafx.stage.Stage;
 
 public abstract class SuperView {
 	
+	protected static final  String BTNPREFKEY = "pref-btn";
+	protected static final  String BTNSRCKEY = "src-btn";
+	protected static final  String BTNEVNKEY = "evn-btn";
+	
 	private static final  String BGCOLORKEY = "ffffff";
 	private static final  String STYLENAME = "textEventName";
+	
 
 	protected static Stage curr;
 
