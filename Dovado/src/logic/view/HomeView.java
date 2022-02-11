@@ -524,7 +524,7 @@ public class HomeView extends SuperView implements Initializable{
 				activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription()); //$NON-NLS-1$
 		}
 		else {
-			activityDescription.setText(activitySelected.getDescription());
+			activityDescription.setText("Description:\n"+activitySelected.getDescription());
 		}
 		activityDescription.setWrappingWidth(280);
 		activityDescription.getStyleClass().add("actInfo"); //$NON-NLS-1$
@@ -868,7 +868,13 @@ public class HomeView extends SuperView implements Initializable{
 	}
 	
 	private void handle2Ok(DatePicker pickDate,DatePicker pickDateReminder, VBox dateBox, ChoiceBox<String> percDiscount, Long activityId) {
-
+		
+		if(pickDate.getValue().isBefore(LocalDate.now())) {
+			Log.getInstance().getLogger().info("Non avendo inserito una data successiva a quella di oggi non si effettuano modifiche."); //$NON-NLS-1$
+			popupGen("Activity must be played after or during today.");  //$NON-NLS-1$
+			return;
+		}
+		
 		if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
 			Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche."); //$NON-NLS-1$
 			popupGen("You haven't specified enough info.");  //$NON-NLS-1$
@@ -898,10 +904,10 @@ public class HomeView extends SuperView implements Initializable{
 			hourReminder = hourBox2.getValue();
 			minBox2.getValue();
 		}
-		if(pickDateReminder.getValue().toString().isBlank()) {
+		if(pickDateReminder.getValue()==null || pickDateReminder.getValue().isAfter(pickDate.getValue())) {
 			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione"); //$NON-NLS-1$
 			dateReminderChosen=dayStringed;
-			popupGen("You haven't specified a day for your reminder... setting to 1 day before the scheduled event");  //$NON-NLS-1$
+			popupGen("You haven't specified a day for your reminder correctly... setting to 1 day before the scheduled event");  //$NON-NLS-1$
 			
 		} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
 		String dateChosen = dayStringed;
@@ -912,7 +918,7 @@ public class HomeView extends SuperView implements Initializable{
 			String[] percPrice = percDiscount.getValue().split("% - "); //$NON-NLS-1$
 			int percRequested = Integer.parseInt(percPrice[0]);
 			
-			String priceString = (percPrice[1].split("$"))[0]; //$NON-NLS-1$
+			String priceString = percPrice[1].replace("$",""); //$NON-NLS-1$
 			int pricePayed = Integer.parseInt(priceString);
 			
 			if(pricePayed > ((User)user).getBalance()) {
@@ -935,7 +941,6 @@ public class HomeView extends SuperView implements Initializable{
 		
 		checkActivity(sc);
 		
-		popupGen("Activity successfully scheduled");  //$NON-NLS-1$
 	}
 	
 	private void checkActivity(AddActivityToScheduleController sc) {
@@ -943,15 +948,21 @@ public class HomeView extends SuperView implements Initializable{
 			try {
 				sc.addCertifiedActivityToSchedule();
 			} catch (Exception e1) {
+
+				popupGen("Activity not scheduled scheduled correctly");  //$NON-NLS-1$
 				e1.printStackTrace();
+				return;
 			}
 		}else {
 			try {
 				sc.addActivityToSchedule();
 			} catch (Exception e1) {
+				popupGen("Activity not scheduled correctly");  //$NON-NLS-1$
 				e1.printStackTrace();
+				return;
 			}
 		}
+		popupGen("Activity successfully scheduled");  //$NON-NLS-1$
 	}
 	
 	//-------------------------------Fine                            -----------------------------------------
@@ -1054,6 +1065,7 @@ public class HomeView extends SuperView implements Initializable{
 
 		if(Navbar.getUser() instanceof Partner) {
 			filterActPartner();
+			return;
 		} else {
 			searchBar.setPromptText("Search activities"); //$NON-NLS-1$
 		}
@@ -1076,8 +1088,9 @@ public class HomeView extends SuperView implements Initializable{
 			}
 			activities = (ArrayList<Activity>) FindActivityController.filterActivitiesByKeyWords(activities, keywords);
 			if(activities.isEmpty() ) {
-				Log.getInstance().getLogger().info("Nothing was found!"); //$NON-NLS-1$
 				popupGen("Nothing has been found");  //$NON-NLS-1$
+			
+				Log.getInstance().getLogger().info("Nothing was found!"); //$NON-NLS-1$
 				return;
 			}
 			
@@ -1097,6 +1110,8 @@ public class HomeView extends SuperView implements Initializable{
 	private void filterActPartner() {
 		int couponCode;
 		try {
+		if(searchBar.getText().length()>6 || searchBar.getText().length()<6)
+			throw new NumberFormatException();
 		couponCode = Integer.parseInt(searchBar.getText());
 		} catch(NumberFormatException ne) {
 			popupGen("Insert a 6 digit NUMBER"); //$NON-NLS-1$

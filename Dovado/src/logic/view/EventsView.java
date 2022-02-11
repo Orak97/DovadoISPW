@@ -575,14 +575,18 @@ public class EventsView extends SuperView implements Initializable{
 			Text startDate = new Text(STARTINFO+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
 			Text endDate = new Text(ENDINFO+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
 			schedInfo.getChildren().addAll(startDate,endDate);
+			endDate.getStyleClass().add(STYLEINFO);
+			startDate.getStyleClass().add(STYLEINFO);
 		}
 		else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
 			Text startDate = new Text(STARTINFO+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
 			Text endDate = new Text(ENDINFO+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
 			Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
+			cadence.getStyleClass().add(STYLEINFO);
+			endDate.getStyleClass().add(STYLEINFO);
+			startDate.getStyleClass().add(STYLEINFO);
 			schedInfo.getChildren().addAll(cadence,startDate,endDate);
 		}
-
 		selection.getChildren().addAll(deleteSched,schedInfo);
 	}
 	
@@ -603,12 +607,18 @@ public class EventsView extends SuperView implements Initializable{
 		if(activities.get(itemNumber).getFrequency() instanceof ExpiringActivity) {
 			Text startDate = new Text(STARTINFO+((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
 			Text endDate = new Text(ENDINFO+(((ExpiringActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate()));
+			endDate.getStyleClass().add(STYLEINFO);
+			startDate.getStyleClass().add(STYLEINFO);
+			
 			eventsInfo.getChildren().addAll(startDate,endDate);
 		}
 		else if(activities.get(itemNumber).getFrequency() instanceof PeriodicActivity) {
 			Text startDate = new Text(STARTINFO+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedStartDate());
 			Text endDate = new Text(ENDINFO+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getFormattedEndDate());
 			Text cadence = new Text("Cadence of the activity: "+((PeriodicActivity)activities.get(itemNumber).getFrequency()).getCadence().toString());
+			cadence.getStyleClass().add(STYLEINFO);
+			endDate.getStyleClass().add(STYLEINFO);
+			startDate.getStyleClass().add(STYLEINFO);
 			eventsInfo.getChildren().addAll(cadence,startDate,endDate);
 		}
 		selection.getChildren().addAll(eventsInfo,modifyEvent,deleteSched);

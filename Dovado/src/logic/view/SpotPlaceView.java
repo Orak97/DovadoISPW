@@ -181,6 +181,8 @@ public class SpotPlaceView extends SuperView implements Initializable{
 		we.executeScript("retrieveLatLng('"+spotCivico+"',\""+spotAddress+"\",\""+spotCity+"\",\""+spotRegion+"\")");
 		
 		//Non funzionando per ora si aggiungono coordinate presettate
+		latLng[0] = 41.93231;
+		latLng[1] = 12.5167;
 		String latLngStr="41.93231;12.5167";
 		
 		
@@ -190,8 +192,6 @@ public class SpotPlaceView extends SuperView implements Initializable{
 		try {
 			String[] splitLatLng = latLngStr.split(";");
 			Log.getInstance().getLogger().info(splitLatLng[0]+" "+splitLatLng[1]);
-			latLng[0] = Double.parseDouble(splitLatLng[0]);
-			latLng[1] = Double.parseDouble(splitLatLng[1]);
 			if(daoPl.spotPlace(spotAddress, placeName, spotCity, spotRegion, spotCivico, null,latLng)<0) {
 				popupGen("Error: place not spotted!"); 
 			    

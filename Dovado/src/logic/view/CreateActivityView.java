@@ -256,7 +256,27 @@ public class CreateActivityView extends SuperView implements Initializable{
 			}
 			
 		});
+		boxSpot.setManaged(false);
+		boxSpot.setVisible(false);
 		
+		spotPlace.setText("Spot your place");
+		spotPlace.getStyleClass().add(BTNSRCKEY);
+		spotPlace1.getStyleClass().add(BTNSRCKEY);
+		spotPlace.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(boxSpot.isManaged()) {
+					boxSpot.setManaged(false);
+					boxSpot.setVisible(false);
+				} else {
+					boxSpot.setManaged(true);
+					boxSpot.setVisible(true);
+				}
+			}
+			
+		});
+	
 		createActBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				if(!createActivity()) {
@@ -354,27 +374,6 @@ public class CreateActivityView extends SuperView implements Initializable{
 		});
 
 		reclaim.getStyleClass().add(BTNSRCKEY);
-		boxSpot.setManaged(false);
-		boxSpot.setVisible(false);
-		
-		spotPlace.setText("Spot your place");
-		spotPlace.getStyleClass().add(BTNSRCKEY);
-		spotPlace1.getStyleClass().add(BTNSRCKEY);
-		spotPlace.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				if(boxSpot.isManaged()) {
-					boxSpot.setManaged(false);
-					boxSpot.setVisible(false);
-				} else {
-					boxSpot.setManaged(true);
-					boxSpot.setVisible(true);
-				}
-			}
-			
-		});
-	
 	}
 	
 	public void updateDescription() {
@@ -387,16 +386,18 @@ public class CreateActivityView extends SuperView implements Initializable{
 		if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.CONTINUA) 
 		{
 			cadenceDescription.setText("Activities open every day of the week, eg: a walk in villa Borghese ");
-			chooseBox();
+			cleanBox();
 		}
 		else if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.PERIODICA) 
 		{
 			cadenceDescription.setText("Activities repeated with a certain frequency, for a period of time.");
-			chooseBox();
+			cleanBox();
+			elementsVBox.getChildren().add(5,periodicBox);
 		}
 		else if(ActivityType.valueOf(chosenType.toUpperCase())==ActivityType.SCADENZA) {
 			cadenceDescription.setText("Activities that take place just once.");
-			chooseBox();
+			cleanBox();
+			elementsVBox.getChildren().add(5,expiringBox);
 		}
 		else {
 			cadenceSelText.setText("Select a type and I'll describe it.");
@@ -404,14 +405,15 @@ public class CreateActivityView extends SuperView implements Initializable{
 		
 	}
 	
-	private void chooseBox() {
+	private void cleanBox() {
 		cadenceDescription.setWrappingWidth(280);
 
 		if(elementsVBox.getChildren().contains(expiringBox))
 			elementsVBox.getChildren().remove(expiringBox);
-
+		
 		if(elementsVBox.getChildren().contains(periodicBox))
 			elementsVBox.getChildren().remove(periodicBox);
+			
 	}
 	
 	
@@ -473,7 +475,11 @@ public class CreateActivityView extends SuperView implements Initializable{
 	}
 	
 	public void spotPlaceConfirm() {
-		
+
+		if(placeNameTF.getText().isEmpty() || regionBox.getSelectionModel().getSelectedItem()==null || addressTF.getText().isEmpty() || civicoTF.getText().isEmpty() || cityNameTF.getText().isEmpty()) {
+			popupGen(wPopup, hPopup, "Not enough info about the place have been inserted");
+			return;
+		}
 		String placeName = placeNameTF.getText();
 		String spotRegion = regionBox.getSelectionModel().getSelectedItem().toString();
 		String spotAddress = addressTF.getText();
@@ -482,10 +488,6 @@ public class CreateActivityView extends SuperView implements Initializable{
 		
 		Log.getInstance().getLogger().info(placeName+'\n'+spotRegion+'\n'+spotAddress+'\n'+spotCity+'\n'+spotCivico);
 		
-		if(placeName.isEmpty() || spotRegion.isEmpty() || spotAddress.isEmpty() || spotCity.isEmpty() || spotCivico.isEmpty()) {
-			popupGen(wPopup, hPopup, "Not enough info about the place have been inserted");
-			return;
-		}
 		SpotPlaceBean spBean = new SpotPlaceBean();
 		spBean.setAddress(spotAddress);
 		spBean.setCity(spotCity);
