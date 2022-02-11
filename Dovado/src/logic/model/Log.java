@@ -29,11 +29,9 @@ public class Log {
 	private Log() {
 		try {
 			File fileLog = new File(fileName);
-				if (!fileLog.exists()) {
-					if(!fileLog.createNewFile()) {
+				if (!fileLog.exists() && !fileLog.createNewFile()) {
 						throw new FilerException("file non creato");
 					}
-				}
 		
 		
 		fh = new FileHandler(fileName, true);
