@@ -1,11 +1,6 @@
 package logic.view;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -20,7 +15,8 @@ public abstract class SuperView {
 	protected static final  String BTNPREFKEY = "pref-btn";
 	protected static final  String BTNSRCKEY = "src-btn";
 	protected static final  String BTNEVNKEY = "evn-btn";
-	
+	private static final long WPOPUP = 500;
+	private static final long HPOPUP = 50;
 	private static final  String BGCOLORKEY = "ffffff";
 	private static final  String STYLENAME = "textEventName";
 	
@@ -28,7 +24,9 @@ public abstract class SuperView {
 	protected static Stage curr;
 
 	
-	
+	public Popup popupGen(String error) {
+		return popupGen(WPOPUP, HPOPUP, error);
+	}
 	
 	public Popup popupGen(double width, double height, String error) {
 		Popup popup = new Popup(); 

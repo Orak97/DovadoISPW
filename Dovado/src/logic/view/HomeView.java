@@ -10,9 +10,6 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -38,15 +35,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.AddActivityToScheduleController;
 import logic.controller.ChannelController;
@@ -55,7 +48,6 @@ import logic.model.Activity;
 import logic.model.CertifiedActivity;
 import logic.model.NormalActivity;
 import logic.model.Channel;
-import logic.model.Coupon;
 import logic.model.DAOActivity;
 import logic.model.DAOChannel;
 import logic.model.DAOCoupon;
@@ -84,12 +76,6 @@ public class HomeView extends SuperView implements Initializable{
 	private static final  String SPOTPLACESCRIPT = "spotPlace";
 	private static final  String CERTIFIED = "CERTIFICATA";
 
-
-	
-	//botton KEYS
-	
-	private static long wPopup = 500;
-	private static long hPopup = 50;
 	
 	private StackPane lastEventBoxSelected;
 
@@ -252,12 +238,12 @@ public class HomeView extends SuperView implements Initializable{
 					public void handle(ActionEvent event) {
 						if(!searchByPreference) {
 							searchByPreference=true;
-							popupGen(wPopup,hPopup,"Your searched activities will be filtered by preference!");
+							popupGen("Your searched activities will be filtered by preference!");
 							
 						}
 						else {
 							searchByPreference=false;
-							popupGen(wPopup,hPopup,"Your searched activities will not be filtered by preference!");
+							popupGen("Your searched activities will not be filtered by preference!");
 						}
 						
 					}
@@ -600,7 +586,7 @@ public class HomeView extends SuperView implements Initializable{
 			deleteActivity.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					popupGen(wPopup,hPopup,"Activity deleted correctly!"); 
+					popupGen("Activity deleted correctly!"); 
 					    
 					Log.getInstance().getLogger().info("Attivit\u00E0 cancellata dalla persistenza");
 					activityDeselected(lastEventBoxSelected,true);
@@ -652,7 +638,7 @@ public class HomeView extends SuperView implements Initializable{
 				try {
 					c.sendMessage(mss.getText());
 				} catch (ClassNotFoundException | SQLException e1) {
-					popupGen(wPopup,hPopup,"Message not sent due to DB error");
+					popupGen("Message not sent due to DB error");
 				
 					
 					e1.printStackTrace();
@@ -904,7 +890,7 @@ public class HomeView extends SuperView implements Initializable{
 
 		if(pickDate.getValue().toString().isBlank() || hourBox.getValue().isBlank() || minBox.getValue().isBlank()) {
 			Log.getInstance().getLogger().info("Non avendo inserito abbastanza prenotazioni non si effettuano modifiche.");
-			popupGen(wPopup,hPopup,"You haven't specified enough info."); 
+			popupGen("You haven't specified enough info."); 
 		
 		}
 	    DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -921,7 +907,7 @@ public class HomeView extends SuperView implements Initializable{
 			hourReminder = Integer.toString(hourReminderInt-1);
 	
 			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito un'ora prima della prenotazione");
-			popupGen(wPopup,hPopup,"You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
+			popupGen("You haven't specified a time for your reminder... setting to 1 hour before the scheduled event"); 
 			
 			
 			if(hourReminderInt-1<10) {
@@ -934,7 +920,7 @@ public class HomeView extends SuperView implements Initializable{
 		if(pickDateReminder.getValue().toString().isBlank()) {
 			Log.getInstance().getLogger().info("Non avendo specificato un orario si setta di predefinito il giorno stesso della prenotazione");
 			dateReminderChosen=dayStringed;
-			popupGen(wPopup,hPopup,"You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
+			popupGen("You haven't specified a day for your reminder... setting to 1 day before the scheduled event"); 
 			
 		} else {dateReminderChosen = day.format(pickDateReminder.getValue());}
 		String dateChosen = dayStringed;
@@ -950,7 +936,7 @@ public class HomeView extends SuperView implements Initializable{
 			
 			if(pricePayed > ((User)user).getBalance()) {
 				Log.getInstance().getLogger().info("Not enough dovado $ for payment");
-				popupGen(wPopup,hPopup,"Not enough Dovado $ for payment"); 
+				popupGen("Not enough Dovado $ for payment"); 
 			
 				return;
 			} else {
@@ -968,7 +954,7 @@ public class HomeView extends SuperView implements Initializable{
 		
 		checkActivity(sc);
 		
-		popupGen(wPopup,hPopup,"Activity successfully scheduled"); 
+		popupGen("Activity successfully scheduled"); 
 	}
 	
 	private void checkActivity(AddActivityToScheduleController sc) {
@@ -994,7 +980,7 @@ public class HomeView extends SuperView implements Initializable{
 		try {
 			ch = daoCH.getChannel(ch.getActivityReferenced());
 		} catch (ClassNotFoundException | SQLException e) {
-			popupGen(wPopup,hPopup,"Unable to get chat.");
+			popupGen("Unable to get chat.");
 			
 			e.printStackTrace();
 			return;
@@ -1110,7 +1096,7 @@ public class HomeView extends SuperView implements Initializable{
 			activities = (ArrayList<Activity>) FindActivityController.filterActivitiesByKeyWords(activities, keywords);
 			if(activities.isEmpty() ) {
 				Log.getInstance().getLogger().info("Nothing was found!");
-				popupGen(wPopup,hPopup,"Nothing has been found"); 
+				popupGen("Nothing has been found"); 
 				return;
 			}
 			
@@ -1132,14 +1118,14 @@ public class HomeView extends SuperView implements Initializable{
 		try {
 		couponCode = Integer.parseInt(searchBar.getText());
 		} catch(NumberFormatException ne) {
-			popupGen(wPopup,hPopup,"Insert a 6 digit NUMBER");
+			popupGen("Insert a 6 digit NUMBER");
 			
 		    return;
 		}
 		try{ 
 			//Con il metodo sottostante mi assicuro della presenza del coupon.
 			if((DAOCoupon.getInstance().findCouponPartner(couponCode))==null) {
-				popupGen(wPopup,hPopup,"No such coupon found!");
+				popupGen("No such coupon found!");
 			    return;
 			}
 			//Una volta trovato eseguo il codice necessario a redimerlo.
@@ -1148,12 +1134,12 @@ public class HomeView extends SuperView implements Initializable{
 		} 
 		catch(Exception e){
 			//Si cattura un'eccezione se trovata e si avverte l'utente				
-			popupGen(wPopup,hPopup,"Due to an issue the coupon was not redeemed.");
+			popupGen("Due to an issue the coupon was not redeemed.");
 			
 		    e.printStackTrace();
 		    return;
 		}
-		popupGen(wPopup,hPopup,"Coupon redeemed correctly");
+		popupGen("Coupon redeemed correctly");
 
 	    searchBar.setText("");
 	    searchBar.setPromptText("Insert a 6 digit coupon code");

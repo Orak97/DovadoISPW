@@ -1,10 +1,7 @@
 package logic.view;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -32,15 +29,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.ActivityType;
@@ -51,9 +42,6 @@ import logic.model.CertifiedActivity;
 import logic.model.ContinuosActivity;
 import logic.model.CreateActivityBean;
 import logic.model.DAOActivity;
-import logic.model.DAOChannel;
-import logic.model.DAOPlace;
-import logic.model.DAOPreferences;
 import logic.model.DAOSchedules;
 import logic.model.ExpiringActivity;
 import logic.model.Log;
@@ -64,7 +52,7 @@ import logic.model.SuperActivity;
 import logic.model.SuperUser;
 import logic.model.User;
 
-public class EventsView implements Initializable{
+public class EventsView extends SuperView implements Initializable{
 	
 	private static final  String BTNSRCKEY = "src-btn";
 	private static final  String STYLEINFO = "textEventInfo";
@@ -88,10 +76,7 @@ public class EventsView implements Initializable{
 	private long hPopup = 50;
 	private HBox selection;
 	private Button deleteSched;
-	
-	
-    private static Stage curr;
-    
+	    
     private int lastActivitySelected = -1;
     
     @FXML
@@ -718,28 +703,4 @@ public class EventsView implements Initializable{
 		}		
 	}
 	
-	
-	public Popup popupGen(double width, double height, String error) {
-		Popup popup = new Popup(); 
-		popup.centerOnScreen();
-		
-		Text errorTxt = new Text(error);
-		errorTxt.getStyleClass().add(STYLEINFO);
-		errorTxt.setTextAlignment(TextAlignment.CENTER);
-		errorTxt.setWrappingWidth(480);
-	    
-	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
-	    StackPane popupContent = new StackPane(r,errorTxt); 
-	    
-	    r.setStrokeType(StrokeType.OUTSIDE);
-	    r.setStrokeWidth(0.3);
-	    r.setStroke(Paint.valueOf("ffffff"));
-	    
-	    popup.getContent().add(popupContent);
-	    popup.centerOnScreen(); 
-	    
-	    popup.show(curr);
-	    popup.setAutoHide(true);
-	    return popup;
-	}
 }

@@ -3,12 +3,6 @@ package logic.view;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
-import javafx.application.Platform;
-import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -20,24 +14,16 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.model.DAOPlace;
 import logic.model.Log;
 import logic.model.Place;
 import logic.model.SpotPlaceBean;
 
-public class SpotPlaceView implements Initializable{
+public class SpotPlaceView extends SuperView implements Initializable{
 	
 	@FXML
 	private TextField placeNameTF;
@@ -65,11 +51,9 @@ public class SpotPlaceView implements Initializable{
 	private TextField cityText;
 	private TextField addressText;
 	private TextField civicoText;
-	private static Stage curr;
 	private DAOPlace daoPl;
 	private ArrayList<Place> placesFound;
-	private long wPopup = 500;
-	private long hPopup = 50;
+	
 	private WebEngine we;
 	private double[] latLng = {0,0};
 	
@@ -120,10 +104,10 @@ public class SpotPlaceView implements Initializable{
 		spotPlaceBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				if(!spotPlace()) {
-					popupGen(wPopup,hPopup,"Place not spotted:\nInsert all informations"); 
+					popupGen("Place not spotted:\nInsert all informations"); 
 					
 				} else {
-					popupGen(wPopup,hPopup,"Place spotted successfully"); 
+					popupGen("Place spotted successfully"); 
 				   
 				}
 			}
@@ -206,13 +190,13 @@ public class SpotPlaceView implements Initializable{
 			latLng[0] = Double.parseDouble(splitLatLng[0]);
 			latLng[1] = Double.parseDouble(splitLatLng[1]);
 			if(daoPl.spotPlace(spotAddress, placeName, spotCity, spotRegion, spotCivico, null,latLng)<0) {
-				popupGen(wPopup,hPopup,"Error: place not spotted!"); 
+				popupGen("Error: place not spotted!"); 
 			    
 				
 				return false;
 			}
 		} catch (Exception e) {
-			popupGen(wPopup,hPopup,"Error: place not spotted!"); 
+			popupGen("Error: place not spotted!"); 
 		    
 			Log.getInstance().getLogger().info("Due to an error in the database the place wasn't spotted.");
 			e.printStackTrace();
@@ -269,30 +253,5 @@ public class SpotPlaceView implements Initializable{
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-	public Popup popupGen(double width, double height, String error) {
-		Popup popup = new Popup(); 
-		popup.centerOnScreen();
-		
-		Text errorTxt = new Text(error);
-    	errorTxt.setWrappingWidth(width - 10);
-
-		errorTxt.getStyleClass().add("textEventName");
-		errorTxt.setTextAlignment(TextAlignment.CENTER);
-		errorTxt.setWrappingWidth(480);
-	    
-	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
-	    StackPane popupContent = new StackPane(r,errorTxt); 
-	    
-	    r.setStrokeType(StrokeType.OUTSIDE);
-	    r.setStrokeWidth(0.3);
-	    r.setStroke(Paint.valueOf("ffffff"));
-	    
-	    popup.getContent().add(popupContent);
-	    popup.centerOnScreen(); 
-	    
-	    popup.show(curr);
-	    popup.setAutoHide(true);
-	    return popup;
 	}
 }

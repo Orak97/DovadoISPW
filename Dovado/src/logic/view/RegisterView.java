@@ -1,12 +1,9 @@
 package logic.view;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,32 +16,14 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Modality;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import logic.controller.AuthException;
 import logic.controller.RegExplorerController;
-import logic.controller.RegPartnerController;
-import logic.model.DAOPlace;
 import logic.model.Log;
-import logic.model.Partner;
-import logic.model.Place;
 import logic.model.RegExpBean;
-import logic.model.SuperUser;
-import logic.model.User;
 
-public class RegisterView implements Initializable{
+public class RegisterView extends SuperView implements Initializable{
 
     @FXML
     private TextField usrnameTField;
@@ -103,10 +82,7 @@ public class RegisterView implements Initializable{
 	
 	//------------------------ FINE PREFERENZE -----------------------------------------------------
 	
-	private static final String BGCOLORKEY = "ffffff";
-	private static long wErrPopup = 500;
-	private static long hErrPopup = 50;
-	private static Stage curr;
+	
 
     @FXML
     void login(ActionEvent event) {
@@ -123,7 +99,7 @@ public class RegisterView implements Initializable{
 		
 		if(password.isEmpty() || passwordCheck.isEmpty() || username.isEmpty() || email.isEmpty()) {
 			Log.getInstance().getLogger().info("One of the four fields is empty!");
-			popupGen(wErrPopup,hErrPopup, "One of the four fields is empty!");
+			popupGen("One of the four fields is empty!");
 		    
 		    return;
 		}
@@ -158,7 +134,7 @@ public class RegisterView implements Initializable{
 
 			controller.addExplorer(regBean);
 		}catch (AuthException e) {
-			popupGen(wErrPopup,hErrPopup, e.getMessage());
+			popupGen(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -203,25 +179,5 @@ public class RegisterView implements Initializable{
     	LoginView.render(curr);
     }
     
-    public void popupGen(double width, double height, String error) {
-    	Popup popup = new Popup(); 
-    	popup.centerOnScreen();
-    	
-    	Text passwordNotEqualTxt = new Text(error);
-    	passwordNotEqualTxt.setWrappingWidth(wErrPopup - 10);
-	    passwordNotEqualTxt.getStyleClass().add("textEventName");
-	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
-	    
-	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
-	    StackPane popupContent = new StackPane(r,passwordNotEqualTxt); 
-	    
-	    r.setStrokeType(StrokeType.OUTSIDE);
-	    r.setStrokeWidth(0.3);
-	    r.setStroke(Paint.valueOf(BGCOLORKEY));
-	    
-	    popup.getContent().add(popupContent);
-
-	    popup.show(curr);
-	    popup.setAutoHide(true);
-    }
+    
 }

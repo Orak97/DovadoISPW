@@ -1,8 +1,5 @@
 package logic.view;
 
-
-import java.io.IOException;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,30 +12,19 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.LogExplorerController;
 import logic.controller.LogPartnerController;
 import logic.model.Log;
 import logic.model.LogBean;
-import logic.model.Partner;
 import logic.model.SuperUser;
-import logic.model.User;
 
-public class LoginView{
+public class LoginView extends SuperView {
 	
-	private static final String BGCOLORKEY = "ffffff";
 	private static long wErrPopup = 500;
 	private static long hErrPopup = 50;
-	private static Stage curr;
 	
 
     @FXML
@@ -160,24 +146,5 @@ public class LoginView{
 			e.printStackTrace();
 		} 
 	}
-    
-    public Popup popupGen(double width, double height, String error) {
-    	Popup popup = new Popup(); 
-    	popup.centerOnScreen();
-    	
-    	Text passwordNotEqualTxt = new Text(error);
-    	passwordNotEqualTxt.setWrappingWidth(wErrPopup - 10);
-	    passwordNotEqualTxt.getStyleClass().add("textEventName");
-	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
-	    
-	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
-	    StackPane popupContent = new StackPane(r,passwordNotEqualTxt); 
-	    
-	    r.setStrokeType(StrokeType.OUTSIDE);
-	    r.setStrokeWidth(0.3);
-	    r.setStroke(Paint.valueOf(BGCOLORKEY));
-	    
-	    popup.getContent().add(popupContent);
-	    return popup;
-    }
+  	
 }

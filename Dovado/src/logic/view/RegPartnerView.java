@@ -13,25 +13,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import logic.controller.AuthException;
 import logic.controller.RegPartnerController;
 import logic.model.Log;
 import logic.model.RegPartnerBean;
 
-public class RegPartnerView implements Initializable{
+public class RegPartnerView extends SuperView implements Initializable{
 	
 	
 	
@@ -68,12 +59,7 @@ public class RegPartnerView implements Initializable{
 	
 	@FXML
 	private Label errorLabel;
-	
-	private static final String BGCOLORKEY = "ffffff";
-	private static long wErrPopup = 500;
-	private static long hErrPopup = 50;
-	private static Stage curr;
-	
+		
     @FXML
     void login(ActionEvent event) {
     	Stage current = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -88,7 +74,7 @@ public class RegPartnerView implements Initializable{
     	String email = emailTField.getText();
     			
 		if(password.isEmpty() || passwordCheck.isEmpty() || username.isEmpty() || email.isEmpty()) {
-			popupGen(wErrPopup,hErrPopup, "One of the fields is empty!");
+			popupGen("One of the fields is empty!");
 			return;
 		}
 		
@@ -107,7 +93,7 @@ public class RegPartnerView implements Initializable{
 		
 			controller.addPartner(regBean);
 		}catch (AuthException e) {
-			popupGen(wErrPopup,hErrPopup, e.getMessage());
+			popupGen(e.getMessage());
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -149,30 +135,5 @@ public class RegPartnerView implements Initializable{
     
     public void switchToLogin() {
     	LoginView.render(curr);
-    }
-   
-    
-    public void popupGen(double width, double height, String error) {
-    	Log.getInstance().getLogger().info(error);
-    	Popup popup = new Popup(); 
-    	popup.centerOnScreen();
-    	
-    	Text passwordNotEqualTxt = new Text(error);
-    	passwordNotEqualTxt.setWrappingWidth(wErrPopup - 10);
-
-	    passwordNotEqualTxt.getStyleClass().add("textEventName");
-	    passwordNotEqualTxt.setTextAlignment(TextAlignment.CENTER);
-	    
-	    Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
-	    StackPane popupContent = new StackPane(r,passwordNotEqualTxt); 
-	    
-	    r.setStrokeType(StrokeType.OUTSIDE);
-	    r.setStrokeWidth(0.3);
-	    r.setStroke(Paint.valueOf(BGCOLORKEY));
-	    
-	    popup.getContent().add(popupContent);
-	    
-	    popup.show(curr);
-	    popup.setAutoHide(true);
     }
 }

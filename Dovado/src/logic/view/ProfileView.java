@@ -15,26 +15,16 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
-import logic.controller.FindActivityController;
-import logic.model.Coupon;
 import logic.model.DAOActivity;
-import logic.model.DAOCoupon;
 import logic.model.DAOPreferences;
 import logic.model.Log;
 import logic.model.Preferences;
 import logic.model.User;
 
-public class ProfileView implements Initializable{
+public class ProfileView extends SuperView implements Initializable{
 
 	@FXML
 	private HBox emailHbox;
@@ -59,7 +49,6 @@ public class ProfileView implements Initializable{
 	
 
 	private DAOPreferences daoPr;
-	private static Stage curr;
 	
 	public static void render(Stage current) {
 		try {
@@ -146,7 +135,7 @@ public class ProfileView implements Initializable{
 			} catch (ClassNotFoundException e) {		
 				e.printStackTrace();
 			} catch (SQLException e) {
-				Log.getInstance().getLogger().info("Errore dal DB; non trovo il numero di attività del partner");
+				Log.getInstance().getLogger().info("Errore dal DB; non trovo il numero di attivitï¿½ del partner");
 				e.printStackTrace();
 				numPAct.setText("0");
 			}
@@ -187,33 +176,8 @@ public class ProfileView implements Initializable{
 			Log.getInstance().getLogger().info("Error in DB update of user preferences.");
 			e.printStackTrace();
 		}
-		final Popup popup = popupGen(500,50,"New preferences correctly set.");
-		popup.centerOnScreen(); 
-	    
-	    popup.show(curr);
-	    popup.setAutoHide(true);
+		popupGen("New preferences correctly set.");
 		
 	}
 	
-	public Popup popupGen(double width, double height, String error) {
-		Popup popup = new Popup(); 
-		popup.centerOnScreen();
-		
-		Text errorTxt = new Text(error);
-    	errorTxt.setWrappingWidth(width - 10);
-
-		errorTxt.getStyleClass().add("textEventName");
-		errorTxt.setTextAlignment(TextAlignment.CENTER);
-		errorTxt.setWrappingWidth(480);
-	    
-		Rectangle r = new Rectangle(width, height, Color.valueOf("212121"));
-	    StackPane popupContent = new StackPane(r,errorTxt); 
-	    
-	    r.setStrokeType(StrokeType.OUTSIDE);
-	    r.setStrokeWidth(0.3);
-	    r.setStroke(Paint.valueOf("ffffff"));
-	    
-	    popup.getContent().add(popupContent);
-	    return popup;
-	}
 }
