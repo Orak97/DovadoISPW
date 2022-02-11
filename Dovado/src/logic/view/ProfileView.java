@@ -23,6 +23,7 @@ import logic.model.User;
 public class ProfileView extends SuperView implements Initializable{
 	private static final String TITLE = "Dovado - Profile";
 	private static final String FILEFXML = "Profile.fxml";
+	private static final String STYLETEXT = "textEventName";
 
 	@FXML
 	private HBox emailHbox;
@@ -54,7 +55,7 @@ public class ProfileView extends SuperView implements Initializable{
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		String styleTextInfo = "textEventName";
+		String styleTextInfo = STYLETEXT;
 		setEmail.getStyleClass().add(styleTextInfo);
 		setUsr.getStyleClass().add(styleTextInfo);
 		currency.getStyleClass().add(styleTextInfo);
@@ -71,27 +72,9 @@ public class ProfileView extends SuperView implements Initializable{
 
 		((VBox)root.getChildren().get(0)).setAlignment(Pos.CENTER);
 		if(Navbar.getUser() instanceof User) {
-			Preferences preferences = ((User)Navbar.getUser()).getPreferences();
 			
-			/*Mi faccio restituire un array di tutti i nomi delle preferenze.
-			 * In seguito un array di tutte le preferenze che l'utente ha settato 
-			 * (false o true che siano)*/
-			boolean[] allPrefsSet = preferences.getSetPreferences();
-			int pset=0;
-			VBox prefInitVBox;
-			for(int i=0;i<prefHBox.getChildren().size();i++) {
-
-				prefInitVBox = (VBox)prefHBox.getChildren().get(i);
-				for(int j=0;j<prefInitVBox.getChildren().size();j++) {
-				//Se trovo una preferenza che è stata settata dall'utente mi fermo,
-				//e segno il checkBox in modo tale da indicare che .
-					if(allPrefsSet[pset]) {
-						((CheckBox)(prefInitVBox.getChildren().get(j))).setSelected(true);
-					}
-					pset++;
-				}
-			}
-			((VBox)root.getChildren().get(1)).setAlignment(Pos.CENTER);
+			setPreferences();
+			
 		} else {
 			
 			prefVBox.getChildren().clear();
@@ -105,9 +88,9 @@ public class ProfileView extends SuperView implements Initializable{
 			usersTouched.getStyleClass().add(styleTextInfo);
 			partActivities.getStyleClass().add(styleTextInfo);
 			coupGenerated.getStyleClass().add(styleTextInfo);
-			numPAct.getStyleClass().add("textEventName");
-			numCoup.getStyleClass().add("textEventName");
-			numusers.getStyleClass().add("textEventName");
+			numPAct.getStyleClass().add(STYLETEXT);
+			numCoup.getStyleClass().add(STYLETEXT);
+			numusers.getStyleClass().add(STYLETEXT);
 			
 			try {
 				numPAct.setText(String.valueOf(DAOActivity.getInstance().getPartnerActivities(Navbar.getUser().getUserID()).size()));
@@ -125,6 +108,30 @@ public class ProfileView extends SuperView implements Initializable{
 			prefVBox.getChildren().addAll(infoPartner);
 			((VBox)root.getChildren().get(0)).getChildren().remove(currencyHBox);
 		}
+	}
+	
+	private void setPreferences() {
+		Preferences preferences = ((User)Navbar.getUser()).getPreferences();
+		
+		/*Mi faccio restituire un array di tutti i nomi delle preferenze.
+		 * In seguito un array di tutte le preferenze che l'utente ha settato 
+		 * (false o true che siano)*/
+		boolean[] allPrefsSet = preferences.getSetPreferences();
+		int pset=0;
+		VBox prefInitVBox;
+		for(int i=0;i<prefHBox.getChildren().size();i++) {
+
+			prefInitVBox = (VBox)prefHBox.getChildren().get(i);
+			for(int j=0;j<prefInitVBox.getChildren().size();j++) {
+			//Se trovo una preferenza che è stata settata dall'utente mi fermo,
+			//e segno il checkBox in modo tale da indicare che .
+				if(allPrefsSet[pset]) {
+					((CheckBox)(prefInitVBox.getChildren().get(j))).setSelected(true);
+				}
+				pset++;
+			}
+		}
+		((VBox)root.getChildren().get(1)).setAlignment(Pos.CENTER);
 	}
 	
 	public void updateUserPreferences() {

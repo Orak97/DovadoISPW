@@ -446,13 +446,14 @@ public class EventsView extends SuperView implements Initializable{
 			
 			dateBox.getChildren().addAll(txtDateOp,pickDateOp,txtDateCl,pickDateCl);						
 		}
+		dateBox.setId("dateBox");
 		dateBox.setBackground(b);
 		dateBox.getChildren().addAll(txtOp,pickTimeOpBox,txtCl,pickTimeClBox,buttonBox);
-		dateBox.setId("dateBox");
-		
-		selectedBox.getChildren().add(dateBox);
 		
 		close.setText("Close");
+
+		selectedBox.getChildren().add(dateBox);
+		
 		close.getStyleClass().add(BTNSRCKEY);					
 		
 		close.setOnAction(new EventHandler<ActionEvent>(){
