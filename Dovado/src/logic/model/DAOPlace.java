@@ -112,7 +112,7 @@ public class DAOPlace extends DAO {
             	searchedPlace = fillBean(rs);
             }
             if(searchedPlace == null) {
-             	Log.getInstance().getLogger().warning("STAROBA E NULLLLLLLLL BROOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!!");
+             	Log.getInstance().getLogger().warning("Il place è NULL");
             }
             rs.close();
         }finally {

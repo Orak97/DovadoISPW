@@ -1,5 +1,6 @@
 package logic.model;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -31,40 +32,9 @@ public class DAOExplorer extends DAO{
             	Log.getInstance().getLogger().warning("user non trovato");
             }
             
-            
             ResultSet rs = stmt.getResultSet();
             
-            
-            while(rs.next()) {
-	            u = new User(
-	            		rs.getString("username"),
-	            		rs.getString("email"),
-	            		rs.getLong("id"),
-	            		rs.getLong("wallet"));
-	                      
-	            boolean[] boolPref= {
-	            		rs.getBoolean("Arte"),
-	            		rs.getBoolean("Cibo"),
-	            		rs.getBoolean("Musica"),
-	            		rs.getBoolean("Sport"),
-	            		rs.getBoolean("Social"),
-	            		rs.getBoolean("Natura"),
-	            		rs.getBoolean("Esplorazione"),
-	            		rs.getBoolean("Ricorrenze_locali"),
-	            		rs.getBoolean("Moda"),
-	            		rs.getBoolean("Shopping"),
-	            		rs.getBoolean("Adrenalina"),
-	            		rs.getBoolean("Relax"),
-	            		rs.getBoolean("Istruzione"),
-	            		rs.getBoolean("Monumenti")
-	            	};
-	            Preferences p = new Preferences(boolPref);
-	            
-	            
-	            u.setPreferences(p);
-            }
-            
-            
+            u = setExplorer(rs);
             
             rs.close();
             
@@ -73,7 +43,69 @@ public class DAOExplorer extends DAO{
         	disconnRoutine();
         } return u;
 	}
+	public User getExpInfo(int id) throws SQLException, ClassNotFoundException {
+		User u = null;
+		
+		try {
+			resetConnection();
+			
+			String sql = "select idUtente as id, username,email, wallet,Arte,Cibo,Musica,Sport,Social,Natura,Esplorazione,Ricorrenze_locali,Moda,Shopping,Adrenalina,Monumenti,Relax,Istruzione  from dati_esploratore where (idUtente = (?));";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			
+			pstmt.executeUpdate();
+			
+			ResultSet rs = pstmt.getResultSet();
+			
+			u = setExplorer(rs);
+            
+            
+            rs.close();
+			
+			
+			
+		}finally {
+        	//Clean-up dell'ambiente
+        	disconnRoutine();
+        } return u;
 	
+	}
+	
+	private User setExplorer(ResultSet rs) throws SQLException {
+		User u= null;
+		
+		while(rs.next()) {
+            u = new User(
+            		rs.getString("username"),
+            		rs.getString("email"),
+            		rs.getLong("id"),
+            		rs.getLong("wallet"));
+                      
+            boolean[] boolPref= {
+            		rs.getBoolean("Arte"),
+            		rs.getBoolean("Cibo"),
+            		rs.getBoolean("Musica"),
+            		rs.getBoolean("Sport"),
+            		rs.getBoolean("Social"),
+            		rs.getBoolean("Natura"),
+            		rs.getBoolean("Esplorazione"),
+            		rs.getBoolean("Ricorrenze_locali"),
+            		rs.getBoolean("Moda"),
+            		rs.getBoolean("Shopping"),
+            		rs.getBoolean("Adrenalina"),
+            		rs.getBoolean("Relax"),
+            		rs.getBoolean("Istruzione"),
+            		rs.getBoolean("Monumenti")
+            	};
+            Preferences p = new Preferences(boolPref);
+            
+            
+            u.setPreferences(p);
+        }
+        
+      return u;
+		
+	}
 	public void registerExplorer(String username, String email, String password, boolean[] pref) throws ClassNotFoundException, SQLException{
         
         try {
