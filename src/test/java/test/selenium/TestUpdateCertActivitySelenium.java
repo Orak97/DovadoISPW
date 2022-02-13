@@ -16,12 +16,12 @@ import org.junit.jupiter.api.Test;
 public class TestUpdateCertActivitySelenium  {
 	WebDriver driver;
 	
-	private static final String PARTNERNAME = "raggiver@gmail.com";
+	private static final String PARTNERNAME = "raggivera@gmail.com";
 	private static final String PASS = "forzaLazio";
 	private static final String LOGIN_URL = "http://localhost:8080/Dovado/loginPartner.jsp";
 	
-	private static final String DRIVER_PATH = "webdriver.chrome.driver";
-	private static final String DRIVER_PROPERTY = "Drivers/chromedriver";
+	private static final String DRIVER_PATH = "Drivers/chromedriver";
+	private static final String DRIVER_PROPERTY = "webdriver.chrome.driver";
 		
 		
 	@Test
