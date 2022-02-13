@@ -38,17 +38,16 @@ public class TestUpdateCertActivitySelenium  {
 		driver.findElement(By.cssSelector(".scheduledActivityCards")).click();
 		
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(6));
-		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".btn-secondary")));
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#activityModal > div > div > div.modal-footer.d-flex.justify-content-center > button.btn.btn-secondary")));
 		
-		driver.findElement(By.cssSelector(".btn-Secondary")).click();
-		driver.findElement(By.cssSelector("#scheduleModal [type=submit]")).click();
+		driver.findElement(By.cssSelector("#activityModal > div > div > div.modal-footer.d-flex.justify-content-center > button.btn.btn-secondary")).click();
 		
 		wait = new WebDriverWait(driver, Duration.ofSeconds(6));
 		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[name=discount5]")));
 		
 		driver.findElement(By.cssSelector("[name=discount5]")).click();
-		driver.findElement(By.cssSelector("[type=submit]")).click();
-		boolean test = driver.findElement(By.cssSelector("#responseModal > div > div > div.modal-body > h5")).equals("Sconti correttamente modificati!");
+		driver.findElement(By.cssSelector("#couponModal > div > div > div.modal-footer > button.btn.btn-success")).click();
+		boolean test = driver.findElement(By.cssSelector("#responseModal > div > div > div.modal-body > h5")).getText().contains("correttamente");
 		
 		assertEquals(true, test);
 		}

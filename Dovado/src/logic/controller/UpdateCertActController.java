@@ -96,7 +96,7 @@ public class UpdateCertActController {
 		if(bean.getActivityDescription() != null) {
 			activity.setDescription(bean.getActivityDescription());
 		}
-		System.out.println("Sono qui 1");
+
 
 		if(activity.getFrequency() instanceof PeriodicActivity) {
          	if(bean.getOpeningLocalDate() != null) {
@@ -113,7 +113,7 @@ public class UpdateCertActController {
           	if(bean.getEndLocalDate() != null) {
           		((ExpiringActivity)activity.getFrequency()).setEndDate(bean.getEndLocalDate());
           	}
-         }		System.out.println("Sono qui 2");
+         }
 
 		if(bean.getOpeningLocalTime() != null) {
 			activity.getFrequency().setOpeningTime(bean.getOpeningLocalTime());
@@ -121,7 +121,6 @@ public class UpdateCertActController {
 		if(bean.getClosingLocalTime() != null) {
 			activity.getFrequency().setClosingTime(bean.getClosingLocalTime());
 		}
-		System.out.println("Sono qui 3");
 
 		//Aggiorno le preferenze
 		activity.getIntrestedCategories().setAdrenalina(bean.isAdrenalina());
@@ -138,7 +137,6 @@ public class UpdateCertActController {
 		activity.getIntrestedCategories().setShopping(bean.isShopping());		
 		activity.getIntrestedCategories().setSocial(bean.isSocial());
 		activity.getIntrestedCategories().setSport(bean.isSport());		
-		System.out.println("Sono qui 4");
 
 		//Ora che ho aggiornato l'attività chiamo il dao e faccio l'update
 		daoAc.updateCertAcivity(activity);
