@@ -29,10 +29,10 @@ public class TestAddActivityToScheduleController {
 	
 	private static final int partnerAuth = 16; //partner proprietario
 	private static final int partnerNotAuth = 22; //partner NON proprietario
-	private String couponToRedeem;
+	private static String couponToRedeem;
 	private static final Long idNormalActivity = 4L;
 	private static final Long idCertifiedActivity = 6L;
-	private Long myScheduleId = null;
+	private static Long myScheduleId = null;
 	
 	private ScheduleBean bean;
 	
@@ -41,6 +41,7 @@ public class TestAddActivityToScheduleController {
 		 bean = new ScheduleBean();
 		 bean.setScheduledDate("2022-03-17");
 		 bean.setScheduledTime("10:12");
+		 
 	}
 	
 	/* test Add activity to schedule */
@@ -55,7 +56,7 @@ public class TestAddActivityToScheduleController {
 		User explorer = new User(null,null,15L,200L);
 		bean.setIdActivity(idNormalActivity); //attività che si fa tutti i fine settimana -> sabato 12 è ok
 		AddActivityToScheduleController controller = new AddActivityToScheduleController(explorer,bean);
-		Assertions.assertThrows(SQLException.class, controller::addCertifiedActivityToSchedule);		
+		Assertions.assertThrows(SQLException.class, () -> controller.addCertifiedActivityToSchedule());		
 	}
 	
 	@Test
@@ -79,7 +80,7 @@ public class TestAddActivityToScheduleController {
 			}
 			
 			if(mySchedule != null) couponToRedeem = String.valueOf(mySchedule.getCoupon().getCouponCode());
-			
+			System.out.println("il coupon è"+couponToRedeem);
 			assertNotNull(mySchedule);
 			
 		} catch (ClassNotFoundException | SQLException e) {
@@ -130,8 +131,9 @@ public class TestAddActivityToScheduleController {
 		Partner notAuthorizedPartner;
 		try {
 			notAuthorizedPartner = DAOPartner.getInstance().getPartnerInfo(partnerNotAuth);
+			System.out.println(notAuthorizedPartner);
 			AddActivityToScheduleController controller = new AddActivityToScheduleController(notAuthorizedPartner,couponToRedeem);
-			Assertions.assertThrows(SQLException.class, controller::redeemCoupon);		
+			Assertions.assertThrows(SQLException.class, () -> controller.redeemCoupon());		
 		} catch (ClassNotFoundException | SQLException e) {
 			Log.getInstance().getLogger().info("error on retrieving the partner :"+e);
 			e.printStackTrace();
@@ -167,7 +169,7 @@ public class TestAddActivityToScheduleController {
 		User explorer = new User(null,null,18L,200L);
 		bean.setScheduleToRemove(myScheduleId);
 		AddActivityToScheduleController controller = new AddActivityToScheduleController(explorer,bean);
-		Assertions.assertThrows(SQLException.class, controller::removeSchedule);
+		Assertions.assertThrows(SQLException.class, () -> controller.removeSchedule());
 	}
 	
 	@Test
@@ -180,7 +182,7 @@ public class TestAddActivityToScheduleController {
 		User explorer = new User(null,null,15L,200L);
 		bean.setScheduleToRemove(myScheduleId);
 		AddActivityToScheduleController controller = new AddActivityToScheduleController(explorer,bean);
-		Assertions.assertDoesNotThrow(controller::removeSchedule);
+		Assertions.assertDoesNotThrow(()-> controller.removeSchedule());
 	}
 
 }
