@@ -17,6 +17,7 @@ import logic.model.Log;
 import logic.model.LogBean;
 import logic.model.NormalActivity;
 import logic.model.Activity;
+import logic.model.Cadence;
 import logic.model.CertifiedActivity;
 
 /*
@@ -27,6 +28,8 @@ import logic.model.CertifiedActivity;
 public class TestCreateActivityControler {
 	private static final String CLOSETIME = "20:20";
 	private static final String OPENTIME = "10:00";
+	private static final String CLOSEDATE = "2022-02-27";
+	private static final String OPENDATE = "2022-02-12";
 
 
 	private CreateActivityBean bean;
@@ -89,7 +92,7 @@ public class TestCreateActivityControler {
 	}
 
 	
-	/*TEST PLACE NOT FOUND EXCEPTION*/
+	/*TEST IF PLACE NOT EXISTENT*/
 	
 	@Test
 	@Order(3)
@@ -108,6 +111,74 @@ public class TestCreateActivityControler {
 			
 		controller = new CreateActivityController(bean);
 		Assertions.assertThrows(NullPointerException.class, controller::createActivity);			
+	}
+	
+/*TEST ACTIVITY TYPE NOT MATCHING PARAMETERS*/
+	
+	@Test
+	@Order(4)
+	void testCreateNormalActivityExceptionWrongParametersForExpiring() {
+		boolean[] emptyPreferences = {false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+		
+		bean.setActivityDescription("Test expiring activity but I don't write opening and closing dates for it.");
+		bean.setActivityName("Test normal activity");
+		bean.setPreferences(emptyPreferences);
+		bean.setOwner(0);
+		bean.setType(ActivityType.SCADENZA);
+		bean.setPrice("10");
+		bean.setPlace(1);
+		bean.setClosingTime(CLOSETIME);
+		bean.setOpeningTime(OPENTIME);
+			
+		controller = new CreateActivityController(bean);
+		Assertions.assertThrows(NullPointerException.class, controller::createActivity);			
+	}
+
+	/*TEST ACTIVITY WITH WRONG DATES*/
+	
+	@Test
+	@Order(5)
+	void testCreateNormalActivityWrongDates() {
+		boolean[] emptyPreferences = {false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+		
+		bean.setActivityDescription("Test expiring activity but I don't write opening and closing dates for it.");
+		bean.setActivityName("Test normal activity");
+		bean.setPreferences(emptyPreferences);
+		bean.setOwner(0);
+		bean.setType(ActivityType.PERIODICA);
+		bean.setPrice("10");
+		bean.setPlace(1);
+		bean.setEndDate(OPENDATE);
+		bean.setOpeningDate(CLOSEDATE);
+		bean.setClosingTime(CLOSETIME);
+		bean.setOpeningTime(OPENTIME);
+			
+		controller = new CreateActivityController(bean);
+		Assertions.assertThrows(IllegalArgumentException.class, controller::saveActivity);			
+	}
+	
+
+	/*TEST ACTIVITY WITH NOT POSSIBLE HOURS*/
+	
+	@Test
+	@Order(5)
+	void testCreateNormalActivityWrongHour() {
+		boolean[] emptyPreferences = {false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+		
+		bean.setActivityDescription("Test expiring activity but I don't write opening and closing dates for it.");
+		bean.setActivityName("Test normal activity");
+		bean.setPreferences(emptyPreferences);
+		bean.setOwner(0);
+		bean.setType(ActivityType.PERIODICA);
+		bean.setPrice("10");
+		bean.setPlace(1);
+		bean.setEndDate(CLOSEDATE);
+		bean.setOpeningDate(OPENDATE);
+		bean.setClosingTime(OPENTIME);
+		bean.setOpeningTime(CLOSETIME);
+			
+		controller = new CreateActivityController(bean);
+		Assertions.assertThrows(IllegalArgumentException.class, controller::saveActivity);			
 	}
 	
 	

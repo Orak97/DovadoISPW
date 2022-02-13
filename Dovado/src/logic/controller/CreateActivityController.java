@@ -148,7 +148,7 @@ public class CreateActivityController {
 		 * Medoto per chiamare il DAO, quello che controllo è che qua il tipo sia continua, periodica o a scadenza
 		 * 
 		 * */
-		if(bean.getClosingLocalTime().compareTo(bean.getOpeningLocalTime()) < 0) throw new IllegalArgumentException("L\'orario di apertura non può essere prima dell\'orario di chiusura");
+		if((bean.getClosingLocalTime().compareTo(bean.getOpeningLocalTime()) < 0) || (bean.getOpeningLocalDate().isAfter(bean.getEndLocalDate()))) throw new IllegalArgumentException("L\'orario di apertura non può essere prima dell\'orario di chiusura");
 
 		daoAc.createNormalActivity(bean);
 
