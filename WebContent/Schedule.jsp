@@ -15,6 +15,9 @@
 		
 			try{ 
 				controller.modifySchedule();
+				%> 
+				<script> alert('Schedulo modificato correttamente!')</script>
+				<%
 			} catch(SQLException se){ 
 				Log.getInstance().getLogger().warning("Errore: " + se.getErrorCode() +" - Messaggio: " + se.getMessage());
 				
