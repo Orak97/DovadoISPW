@@ -75,7 +75,7 @@ public class HomeView extends SuperView implements Initializable{
 	private static final  String CLOSEDKEY = "CLOSED NOW"; //$NON-NLS-1$
 	private static final  String SPOTPLACESCRIPT = "spotPlace"; //$NON-NLS-1$
 	private static final  String CERTIFIED = "CERTIFICATA"; //$NON-NLS-1$
-
+	private static final  String DESCRIPTION = "Description:";
 	
 	private StackPane lastEventBoxSelected;
 
@@ -514,17 +514,17 @@ public class HomeView extends SuperView implements Initializable{
 			" cadence\n\nOpen from the date:\n"+((PeriodicActivity)(activitySelected.getFrequency())).getFormattedStartDate()+ //$NON-NLS-1$
 			"\nTo the date:\n"+((PeriodicActivity)(activitySelected.getFrequency())).getFormattedEndDate()+"\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription()); //$NON-NLS-1$
+			activityDescription.setText(activityDescription.getText()+DESCRIPTION + "\n" +activitySelected.getDescription()); //$NON-NLS-1$
 		} 
 		else if(activitySelected.getFrequency() instanceof ExpiringActivity) {
 				activityDescription.setText("An expiring activity that goes from the date:\n"+ //$NON-NLS-1$
 						((ExpiringActivity)(activitySelected.getFrequency())).getFormattedStartDate()+
 				"\nTo the date:\n"+((ExpiringActivity)(activitySelected.getFrequency())).getFormattedEndDate()+"\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-				activityDescription.setText(activityDescription.getText()+"Description:\n"+activitySelected.getDescription()); //$NON-NLS-1$
+				activityDescription.setText(activityDescription.getText()+DESCRIPTION + "\n"+activitySelected.getDescription()); //$NON-NLS-1$
 		}
 		else {
-			activityDescription.setText("Description:\n"+activitySelected.getDescription());
+			activityDescription.setText(DESCRIPTION + "\n"+activitySelected.getDescription());
 		}
 		activityDescription.setWrappingWidth(280);
 		activityDescription.getStyleClass().add("actInfo"); //$NON-NLS-1$

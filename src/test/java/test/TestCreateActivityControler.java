@@ -105,7 +105,7 @@ public class TestCreateActivityControler {
 		bean.setOpeningTime("10:00");
 			
 		controller = new CreateActivityController(bean);
-		Assertions.assertThrows(NullPointerException.class, ()->controller.createActivity());			
+		Assertions.assertThrows(NullPointerException.class, controller::createActivity);			
 	}
 
 }

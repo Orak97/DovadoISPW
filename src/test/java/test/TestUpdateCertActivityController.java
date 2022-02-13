@@ -55,7 +55,7 @@ class TestUpdateCertActivityController {
 			bean= new CreateActivityBean();
 			
 			controller = new UpdateCertActController(bean, u);
-			Assertions.assertThrows(NoPartnerException.class, ()-> controller.claimActivity());		
+			Assertions.assertThrows(NoPartnerException.class, controller::claimActivity);		
 			
 		} catch (ClassNotFoundException| NoPartnerException | SQLException e) {
 			Log.getInstance().getLogger().warning("testClaimActivityPartner SHOULD NOT THROW exception " + e );
@@ -100,7 +100,7 @@ class TestUpdateCertActivityController {
 				bean.setIdActivity(NOCERTACTIVITY.intValue());
 				controller = new UpdateCertActController(bean, p);
 				
-				Assertions.assertThrows(CertifiedException.class, ()-> controller.claimActivity());	
+				Assertions.assertThrows(CertifiedException.class, controller::claimActivity);	
 				
 			}  catch (ClassNotFoundException| NoPartnerException | SQLException e) {
 				Log.getInstance().getLogger().warning("testClaimActivityAlreadyClaimed SHOULD NOT THROW exception " + e.getMessage()  );

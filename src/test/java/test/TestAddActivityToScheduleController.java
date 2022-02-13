@@ -29,10 +29,10 @@ public class TestAddActivityToScheduleController {
 	
 	private static final int partnerAuth = 16; //partner proprietario
 	private static final int partnerNotAuth = 22; //partner NON proprietario
-	private static String couponToRedeem;
+	private String couponToRedeem;
 	private static final Long idNormalActivity = 4L;
 	private static final Long idCertifiedActivity = 6L;
-	private static Long myScheduleId = null;
+	private Long myScheduleId = null;
 	
 	private ScheduleBean bean;
 	
@@ -55,7 +55,7 @@ public class TestAddActivityToScheduleController {
 		User explorer = new User(null,null,15L,200L);
 		bean.setIdActivity(idNormalActivity); //attività che si fa tutti i fine settimana -> sabato 12 è ok
 		AddActivityToScheduleController controller = new AddActivityToScheduleController(explorer,bean);
-		Assertions.assertThrows(SQLException.class, ()->controller.addCertifiedActivityToSchedule());		
+		Assertions.assertThrows(SQLException.class, controller::addCertifiedActivityToSchedule);		
 	}
 	
 	@Test
@@ -131,7 +131,7 @@ public class TestAddActivityToScheduleController {
 		try {
 			notAuthorizedPartner = DAOPartner.getInstance().getPartnerInfo(partnerNotAuth);
 			AddActivityToScheduleController controller = new AddActivityToScheduleController(notAuthorizedPartner,couponToRedeem);
-			Assertions.assertThrows(SQLException.class, ()->controller.redeemCoupon());		
+			Assertions.assertThrows(SQLException.class, controller::redeemCoupon);		
 		} catch (ClassNotFoundException | SQLException e) {
 			Log.getInstance().getLogger().info("error on retrieving the partner :"+e);
 			e.printStackTrace();
@@ -167,7 +167,7 @@ public class TestAddActivityToScheduleController {
 		User explorer = new User(null,null,18L,200L);
 		bean.setScheduleToRemove(myScheduleId);
 		AddActivityToScheduleController controller = new AddActivityToScheduleController(explorer,bean);
-		Assertions.assertThrows(SQLException.class, ()->controller.removeSchedule());
+		Assertions.assertThrows(SQLException.class, controller::removeSchedule);
 	}
 	
 	@Test
@@ -180,7 +180,7 @@ public class TestAddActivityToScheduleController {
 		User explorer = new User(null,null,15L,200L);
 		bean.setScheduleToRemove(myScheduleId);
 		AddActivityToScheduleController controller = new AddActivityToScheduleController(explorer,bean);
-		Assertions.assertDoesNotThrow( ()->controller.removeSchedule());
+		Assertions.assertDoesNotThrow(controller::removeSchedule);
 	}
 
 }
