@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -83,6 +84,27 @@ public class DAOActivity extends DAO{
 		
 	}
 	
+	public void deleteActivity(Long idActivity, Long idPartner) throws ClassNotFoundException, SQLException {
+		
+		try {
+			resetConnection();
+        
+			String call = "{delete_activity(?,?)}";
+        
+			stmt = conn.prepareCall(call);
+			
+			stmt.setLong(1, idActivity);
+			stmt.setLong(2, idPartner);
+			
+			stmt.execute();
+			
+        } finally {
+        	//Clean-up dell'ambiente
+            disconnRoutine();
+        }
+		
+	}
+	
 	public List<Activity> getNearbyActivities(double userLat,double userLong, float maxDistance) throws ClassNotFoundException, SQLException {
 		//metodo per ottenere TUTTE le attività entro una maxDistance(Km) partendo da un punto di coordinate geografiche(userLat,userLong)
 		ArrayList<Activity> nearbyActivities = new ArrayList<>();
@@ -91,7 +113,6 @@ public class DAOActivity extends DAO{
         	
         	resetConnection();
             
-            //STEP4.1: preparo la stored procedure
             String call = "{call get_nearby_activities(?,?,?)}";
             
             stmt = conn.prepareCall(call);
@@ -304,7 +325,6 @@ public class DAOActivity extends DAO{
         try {
         	resetConnection();
             
-            //STEP4.1: preparo la stored procedure
             String call = "{call get_activities_by_zone(?)}";
             
             stmt = conn.prepareCall(call);
@@ -342,7 +362,6 @@ public class DAOActivity extends DAO{
         try {
         	resetConnection();
             
-            //STEP4.1: preparo la stored procedure
             String call = "{call view_discounts(?)}";
             
             stmt = conn.prepareCall(call);
@@ -353,7 +372,6 @@ public class DAOActivity extends DAO{
             	throw new SQLException("Sembra che non esistono Coupon per questa attività");
             }
             
-            //ottengo il resultSet
             ResultSet rs = stmt.getResultSet();
             
             while(rs.next()) {
@@ -377,12 +395,11 @@ public class DAOActivity extends DAO{
 	}	
 	
 	public void claimActivity(Long activity, Long partner) throws ClassNotFoundException, SQLException {
-		// STEP 1: dichiarazioni
-        
+		
         try {
         	resetConnection();
             
-            //STEP4.1: preparo la stored procedure
+            
             String call = "{call claim_activity(?,?)}";
             
             stmt = conn.prepareCall(call);
@@ -403,7 +420,6 @@ public class DAOActivity extends DAO{
 		try {
 			resetConnection();
 			
-            //STEP4.1: preparo la stored procedure
             String call = "{call modify_discount(?,?,?,?)}";
 
             
@@ -429,8 +445,28 @@ public class DAOActivity extends DAO{
 		}
 	}
 	
+	public void resetOwnerForTest(int idActivity) throws SQLException, ClassNotFoundException {
+
+		try {
+        	resetConnection();
+            
+            
+            String call = "{call resetCertForTest(?)}";
+            
+            stmt = conn.prepareCall(call);
+            
+            stmt.setInt(1, idActivity);
+           
+            
+            stmt.execute();
+			
+		}finally {
+        	//Clean-up dell'ambiente
+        	disconnRoutine();
+        }
+	}
 	
-	//---- Da qui in poi ci sono i metodi utili per la classe ma private
+	//---- Da qui in poi ci sono i metodi utili solo per la classe stessa
 	private Activity getActivitybyResultSet(ResultSet rs) throws SQLException, ClassNotFoundException {
     	//NOTA: andre questo puoi copiarlo e incollarlo quando devi riempire il bean nella view per salvare un attività
     	CreateActivityBean bean = fillBean(rs);
