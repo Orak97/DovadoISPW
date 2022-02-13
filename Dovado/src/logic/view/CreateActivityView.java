@@ -28,6 +28,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import logic.controller.ActivityType;
+import logic.controller.CertifiedException;
 import logic.controller.CreateActivityController;
 import logic.controller.FindActivityController;
 import logic.controller.SpotPlaceController;
@@ -665,7 +666,7 @@ public class CreateActivityView extends SuperView implements Initializable{
 		UpdateCertActController upCac = new UpdateCertActController(cab,(Partner)Navbar.getUser());
 		try {
 			upCac.claimActivity();
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | CertifiedException e) {
 			popupGen(wPopup,hPopup,"Due to issues your Activity wasn't claimed!");
 			e.printStackTrace();
 			return;

@@ -25,7 +25,9 @@ import logic.model.CertifiedActivity;
 
 @TestMethodOrder(OrderAnnotation.class)
 public class TestCreateActivityControler {
-	
+	private static final String CLOSETIME = "20:20";
+	private static final String OPENTIME = "10:00";
+
 
 	private CreateActivityBean bean;
 	private CreateActivityController controller;		
@@ -50,8 +52,8 @@ public class TestCreateActivityControler {
 			bean.setType(ActivityType.CONTINUA);
 			bean.setPrice(null);
 			bean.setPlace(1);
-			bean.setClosingTime("20:20");
-			bean.setOpeningTime("10:00");
+			bean.setClosingTime(CLOSETIME);
+			bean.setOpeningTime(OPENTIME);
 			
 			controller = new CreateActivityController(bean);
 			Assertions.assertTrue(controller.createActivity() instanceof NormalActivity);			
@@ -69,15 +71,15 @@ public class TestCreateActivityControler {
 		
 		
 		try {
-			bean.setActivityDescription("Test");
-			bean.setActivityName("Test normal activity");
+			bean.setActivityDescription("Test certificata");
+			bean.setActivityName("Test certificata activity");
 			bean.setPreferences(emptyPreferences);
 			bean.setOwner(16);
 			bean.setType(ActivityType.CONTINUA);
 			bean.setPrice("10");
 			bean.setPlace(1);
-			bean.setClosingTime("20:20");
-			bean.setOpeningTime("10:00");
+			bean.setClosingTime(CLOSETIME);
+			bean.setOpeningTime(OPENTIME);
 
 			controller = new CreateActivityController(bean,DAOPartner.getInstance().getPartnerInfo(16));
 			Assertions.assertTrue(controller.createActivity() instanceof CertifiedActivity);			
@@ -101,11 +103,13 @@ public class TestCreateActivityControler {
 		bean.setType(ActivityType.CONTINUA);
 		bean.setPrice("10");
 		bean.setPlace(156);
-		bean.setClosingTime("20:20");
-		bean.setOpeningTime("10:00");
+		bean.setClosingTime(CLOSETIME);
+		bean.setOpeningTime(OPENTIME);
 			
 		controller = new CreateActivityController(bean);
-		Assertions.assertThrows(NullPointerException.class, ()->controller.createActivity());			
+		Assertions.assertThrows(NullPointerException.class, controller::createActivity);			
 	}
+	
+	
 
 }

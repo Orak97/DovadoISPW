@@ -57,20 +57,27 @@ public class UpdateCertActController {
 	}
 	
 	/*-----------------------------------------------------------------------*/
+	public void setDiscountBean(DiscountBean bean) {
+		this.beanDiscount = bean;
+	}
+	
 	
 	public UpdateCertActController(CreateActivityBean bean) {
 		this(bean,(Partner)null);
 	}
 	
-	public boolean updateActivity() throws ClassNotFoundException, SQLException {
+	public boolean updateActivity() throws ClassNotFoundException, CertifiedException {
 		boolean error = false;
-		
-		if (activity == null) {
-			error = updateByBean();
-		} else {
-			error = updateWithCheck();
+		try {
+			if (activity == null) {
+				error = updateByBean();
+			} else {
+				error = updateWithCheck();
+			}
+			return error;
+		}catch(SQLException e) {
+			throw new CertifiedException(e);
 		}
-		return error;
 	}
 	
 	public boolean updateByBean() throws ClassNotFoundException, SQLException {
@@ -89,7 +96,8 @@ public class UpdateCertActController {
 		if(bean.getActivityDescription() != null) {
 			activity.setDescription(bean.getActivityDescription());
 		}
-		
+		System.out.println("Sono qui 1");
+
 		if(activity.getFrequency() instanceof PeriodicActivity) {
          	if(bean.getOpeningLocalDate() != null) {
          		((PeriodicActivity)activity.getFrequency()).setStartDate(bean.getOpeningLocalDate());
@@ -105,15 +113,16 @@ public class UpdateCertActController {
           	if(bean.getEndLocalDate() != null) {
           		((ExpiringActivity)activity.getFrequency()).setEndDate(bean.getEndLocalDate());
           	}
-         }		
-		//Gestire il place se vogliamo cambiarlo
+         }		System.out.println("Sono qui 2");
+
 		if(bean.getOpeningLocalTime() != null) {
 			activity.getFrequency().setOpeningTime(bean.getOpeningLocalTime());
 		}
 		if(bean.getClosingLocalTime() != null) {
 			activity.getFrequency().setClosingTime(bean.getClosingLocalTime());
 		}
-		
+		System.out.println("Sono qui 3");
+
 		//Aggiorno le preferenze
 		activity.getIntrestedCategories().setAdrenalina(bean.isAdrenalina());
 		activity.getIntrestedCategories().setArte(bean.isArte());
@@ -129,25 +138,28 @@ public class UpdateCertActController {
 		activity.getIntrestedCategories().setShopping(bean.isShopping());		
 		activity.getIntrestedCategories().setSocial(bean.isSocial());
 		activity.getIntrestedCategories().setSport(bean.isSport());		
-		
+		System.out.println("Sono qui 4");
+
 		//Ora che ho aggiornato l'attività chiamo il dao e faccio l'update
 		daoAc.updateCertAcivity(activity);
 		return true;
 	}
 
-	/*Rimuovere in caso si sposti il metodo `claimActivity`in un altra classe*/
-	public void claimActivity() throws ClassNotFoundException, SQLException{
+	public void claimActivity() throws ClassNotFoundException, CertifiedException{
 		if(session == null || bean.getIdActivity() == 0) throw new NullPointerException();
 		
 		Long partnerID = session.getUserID();
 		Long activityId;
 		try {
 			activityId = Long.valueOf(bean.getIdActivity());
+	
+			daoAc.claimActivity(activityId, partnerID);
 		}catch(NumberFormatException e) {
 			Log.getInstance().getLogger().severe("l'ID dell'attività da reclamare è NULL");
 			throw e;
+		} catch(SQLException e) {
+			throw new CertifiedException(e);
 		}
-		daoAc.claimActivity(activityId, partnerID);
 	}
 	
 	/*Chiamare questo metodo dopo aver istanziato il controller tramite il costruttore che prende come parametri `DiscountBean` e `Partner`*/
