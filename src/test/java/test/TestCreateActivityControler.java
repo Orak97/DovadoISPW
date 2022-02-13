@@ -71,8 +71,8 @@ public class TestCreateActivityControler {
 		
 		
 		try {
-			bean.setActivityDescription("Test");
-			bean.setActivityName("Test normal activity");
+			bean.setActivityDescription("Test certificata");
+			bean.setActivityName("Test certificata activity");
 			bean.setPreferences(emptyPreferences);
 			bean.setOwner(16);
 			bean.setType(ActivityType.CONTINUA);
@@ -109,5 +109,7 @@ public class TestCreateActivityControler {
 		controller = new CreateActivityController(bean);
 		Assertions.assertThrows(NullPointerException.class, controller::createActivity);			
 	}
+	
+	
 
 }
